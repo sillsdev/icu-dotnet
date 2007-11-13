@@ -1,0 +1,15 @@
+1. Delete all the .mk files in the source/data subdirectories (locales\resfiles.mk, rbnf\rbnffiles.mk, coll\colfiles.mk, etc)
+
+2. Compile with (I changed these in my source/common/unicode/uconfig.h file):
+#define UCONFIG_ONLY_COLLATION 1
+#define UCONFIG_NO_LEGACY_CONVERSION 1
+
+3. patch the makedata.mak with makedata.mak.patch
+
+
+The following seem to be the absolute minimum data to be included (from icudata.lst):
+ucadata.icu
+invuca.icu
+cnvalias.icu
+ibm-37_P100-1995.cnv
+ibm-1047_P100-1995.cnv
