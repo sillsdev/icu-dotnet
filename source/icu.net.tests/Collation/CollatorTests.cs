@@ -1,4 +1,3 @@
-#define MINIMAL_ICU
 using System;
 using System.Globalization;
 using Icu.Collation;
