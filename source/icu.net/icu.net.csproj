@@ -49,6 +49,20 @@
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="VersionInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+	<None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="..\..\lib\icu\icudt38.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\icu\icuin38.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lib\icu\icuuc38.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
@@ -58,8 +72,6 @@
   </Target>
   -->
   <PropertyGroup>
-	<PreBuildEvent>copy "$(SolutionDir)..\lib\icu\icuin38.dll" "$(ProjectDir)$(OutDir)"
-copy "$(SolutionDir)..\lib\icu\icuuc38.dll" "$(ProjectDir)$(OutDir)"
-copy "$(SolutionDir)..\lib\icu\icudt38.dll" "$(ProjectDir)$(OutDir)"</PreBuildEvent>
+	<PreBuildEvent />
   </PropertyGroup>
 </Project>
