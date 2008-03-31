@@ -37,7 +37,7 @@ namespace Icu.Collation
 		}
 
 		private SafeRuleBasedCollatorHandle collatorHandle;
-		ParseError parseError = new ParseError();
+		readonly ParseError parseError = new ParseError();
 
 		/// <summary>
 		/// RuleBasedCollator constructor.
@@ -356,7 +356,7 @@ namespace Icu.Collation
 		private static class NativeMethods
 		{
 			private const string ICU_I18N_LIB = "icuin38.dll";
-			private const string ICU_VERSION_SUFFIX = "_3_7";
+			private const string ICU_VERSION_SUFFIX = "_3_8";
 
 			/// <summary>
 			/// Open a Collator for comparing strings.
