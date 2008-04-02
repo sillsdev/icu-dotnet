@@ -9,27 +9,24 @@ namespace icu.net.tests.Collation
 	public class CollatorTests
 	{
 		[Test]
-#if MINIMAL_ICU
-		[Ignore("This fails when ICU's data DLL is built without rules for the en locale.")]
-#endif
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the en locale.
 		public void Create_Locale()
 		{
 			Assert.IsNotNull(Collator.Create("en"));
 		}
 
 		[Test]
-#if MINIMAL_ICU
-		[Ignore("This fails when ICU's data DLL is built without rules for the root locale.")]
-#endif
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
 			Assert.IsNotNull(Collator.Create("root"));
 		}
 
 		[Test]
-#if MINIMAL_ICU
-		[Ignore("This fails when ICU's data DLL is built without rules for the root locale.")]
-#endif
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocaleAsEmpty()
 		{
 			Assert.IsNotNull(Collator.Create(string.Empty));
