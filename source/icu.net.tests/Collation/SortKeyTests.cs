@@ -74,7 +74,7 @@ namespace icu.net.tests.Collation
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void Compare_bothnull_throws()
 		{
-			Assert.AreEqual(Same, SortKey.Compare(null, null));
+			SortKey.Compare(null, null);
 		}
 
 		[Test]
@@ -83,7 +83,7 @@ namespace icu.net.tests.Collation
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
 			SortKey sortKey = Collator.CreateSortKey("heo", keyData);
-			Assert.AreEqual(Precedes, SortKey.Compare(null, sortKey));
+			SortKey.Compare(null, sortKey);
 		}
 
 		[Test]
@@ -92,7 +92,7 @@ namespace icu.net.tests.Collation
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
 			SortKey sortKey = Collator.CreateSortKey("heo", keyData);
-			Assert.AreEqual(Follows, SortKey.Compare(sortKey, null));
+			SortKey.Compare(sortKey, null);
 		}
 
 		[Test]
