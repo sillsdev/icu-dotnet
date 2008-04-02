@@ -107,7 +107,7 @@ namespace Icu.Collation
 
 		private static void SetInternalOriginalStringField(SortKey sortKey, string originalString) {
 			string propertyName = "SortKey.OriginalString";
-			string monoInternalFieldName = "str";
+			string monoInternalFieldName = "source";
 			string netInternalFieldName = "m_String";
 			SetInternalFieldForPublicProperty(sortKey,
 											  propertyName,
