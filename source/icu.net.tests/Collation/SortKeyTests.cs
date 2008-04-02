@@ -66,7 +66,7 @@ namespace icu.net.tests.Collation
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
 			SortKey sortKey1 = Collator.CreateSortKey("heo", keyData);
 			keyData[2] = 0x21;
-			SortKey sortKey2 = Collator.CreateSortKey("heo", keyData);
+			SortKey sortKey2 = Collator.CreateSortKey("hao", keyData);
 			Assert.AreEqual(Precedes, SortKey.Compare(sortKey1, sortKey2));
 		}
 
