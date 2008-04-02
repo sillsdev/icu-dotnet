@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 
@@ -83,17 +84,76 @@ namespace Icu.Collation
 			}
 
 			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty);
-			FieldInfo originalStringField =
-					sortKey.GetType().GetField("m_String", BindingFlags.Instance | BindingFlags.NonPublic);
-			originalStringField.SetValue(sortKey, originalString);
+			SetInternalOriginalStringField(sortKey, originalString);
+			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
 
+			return sortKey;
+		}
+
+		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength) {
 			byte[] keyDataCopy = new byte[keyDataLength];
 			Array.Copy(keyData, keyDataCopy, keyDataLength);
 
-			FieldInfo keyDataField =
-					sortKey.GetType().GetField("m_KeyData", BindingFlags.Instance | BindingFlags.NonPublic);
-			keyDataField.SetValue(sortKey, keyDataCopy);
-			return sortKey;
+			string propertyName = "SortKey.KeyData";
+			string monoInternalFieldName = "key";
+			string netInternalFieldName = "m_KeyData";
+			SetInternalFieldForPublicProperty(sortKey,
+											  propertyName,
+											  netInternalFieldName,
+											  monoInternalFieldName,
+											  keyDataCopy);
+
+		}
+
+		private static void SetInternalOriginalStringField(SortKey sortKey, string originalString) {
+			string propertyName = "SortKey.OriginalString";
+			string monoInternalFieldName = "str";
+			string netInternalFieldName = "m_String";
+			SetInternalFieldForPublicProperty(sortKey,
+											  propertyName,
+											  netInternalFieldName,
+											  monoInternalFieldName,
+											  originalString);
+		}
+
+		private static void SetInternalFieldForPublicProperty<T,P>(
+			T instance,
+			string propertyName,
+			string netInternalFieldName,
+			string monoInternalFieldName,
+			P value)
+		{
+			Type type = instance.GetType();
+
+			FieldInfo fieldInfo;
+			if (IsRunningOnMono())
+			{
+				fieldInfo = type.GetField(monoInternalFieldName,
+										  BindingFlags.Instance
+										  | BindingFlags.NonPublic);
+			}
+			else //Is Running On .Net
+			{
+				fieldInfo = type.GetField(netInternalFieldName,
+										  BindingFlags.Instance
+										  | BindingFlags.NonPublic);
+			}
+
+			Debug.Assert(fieldInfo != null,
+						 "Unsupported runtime",
+						 "Could not figure out an internal field for" + propertyName);
+
+			if(fieldInfo == null)
+			{
+				throw new NotImplementedException("Not implemented for this runtime");
+			}
+
+			fieldInfo.SetValue(instance, value);
+		}
+
+		private static bool IsRunningOnMono()
+		{
+			return Type.GetType("Mono.Runtime") != null;
 		}
 
 	}
