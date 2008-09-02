@@ -1,21 +1,25 @@
-Index: source/common/unicode/uconfig.h
-===================================================================
---- source/common/unicode/uconfig.h	(revision 23713)
-+++ source/common/unicode/uconfig.h	(working copy)
-@@ -46,7 +46,8 @@
+--- source/common/unicode/uconfig.h	2008-07-01 08:41:08.000000000 +0700
++++ source/common/unicode/uconfig.h	2008-08-21 16:22:57.000000000 +0700
+@@ -59,7 +59,7 @@
   * @stable ICU 2.4
   */
  #ifndef UCONFIG_ONLY_COLLATION
 -#   define UCONFIG_ONLY_COLLATION 0
 +#   define UCONFIG_ONLY_COLLATION 1
-+#   define UCONFIG_NO_LEGACY_CONVERSION 1
  #endif
 
  #if UCONFIG_ONLY_COLLATION
-Index: source/data/makedata.mak
-===================================================================
---- source/data/makedata.mak	(revision 23713)
-+++ source/data/makedata.mak	(working copy)
+@@ -128,7 +128,7 @@
+  * @stable ICU 2.4
+  */
+ #ifndef UCONFIG_NO_LEGACY_CONVERSION
+-#   define UCONFIG_NO_LEGACY_CONVERSION 0
++#   define UCONFIG_NO_LEGACY_CONVERSION 1
+ #endif
+
+ /**
+--- source/data/makedata.mak	2008-07-01 08:42:02.000000000 +0700
++++ source/data/makedata.mak	2008-08-21 16:33:43.000000000 +0700
 @@ -219,9 +219,11 @@
  #
  #  Break iterator data files.

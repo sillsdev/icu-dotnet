@@ -1,7 +1,5 @@
-Index: source/data/makedata.mak
-===================================================================
---- source/data/makedata.mak	(revision 23713)
-+++ source/data/makedata.mak	(working copy)
+--- source/data/makedata.mak	2008-07-01 01:42:02.000000000 +0000
++++ source/data/makedata.mak	2008-08-21 09:33:43.000000000 +0000
 @@ -219,9 +219,11 @@
  #
  #  Break iterator data files.

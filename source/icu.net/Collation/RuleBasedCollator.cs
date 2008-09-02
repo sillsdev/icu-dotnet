@@ -355,8 +355,8 @@ namespace Icu.Collation
 
 		private static class NativeMethods
 		{
-			private const string ICU_I18N_LIB = "icuin38.dll";
-			private const string ICU_VERSION_SUFFIX = "_3_8";
+			private const string ICU_I18N_LIB = "icuin40.dll";
+			private const string ICU_VERSION_SUFFIX = "_4_0";
 
 			/// <summary>
 			/// Open a Collator for comparing strings.

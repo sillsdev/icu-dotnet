@@ -1,4 +1,4 @@
-Either apply the whole patch (minimal icu.patch - patched against http://source.icu-project.org/repos/icu/icu/tags/release-3-8-d02) or follow the steps below:
+Either apply the whole patch (minimal icu.patch - patched against http://source.icu-project.org/repos/icu/icu/tags/release-4-0) or follow the steps below:
 
 1. Delete all the .mk files in the source/data subdirectories (locales\resfiles.mk, rbnf\rbnffiles.mk, coll\colfiles.mk, etc)
 
