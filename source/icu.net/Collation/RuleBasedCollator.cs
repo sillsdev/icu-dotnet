@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Globalization;
@@ -243,6 +244,69 @@ namespace Icu.Collation
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
+		public static IList<string> GetAvailableCollationLocales()
+		{
+			List<string> locales = new List<string>();
+			ErrorCode ec;
+			SafeEnumeratorHandle en = NativeMethods.ucol_openAvailableLocales(out ec);
+			ExceptionFromErrorCode.ThrowIfError(ec);
+			try
+			{
+				string str = en.Next();
+				while (str != null)
+				{
+					locales.Add(str);
+					str = en.Next();
+				}
+			}
+			finally
+			{
+				en.Close();
+			}
+			return locales;
+		}
+
+		private sealed class SafeEnumeratorHandle : SafeHandle
+		{
+			public SafeEnumeratorHandle()
+				:
+					base(IntPtr.Zero, true) { }
+
+			///<summary>
+			///When overridden in a derived class, executes the code required to free the handle.
+			///</summary>
+			///<returns>
+			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
+			///</returns>
+			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+			protected override bool ReleaseHandle()
+			{
+				NativeMethods.uenum_close(handle);
+				handle = IntPtr.Zero;
+				return true;
+			}
+
+			///<summary>
+			///When overridden in a derived class, gets a value indicating whether the handle value is invalid.
+			///</summary>
+			///<returns>
+			///true if the handle is valid; otherwise, false.
+			///</returns>
+			public override bool IsInvalid
+			{
+				get { return (handle == IntPtr.Zero); }
+			}
+
+			public string Next()
+			{
+				ErrorCode e;
+				int length;
+				string result = NativeMethods.uenum_unext(this, out length, out e);
+				ExceptionFromErrorCode.ThrowIfError(e);
+				return result;
+			}
+		}
+
 		#region ICloneable Members
 
 		///<summary>
@@ -356,7 +420,37 @@ namespace Icu.Collation
 		private static class NativeMethods
 		{
 			private const string ICU_I18N_LIB = "icuin40.dll";
+			private const string ICU_COMMON_LIB = "icuuc40.dll";
 			private const string ICU_VERSION_SUFFIX = "_4_0";
+
+			/**
+			 * Function type declaration for uenum_close().
+			 *
+			 * This function should cleanup the enumerator object
+			 *
+			 * @param en enumeration to be closed
+			 */
+			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_close" + ICU_VERSION_SUFFIX)]
+			public static extern void uenum_close(IntPtr en);
+
+			/**
+			 * Function type declaration for uenum_unext().
+			 *
+			 * This function returns the next element as a UChar *,
+			 * or NULL after all elements haven been enumerated.
+			 *
+			 * @param en enumeration
+			 * @param resultLength pointer to result length
+			 * @param status pointer to UErrorCode variable
+			 * @return next element as UChar *,
+			 *         or NULL after all elements haven been enumerated
+			 */
+			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX)]
+			[return: MarshalAs(UnmanagedType.LPWStr)]
+			public static extern string uenum_unext(
+				SafeEnumeratorHandle en,
+				out int resultLength,
+				out ErrorCode status);
 
 			/// <summary>
 			/// Open a Collator for comparing strings.
@@ -541,10 +635,10 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 2.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAvailable"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAvailable"+ICU_VERSION_SUFFIX)]
 			[return : MarshalAs(UnmanagedType.LPStr)]
 			public static extern string ucol_getAvailable(Int32 index);
-			 */
+			*/
 
 /**
  * Determine how many locales have collation rules available.
@@ -555,7 +649,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 2.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable"+ICU_VERSION_SUFFIX)]
 			public static extern Int32 ucol_countAvailable();
 			*/
 
@@ -567,10 +661,8 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * responsible for closing the result.
  * @stable ICU 3.0
  */
-			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales"+ICU_VERSION_SUFFIX))]
-			public static extern IntPtr ucol_openAvailableLocales(out ErrorCode status);
-			*/
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales"+ICU_VERSION_SUFFIX)]
+			public static extern SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status);
 
 
 			/**
