@@ -119,6 +119,10 @@ namespace Icu
 		UNMATCHED_BRACES,               /**< Braces do not match in message pattern */
 		UNSUPPORTED_PROPERTY,           /**< UNUSED as of ICU 2.4 */
 		UNSUPPORTED_ATTRIBUTE,          /**< UNUSED as of ICU 2.4 */
+		ARGUMENT_TYPE_MISMATCH,         /**< Argument name and argument index mismatch in MessageFormat functions. */
+		DUPLICATE_KEYWORD,              /**< Duplicate keyword in PluralFormat. */
+		UNDEFINED_KEYWORD,              /**< Undefined Plural keyword. */
+		DEFAULT_KEYWORD_MISSING,        /**< Missing DEFAULT rule in plural rules. */
 		FMT_PARSE_ERROR_LIMIT,          /**< The limit for format library errors */
 				/*
 		 * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
@@ -157,6 +161,12 @@ namespace Icu
 		REGEX_INVALID_FLAG,                 /**< Invalid value for match mode flags.                */
 		REGEX_LOOK_BEHIND_LIMIT,            /**< Look-Behind pattern matches must have a bounded maximum length.    */
 		REGEX_SET_CONTAINS_STRING,          /**< Regexps cannot have UnicodeSets containing strings.*/
+		REGEX_OCTAL_TOO_BIG,                /**< Octal character constants must be <= 0377. */
+		REGEX_MISSING_CLOSE_BRACKET,        /**< Missing closing bracket on a bracket expression. */
+		REGEX_INVALID_RANGE,                /**< In a character range [x-y], x is greater than y. */
+		REGEX_STACK_OVERFLOW,               /**< Regular expression backtrack stack overflow. */
+		REGEX_TIME_OUT,                     /**< Maximum allowed match time exceeded. */
+		REGEX_STOPPED_BY_CALLER,            /**< Matching operation aborted by user callback fn. */
 		REGEX_ERROR_LIMIT,                  /**< This must always be the last value to indicate the limit for regexp errors */
 
 		/*
@@ -385,6 +395,14 @@ namespace Icu
 					throw new SyntaxErrorException("Format Parse Error: Pad symbol misplaced in number pattern " + extraInfo);
 				case ErrorCode.UNMATCHED_BRACES:
 					throw new SyntaxErrorException("Format Parse Error: Braces do not match in message pattern " + extraInfo);
+				case ErrorCode.ARGUMENT_TYPE_MISMATCH:
+					throw new SyntaxErrorException("Format Parse Error: Argument name and argument index mismatch in MessageFormat functions. " + extraInfo);
+				case ErrorCode.DUPLICATE_KEYWORD:
+					throw new SyntaxErrorException("Format Parse Error: Duplicate keyword in PluralFormat. " + extraInfo);
+				case ErrorCode.UNDEFINED_KEYWORD:
+					throw new SyntaxErrorException("Format Parse Error: Undefined Plural keyword. " + extraInfo);
+				case ErrorCode.DEFAULT_KEYWORD_MISSING:
+					throw new SyntaxErrorException("Format Parse Error: Missing DEFAULT rule in plural rules. " + extraInfo);
 				case ErrorCode.BRK_INTERNAL_ERROR:
 					throw new ApplicationException("Break Error: An internal error (bug) was detected. " + extraInfo);
 				case ErrorCode.BRK_HEX_DIGITS_EXPECTED:
@@ -443,6 +461,18 @@ namespace Icu
 					throw new ApplicationException("RegEx Error: Look-Behind pattern matches must have a bounded maximum length. " + extraInfo);
 				case ErrorCode.REGEX_SET_CONTAINS_STRING:
 					throw new ApplicationException("RegEx Error: Regexps cannot have UnicodeSets containing strings. " + extraInfo);
+				case ErrorCode.REGEX_OCTAL_TOO_BIG:
+					throw new ApplicationException("Regex Error: Octal character constants must be <= 0377. " + extraInfo);
+				case ErrorCode.REGEX_MISSING_CLOSE_BRACKET:
+					throw new ApplicationException("Regex Error: Missing closing bracket on a bracket expression. " + extraInfo);
+				case ErrorCode.REGEX_INVALID_RANGE:
+					throw new ApplicationException("Regex Error: In a character range [x-y], x is greater than y. " + extraInfo);
+				case ErrorCode.REGEX_STACK_OVERFLOW:
+					throw new ApplicationException("Regex Error: Regular expression backtrack stack overflow. " + extraInfo);
+				case ErrorCode.REGEX_TIME_OUT:
+					throw new ApplicationException("Regex Error: Maximum allowed match time exceeded. " + extraInfo);
+				case ErrorCode.REGEX_STOPPED_BY_CALLER:
+					throw new ApplicationException("Regex Error: Matching operation aborted by user callback fn. " + extraInfo);
 				case ErrorCode.REGEX_ERROR_LIMIT:
 					throw new ApplicationException("RegEx Error:  " + extraInfo);
 				case ErrorCode.IDNA_PROHIBITED_ERROR:
