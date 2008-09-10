@@ -247,6 +247,11 @@ namespace Icu.Collation
 		public static IList<string> GetAvailableCollationLocales()
 		{
 			List<string> locales = new List<string>();
+			// The ucol_openAvailableLocales call failes when there are no locales available, so check first.
+			if (NativeMethods.ucol_countAvailable() == 0)
+			{
+				return locales;
+			}
 			ErrorCode ec;
 			SafeEnumeratorHandle en = NativeMethods.ucol_openAvailableLocales(out ec);
 			ExceptionFromErrorCode.ThrowIfError(ec);
@@ -648,10 +653,9 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @see ucol_getAvailable
  * @stable ICU 2.0
  */
-			/*
 			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable"+ICU_VERSION_SUFFIX)]
 			public static extern Int32 ucol_countAvailable();
-			*/
+
 
 			/**
  * Create a string enumerator of all locales for which a valid
