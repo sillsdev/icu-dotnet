@@ -306,7 +306,12 @@ namespace Icu.Collation
 			{
 				ErrorCode e;
 				int length;
-				string result = NativeMethods.uenum_unext(this, out length, out e);
+				IntPtr str = NativeMethods.uenum_unext(this, out length, out e);
+				if (str == IntPtr.Zero)
+				{
+					return null;
+				}
+				string result = Marshal.PtrToStringUni(str, length);
 				ExceptionFromErrorCode.ThrowIfError(e);
 				return result;
 			}
@@ -451,8 +456,7 @@ namespace Icu.Collation
 			 *         or NULL after all elements haven been enumerated
 			 */
 			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX)]
-			[return: MarshalAs(UnmanagedType.LPWStr)]
-			public static extern string uenum_unext(
+			public static extern IntPtr uenum_unext(
 				SafeEnumeratorHandle en,
 				out int resultLength,
 				out ErrorCode status);
