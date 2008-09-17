@@ -1,8 +1,8 @@
-<project name="ICU dotNet" default="fullbuild">
+<project name="ICU dotNet" default="build">
 
 	<property name="configuration" value="release" />
 
-	<target name="fullbuild" depends="assemblyinfo, test" />
+	<target name="build" depends="assemblyinfo, test" />
 
 	<target name="clean" description="Delete all previously compiled binaries.">
 		<delete>
@@ -15,11 +15,11 @@
 		</delete>
 	</target>
 
-	<target name="build" depends="clean" description="Builds the solution.">
+	<target name="build.only" depends="clean" description="Builds the solution.">
 		<solution configuration="${configuration}" solutionfile="../source/icu.net.sln" />
 	</target>
 
-	<target name="test" depends="build" description="Tests the build.">
+	<target name="test" depends="build.only" description="Tests the build.">
 		<nunit2>
 			<formatter type="Plain" usefile="true" />
 			<test>
