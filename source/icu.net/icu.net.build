@@ -2,6 +2,7 @@
 <project name="icu.net" default="build" basedir=".">
 
   <target name="build">
+	<copy file="App.config" tofile="${current.build.dir}/icu.net.dll.config" />
 	<csc target="library"
 		output="${current.build.dir}/icu.net.dll"
 		doc="${current.build.dir}/icu.net.xml"
