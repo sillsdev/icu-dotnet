@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net/icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.tests", "icu.net.tests\icu.net.tests.csproj", "{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.tests", "icu.net.tests/icu.net.tests.csproj", "{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

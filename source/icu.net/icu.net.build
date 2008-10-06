@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<project name="icu.net" default="build" basedir=".">
+
+  <target name="build">
+	<csc target="library"
+		output="${current.build.dir}/icu.net.dll"
+		doc="${current.build.dir}/icu.net.xml"
+		debug="${build.debug}"
+		define="${build.defines}">
+	  <nowarn>
+		<warning number="618,672"/>
+		<warning number="1699" if="${runtime.version=='2.0'}"/>
+	  </nowarn>
+	  <sources basedir=".">
+		<include name="*.cs" />
+		<include name="Collation/*.cs" />
+		<include name="Properties/*.cs" />
+	  </sources>
+	  <references basedir="${current.build.dir}">
+	<include name="System.dll" />
+	<include name="System.Data.dll" />
+	  </references>
+	</csc>
+  </target>
+
+  <target name="package">
+	<copy todir="${package.src.dir}/icu.net">
+	  <fileset refid="source-files" />
+	</copy>
+  </target>
+
+</project>

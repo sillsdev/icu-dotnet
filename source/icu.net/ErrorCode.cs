@@ -7,167 +7,167 @@ namespace Icu
 {
 	internal enum ErrorCode
 	{
-		USING_FALLBACK_WARNING = -128,   /**< A resource bundle lookup returned a fallback result (not an error) */
+		USING_FALLBACK_WARNING = -128,   /** A resource bundle lookup returned a fallback result (not an error) */
 
-		ERROR_WARNING_START = -128,   /**< Start of information results (semantically successful) */
+		ERROR_WARNING_START = -128,   /** Start of information results (semantically successful) */
 
-		USING_DEFAULT_WARNING = -127,   /**< A resource bundle lookup returned a result from the root locale (not an error) */
+		USING_DEFAULT_WARNING = -127,   /** A resource bundle lookup returned a result from the root locale (not an error) */
 
-		SAFECLONE_ALLOCATED_WARNING = -126, /**< A SafeClone operation required allocating memory (informational only) */
+		SAFECLONE_ALLOCATED_WARNING = -126, /** A SafeClone operation required allocating memory (informational only) */
 
-		STATE_OLD_WARNING = -125,   /**< ICU has to use compatibility layer to construct the service. Expect performance/memory usage degradation. Consider upgrading */
+		STATE_OLD_WARNING = -125,   /** ICU has to use compatibility layer to construct the service. Expect performance/memory usage degradation. Consider upgrading */
 
-		STRING_NOT_TERMINATED_WARNING = -124,/**< An output string could not be NUL-terminated because output length==destCapacity. */
+		STRING_NOT_TERMINATED_WARNING = -124,/** An output string could not be NUL-terminated because output length==destCapacity. */
 
-		SORT_KEY_TOO_SHORT_WARNING = -123, /**< Number of levels requested in getBound is higher than the number of levels in the sort key */
+		SORT_KEY_TOO_SHORT_WARNING = -123, /** Number of levels requested in getBound is higher than the number of levels in the sort key */
 
-		AMBIGUOUS_ALIAS_WARNING = -122,   /**< This converter alias can go to different converter implementations */
+		AMBIGUOUS_ALIAS_WARNING = -122,   /** This converter alias can go to different converter implementations */
 
-		DIFFERENT_UCA_VERSION = -121,     /**< ucol_open encountered a mismatch between UCA version and collator image version, so the collator was constructed from rules. No impact to further function */
+		DIFFERENT_UCA_VERSION = -121,     /** ucol_open encountered a mismatch between UCA version and collator image version, so the collator was constructed from rules. No impact to further function */
 
-		ERROR_WARNING_LIMIT,              /**< This must always be the last warning value to indicate the limit for UErrorCode warnings (last warning code +1) */
+		ERROR_WARNING_LIMIT,              /** This must always be the last warning value to indicate the limit for UErrorCode warnings (last warning code +1) */
 
 
-		ZERO_ERROR = 0,     /**< No error, no warning. */
+		ZERO_ERROR = 0,     /** No error, no warning. */
 		NoErrors = ZERO_ERROR,
-		ILLEGAL_ARGUMENT_ERROR = 1,     /**< Start of codes indicating failure */
-		MISSING_RESOURCE_ERROR = 2,     /**< The requested resource cannot be found */
-		INVALID_FORMAT_ERROR = 3,     /**< Data format is not what is expected */
-		FILE_ACCESS_ERROR = 4,     /**< The requested file cannot be found */
-		INTERNAL_PROGRAM_ERROR = 5,     /**< Indicates a bug in the library code */
-		MESSAGE_PARSE_ERROR = 6,     /**< Unable to parse a message (message format) */
-		MEMORY_ALLOCATION_ERROR = 7,     /**< Memory allocation error */
-		INDEX_OUTOFBOUNDS_ERROR = 8,     /**< Trying to access the index that is out of bounds */
-		PARSE_ERROR = 9,     /**< Equivalent to Java ParseException */
-		INVALID_CHAR_FOUND = 10,     /**< Character conversion: Unmappable input sequence. In other APIs: Invalid character. */
-		TRUNCATED_CHAR_FOUND = 11,     /**< Character conversion: Incomplete input sequence. */
-		ILLEGAL_CHAR_FOUND = 12,     /**< Character conversion: Illegal input sequence/combination of input units. */
-		INVALID_TABLE_FORMAT = 13,     /**< Conversion table file found, but corrupted */
-		INVALID_TABLE_FILE = 14,     /**< Conversion table file not found */
-		BUFFER_OVERFLOW_ERROR = 15,     /**< A result would not fit in the supplied buffer */
-		UNSUPPORTED_ERROR = 16,     /**< Requested operation not supported in current context */
-		RESOURCE_TYPE_MISMATCH = 17,     /**< an operation is requested over a resource that does not support it */
-		ILLEGAL_ESCAPE_SEQUENCE = 18,     /**< ISO-2022 illlegal escape sequence */
-		UNSUPPORTED_ESCAPE_SEQUENCE = 19, /**< ISO-2022 unsupported escape sequence */
-		NO_SPACE_AVAILABLE = 20,     /**< No space available for in-buffer expansion for Arabic shaping */
-		CE_NOT_FOUND_ERROR = 21,     /**< Currently used only while setting variable top, but can be used generally */
-		PRIMARY_TOO_LONG_ERROR = 22,     /**< User tried to set variable top to a primary that is longer than two bytes */
-		STATE_TOO_OLD_ERROR = 23,     /**< ICU cannot construct a service from this state, as it is no longer supported */
-		TOO_MANY_ALIASES_ERROR = 24,     /**< There are too many aliases in the path to the requested resource.
+		ILLEGAL_ARGUMENT_ERROR = 1,     /** Start of codes indicating failure */
+		MISSING_RESOURCE_ERROR = 2,     /** The requested resource cannot be found */
+		INVALID_FORMAT_ERROR = 3,     /** Data format is not what is expected */
+		FILE_ACCESS_ERROR = 4,     /** The requested file cannot be found */
+		INTERNAL_PROGRAM_ERROR = 5,     /** Indicates a bug in the library code */
+		MESSAGE_PARSE_ERROR = 6,     /** Unable to parse a message (message format) */
+		MEMORY_ALLOCATION_ERROR = 7,     /** Memory allocation error */
+		INDEX_OUTOFBOUNDS_ERROR = 8,     /** Trying to access the index that is out of bounds */
+		PARSE_ERROR = 9,     /** Equivalent to Java ParseException */
+		INVALID_CHAR_FOUND = 10,     /** Character conversion: Unmappable input sequence. In other APIs: Invalid character. */
+		TRUNCATED_CHAR_FOUND = 11,     /** Character conversion: Incomplete input sequence. */
+		ILLEGAL_CHAR_FOUND = 12,     /** Character conversion: Illegal input sequence/combination of input units. */
+		INVALID_TABLE_FORMAT = 13,     /** Conversion table file found, but corrupted */
+		INVALID_TABLE_FILE = 14,     /** Conversion table file not found */
+		BUFFER_OVERFLOW_ERROR = 15,     /** A result would not fit in the supplied buffer */
+		UNSUPPORTED_ERROR = 16,     /** Requested operation not supported in current context */
+		RESOURCE_TYPE_MISMATCH = 17,     /** an operation is requested over a resource that does not support it */
+		ILLEGAL_ESCAPE_SEQUENCE = 18,     /** ISO-2022 illlegal escape sequence */
+		UNSUPPORTED_ESCAPE_SEQUENCE = 19, /** ISO-2022 unsupported escape sequence */
+		NO_SPACE_AVAILABLE = 20,     /** No space available for in-buffer expansion for Arabic shaping */
+		CE_NOT_FOUND_ERROR = 21,     /** Currently used only while setting variable top, but can be used generally */
+		PRIMARY_TOO_LONG_ERROR = 22,     /** User tried to set variable top to a primary that is longer than two bytes */
+		STATE_TOO_OLD_ERROR = 23,     /** ICU cannot construct a service from this state, as it is no longer supported */
+		TOO_MANY_ALIASES_ERROR = 24,     /** There are too many aliases in the path to the requested resource.
 										   It is very possible that a circular alias definition has occured */
-		ENUM_OUT_OF_SYNC_ERROR = 25,     /**< UEnumeration out of sync with underlying collection */
-		INVARIANT_CONVERSION_ERROR = 26,  /**< Unable to convert a UChar* string to char* with the invariant converter. */
-		INVALID_STATE_ERROR = 27,     /**< Requested operation can not be completed with ICU in its current state */
-		COLLATOR_VERSION_MISMATCH = 28,   /**< Collator version is not compatible with the base version */
-		USELESS_COLLATOR_ERROR = 29,     /**< Collator is options only and no base is specified */
-		NO_WRITE_PERMISSION = 30,     /**< Attempt to modify read-only or constant data. */
+		ENUM_OUT_OF_SYNC_ERROR = 25,     /** UEnumeration out of sync with underlying collection */
+		INVARIANT_CONVERSION_ERROR = 26,  /** Unable to convert a UChar* string to char* with the invariant converter. */
+		INVALID_STATE_ERROR = 27,     /** Requested operation can not be completed with ICU in its current state */
+		COLLATOR_VERSION_MISMATCH = 28,   /** Collator version is not compatible with the base version */
+		USELESS_COLLATOR_ERROR = 29,     /** Collator is options only and no base is specified */
+		NO_WRITE_PERMISSION = 30,     /** Attempt to modify read-only or constant data. */
 
-		STANDARD_ERROR_LIMIT,             /**< This must always be the last value to indicate the limit for standard errors */
+		STANDARD_ERROR_LIMIT,             /** This must always be the last value to indicate the limit for standard errors */
 		/*
 		 * the error code range 0x10000 0x10100 are reserved for Transliterator
 		 */
-		BAD_VARIABLE_DEFINITION = 0x10000,/**< Missing '$' or duplicate variable name */
-		PARSE_ERROR_START = 0x10000,    /**< Start of Transliterator errors */
-		MALFORMED_RULE,                 /**< Elements of a rule are misplaced */
-		MALFORMED_SET,                  /**< A UnicodeSet pattern is invalid*/
-		MALFORMED_SYMBOL_REFERENCE,     /**< UNUSED as of ICU 2.4 */
-		MALFORMED_UNICODE_ESCAPE,       /**< A Unicode escape pattern is invalid*/
-		MALFORMED_VARIABLE_DEFINITION,  /**< A variable definition is invalid */
-		MALFORMED_VARIABLE_REFERENCE,   /**< A variable reference is invalid */
-		MISMATCHED_SEGMENT_DELIMITERS,  /**< UNUSED as of ICU 2.4 */
-		MISPLACED_ANCHOR_START,         /**< A start anchor appears at an illegal position */
-		MISPLACED_CURSOR_OFFSET,        /**< A cursor offset occurs at an illegal position */
-		MISPLACED_QUANTIFIER,           /**< A quantifier appears after a segment close delimiter */
-		MISSING_OPERATOR,               /**< A rule contains no operator */
-		MISSING_SEGMENT_CLOSE,          /**< UNUSED as of ICU 2.4 */
-		MULTIPLE_ANTE_CONTEXTS,         /**< More than one ante context */
-		MULTIPLE_CURSORS,               /**< More than one cursor */
-		MULTIPLE_POST_CONTEXTS,         /**< More than one post context */
-		TRAILING_BACKSLASH,             /**< A dangling backslash */
-		UNDEFINED_SEGMENT_REFERENCE,    /**< A segment reference does not correspond to a defined segment */
-		UNDEFINED_VARIABLE,             /**< A variable reference does not correspond to a defined variable */
-		UNQUOTED_SPECIAL,               /**< A special character was not quoted or escaped */
-		UNTERMINATED_QUOTE,             /**< A closing single quote is missing */
-		RULE_MASK_ERROR,                /**< A rule is hidden by an earlier more general rule */
-		MISPLACED_COMPOUND_FILTER,      /**< A compound filter is in an invalid location */
-		MULTIPLE_COMPOUND_FILTERS,      /**< More than one compound filter */
-		INVALID_RBT_SYNTAX,             /**< A "::id" rule was passed to the RuleBasedTransliterator parser */
-		INVALID_PROPERTY_PATTERN,       /**< UNUSED as of ICU 2.4 */
-		MALFORMED_PRAGMA,               /**< A 'use' pragma is invlalid */
-		UNCLOSED_SEGMENT,               /**< A closing ')' is missing */
-		ILLEGAL_CHAR_IN_SEGMENT,        /**< UNUSED as of ICU 2.4 */
-		VARIABLE_RANGE_EXHAUSTED,       /**< Too many stand-ins generated for the given variable range */
-		VARIABLE_RANGE_OVERLAP,         /**< The variable range overlaps characters used in rules */
-		ILLEGAL_CHARACTER,              /**< A special character is outside its allowed context */
-		INTERNAL_TRANSLITERATOR_ERROR,  /**< Internal transliterator system error */
-		INVALID_ID,                     /**< A "::id" rule specifies an unknown transliterator */
-		INVALID_FUNCTION,               /**< A "&fn()" rule specifies an unknown transliterator */
-		PARSE_ERROR_LIMIT,              /**< The limit for Transliterator errors */
-			   /*
+		BAD_VARIABLE_DEFINITION = 0x10000,/** Missing '$' or duplicate variable name */
+		PARSE_ERROR_START = 0x10000,    /** Start of Transliterator errors */
+		MALFORMED_RULE,                 /** Elements of a rule are misplaced */
+		MALFORMED_SET,                  /** A UnicodeSet pattern is invalid*/
+		MALFORMED_SYMBOL_REFERENCE,     /** UNUSED as of ICU 2.4 */
+		MALFORMED_UNICODE_ESCAPE,       /** A Unicode escape pattern is invalid*/
+		MALFORMED_VARIABLE_DEFINITION,  /** A variable definition is invalid */
+		MALFORMED_VARIABLE_REFERENCE,   /** A variable reference is invalid */
+		MISMATCHED_SEGMENT_DELIMITERS,  /** UNUSED as of ICU 2.4 */
+		MISPLACED_ANCHOR_START,         /** A start anchor appears at an illegal position */
+		MISPLACED_CURSOR_OFFSET,        /** A cursor offset occurs at an illegal position */
+		MISPLACED_QUANTIFIER,           /** A quantifier appears after a segment close delimiter */
+		MISSING_OPERATOR,               /** A rule contains no operator */
+		MISSING_SEGMENT_CLOSE,          /** UNUSED as of ICU 2.4 */
+		MULTIPLE_ANTE_CONTEXTS,         /** More than one ante context */
+		MULTIPLE_CURSORS,               /** More than one cursor */
+		MULTIPLE_POST_CONTEXTS,         /** More than one post context */
+		TRAILING_BACKSLASH,             /** A dangling backslash */
+		UNDEFINED_SEGMENT_REFERENCE,    /** A segment reference does not correspond to a defined segment */
+		UNDEFINED_VARIABLE,             /** A variable reference does not correspond to a defined variable */
+		UNQUOTED_SPECIAL,               /** A special character was not quoted or escaped */
+		UNTERMINATED_QUOTE,             /** A closing single quote is missing */
+		RULE_MASK_ERROR,                /** A rule is hidden by an earlier more general rule */
+		MISPLACED_COMPOUND_FILTER,      /** A compound filter is in an invalid location */
+		MULTIPLE_COMPOUND_FILTERS,      /** More than one compound filter */
+		INVALID_RBT_SYNTAX,             /** A "::id" rule was passed to the RuleBasedTransliterator parser */
+		INVALID_PROPERTY_PATTERN,       /** UNUSED as of ICU 2.4 */
+		MALFORMED_PRAGMA,               /** A 'use' pragma is invlalid */
+		UNCLOSED_SEGMENT,               /** A closing ')' is missing */
+		ILLEGAL_CHAR_IN_SEGMENT,        /** UNUSED as of ICU 2.4 */
+		VARIABLE_RANGE_EXHAUSTED,       /** Too many stand-ins generated for the given variable range */
+		VARIABLE_RANGE_OVERLAP,         /** The variable range overlaps characters used in rules */
+		ILLEGAL_CHARACTER,              /** A special character is outside its allowed context */
+		INTERNAL_TRANSLITERATOR_ERROR,  /** Internal transliterator system error */
+		INVALID_ID,                     /** A "::id" rule specifies an unknown transliterator */
+		INVALID_FUNCTION,               /** A "&amp;fn()" rule specifies an unknown transliterator */
+		PARSE_ERROR_LIMIT,              /** The limit for Transliterator errors */
+		 /*
 		 * the error code range 0x10100 0x10200 are reserved for formatting API parsing error
 		 */
-		UNEXPECTED_TOKEN = 0x10100,       /**< Syntax error in format pattern */
-		FMT_PARSE_ERROR_START = 0x10100,  /**< Start of format library errors */
-		MULTIPLE_DECIMAL_SEPARATORS,    /**< More than one decimal separator in number pattern */
-		MULTIPLE_EXPONENTIAL_SYMBOLS,   /**< More than one exponent symbol in number pattern */
-		MALFORMED_EXPONENTIAL_PATTERN,  /**< Grouping symbol in exponent pattern */
-		MULTIPLE_PERCENT_SYMBOLS,       /**< More than one percent symbol in number pattern */
-		MULTIPLE_PERMILL_SYMBOLS,       /**< More than one permill symbol in number pattern */
-		MULTIPLE_PAD_SPECIFIERS,        /**< More than one pad symbol in number pattern */
-		PATTERN_SYNTAX_ERROR,           /**< Syntax error in format pattern */
-		ILLEGAL_PAD_POSITION,           /**< Pad symbol misplaced in number pattern */
-		UNMATCHED_BRACES,               /**< Braces do not match in message pattern */
-		UNSUPPORTED_PROPERTY,           /**< UNUSED as of ICU 2.4 */
-		UNSUPPORTED_ATTRIBUTE,          /**< UNUSED as of ICU 2.4 */
-		ARGUMENT_TYPE_MISMATCH,         /**< Argument name and argument index mismatch in MessageFormat functions. */
-		DUPLICATE_KEYWORD,              /**< Duplicate keyword in PluralFormat. */
-		UNDEFINED_KEYWORD,              /**< Undefined Plural keyword. */
-		DEFAULT_KEYWORD_MISSING,        /**< Missing DEFAULT rule in plural rules. */
-		FMT_PARSE_ERROR_LIMIT,          /**< The limit for format library errors */
+		UNEXPECTED_TOKEN = 0x10100,       /** Syntax error in format pattern */
+		FMT_PARSE_ERROR_START = 0x10100,  /** Start of format library errors */
+		MULTIPLE_DECIMAL_SEPARATORS,    /** More than one decimal separator in number pattern */
+		MULTIPLE_EXPONENTIAL_SYMBOLS,   /** More than one exponent symbol in number pattern */
+		MALFORMED_EXPONENTIAL_PATTERN,  /** Grouping symbol in exponent pattern */
+		MULTIPLE_PERCENT_SYMBOLS,       /** More than one percent symbol in number pattern */
+		MULTIPLE_PERMILL_SYMBOLS,       /** More than one permill symbol in number pattern */
+		MULTIPLE_PAD_SPECIFIERS,        /** More than one pad symbol in number pattern */
+		PATTERN_SYNTAX_ERROR,           /** Syntax error in format pattern */
+		ILLEGAL_PAD_POSITION,           /** Pad symbol misplaced in number pattern */
+		UNMATCHED_BRACES,               /** Braces do not match in message pattern */
+		UNSUPPORTED_PROPERTY,           /** UNUSED as of ICU 2.4 */
+		UNSUPPORTED_ATTRIBUTE,          /** UNUSED as of ICU 2.4 */
+		ARGUMENT_TYPE_MISMATCH,         /** Argument name and argument index mismatch in MessageFormat functions. */
+		DUPLICATE_KEYWORD,              /** Duplicate keyword in PluralFormat. */
+		UNDEFINED_KEYWORD,              /** Undefined Plural keyword. */
+		DEFAULT_KEYWORD_MISSING,        /** Missing DEFAULT rule in plural rules. */
+		FMT_PARSE_ERROR_LIMIT,          /** The limit for format library errors */
 				/*
 		 * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
 		 */
-		BRK_INTERNAL_ERROR = 0x10200,          /**< An internal error (bug) was detected.             */
-		BRK_ERROR_START = 0x10200,             /**< Start of codes indicating Break Iterator failures */
-		BRK_HEX_DIGITS_EXPECTED,             /**< Hex digits expected as part of a escaped char in a rule. */
-		BRK_SEMICOLON_EXPECTED,              /**< Missing ';' at the end of a RBBI rule.            */
-		BRK_RULE_SYNTAX,                     /**< Syntax error in RBBI rule.                        */
-		BRK_UNCLOSED_SET,                    /**< UnicodeSet witing an RBBI rule missing a closing ']'.  */
-		BRK_ASSIGN_ERROR,                    /**< Syntax error in RBBI rule assignment statement.   */
-		BRK_VARIABLE_REDFINITION,            /**< RBBI rule $Variable redefined.                    */
-		BRK_MISMATCHED_PAREN,                /**< Mis-matched parentheses in an RBBI rule.          */
-		BRK_NEW_LINE_IN_QUOTED_STRING,       /**< Missing closing quote in an RBBI rule.            */
-		BRK_UNDEFINED_VARIABLE,              /**< Use of an undefined $Variable in an RBBI rule.    */
-		BRK_INIT_ERROR,                      /**< Initialization failure.  Probable missing ICU Data. */
-		BRK_RULE_EMPTY_SET,                  /**< Rule contains an empty Unicode Set.               */
-		BRK_UNRECOGNIZED_OPTION,             /**< !!option in RBBI rules not recognized.            */
-		BRK_MALFORMED_RULE_TAG,              /**< The {nnn} tag on a rule is mal formed             */
-		BRK_ERROR_LIMIT,                     /**< This must always be the last value to indicate the limit for Break Iterator failures */
+		BRK_INTERNAL_ERROR = 0x10200,          /** An internal error (bug) was detected.             */
+		BRK_ERROR_START = 0x10200,             /** Start of codes indicating Break Iterator failures */
+		BRK_HEX_DIGITS_EXPECTED,             /** Hex digits expected as part of a escaped char in a rule. */
+		BRK_SEMICOLON_EXPECTED,              /** Missing ';' at the end of a RBBI rule.            */
+		BRK_RULE_SYNTAX,                     /** Syntax error in RBBI rule.                        */
+		BRK_UNCLOSED_SET,                    /** UnicodeSet witing an RBBI rule missing a closing ']'.  */
+		BRK_ASSIGN_ERROR,                    /** Syntax error in RBBI rule assignment statement.   */
+		BRK_VARIABLE_REDFINITION,            /** RBBI rule $Variable redefined.                    */
+		BRK_MISMATCHED_PAREN,                /** Mis-matched parentheses in an RBBI rule.          */
+		BRK_NEW_LINE_IN_QUOTED_STRING,       /** Missing closing quote in an RBBI rule.            */
+		BRK_UNDEFINED_VARIABLE,              /** Use of an undefined $Variable in an RBBI rule.    */
+		BRK_INIT_ERROR,                      /** Initialization failure.  Probable missing ICU Data. */
+		BRK_RULE_EMPTY_SET,                  /** Rule contains an empty Unicode Set.               */
+		BRK_UNRECOGNIZED_OPTION,             /** !!option in RBBI rules not recognized.            */
+		BRK_MALFORMED_RULE_TAG,              /** The {nnn} tag on a rule is mal formed             */
+		BRK_ERROR_LIMIT,                     /** This must always be the last value to indicate the limit for Break Iterator failures */
 				/*
 		 * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errrs
 		 */
-		REGEX_INTERNAL_ERROR = 0x10300,       /**< An internal error (bug) was detected.              */
-		REGEX_ERROR_START = 0x10300,          /**< Start of codes indicating Regexp failures          */
-		REGEX_RULE_SYNTAX,                  /**< Syntax error in regexp pattern.                    */
-		REGEX_INVALID_STATE,                /**< RegexMatcher in invalid state for requested operation */
-		REGEX_BAD_ESCAPE_SEQUENCE,          /**< Unrecognized backslash escape sequence in pattern  */
-		REGEX_PROPERTY_SYNTAX,              /**< Incorrect Unicode property                         */
-		REGEX_UNIMPLEMENTED,                /**< Use of regexp feature that is not yet implemented. */
-		REGEX_MISMATCHED_PAREN,             /**< Incorrectly nested parentheses in regexp pattern.  */
-		REGEX_NUMBER_TOO_BIG,               /**< Decimal number is too large.                       */
-		REGEX_BAD_INTERVAL,                 /**< Error in {min,max} interval                        */
-		REGEX_MAX_LT_MIN,                   /**< In {min,max}, max is less than min.                */
-		REGEX_INVALID_BACK_REF,             /**< Back-reference to a non-existent capture group.    */
-		REGEX_INVALID_FLAG,                 /**< Invalid value for match mode flags.                */
-		REGEX_LOOK_BEHIND_LIMIT,            /**< Look-Behind pattern matches must have a bounded maximum length.    */
-		REGEX_SET_CONTAINS_STRING,          /**< Regexps cannot have UnicodeSets containing strings.*/
-		REGEX_OCTAL_TOO_BIG,                /**< Octal character constants must be <= 0377. */
-		REGEX_MISSING_CLOSE_BRACKET,        /**< Missing closing bracket on a bracket expression. */
-		REGEX_INVALID_RANGE,                /**< In a character range [x-y], x is greater than y. */
-		REGEX_STACK_OVERFLOW,               /**< Regular expression backtrack stack overflow. */
-		REGEX_TIME_OUT,                     /**< Maximum allowed match time exceeded. */
-		REGEX_STOPPED_BY_CALLER,            /**< Matching operation aborted by user callback fn. */
-		REGEX_ERROR_LIMIT,                  /**< This must always be the last value to indicate the limit for regexp errors */
+		REGEX_INTERNAL_ERROR = 0x10300,       /** An internal error (bug) was detected.              */
+		REGEX_ERROR_START = 0x10300,          /** Start of codes indicating Regexp failures          */
+		REGEX_RULE_SYNTAX,                  /** Syntax error in regexp pattern.                    */
+		REGEX_INVALID_STATE,                /** RegexMatcher in invalid state for requested operation */
+		REGEX_BAD_ESCAPE_SEQUENCE,          /** Unrecognized backslash escape sequence in pattern  */
+		REGEX_PROPERTY_SYNTAX,              /** Incorrect Unicode property                         */
+		REGEX_UNIMPLEMENTED,                /** Use of regexp feature that is not yet implemented. */
+		REGEX_MISMATCHED_PAREN,             /** Incorrectly nested parentheses in regexp pattern.  */
+		REGEX_NUMBER_TOO_BIG,               /** Decimal number is too large.                       */
+		REGEX_BAD_INTERVAL,                 /** Error in {min,max} interval                        */
+		REGEX_MAX_LT_MIN,                   /** In {min,max}, max is less than min.                */
+		REGEX_INVALID_BACK_REF,             /** Back-reference to a non-existent capture group.    */
+		REGEX_INVALID_FLAG,                 /** Invalid value for match mode flags.                */
+		REGEX_LOOK_BEHIND_LIMIT,            /** Look-Behind pattern matches must have a bounded maximum length.    */
+		REGEX_SET_CONTAINS_STRING,          /** Regexps cannot have UnicodeSets containing strings.*/
+		REGEX_OCTAL_TOO_BIG,                /** Octal character constants must be <= 0377. */
+		REGEX_MISSING_CLOSE_BRACKET,        /** Missing closing bracket on a bracket expression. */
+		REGEX_INVALID_RANGE,                /** In a character range [x-y], x is greater than y. */
+		REGEX_STACK_OVERFLOW,               /** Regular expression backtrack stack overflow. */
+		REGEX_TIME_OUT,                     /** Maximum allowed match time exceeded. */
+		REGEX_STOPPED_BY_CALLER,            /** Matching operation aborted by user callback fn. */
+		REGEX_ERROR_LIMIT,                  /** This must always be the last value to indicate the limit for regexp errors */
 
 		/*
 		 * The error code in the range 0x10400-0x104ff are reserved for IDNA related error codes
@@ -191,7 +191,7 @@ namespace Icu
 		STRINGPREP_CHECK_BIDI_ERROR = IDNA_CHECK_BIDI_ERROR,
 
 
-		ERROR_LIMIT = IDNA_ERROR_LIMIT      /**< This must always be the last value to indicate the limit for UErrorCode (last error code +1) */
+		ERROR_LIMIT = IDNA_ERROR_LIMIT      /** This must always be the last value to indicate the limit for UErrorCode (last error code +1) */
 	}
 
 	internal class ExceptionFromErrorCode

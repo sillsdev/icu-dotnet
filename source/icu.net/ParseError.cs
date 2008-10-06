@@ -9,15 +9,15 @@ namespace Icu
 		/// <summary>
 		/// The line on which the error occured.  If the parser uses this
 		 /// field, it sets it to the line number of the source text line on
-		 /// which the error appears, which will be be a value >= 1.  If the
-		 /// parse does not support line numbers, the value will be <= 0.
+		 /// which the error appears, which will be be a value &gt;= 1.  If the
+		 /// parse does not support line numbers, the value will be &lt;= 0.
 		/// </summary>
 		public Int32 Line;
 		/// <summary>
-		/// The character offset to the error.  If the line field is >= 1,
+		/// The character offset to the error.  If the line field is &gt;= 1,
 		 /// then this is the offset from the start of the line.  Otherwise,
 		 /// this is the offset from the start of the text.  If the parser
-		 /// does not support this field, it will have a value < 0.
+		 /// does not support this field, it will have a value &lt; 0.
 		/// </summary>
 		public Int32 Offset;
 		/// <summary>
