@@ -156,6 +156,11 @@
 		<exclude name="**/Release/**" />
   </fileset>
 
+<fileset id="dlls for GAC" >
+		<include name="${project.build.dir}/home/mono/icu-dotnet/output/linux/mono/2.0/debug/icu.net.dll" />
+		<include name="${project.build.dir}/home/mono/icu-dotnet/output/linux/mono/2.0/debug/icu.net.dll.config" />
+ </fileset>
+
 <!-- ***************************************************************** -->
 <!-- ********* Targets for setting the build configuration *********** -->
 <!-- ***************************************************************** -->

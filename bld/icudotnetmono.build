@@ -204,10 +204,12 @@
 	</nant>
 
 	<!-- Copy files for running tests -->
+	<!--
 	<copy todir="${current.build.dir}">
 	  <fileset>
 	  </fileset>
 	</copy>
+	-->
 
   </target>
 
@@ -570,9 +572,29 @@
 <!-- ***        Targets for installing the NUnit distribution      *** -->
 <!-- ***************************************************************** -->
 
+  <target name="install" depends=""
+	  description="Install Icu.net in the GAC">
+	<echo message="*"/>
+	<echo message="* Installing Icu.net in the GAC (Global Assembly Cache)"/>
+		<echo message="*"/>
+	<if test="${file::exists('${project.build.dir}/linux/mono/2.0/debug/icu.net.dll')}">
+		<if test="${file::exists('${project.build.dir}/linux/mono/2.0/debug/icu.net.dll')}">
+			<exec program="gacutil.exe" >
+				<arg value="/i ${project.build.dir}/linux/mono/2.0/debug/icu.net.dll" />
+				<arg value="-root ${usr_root}/lib" />
+			</exec>
+		</if>
+	</if>
+	<!-- Install icu.net.dll and icu.net.dll.config into the mono GAC -->
+	<!-- Check that the binary file set exists first -->
+
+	<!-- Use gacutil -->
+
+  </target>
+  <!--
   <target name="install" depends="build-install-image"
 	  description="Install NUnit directly from the build">
 
   </target>
-
+  -->
 </project>
