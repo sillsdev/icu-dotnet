@@ -33,3 +33,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+//Location of the public/private key pair for strong naming this assembly --TA 7 Oct 2008
+[assembly: AssemblyKeyFile("icu.net.snk")]
