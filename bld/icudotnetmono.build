@@ -580,15 +580,9 @@
 	<property name="icu.net.dll" value="${path::combine(project.build.dir, 'linux/mono/2.0/debug/icu.net.dll')}"/>
 	<property name="icu.net.dll.config" value="${path::combine(project.build.dir, 'linux/mono/2.0/debug/icu.net.dll.config')}"/>
 	<if test="${file::exists(icu.net.dll)}">
-		<echo message="1st if"/>
 		<if test="${file::exists(icu.net.dll.config)}">
-			<echo message="2nd if"/>
 			<exec program="gacutil.exe" >
 				<arg value="-i ${project.build.dir}/linux/mono/2.0/debug/icu.net.dll" />
-				<arg value="-root ${usr_root}/lib" />
-			</exec>
-			<exec program="gacutil.exe" >
-				<arg value="-i ${project.build.dir}/linux/mono/2.0/debug/icu.net.dll.config" />
 				<arg value="-root ${usr_root}/lib" />
 			</exec>
 		</if>
