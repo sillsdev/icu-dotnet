@@ -572,8 +572,9 @@
 <!-- ***        Targets for installing the NUnit distribution      *** -->
 <!-- ***************************************************************** -->
 
-  <target name="install" depends=""
+  <target name="install" depends="build-only"
 	  description="Install Icu.net in the GAC">
+	<property name="usr_root" value="/usr/local"/>
 	<echo message="*"/>
 	<echo message="* Installing Icu.net in the GAC (Global Assembly Cache)"/>
 		<echo message="*"/>
