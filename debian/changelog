@@ -1,0 +1,11 @@
+libicu-cil (0.1-1sil1.1) hardy; urgency=low
+
+  * Non-maintainer upload.
+
+ -- Martin Hosken <martin_hosken@sil.org>  Thu, 09 Oct 2008 09:19:29 +0700
+
+libicu-cil (0.1-1sil1) hardy; urgency=low
+
+  * Initial release. (Closes: #XXXXXX)
+
+ -- Martin Hosken <martin_hosken@sil.org>  Thu, 02 Oct 2008 15:11:55 +0700
