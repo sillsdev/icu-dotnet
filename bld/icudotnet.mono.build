@@ -221,6 +221,8 @@
 		<tar destfile="${project.output.dir}/icudotnet-src-${version}.tar.gz" compression="GZip">
 			<fileset basedir="${project.base.dir}">
 				<include name="source/**/*.build" />
+				<include name="source/**/*.config" />
+				<include name="source/**/*.snk" />
 				<include name="source/**/*.cs" />
 				<include name="source/**/*.resx" />
 				<include name="source/**/Resources/*" />
@@ -249,6 +251,7 @@
 	</target>
 
 	<target name="package" depends="dist package_clean">
+		<echo message="Package revision ${revision}" />
 		<exec program="build" basedir="${project.base.dir}/debian-src" workingdir="${project.base.dir}">
 			<environment>
 				<variable name="BUILD_NUMBER" value="${revision}" />
@@ -273,7 +276,7 @@
 			<if test="${file::exists(file.config)}">
 				<!-- Use gacutil -->
 				<exec program="gacutil" >
-					<arg line="-i ${file.dll}/linux/mono/2.0/debug/icu.net.dll" />
+					<arg line="-i ${file.dll}" />
 					<arg line="-root ${USR_LIB}" />
 				</exec>
 			</if>

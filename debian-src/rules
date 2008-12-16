@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-NANT=MONO_SHARED_DIR=/tmp nant -buildfile:bld/icudotnetmono.build
+NANT=MONO_SHARED_DIR=/tmp nant -buildfile:bld/icudotnet.mono.build
 build: build-stamp
 build-stamp:
 	dh_testdir
@@ -19,7 +19,7 @@ install-stamp:
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	$(NANT) -D:usr_root=../debian/tmp/usr install
+	$(NANT) install -D:INSTALL_DIR=../debian/tmp
 	dh_install --sourcedir=debian/tmp
 	dh_installdocs
 	dh_installchangelogs
