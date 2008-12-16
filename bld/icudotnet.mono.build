@@ -250,6 +250,9 @@
 
 	<target name="package" depends="dist package_clean">
 		<exec program="build" basedir="${project.base.dir}/debian-src" workingdir="${project.base.dir}">
+			<environment>
+				<variable name="BUILD_NUMBER" value="${revision}" />
+			</environment>
 		</exec>
 	</target>
 
