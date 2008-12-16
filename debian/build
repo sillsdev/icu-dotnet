@@ -1,0 +1,18 @@
+#!/bin/sh
+HERE=`pwd`
+TARGETS='hardy intrepid'
+REVISION=`echo $BUILD_NUMBER | sed -e 's/:.*$//'`
+MAJOR=`sed -e 's/\.${revision}//' bld/version.txt`
+rm -fr build
+mkdir -p output/build
+cd output/build
+cp ../linux/mono/2.0/Debug/icudotnet-src-$MAJOR.$REVISION.tar.gz icudotnet_$MAJOR.$REVISION.orig.tar.gz
+mkdir icudotnet-$MAJOR.$REVISION
+cd wesay-$MAJOR.$REVISION
+tar xzf ../icudotnet_$MAJOR.$REVISION.orig.tar.gz
+cp -r ../../../debian-src debian
+export DEBSIGN_KEYID="mono teamcity"
+dch -v $MAJOR.$REVISION-1sil1 "Daily Build"
+/home/mono/bin/mpdebuild --vadd .%d --distrib "$TARGETS" --configfile /home/mono/pbuilder/pbuilderrc-%d-new --auto-debsign
+#/home/mono/bin/mpdebuild --vadd .%d --distrib "$TARGETS" --use-pdebuild-internal --configfile /home/mono/pbuilder/pbuilderrc-%d-new --auto-debsign
+/home/mono/bin/mdput -d ~/pbuilder/results -t PALASO- -f wesay_$MAJOR.$REVISION\*.changes $TARGETS
