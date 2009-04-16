@@ -1,6 +1,6 @@
 #!/bin/sh
 HERE=`pwd`
-TARGETS='hardy intrepid'
+TARGETS='hardy intrepid jaunty'
 #REVISION=`echo $BUILD_NUMBER | sed -e 's/:.*$//'`
 REVISION=$BUILD_NUMBER
 MAJOR=`sed -e 's/\.${revision}//' bld/version.txt`
