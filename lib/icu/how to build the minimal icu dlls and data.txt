@@ -19,3 +19,10 @@ invuca.icu
 cnvalias.icu
 ibm-37_P100-1995.cnv
 ibm-1047_P100-1995.cnv
+
+4. Open the solution provided in source\allinone\allinone.sln
+Set the CRT dll to use the static link version (/MT)
+Build:
+- stubdata (icudtxx.dll)
+- common (icuucxx.dll)
+- i18n (icuinxx.dll)

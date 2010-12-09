@@ -1,0 +1,6 @@
+syntax:glob
+obj
+bin
+_ReSharper*
+*.user
+*.suo

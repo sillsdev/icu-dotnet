@@ -382,9 +382,12 @@ namespace Icu.Collation
 		 get
 		 {
 			 ErrorCode status;
-			 string result = NativeMethods.ucol_getLocaleByType(collatorHandle,
-														 NativeMethods.LocaleType.ActualLocale,
-														 out status);
+			 IntPtr resultAsIntPtr = NativeMethods.ucol_getLocaleByType(
+				 collatorHandle,
+				 NativeMethods.LocaleType.ActualLocale,
+				 out status
+			 );
+			 string result = Marshal.PtrToStringAnsi(resultAsIntPtr);
 			 if(status != ErrorCode.NoErrors)
 			 {
 				 return string.Empty;
@@ -429,9 +432,9 @@ namespace Icu.Collation
 
 		private static class NativeMethods
 		{
-			private const string ICU_I18N_LIB = "icuin40.dll";
-			private const string ICU_COMMON_LIB = "icuuc40.dll";
-			private const string ICU_VERSION_SUFFIX = "_4_0";
+			private const string ICU_I18N_LIB = "icuin42.dll";
+			private const string ICU_COMMON_LIB = "icuuc42.dll";
+			private const string ICU_VERSION_SUFFIX = "_4_2";
 
 			/**
 			 * Function type declaration for uenum_close().
@@ -1152,8 +1155,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  */
 
 			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX)]
-			[return : MarshalAs(UnmanagedType.LPStr)]
-			public static extern string
+			public static extern IntPtr
 					ucol_getLocaleByType(SafeRuleBasedCollatorHandle collator, LocaleType type,
 										 out ErrorCode status);
 
