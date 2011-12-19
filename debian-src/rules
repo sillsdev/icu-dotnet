@@ -1,15 +1,15 @@
 #!/usr/bin/make -f
 
-NANT=MONO_SHARED_DIR=/tmp nant -buildfile:bld/icudotnet.mono.build
+XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(CURDIR)
 build: build-stamp
 build-stamp:
 	dh_testdir
-	$(NANT) build
+	$(XBUILD) /target:Compile
 	touch build-stamp
 
 clean:
 	dh_testdir
-	$(NANT) clean
+	$(XBUILD) /target:Clean
 	rm -f *-stamp
 	dh_clean
 
@@ -17,14 +17,18 @@ install: build install-stamp
 install-stamp:
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
+	$(XBUILD) /target:Install /p:InstallDir=../debian/icu-cil
 	dh_installdirs
-	$(NANT) install -D:INSTALL_DIR=../debian/tmp
-	dh_install --sourcedir=debian/tmp
+	dh_install
 	dh_installdocs
 	dh_installchangelogs
+#	dh_desktop
+	dh_icons
 	dh_compress
 	dh_fixperms
+	dh_clifixperms
+	dh_clideps -d -i
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums
@@ -32,5 +36,7 @@ install-stamp:
 	touch install-stamp
 
 binary-indep: install
+
+binary-arch:
 
 binary: binary-indep
