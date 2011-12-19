@@ -17,6 +17,7 @@
 
   <Target Name="Build">
 	<CallTarget Targets="Clean"/>
+	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
