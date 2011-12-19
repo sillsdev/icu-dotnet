@@ -10,34 +10,12 @@
 	<ApplicationName>libicu-cil</ApplicationName>
   </PropertyGroup>
 
-  <Target Name="VersionNumbers">
-	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
-
-	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
-	</Split>
-
-	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
-
-	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="4.2.$(BuildCounter)">
-	  <Output PropertyName="Version" TaskParameter="Value"/>
-	</CreateProperty>
-
-	<Message Text="Version: $(Version)" Importance="high"/>
-  </Target>
-
   <Target Name="Build">
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
 
-  <ItemGroup>
-	<AssemblyInfoFiles Include="$(teamcity_build_checkoutDir)/source/**/AssemblyInfo.cs"/>
-  </ItemGroup>
-  <Target Name="SetAssemblyVersion">
-	  <StampAssemblies Version="$(BUILD_NUMBER)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
-	</Target>
+  <Import Project="$(RootDir)/build/build.common.proj" />
 
   <Target Name="Compile" DependsOnTargets="SetAssemblyVersion">
 	<MSBuild Projects="$(teamcity_build_checkoutDir)\source\$(Solution)"

@@ -1,0 +1,32 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="VersionNumbers">
+	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
+
+	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
+	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
+	</Split>
+
+	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
+
+	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
+	<CreateProperty Value="4.2.$(BuildCounter)">
+	  <Output PropertyName="Version" TaskParameter="Value"/>
+	</CreateProperty>
+
+	<Message Text="Version: $(Version)" Importance="high"/>
+  </Target>
+
+	<ItemGroup>
+		<AssemblyInfoFiles Include="$(RootDir)/src/**/AssemblyInfo.cs"/>
+	</ItemGroup>
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+	  <StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
+	</Target>
+
+	<PropertyGroup>
+		<OutputDir>$(RootDir)/output/$(Configuration)</OutputDir>
+
+	</PropertyGroup>
+
+</Project>

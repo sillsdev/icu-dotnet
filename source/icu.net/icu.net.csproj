@@ -2,6 +2,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<icu_ver Condition=" '$(icu_ver)' == '' ">42</icu_ver>
 	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{28A0072F-AE0B-449A-8494-B53F09756273}</ProjectGuid>
@@ -34,7 +35,7 @@
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
-	<OutputPath>bin\Debug\</OutputPath>
+	<OutputPath>..\..\output\Debug\</OutputPath>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
@@ -43,8 +44,26 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\output\Release\</OutputPath>
 	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<DefineConstants>MONO;DEBUG;TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<DefineConstants>MONO;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -63,6 +82,15 @@
 	<DebugType>pdbonly</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+ <PropertyGroup Condition=" '$(icu_ver)' == '42' ">
+	<appConfig>App42.config</appConfig>
+  </PropertyGroup>
+ <PropertyGroup Condition=" '$(icu_ver)' == '44' ">
+	<appConfig>App44.config</appConfig>
+  </PropertyGroup>
+ <PropertyGroup Condition=" '$(icu_ver)' == '48' ">
+	<appConfig>App48.config</appConfig>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="System" />
@@ -85,9 +113,6 @@
 	<Compile Include="Collation\RuleBasedCollator.cs" />
 	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="VersionInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
