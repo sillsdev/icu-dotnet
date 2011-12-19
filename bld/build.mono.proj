@@ -7,29 +7,13 @@
   <!-- <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" /> -->
   <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="Archive" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll" />
 
   <PropertyGroup>
 	<Solution>icu.net.sln</Solution>
 	<ApplicationName>libicu-cil</ApplicationName>
   </PropertyGroup>
-
-  <Target Name="VersionNumbers">
-	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
-
-	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
-	</Split>
-
-	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
-
-	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="4.2.$(BuildCounter)">
-	  <Output PropertyName="Version" TaskParameter="Value"/>
-	</CreateProperty>
-
-	<Message Text="Version: $(Version)" Importance="high"/>
-  </Target>
 
   <Target Name="Build">
 	<CallTarget Targets="Clean"/>
@@ -56,17 +40,9 @@
 			Properties="Configuration=$(Configuration)" />
 	</Target>
 
-  <Target Name="OldTest" DependsOnTargets="Build">
-	<ItemGroup>
-	  <TestAssemblies Include="$(teamcity_build_checkoutDir)/output/Release/*Tests.dll;" Exclude="" />
-	</ItemGroup>
-	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" />
-  </Target>
-
 	<Target Name="Test" DependsOnTargets="Build">
 		<CreateItem
-			Include="$(RootDir)/output/$(Configuration)/icu.net.tests.dll"
-			Exclude="$(RootDir)/output/$(Configuration)/icu*42.dll">
+			Include="$(RootDir)/output/$(Configuration)/icu.net.tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
@@ -74,6 +50,48 @@
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
 			NUnitVersion="NUnit-2.5.5" />
+	</Target>
+
+	<!-- Source Package -->
+	<ItemGroup>
+		<ExistingPackageFiles Include="$(OutputDir)/icu-cil*.tar.gz" />
+		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**/*" />
+		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**" />
+	</ItemGroup>
+	<Target Name="PackageClean">
+		<Delete Files="@(ExistingPackageFiles)" />
+		<Delete Files="@(ExistingPackageBuildFiles)" />
+	</Target>
+
+	<ItemGroup>
+		<Source Include="$(RootDir)/source/**/*" Exclude="$(RootDir)/source/**/obj/**/*;$(RootDir)/source/**/bin/**/*" />
+		<Source Include="$(RootDir)/lib/**/*" />
+		<Source Include="$(RootDir)/bld/**" />
+	</ItemGroup>
+	<Target Name="SourcePackage" DependsOnTargets="PackageClean;SetAssemblyVersion">
+		<CreateProperty Value="$(OutputDir)/$(ApplicationName)_$(Version).tar.gz">
+			<Output TaskParameter="Value" PropertyName="SourcePackageFileName" />
+		</CreateProperty>
+		<CreateProperty Value="$(OutputDir)/$(ApplicationName)-$(Version)">
+			<Output TaskParameter="Value" PropertyName="TarBaseDir" />
+		</CreateProperty>
+		<Message Text="Archive source to '$(SourcePackageFileName)'" />
+		<Archive
+			Command="Tar"
+			InputFilePaths="@(Source)"
+			OutputFileName="$(SourcePackageFileName)"
+			BasePath="$(RootDir)"
+			WorkingDir="$(RootDir)"
+		/>
+		<MakeDir Directories="$(TarBaseDir)" />
+		<Exec
+			Command="tar -xzf $(SourcePackageFileName)"
+			WorkingDirectory="$(TarBaseDir)"
+		/>
+		<Exec
+			Command="tar -czf $(SourcePackageFileName) $(ApplicationName)-$(Version)"
+			WorkingDirectory="$(OutputDir)"
+		/>
 	</Target>
 
 </Project>
