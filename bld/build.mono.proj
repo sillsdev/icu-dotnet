@@ -7,7 +7,7 @@
   <!-- <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" /> -->
   <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll" />
 
   <PropertyGroup>
 	<Solution>icu.net.sln</Solution>
@@ -69,6 +69,7 @@
 			Exclude="$(RootDir)/output/$(Configuration)/icu*42.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
+		<Message Text="Testing assemblies '@(TestAssemblies)'" />
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
