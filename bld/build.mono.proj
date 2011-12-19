@@ -94,4 +94,44 @@
 		/>
 	</Target>
 
+	<!-- Installer (Packaging) -->
+	<ItemGroup>
+		<DebianControlFiles Include="$(RootDir)/debian-src/*" />
+	</ItemGroup>
+	<Target Name="Installer" DependsOnTargets="SourcePackage">
+		<CreateProperty Value="$(OutputDir)/Package/$(ApplicationName)-$(Version)">
+			<Output TaskParameter="Value" PropertyName="InstallerBaseDir" />
+		</CreateProperty>
+		<CreateItem Include="$(InstallerBaseDir)/**/*;$(InstallerBaseDir)/**">
+			<Output TaskParameter="Include" ItemName="OldInstallerFiles" />
+		</CreateItem>
+		<CreateItem Include="@(OldInstallerFiles->'%(RootDir)%(Directory)')">
+			<Output TaskParameter="Include" ItemName="FoldersToDelete" />
+		</CreateItem>
+		<Delete Files="@(OldInstallerFiles)" />
+		<RemoveDir Directories="$(FoldersToDelete)" />
+		<MakeDir Directories="$(OutputDir)/Package" />
+		<Copy SourceFiles="$(SourcePackageFileName)" DestinationFiles="$(OutputDir)/Package/$(ApplicationName)_$(Version).orig.tar.gz" />
+		<Exec
+			Command="tar -xzf $(OutputDir)/Package/$(ApplicationName)_$(Version).orig.tar.gz"
+			WorkingDirectory="$(OutputDir)/Package"
+		/>
+		<MakeDir Directories="$(InstallerBaseDir)/debian" />
+		<Copy SourceFiles="@(DebianControlFiles)" DestinationFiles="$(InstallerBaseDir)/debian/%(RecursiveDir)%(Filename)%(Extension)" />
+		<Exec
+			Command='dch -v $(Version)-1palaso1 "Auto Build"'
+			WorkingDirectory="$(InstallerBaseDir)"
+		/>
+		<Message Text="pbuilder update" />
+		<Exec
+			Command='sudo pbuilder --update --configfile /home/bob/pbuilder/pbuilderrc-$(Dist)-i386-lingnet'
+			WorkingDirectory="$(InstallerBaseDir)"
+		/>
+		<Message Text="Starting pdebuild -- $(Dist) i386" />
+		<Exec
+			Command='pdebuild --architecture i386 --configfile /home/bob/pbuilder/pbuilderrc-$(Dist)-i386-lingnet --debbuildopts "" --debbuildopts "-sa" --debsign-k "mono teamcity" --auto-debsign'
+			WorkingDirectory="$(InstallerBaseDir)"
+		/>
+	</Target>
+
 </Project>
