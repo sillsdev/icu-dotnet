@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/cli-common/cli.make
+
 XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(CURDIR) /p:Configuration=DebugMono
 build: build-stamp
 build-stamp:
@@ -23,13 +28,16 @@ install-stamp:
 	dh_install
 	dh_installdocs
 	dh_installchangelogs
-#	dh_desktop
+		dh_installcligac
+		dh_cligacpolicy
 	dh_icons
 	dh_compress
 	dh_fixperms
 	dh_clifixperms
-	dh_clideps -d -i
 	dh_installdeb
+		dh_makeclilibs -m 0.1
+	dh_shlibdeps
+	dh_clideps -d -i
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
