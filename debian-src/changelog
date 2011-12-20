@@ -6,6 +6,6 @@ libicu-cil (0.1-1sil1.1) hardy; urgency=low
 
 libicu-cil (0.1-1sil1) hardy; urgency=low
 
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release.
 
  -- Martin Hosken <martin_hosken@sil.org>  Thu, 02 Oct 2008 15:11:55 +0700

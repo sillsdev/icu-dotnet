@@ -3,9 +3,11 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-include /usr/share/cli-common/cli.make
+#include /usr/share/cli-common/cli.make
+export MONO_DISABLE_SHM = 1
+ROOTDIR=$(CURDIR)
 
-XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(CURDIR) /p:Configuration=DebugMono
+XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(ROOTDIR) /p:Configuration=DebugMono
 build: build-stamp
 build-stamp:
 	dh_testdir
@@ -23,7 +25,7 @@ install-stamp:
 	dh_testdir
 	dh_testroot
 	dh_prep
-	$(XBUILD) /target:Install /p:InstallDir=../debian/icu-cil
+	$(XBUILD) /target:Install /p:InstallDir=../debian/libicu-cil
 	dh_installdirs
 	dh_install
 	dh_installdocs
