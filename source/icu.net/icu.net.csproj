@@ -54,7 +54,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>..\..\output\DebugMono\</OutputPath>
-	<DefineConstants>MONO;DEBUG;TRACE</DefineConstants>
+	<DefineConstants>MONO;DEBUG;TRACE;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<PlatformTarget>x86</PlatformTarget>
@@ -63,7 +63,7 @@
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
 	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
-	<DefineConstants>MONO;TRACE</DefineConstants>
+	<DefineConstants>MONO;TRACE;ICU_VER=ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
