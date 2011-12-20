@@ -2,7 +2,7 @@ Source: libicu-cil
 Section: libs
 Priority: optional
 Maintainer: Martin Hosken <mhosken@sil.org>
-Build-Depends: debhelper (>=7), mono-gmcs (>=2.0), mono-gac (>=2.0), mono-xbuild, libmono-system-data2.0-cil
+Build-Depends: debhelper (>=7), cli-common-dev (>=0.7),mono-gmcs (>=2.0), mono-gac (>=2.0), mono-xbuild, libmono-system-data2.0-cil
 Standards-Version: 3.7.3
 
 Package: libicu-cil
