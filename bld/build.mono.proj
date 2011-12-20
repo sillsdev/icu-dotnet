@@ -142,7 +142,7 @@
 		<ExecutableFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
 	</ItemGroup>
 	<PropertyGroup>
-		<InstallLib>$(InstallDir)/usr/lib/cli/</InstallLib>
+		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-0.1</InstallLib>
 	</PropertyGroup>
 	<Target Name="Install">
 		<Copy

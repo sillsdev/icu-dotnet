@@ -10,7 +10,7 @@
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="0.1.0.$(BuildCounter)">
+	<CreateProperty Value="0.1.$(BuildCounter)">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
