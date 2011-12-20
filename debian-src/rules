@@ -7,7 +7,9 @@
 export MONO_DISABLE_SHM = 1
 ROOTDIR=$(CURDIR)
 
-XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(ROOTDIR) /p:Configuration=DebugMono
+ICU_VER=`icu-config --version  | sed "s/\([0-9]\)\.\([0-9]\).*/\1\2/"`
+
+XBUILD=MONO_SHARED_DIR=/tmp /usr/bin/xbuild bld/build.mono.proj /p:RootDir=$(ROOTDIR) /p:Configuration=DebugMono /p:icu_ver=$(ICU_VER)
 build: build-stamp
 build-stamp:
 	dh_testdir
