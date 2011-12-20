@@ -12,6 +12,7 @@ build: build-stamp
 build-stamp:
 	dh_testdir
 	$(XBUILD) /target:Compile
+	$(XBUILD) /target:Test
 	touch build-stamp
 
 clean:
