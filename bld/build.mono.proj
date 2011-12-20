@@ -56,7 +56,8 @@
 
 	<!-- Source Package -->
 	<ItemGroup>
-		<ExistingPackageFiles Include="$(OutputDir)/icu-cil*.tar.gz" />
+		<ExistingPackageFiles Include="$(OutputDir)/libicu-cil*/**" />
+		<ExistingPackageFiles Include="$(OutputDir)/libicu-cil*" />
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**/*" />
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**" />
 	</ItemGroup>
@@ -98,7 +99,7 @@
 
 	<!-- Installer (Packaging) -->
 	<ItemGroup>
-		<DebianControlFiles Include="$(RootDir)/debian-src/*" />
+		<DebianControlFiles Include="$(RootDir)/debian-src/**/*" />
 	</ItemGroup>
 	<Target Name="Installer" DependsOnTargets="SourcePackage">
 		<CreateProperty Value="$(OutputDir)/Package/$(ApplicationName)-$(Version)">
@@ -139,12 +140,13 @@
 	<!-- Install -->
 	<!-- The Install Target must be called from an MSBuild task so as to include the output from the previous MSBuild in the ItemGroup below -->
 	<ItemGroup>
-		<ExecutableFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
+		<LibFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
 	</ItemGroup>
 	<PropertyGroup>
 		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-0.1</InstallLib>
 	</PropertyGroup>
 	<Target Name="Install">
+		<MakeDir Directories="$(InstallLib)" />
 		<Copy
 			DestinationFolder="$(InstallLib)"
 			SourceFiles="@(LibFiles)"
