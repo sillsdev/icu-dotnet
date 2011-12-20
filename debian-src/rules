@@ -12,7 +12,7 @@ build: build-stamp
 build-stamp:
 	dh_testdir
 	$(XBUILD) /target:Compile
-	$(XBUILD) /target:Test
+	nunit-console output/DebugMono/icu.net.tests.dll
 	touch build-stamp
 
 clean:
