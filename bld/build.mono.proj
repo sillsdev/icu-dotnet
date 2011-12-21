@@ -122,7 +122,7 @@
 		<MakeDir Directories="$(InstallerBaseDir)/debian" />
 		<Copy SourceFiles="@(DebianControlFiles)" DestinationFiles="$(InstallerBaseDir)/debian/%(RecursiveDir)%(Filename)%(Extension)" />
 		<Exec
-			Command='dch -v $(Version)-1palaso1 "Auto Build"'
+			Command='dch -v $(Version)-1palaso$(BuildCounter) "Auto Build"'
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
 		<Message Text="pbuilder update" />
@@ -133,6 +133,14 @@
 		<Message Text="Starting pdebuild -- $(Dist) i386" />
 		<Exec
 			Command='pdebuild --architecture i386 --configfile /home/bob/pbuilder/pbuilderrc-$(Dist)-i386-lingnet --debbuildopts "" --debbuildopts "-sa" --debsign-k "mono teamcity" --auto-debsign'
+			WorkingDirectory="$(InstallerBaseDir)"
+		/>
+	</Target>
+
+	<Target Name="Upload" DependsOnTargets="Installer">
+		<Message Text="Starting dput -- $(Dist) i386" />
+		<Exec
+			Command='dput LINGNET-$(Dist) /home/bob/pbuilder/results/$(Dist)/$(ApplicationName)_$(Version)-1palaso$(BuildCounter)_i386.changes'
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
 	</Target>
