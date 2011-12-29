@@ -1,4 +1,10 @@
-libicu-cil (0.1-1) UNRELEASED; urgency=low
+libicu-cil (0.1.1-1) UNRELEASED; urgency=low
+
+  * build system now uses xbuild
+
+ -- Daniel Glassey <daniel_glassey@sil.org>  Thu, 29 Dec 2011 12:41:07 +1300
+
+libicu-cil (0.1-1) hardy; urgency=low
 
   * Initial release.
 
