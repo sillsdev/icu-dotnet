@@ -149,15 +149,22 @@
 	<!-- The Install Target must be called from an MSBuild task so as to include the output from the previous MSBuild in the ItemGroup below -->
 	<ItemGroup>
 		<LibFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
+		<DevFiles Include="$(RootDir)/source/icu.net.pc" />
 	</ItemGroup>
 	<PropertyGroup>
 		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-$(Version)</InstallLib>
+		<InstallDev>$(InstallDir)/usr/lib/pkgconfig</InstallLib>
 	</PropertyGroup>
 	<Target Name="Install">
 		<MakeDir Directories="$(InstallLib)" />
 		<Copy
 			DestinationFolder="$(InstallLib)"
 			SourceFiles="@(LibFiles)"
+		/>
+		<MakeDir Directories="$(InstallDev)" />
+		<Copy
+			DestinationFolder="$(InstallDev)"
+			SourceFiles="@(DevFiles)"
 		/>
 	</Target>
 
