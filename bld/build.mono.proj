@@ -4,7 +4,6 @@
   </PropertyGroup>
 
   <UsingTask TaskName="StampAssemblies" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
-  <!-- <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" /> -->
   <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="Archive" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
@@ -152,7 +151,7 @@
 		<LibFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
 	</ItemGroup>
 	<PropertyGroup>
-		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-0.1</InstallLib>
+		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-$(Version)</InstallLib>
 	</PropertyGroup>
 	<Target Name="Install">
 		<MakeDir Directories="$(InstallLib)" />
