@@ -62,6 +62,9 @@
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**" />
 	</ItemGroup>
 	<Target Name="PackageClean">
+		<CreateProperty Value="$(OutputDir)/$(ApplicationName)_$(Version).tar.gz">
+			<Output TaskParameter="Value" PropertyName="SourcePackageFileName" />
+		</CreateProperty>
 		<Delete Files="@(ExistingPackageFiles)" />
 		<Delete Files="@(ExistingPackageBuildFiles)" />
 	</Target>
@@ -72,9 +75,6 @@
 		<Source Include="$(RootDir)/bld/**" />
 	</ItemGroup>
 	<Target Name="SourcePackage" DependsOnTargets="PackageClean;SetAssemblyVersion">
-		<CreateProperty Value="$(OutputDir)/$(ApplicationName)_$(Version).tar.gz">
-			<Output TaskParameter="Value" PropertyName="SourcePackageFileName" />
-		</CreateProperty>
 		<CreateProperty Value="$(OutputDir)/$(ApplicationName)-$(Version)">
 			<Output TaskParameter="Value" PropertyName="TarBaseDir" />
 		</CreateProperty>
@@ -102,7 +102,7 @@
 	<ItemGroup>
 		<DebianControlFiles Include="$(RootDir)/debian-src/**/*" />
 	</ItemGroup>
-	<Target Name="Installer" DependsOnTargets="SourcePackage">
+	<Target Name="Installer" DependsOnTargets="PackageClean;SetAssemblyVersion">
 		<CreateProperty Value="$(OutputDir)/Package/$(ApplicationName)-$(Version)">
 			<Output TaskParameter="Value" PropertyName="InstallerBaseDir" />
 		</CreateProperty>
