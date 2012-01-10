@@ -3,10 +3,10 @@
 	<RootDir>$(teamcity_build_checkoutDir)</RootDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
-  <UsingTask TaskName="Archive" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="Split" AssemblyFile="$(RootDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(RootDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="Archive" AssemblyFile="$(RootDir)/bld/Palaso.BuildTasks.dll" />
   <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll" />
 
   <PropertyGroup>
