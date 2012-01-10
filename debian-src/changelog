@@ -1,3 +1,10 @@
+libicu-cil (0.1.1-1) UNRELEASED; urgency=low
+
+  * Build now uses xbuild rather than nant
+  * Can now built against icu 4.2, 4.4 or 4.8
+
+ -- Daniel Glassey <daniel@glassey>  Tue, 10 Jan 2012 11:09:19 +0700
+
 libicu-cil (0.1-1) UNRELEASED; urgency=low
 
   * Initial release.
