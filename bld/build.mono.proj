@@ -67,7 +67,7 @@
 
 	<ItemGroup>
 		<Source Include="$(RootDir)/source/**/*" Exclude="$(RootDir)/source/**/obj/**/*;$(RootDir)/source/**/bin/**/*" />
-		<Source Include="$(RootDir)/lib/**/*" />
+		<Source Include="$(RootDir)/lib/**/*" Exclude="$(RootDir)/lib/icu" />
 		<Source Include="$(RootDir)/bld/**" />
 	</ItemGroup>
 	<Target Name="SourcePackage" DependsOnTargets="PackageClean;SetAssemblyVersion">
