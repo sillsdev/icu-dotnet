@@ -1,6 +1,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="VersionNumbers">
+  <Target Name="JustVersion">
+	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
+	<CreateProperty Value="0.1.1">
+	  <Output PropertyName="Version" TaskParameter="Value"/>
+	</CreateProperty>
+
+	<Message Text="Version: $(Version)" Importance="high"/>
+  </Target>
+
+
+  <Target Name="VersionNumbers" DependsOnTargets="JustVersion">
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
 	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
@@ -9,12 +19,6 @@
 
 	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
-	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="0.1.1">
-	  <Output PropertyName="Version" TaskParameter="Value"/>
-	</CreateProperty>
-
-	<Message Text="Version: $(Version)" Importance="high"/>
   </Target>
 
 	<ItemGroup>

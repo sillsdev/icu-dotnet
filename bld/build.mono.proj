@@ -157,7 +157,7 @@
 		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-$(Version)</InstallLib>
 		<InstallDev>$(InstallDir)/usr/lib/pkgconfig</InstallDev>
 	</PropertyGroup>
-	<Target Name="Install"  DependsOnTargets="VersionNumbers">
+	<Target Name="Install"  DependsOnTargets="JustVersion">
 		<MakeDir Directories="$(InstallLib)" />
 		<Copy
 			DestinationFolder="$(InstallLib)"
