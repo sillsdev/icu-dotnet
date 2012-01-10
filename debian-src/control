@@ -9,6 +9,6 @@ Package: libicu-cil
 Section: cli-mono
 Architecture: all
 Depends: libmono-corlib2.0-cil (>= 2.0), libmono-system2.0-cil (>=2.0), ${misc:Depends}, ${cli:Depends}, ${shlibs:Depends}
-Description: mono/.net wrapper for ICU 4.0 and later
- libicu-cil is a mono/.net library to allow interaction with the
+Description: C# wrapper for ICU 4.0 and later
+ libicu-cil is a C# library to allow interaction with the
  ICU library.
