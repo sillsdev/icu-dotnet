@@ -55,6 +55,7 @@
 
 	<!-- Source Package -->
 	<ItemGroup>
+		<ExistingPackageFiles Include="$(OutputDir)/libicu-cil*/**/*" />
 		<ExistingPackageFiles Include="$(OutputDir)/libicu-cil*/**" />
 		<ExistingPackageFiles Include="$(OutputDir)/libicu-cil*" />
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**/*" />
@@ -67,7 +68,7 @@
 
 	<ItemGroup>
 		<Source Include="$(RootDir)/source/**/*" Exclude="$(RootDir)/source/**/obj/**/*;$(RootDir)/source/**/bin/**/*" />
-		<Source Include="$(RootDir)/lib/**/*" Exclude="$(RootDir)/lib/icu" />
+		<Source Include="$(RootDir)/lib/**/*" Exclude="$(RootDir)/lib/icu/*" />
 		<Source Include="$(RootDir)/bld/**" />
 	</ItemGroup>
 	<Target Name="SourcePackage" DependsOnTargets="PackageClean;SetAssemblyVersion">
