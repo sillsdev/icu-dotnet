@@ -61,8 +61,8 @@
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**/*" />
 		<ExistingPackageBuildFiles Include="$(OutputDir)/Package/**" />
 	</ItemGroup>
-	<Target Name="PackageClean">
-		<CreateProperty Value="$(RootDir)/building/$(ApplicationName)_$(Version).tar.gz">
+	<Target Name="PackageClean" DependsOnTargets="JustVersion">
+		<CreateProperty Value="$(RootDir)/building/$(ApplicationName)-$(Version).tar.gz">
 			<Output TaskParameter="Value" PropertyName="SourcePackageFileName" />
 		</CreateProperty>
 		<Delete Files="@(ExistingPackageFiles)" />
