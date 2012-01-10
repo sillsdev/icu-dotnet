@@ -153,11 +153,13 @@
 		<LibFiles Include="$(OutputDir)/icu.net.dll*" Exclude="$(OutputDir)/*.mdb" />
 		<DevFiles Include="$(RootDir)/source/icu.net.pc" />
 	</ItemGroup>
-	<PropertyGroup>
-		<InstallLib>$(InstallDir)/usr/lib/cli/icu-cil-$(Version)</InstallLib>
-		<InstallDev>$(InstallDir)/usr/lib/pkgconfig</InstallDev>
-	</PropertyGroup>
 	<Target Name="Install"  DependsOnTargets="JustVersion">
+		<CreateProperty Value="$(InstallDir)/usr/lib/cli/icu-cil-$(Version)">
+			<Output TaskParameter="Value" PropertyName="InstallLib" />
+		</CreateProperty>
+		<CreateProperty Value="$(InstallDir)/usr/lib/pkgconfig">
+			<Output TaskParameter="Value" PropertyName="InstallDev" />
+		</CreateProperty>
 		<MakeDir Directories="$(InstallLib)" />
 		<Copy
 			DestinationFolder="$(InstallLib)"
