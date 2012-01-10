@@ -78,6 +78,7 @@
 		<CreateProperty Value="$(OutputDir)/$(ApplicationName)-$(Version)">
 			<Output TaskParameter="Value" PropertyName="TarBaseDir" />
 		</CreateProperty>
+		<MakeDir Directories="$(RootDir)/building" />
 		<MakeDir Directories="$(OutputDir)/Package" />
 		<Message Text="Archive source to '$(SourcePackageFileName)'" />
 		<Archive
