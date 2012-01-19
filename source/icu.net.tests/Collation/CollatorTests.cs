@@ -15,7 +15,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en");
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "en");
+			Assert.AreEqual("en", coll.ValidId);
 		}
 
 		[Test]
@@ -27,7 +27,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en_GB", Collator.Fallback.FallbackAllowed);
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "en_GB");
+			Assert.AreEqual("en_GB", coll.ValidId);
 		}
 
 		[Test]
@@ -39,7 +39,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("fr");
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "fr");
+			Assert.AreEqual("fr", coll.ValidId);
 		}
 
 		[Test]
@@ -51,7 +51,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("es_ES", Collator.Fallback.FallbackAllowed);
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "es_ES");
+			Assert.AreEqual("es_ES", coll.ValidId);
 		}
 
 		[Test]
@@ -61,7 +61,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("root");
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "root");
+			Assert.AreEqual("root", coll.ValidId);
 		}
 
 		[Test]
@@ -71,7 +71,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create(string.Empty);
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, "root");
+			Assert.AreEqual("root", coll.ValidId);
 		}
 
 		[Test]
@@ -86,7 +86,7 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("non-existent", Collator.Fallback.FallbackAllowed);
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(coll.ValidId, CultureInfo.CurrentCulture.Name.Replace('-','_'));
+			Assert.AreEqual(CultureInfo.CurrentCulture.Name.Replace('-','_'), coll.ValidId);
 		}
 
 		[Test]
