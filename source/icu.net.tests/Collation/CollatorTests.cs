@@ -18,6 +18,36 @@ namespace icu.net.tests.Collation
 
 		[Test]
 		[Category("Full ICU")]
+
+		//This fails when ICU's data DLL is built without rules for the en_GB locale.
+
+		public void Create_Locale_en_GB()
+		{
+			Assert.IsNotNull(Collator.Create("en_GB"));
+		}
+
+		[Test]
+		[Category("Full ICU")]
+
+		//This fails when ICU's data DLL is built without rules for the fr locale.
+
+		public void Create_Locale_fr()
+		{
+			Assert.IsNotNull(Collator.Create("fr"));
+		}
+
+		[Test]
+		[Category("Full ICU")]
+
+		//This fails when ICU's data DLL is built without rules for the es_ES locale.
+
+		public void Create_Locale_es_ES()
+		{
+			Assert.IsNotNull(Collator.Create("es_ES"));
+		}
+
+		[Test]
+		[Category("Full ICU")]
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
