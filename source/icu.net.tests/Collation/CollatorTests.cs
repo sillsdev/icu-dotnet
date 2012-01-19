@@ -33,6 +33,42 @@ namespace icu.net.tests.Collation
 		[Test]
 		[Category("Full ICU")]
 
+		//This fails when ICU's data DLL is built without rules for the en_US locale.
+
+		public void Create_Locale_en_US()
+		{
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en_US", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual("en_US", coll.ValidId);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+
+		//This fails when ICU's data DLL is built without rules for the en_US_POSIX locale.
+
+		public void Create_Locale_en_US_POSIX()
+		{
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en_US_POSIX", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual("en_US_POSIX", coll.ValidId);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+
+		//This fails when ICU's data DLL is built without rules for the en-US-POSIX locale.
+
+		public void Create_Locale_en_US_POSIX2()
+		{
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en-US-POSIX", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual("en_US_POSIX", coll.ValidId);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+
 		//This fails when ICU's data DLL is built without rules for the fr locale.
 
 		public void Create_Locale_fr()
