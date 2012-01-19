@@ -406,7 +406,7 @@ namespace Icu.Collation
 			 return result;
 		 }
 		}
-		private string ValidId
+		public string ValidId
 		{
 		 get
 		 {

@@ -13,7 +13,9 @@ namespace icu.net.tests.Collation
 		//This fails when ICU's data DLL is built without rules for the en locale.
 		public void Create_Locale()
 		{
-			Assert.IsNotNull(Collator.Create("en"));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en");
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "en");
 		}
 
 		[Test]
@@ -23,7 +25,9 @@ namespace icu.net.tests.Collation
 
 		public void Create_Locale_en_GB()
 		{
-			Assert.IsNotNull(Collator.Create("en_GB"));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("en_GB", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "en_GB");
 		}
 
 		[Test]
@@ -33,7 +37,9 @@ namespace icu.net.tests.Collation
 
 		public void Create_Locale_fr()
 		{
-			Assert.IsNotNull(Collator.Create("fr"));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("fr");
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "fr");
 		}
 
 		[Test]
@@ -43,7 +49,9 @@ namespace icu.net.tests.Collation
 
 		public void Create_Locale_es_ES()
 		{
-			Assert.IsNotNull(Collator.Create("es_ES"));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("es_ES", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "es_ES");
 		}
 
 		[Test]
@@ -51,7 +59,9 @@ namespace icu.net.tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
-			Assert.IsNotNull(Collator.Create("root"));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("root");
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "root");
 		}
 
 		[Test]
@@ -59,7 +69,9 @@ namespace icu.net.tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocaleAsEmpty()
 		{
-			Assert.IsNotNull(Collator.Create(string.Empty));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create(string.Empty);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, "root");
 		}
 
 		[Test]
@@ -72,7 +84,9 @@ namespace icu.net.tests.Collation
 		[Test]
 		public void Create_nonexistentFallbackAllowed_fallsbackToUca()
 		{
-			Assert.IsNotNull(Collator.Create("non-existent", Collator.Fallback.FallbackAllowed));
+			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("non-existent", Collator.Fallback.FallbackAllowed);
+			Assert.IsNotNull(coll);
+			Assert.AreEqual(coll.ValidId, CultureInfo.CurrentCulture.Name.Replace('-','_'));
 		}
 
 		[Test]
