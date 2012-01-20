@@ -1,3 +1,9 @@
+libicu-cil (0.1.2-1ubuntu1) precise; urgency=low
+
+  * fixes to work better with icu 4.8
+
+ -- Daniel Glassey <daniel_glassey@sil.org>  Fri, 20 Jan 2012 09:31:52 +0700
+
 libicu-cil (0.1.1-1) lucid; urgency=low
 
   * Build now uses xbuild rather than nant
