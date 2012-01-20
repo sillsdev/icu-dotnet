@@ -122,7 +122,14 @@ namespace icu.net.tests.Collation
 		{
 			RuleBasedCollator coll = (RuleBasedCollator) Collator.Create("non-existent", Collator.Fallback.FallbackAllowed);
 			Assert.IsNotNull(coll);
-			Assert.AreEqual(CultureInfo.CurrentCulture.Name.Replace('-','_'), coll.Name);
+			if (CultureInfo.CurrentCulture.Name == "")
+			{
+				Assert.AreEqual("en_US_POSIX", coll.Name);
+			}
+			else
+			{
+				Assert.AreEqual(CultureInfo.CurrentCulture.Name.Replace('-','_'), coll.Name);
+			}
 		}
 
 		[Test]
