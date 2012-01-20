@@ -406,7 +406,7 @@ namespace Icu.Collation
 			 return result;
 		 }
 		}
-		public string ValidId
+		private string ValidId
 		{
 		 get
 		 {
@@ -424,7 +424,13 @@ namespace Icu.Collation
 			 return result;
 		 }
 		}
-
+		public string Name
+		{
+		 get
+		 {
+			 return ValidId;
+		 }
+		}
 		#endregion
 
 		#region IComparer<string> Members
