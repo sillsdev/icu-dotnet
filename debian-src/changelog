@@ -1,4 +1,4 @@
-libicu-cil (0.1.2-1ubuntu1) precise; urgency=low
+libicu-cil (0.1.2-1ubuntu1) UNRELEASED; urgency=low
 
   * fixes to work better with icu 4.8
 
