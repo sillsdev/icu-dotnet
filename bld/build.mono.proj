@@ -124,7 +124,7 @@
 		<MakeDir Directories="$(InstallerBaseDir)/debian" />
 		<Copy SourceFiles="@(DebianControlFiles)" DestinationFiles="$(InstallerBaseDir)/debian/%(RecursiveDir)%(Filename)%(Extension)" />
 		<Exec
-			Command='dch -v $(Version)-1palaso$(BuildCounter) --force-distribution --distribution $(Dist) "Auto Build"'
+			Command='dch -v 1:$(Version)-1palaso$(BuildCounter) --force-distribution --distribution $(Dist) "Auto Build"'
 			WorkingDirectory="$(InstallerBaseDir)"
 		/>
 		<Message Text="pbuilder update" />
