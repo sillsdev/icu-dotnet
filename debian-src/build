@@ -17,6 +17,7 @@ BASE=$(dpkg-parsechangelog -lchangelog| grep ^Vers | cut -d\  -f2 | cut -d\- -f1
 if [ "${TCTARGET}" = "lucid" ]; then
 	xbuild /target:SourcePackage /p:Configuration=DebugMono /p:BUILD_NUMBER="${BASE}.abcd" /p:RootDir=$1 $1/bld/build.mono.proj  || exit $?
 	cp $1/building/${PRODUCT}-${BASE}.tar.gz ~/upstream/${PRODUCT}_${BASE}.orig.tar.gz  || exit $?
+	rm -rf ${DEST}/results
 else
 	rm ${BUILDINGDIR}/*build*
 fi
