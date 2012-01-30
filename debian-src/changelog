@@ -1,7 +1,8 @@
-libicu-cil (1:0.1.1-1) lucid; urgency=low
+libicu-cil (1:0.1.2-1) lucid; urgency=low
 
   * Use epoch to be preferred over old packages
 	  with erroneous 1.1 version number
+  * version 0.1.2 with build changes
 
  -- Daniel Glassey <daniel_glassey@sil.org>  Fri, 27 Jan 2012 13:51:07 +0700
 
