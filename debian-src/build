@@ -1,19 +1,31 @@
-#!/bin/sh
+#!/bin/bash
 HERE=`pwd`
-TARGETS='hardy intrepid jaunty'
-#REVISION=`echo $BUILD_NUMBER | sed -e 's/:.*$//'`
-REVISION=$BUILD_NUMBER
-MAJOR=`sed -e 's/\.${revision}//' bld/version.txt`
-rm -fr output/build
-mkdir -p output/build
-cd output/build
-cp ../linux/mono/2.0/Debug/icudotnet-src-$MAJOR.$REVISION.tar.gz libicu-cil_$MAJOR.$REVISION.orig.tar.gz
-mkdir libicu-cil-$MAJOR.$REVISION
-cd libicu-cil-$MAJOR.$REVISION
-tar xzf ../libicu-cil_$MAJOR.$REVISION.orig.tar.gz
-cp -r ../../../debian-src debian
-export DEBSIGN_KEYID="mono teamcity"
-dch -v $MAJOR.$REVISION-1sil1 "Daily Build"
-/home/mono/bin/mpdebuild --vadd .%d --distrib "$TARGETS" --configfile /home/mono/pbuilder/pbuilderrc-%d-new --auto-debsign
-#/home/mono/bin/mpdebuild --vadd .%d --distrib "$TARGETS" --use-pdebuild-internal --configfile /home/mono/pbuilder/pbuilderrc-%d-new --auto-debsign
-/home/mono/bin/mdput -d ~/pbuilder/results -t PALASO- -f icudotnet_$MAJOR.$REVISION\*.changes $TARGETS
+TARGETS="lucid maverick natty oneiric"
+#PUBLISH='PALASO'
+PUBLISH='LINGNET'
+#REVISION=`echo $BUILD_NUMBER | sed -e 's/[:-].*$//'`
+VARIANT='lingnet'
+PRODUCT='libicu-cil'
+ZIPTYPE='gz'
+DEST=${HERE}/../output
+BUILDINGDIR=${HERE}/../building
+
+NO_DPUT=1
+
+BASE=$(dpkg-parsechangelog -lchangelog| grep ^Vers | cut -d\  -f2 | cut -d\- -f1 | cut -d\: -f2)
+
+if [ "${TCTARGET}" = "lucid" ]; then
+	xbuild /target:SourcePackage /p:Configuration=DebugMono /p:BUILD_NUMBER="${BASE}.abcd" /p:RootDir=$1 $1/bld/build.mono.proj  || exit $?
+	cp $1/building/${PRODUCT}-${BASE}.tar.gz ~/upstream/${PRODUCT}_${BASE}.orig.tar.gz  || exit $?
+else
+	rm ${BUILDINGDIR}/*build*
+fi
+
+source /home/bob/pbuilder/build.common
+
+# create artifacts
+if [ "${TCTARGET}" = "lucid" ]; then
+	mkdir ${DEST}/results || exit $?
+	cp /home/bob/pbuilder/results/lucid/${PRODUCT}_${BASE}* ${DEST}/results || exit $?
+	test -e ${DEST}/results/${PRODUCT}_${BASE}.orig.tar.gz || exit $?
+fi
