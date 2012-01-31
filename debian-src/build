@@ -27,6 +27,7 @@ source /home/bob/pbuilder/build.common
 # create artifacts
 if [ "${TCTARGET}" = "lucid" ]; then
 	mkdir ${DEST}/results || exit $?
-	cp /home/bob/pbuilder/results/lucid/${PRODUCT}_${BASE}* ${DEST}/results || exit $?
+	cp /home/bob/pbuilder/results/lucid/${PRODUCT}_${BASE}-* ${DEST}/results || exit $?
+	cp /home/bob/pbuilder/results/lucid/${PRODUCT}_${BASE}.orig.tar.gz ${DEST}/results || exit $?
 	test -e ${DEST}/results/${PRODUCT}_${BASE}.orig.tar.gz || exit $?
 fi
