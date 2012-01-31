@@ -10,7 +10,7 @@ ZIPTYPE='gz'
 DEST=${HERE}/../output
 BUILDINGDIR=${HERE}/../building
 
-NO_DPUT=1
+#NO_DPUT=1
 
 BASE=$(dpkg-parsechangelog -lchangelog| grep ^Vers | cut -d\  -f2 | cut -d\- -f1 | cut -d\: -f2)
 
