@@ -42,7 +42,7 @@ install-stamp:
 	dh_fixperms
 	dh_clifixperms
 	dh_installdeb
-	dh_makeclilibs -m 0.1.2
+	dh_makeclilibs -m 0.1.3
 	dh_shlibdeps
 	dh_clideps -d -i
 	dh_gencontrol
