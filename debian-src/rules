@@ -14,6 +14,8 @@ build: build-stamp
 build-stamp:
 	dh_testdir
 	$(XBUILD) /target:Compile
+	locale
+	locale -a
 	nunit-console output/DebugMono/icu.net.tests.dll
 	touch build-stamp
 
@@ -40,7 +42,7 @@ install-stamp:
 	dh_fixperms
 	dh_clifixperms
 	dh_installdeb
-	dh_makeclilibs -m 0.1.2
+	dh_makeclilibs -m 0.1.3
 	dh_shlibdeps
 	dh_clideps -d -i
 	dh_gencontrol

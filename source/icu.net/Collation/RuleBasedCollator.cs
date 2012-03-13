@@ -349,10 +349,21 @@ namespace Icu.Collation
 			RuleBasedCollator instance = new RuleBasedCollator();
 			ErrorCode status;
 			instance.collatorHandle = NativeMethods.ucol_open(localeId, out status);
-			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
+			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback && instance.ValidId != localeId )
 			{
-				throw new ArgumentException("Could only create Collator by falling back to '" +
-											instance.Id +
+				throw new ArgumentException("Could only create Collator '" +
+											localeId +
+											"' by falling back to '" +
+											instance.ActualId +
+											"'. You can use the fallback option to create this.");
+			}
+			if(status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback && instance.ValidId != localeId &&
+				 localeId.Length > 0 && localeId != "root")
+			{
+				throw new ArgumentException("Could only create Collator '" +
+											localeId +
+											"' by falling back to the default '" +
+											instance.ActualId +
 											"'. You can use the fallback option to create this.");
 			}
 			if (status == ErrorCode.INTERNAL_PROGRAM_ERROR && fallback == Fallback.FallbackAllowed)
@@ -368,7 +379,7 @@ namespace Icu.Collation
 				catch (Exception e)
 				{
 					throw new ArgumentException(
-							"Unable to create a collator using the given localeId.\nThis is likely because the ICU data file was created without collation rules for this locale. You can provide the rules yourself or replace the data dll.",
+							"Unable to create a collator using the given localeId '"+localeId+"'.\nThis is likely because the ICU data file was created without collation rules for this locale. You can provide the rules yourself or replace the data dll.",
 							e);
 				}
 			}
@@ -377,7 +388,7 @@ namespace Icu.Collation
 
 		private RuleBasedCollator() {}
 
-		private string Id
+		private string ActualId
 		{
 		 get
 		 {
@@ -395,7 +406,31 @@ namespace Icu.Collation
 			 return result;
 		 }
 		}
-
+		private string ValidId
+		{
+		 get
+		 {
+			 ErrorCode status;
+			 IntPtr resultAsIntPtr = NativeMethods.ucol_getLocaleByType(
+				 collatorHandle,
+				 NativeMethods.LocaleType.ValidLocale,
+				 out status
+			 );
+			 string result = Marshal.PtrToStringAnsi(resultAsIntPtr);
+			 if(status != ErrorCode.NoErrors)
+			 {
+				 return string.Empty;
+			 }
+			 return result;
+		 }
+		}
+		public string Name
+		{
+		 get
+		 {
+			 return ValidId;
+		 }
+		}
 		#endregion
 
 		#region IComparer<string> Members
