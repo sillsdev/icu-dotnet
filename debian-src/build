@@ -1,6 +1,6 @@
 #!/bin/bash
 HERE=`pwd`
-TARGETS="lucid maverick natty oneiric"
+TARGETS="lucid natty oneiric"
 #PUBLISH='PALASO'
 PUBLISH='LINGNET'
 #REVISION=`echo $BUILD_NUMBER | sed -e 's/[:-].*$//'`
