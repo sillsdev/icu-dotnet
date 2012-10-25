@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("icu.net")]
-[assembly: AssemblyCopyright("Copyright © SIL International 2007")]
+[assembly: AssemblyCopyright("Copyright © SIL International 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,8 +31,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.2.1.0")]
-[assembly: AssemblyFileVersion("4.2.1.0")]
-
-//Location of the public/private key pair for strong naming this assembly --TA 7 Oct 2008
-[assembly: AssemblyKeyFile("icu.net.snk")]
+// (These numbers match the ICU version number we're building against.)
+[assembly: AssemblyVersion("5.0.0.2")]
+[assembly: AssemblyFileVersion("5.0.0.2")]

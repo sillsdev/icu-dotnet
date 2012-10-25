@@ -467,6 +467,11 @@ namespace Icu.Collation
 
 		private static class NativeMethods
 		{
+#if ICU_VER_50
+			private const string ICU_I18N_LIB = "icuin50.dll";
+			private const string ICU_COMMON_LIB = "icuuc50.dll";
+			private const string ICU_VERSION_SUFFIX = "_50";
+#else
 			private const string ICU_I18N_LIB = "icuin42.dll";
 			private const string ICU_COMMON_LIB = "icuuc42.dll";
 			#if ICU_VER_48
@@ -476,7 +481,7 @@ namespace Icu.Collation
 			#else
 			private const string ICU_VERSION_SUFFIX = "_4_2";
 			#endif
-
+#endif
 			/**
 			 * Function type declaration for uenum_close().
 			 *
