@@ -489,7 +489,7 @@ namespace Icu.Collation
 			 *
 			 * @param en enumeration to be closed
 			 */
-			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_close" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_close" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void uenum_close(IntPtr en);
 
 			/**
@@ -504,7 +504,7 @@ namespace Icu.Collation
 			 * @return next element as UChar *,
 			 *         or NULL after all elements haven been enumerated
 			 */
-			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern IntPtr uenum_unext(
 				SafeEnumeratorHandle en,
 				out int resultLength,
@@ -523,7 +523,7 @@ namespace Icu.Collation
 			/// <param name="status">A pointer to an UErrorCode to receive any errors
 			///</param>
 			/// <returns>pointer to a Collator or 0 if an error occurred</returns>
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_open"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_open" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern SafeRuleBasedCollatorHandle ucol_open(
 					[MarshalAs(UnmanagedType.LPStr)] string loc,
 					out ErrorCode status);
@@ -546,7 +546,7 @@ namespace Icu.Collation
 			/// <param name="status">A pointer to an ErrorCode to receive any errors</param>
 			/// <returns>A pointer to a UCollator. It is not guaranteed that NULL be returned in case
 			///         of error - please use status argument to check for errors.</returns>
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern SafeRuleBasedCollatorHandle ucol_openRules(
 					[MarshalAs(UnmanagedType.LPWStr)] string rules,
 					int rulesLength,
@@ -591,7 +591,7 @@ namespace Icu.Collation
  */
 
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openFromShortString"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openFromShortString"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 			public static extern SafeRuleBasedCollatorHandle ucol_openFromShortString(
 					[MarshalAs(UnmanagedType.LPStr)] string definition,
 					[MarshalAs(UnmanagedType.I1)] bool forceDefaults,
@@ -607,7 +607,7 @@ namespace Icu.Collation
  * @stable ICU 2.0
  */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_close"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_close"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void ucol_close(IntPtr collator);
 
 			/**
@@ -626,7 +626,7 @@ namespace Icu.Collation
  * @stable ICU 2.0
  */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_strcoll"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_strcoll"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern CollationResult ucol_strcoll(SafeRuleBasedCollatorHandle collator,
 															  [MarshalAs(UnmanagedType.LPWStr)] string source,
 															  Int32 sourceLength,
@@ -644,21 +644,21 @@ namespace Icu.Collation
  */
 			/*
 
-[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getStrength"+ICU_VERSION_SUFFIX))]
+[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getStrength"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHandle collator);
 */
 
-/**
-* Set the collation strength used in a UCollator.
-* The strength influences how strings are compared.
-* @param coll The UCollator to set.
-* @param strength The desired collation strength; one of UCOL_PRIMARY,
-* UCOL_SECONDARY, UCOL_TERTIARY, UCOL_QUATERNARY, UCOL_IDENTICAL, UCOL_DEFAULT
-* @see ucol_getStrength
-* @stable ICU 2.0
-*/
+			/**
+			* Set the collation strength used in a UCollator.
+			* The strength influences how strings are compared.
+			* @param coll The UCollator to set.
+			* @param strength The desired collation strength; one of UCOL_PRIMARY,
+			* UCOL_SECONDARY, UCOL_TERTIARY, UCOL_QUATERNARY, UCOL_IDENTICAL, UCOL_DEFAULT
+			* @see ucol_getStrength
+			* @stable ICU 2.0
+			*/
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setStrength"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setStrength"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 			public static extern void ucol_setStrength(SafeRuleBasedCollatorHandle collator,
 													   CollationStrength strength);
 			*/
@@ -676,37 +676,37 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 2.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getDisplayName"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getDisplayName"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_getDisplayName([MarshalAs(UnmanagedType.LPStr)] string objLoc,
 														   [MarshalAs(UnmanagedType.LPStr)] string dispLoc,
 														   [MarshalAs(UnmanagedType.LPWStr)] StringBuilder result,
 														   Int32 resultLength,
 														   out ErrorCode status);
 			*/
-/**
- * Get a locale for which collation rules are available.
- * A UCollator in a locale returned by this function will perform the correct
- * collation for the locale.
- * @param index The index of the desired locale.
- * @return A locale for which collation rules are available, or 0 if none.
- * @see ucol_countAvailable
- * @stable ICU 2.0
- */
+			/**
+			 * Get a locale for which collation rules are available.
+			 * A UCollator in a locale returned by this function will perform the correct
+			 * collation for the locale.
+			 * @param index The index of the desired locale.
+			 * @return A locale for which collation rules are available, or 0 if none.
+			 * @see ucol_countAvailable
+			 * @stable ICU 2.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAvailable"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAvailable"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			[return : MarshalAs(UnmanagedType.LPStr)]
 			public static extern string ucol_getAvailable(Int32 index);
 			*/
 
-/**
- * Determine how many locales have collation rules available.
- * This function is most useful as determining the loop ending condition for
- * calls to {@link #ucol_getAvailable }.
- * @return The number of locales for which collation rules are available.
- * @see ucol_getAvailable
- * @stable ICU 2.0
- */
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable"+ICU_VERSION_SUFFIX)]
+			/**
+			 * Determine how many locales have collation rules available.
+			 * This function is most useful as determining the loop ending condition for
+			 * calls to {@link #ucol_getAvailable }.
+			 * @return The number of locales for which collation rules are available.
+			 * @see ucol_getAvailable
+			 * @stable ICU 2.0
+			 */
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_countAvailable();
 
 
@@ -718,7 +718,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * responsible for closing the result.
  * @stable ICU 3.0
  */
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales"+ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status);
 
 
@@ -732,7 +732,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 3.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getKeywords"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getKeywords"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 			public static extern IntPtr ucol_getKeywords(out ErrorCode status);
 			*/
 
@@ -749,7 +749,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 3.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getKeywordValues"+ICU_VERSION_SUFFIX))]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getKeywordValues"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 			public static extern IntPtr ucol_getKeywordValues([MarshalAs(UnmanagedType.LPStr)] string keyword,
 															  out ErrorCode status);
 			*/
@@ -787,7 +787,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 3.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getFunctionalEquivalent" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getFunctionalEquivalent" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_getFunctionalEquivalent(
 					[MarshalAs(UnmanagedType.LPStr)] StringBuilder result,
 					Int32 resultCapacity,
@@ -797,42 +797,42 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
 					out ErrorCode status);
 			*/
 
-/**
- * Get the collation rules from a UCollator.
- * The rules will follow the rule syntax.
- * @param coll The UCollator to query.
- * @param length
- * @return The collation rules.
- * @stable ICU 2.0
- */
+			/**
+			 * Get the collation rules from a UCollator.
+			 * The rules will follow the rule syntax.
+			 * @param coll The UCollator to query.
+			 * @param length
+			 * @return The collation rules.
+			 * @stable ICU 2.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRules" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRules" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern string ucol_getRules(SafeRuleBasedCollatorHandle collator,
 													  out Int32 length);
 			*/
 
-/** Get the short definition string for a collator. This API harvests the collator's
- *  locale and the attribute set and produces a string that can be used for opening
- *  a collator with the same properties using the ucol_openFromShortString API.
- *  This string will be normalized.
- *  The structure and the syntax of the string is defined in the "Naming collators"
- *  section of the users guide:
- *  http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
- *  This API supports preflighting.
- *  @param coll a collator
- *  @param locale a locale that will appear as a collators locale in the resulting
- *                short string definition. If NULL, the locale will be harvested
- *                from the collator.
- *  @param buffer space to hold the resulting string
- *  @param capacity capacity of the buffer
- *  @param status for returning errors. All the preflighting errors are featured
- *  @return length of the resulting string
- *  @see ucol_openFromShortString
- *  @see ucol_normalizeShortDefinitionString
- *  @stable ICU 3.0
- */
+			/** Get the short definition string for a collator. This API harvests the collator's
+			 *  locale and the attribute set and produces a string that can be used for opening
+			 *  a collator with the same properties using the ucol_openFromShortString API.
+			 *  This string will be normalized.
+			 *  The structure and the syntax of the string is defined in the "Naming collators"
+			 *  section of the users guide:
+			 *  http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
+			 *  This API supports preflighting.
+			 *  @param coll a collator
+			 *  @param locale a locale that will appear as a collators locale in the resulting
+			 *                short string definition. If NULL, the locale will be harvested
+			 *                from the collator.
+			 *  @param buffer space to hold the resulting string
+			 *  @param capacity capacity of the buffer
+			 *  @param status for returning errors. All the preflighting errors are featured
+			 *  @return length of the resulting string
+			 *  @see ucol_openFromShortString
+			 *  @see ucol_normalizeShortDefinitionString
+			 *  @stable ICU 3.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getShortDefinitionString" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getShortDefinitionString" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_getShortDefinitionString(SafeRuleBasedCollatorHandle collator,
 																	 [MarshalAs(UnmanagedType.LPStr)] string locale,
 																	 [In,Out][MarshalAs(UnmanagedType.LPStr)] StringBuilder
@@ -840,27 +840,27 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
 																	 Int32 capacity,
 																	 out ErrorCode status);
 			*/
-/** Verifies and normalizes short definition string.
- *  Normalized short definition string has all the option sorted by the argument name,
- *  so that equivalent definition strings are the same.
- *  This API supports preflighting.
- *  @param source definition string
- *  @param destination space to hold the resulting string
- *  @param capacity capacity of the buffer
- *  @param parseError if not NULL, structure that will get filled with error's pre
- *                   and post context in case of error.
- *  @param status     Error code. This API will return an error if an invalid attribute
- *                    or attribute/value combination is specified. All the preflighting
- *                    errors are also featured
- *  @return length of the resulting normalized string.
- *
- *  @see ucol_openFromShortString
- *  @see ucol_getShortDefinitionString
- *
- *  @stable ICU 3.0
- */
+			/** Verifies and normalizes short definition string.
+			 *  Normalized short definition string has all the option sorted by the argument name,
+			 *  so that equivalent definition strings are the same.
+			 *  This API supports preflighting.
+			 *  @param source definition string
+			 *  @param destination space to hold the resulting string
+			 *  @param capacity capacity of the buffer
+			 *  @param parseError if not NULL, structure that will get filled with error's pre
+			 *                   and post context in case of error.
+			 *  @param status     Error code. This API will return an error if an invalid attribute
+			 *                    or attribute/value combination is specified. All the preflighting
+			 *                    errors are also featured
+			 *  @return length of the resulting normalized string.
+			 *
+			 *  @see ucol_openFromShortString
+			 *  @see ucol_getShortDefinitionString
+			 *
+			 *  @stable ICU 3.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_normalizeShortDefinitionString" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_normalizeShortDefinitionString" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_normalizeShortDefinitionString(
 					[MarshalAs(UnmanagedType.LPStr)] string source,
 					[MarshalAs(UnmanagedType.LPStr)] StringBuilder destination,
@@ -868,20 +868,20 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
 					ref ParseError parseError,
 					out ErrorCode status);
 			*/
-/**
- * Get a sort key for a string from a UCollator.
- * Sort keys may be compared using <TT>strcmp</TT>.
- * @param coll The UCollator containing the collation rules.
- * @param source The string to transform.
- * @param sourceLength The length of source, or -1 if null-terminated.
- * @param result A pointer to a buffer to receive the attribute.
- * @param resultLength The maximum size of result.
- * @return The size needed to fully store the sort key..
- * @see ucol_keyHashCode
- * @stable ICU 2.0
- */
+			/**
+			 * Get a sort key for a string from a UCollator.
+			 * Sort keys may be compared using <TT>strcmp</TT>.
+			 * @param coll The UCollator containing the collation rules.
+			 * @param source The string to transform.
+			 * @param sourceLength The length of source, or -1 if null-terminated.
+			 * @param result A pointer to a buffer to receive the attribute.
+			 * @param resultLength The maximum size of result.
+			 * @return The size needed to fully store the sort key..
+			 * @see ucol_keyHashCode
+			 * @stable ICU 2.0
+			 */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getSortKey" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getSortKey" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_getSortKey(SafeRuleBasedCollatorHandle collator,
 													   [MarshalAs(UnmanagedType.LPWStr)] string source,
 													   Int32 sourceLength,
@@ -910,7 +910,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  *  @stable ICU 2.6
  */
 			/*
-[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_nextSortKeyPart"+ICU_VERSION_SUFFIX))]
+[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_nextSortKeyPart"+ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl))]
 		static public extern Int32
 ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 					 UCharIterator *iter,
@@ -968,7 +968,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.1
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getBound" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getBound" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32
 					ucol_getBound([MarshalAs(UnmanagedType.LPArray)] byte[] source,
 								  Int32 sourceLength,
@@ -978,57 +978,57 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 								  Int32 resultLength,
 								  out ErrorCode status);
 			*/
-/**
- * Gets the version information for a Collator. Version is currently
- * an opaque 32-bit number which depends, among other things, on major
- * versions of the collator tailoring and UCA.
- * @param coll The UCollator to query.
- * @param info the version # information, the result will be filled in
- * @stable ICU 2.0
- */
+			/**
+			 * Gets the version information for a Collator. Version is currently
+			 * an opaque 32-bit number which depends, among other things, on major
+			 * versions of the collator tailoring and UCA.
+			 * @param coll The UCollator to query.
+			 * @param info the version # information, the result will be filled in
+			 * @stable ICU 2.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getVersion" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getVersion" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void ucol_getVersion(
 					SafeRuleBasedCollatorHandle collator,
 					out VersionInfo info);
 			*/
-/**
- * Gets the UCA version information for a Collator. Version is the
- * UCA version number (3.1.1, 4.0).
- * @param coll The UCollator to query.
- * @param info the version # information, the result will be filled in
- * @stable ICU 2.8
- */
+			/**
+			 * Gets the UCA version information for a Collator. Version is the
+			 * UCA version number (3.1.1, 4.0).
+			 * @param coll The UCollator to query.
+			 * @param info the version # information, the result will be filled in
+			 * @stable ICU 2.8
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getUCAVersion" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getUCAVersion" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void ucol_getUCAVersion(
 					SafeRuleBasedCollatorHandle collator,
 					out VersionInfo info);
 			*/
-/**
- * Merge two sort keys. The levels are merged with their corresponding counterparts
- * (primaries with primaries, secondaries with secondaries etc.). Between the values
- * from the same level a separator is inserted.
- * example (uncompressed):
- * 191B1D 01 050505 01 910505 00 and 1F2123 01 050505 01 910505 00
- * will be merged as
- * 191B1D 02 1F212301 050505 02 050505 01 910505 02 910505 00
- * This allows for concatenating of first and last names for sorting, among other things.
- * If the destination buffer is not big enough, the results are undefined.
- * If any of source lengths are zero or any of source pointers are NULL/undefined,
- * result is of size zero.
- * @param src1 pointer to the first sortkey
- * @param src1Length length of the first sortkey
- * @param src2 pointer to the second sortkey
- * @param src2Length length of the second sortkey
- * @param dest buffer to hold the result
- * @param destCapacity size of the buffer for the result
- * @return size of the result. If the buffer is big enough size is always
- *         src1Length+src2Length-1
- * @stable ICU 2.0
- */
+			/**
+			 * Merge two sort keys. The levels are merged with their corresponding counterparts
+			 * (primaries with primaries, secondaries with secondaries etc.). Between the values
+			 * from the same level a separator is inserted.
+			 * example (uncompressed):
+			 * 191B1D 01 050505 01 910505 00 and 1F2123 01 050505 01 910505 00
+			 * will be merged as
+			 * 191B1D 02 1F212301 050505 02 050505 01 910505 02 910505 00
+			 * This allows for concatenating of first and last names for sorting, among other things.
+			 * If the destination buffer is not big enough, the results are undefined.
+			 * If any of source lengths are zero or any of source pointers are NULL/undefined,
+			 * result is of size zero.
+			 * @param src1 pointer to the first sortkey
+			 * @param src1Length length of the first sortkey
+			 * @param src2 pointer to the second sortkey
+			 * @param src2Length length of the second sortkey
+			 * @param dest buffer to hold the result
+			 * @param destCapacity size of the buffer for the result
+			 * @return size of the result. If the buffer is big enough size is always
+			 *         src1Length+src2Length-1
+			 * @stable ICU 2.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_mergeSortkeys" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_mergeSortkeys" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32
 					ucol_mergeSortkeys([MarshalAs(UnmanagedType.LPArray)] byte[] src1,
 									   Int32 src1Length,
@@ -1037,19 +1037,19 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 									   [Out][MarshalAs(UnmanagedType.LPArray)] byte[] dest,
 									   Int32 destCapacity);
 			*/
-/**
- * Universal attribute setter
- * @param coll collator which attributes are to be changed
- * @param attr attribute type
- * @param value attribute value
- * @param status to indicate whether the operation went on smoothly or there were errors
- * @see UColAttribute
- * @see UColAttributeValue
- * @see ucol_getAttribute
- * @stable ICU 2.0
- */
+			/**
+			 * Universal attribute setter
+			 * @param coll collator which attributes are to be changed
+			 * @param attr attribute type
+			 * @param value attribute value
+			 * @param status to indicate whether the operation went on smoothly or there were errors
+			 * @see UColAttribute
+			 * @see UColAttributeValue
+			 * @see ucol_getAttribute
+			 * @stable ICU 2.0
+			 */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setAttribute" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setAttribute" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void ucol_setAttribute(
 					SafeRuleBasedCollatorHandle collator,
 					CollationAttribute attr,
@@ -1068,7 +1068,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAttribute" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAttribute" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern CollationAttributeValue ucol_getAttribute(
 					SafeRuleBasedCollatorHandle collator,
 					CollationAttribute attr,
@@ -1094,72 +1094,72 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setVariableTop" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setVariableTop" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern UInt32 ucol_setVariableTop(
 					SafeRuleBasedCollatorHandle collator,
 					[MarshalAs(UnmanagedType.LPWStr)] string varTop,
 					Int32 len,
 					out ErrorCode status);
 			*/
-/**
- * Gets the variable top value of a Collator.
- * Lower 16 bits are undefined and should be ignored.
- * @param coll collator which variable top needs to be retrieved
- * @param status error code (not changed by function). If error code is set,
- *               the return value is undefined.
- * @return the variable top value of a Collator.
- * @see ucol_setVariableTop
- * @see ucol_restoreVariableTop
- * @stable ICU 2.0
- */
-/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getVariableTop" + ICU_VERSION_SUFFIX)]
-			public static extern UInt32 ucol_getVariableTop(
-					SafeRuleBasedCollatorHandle collator,
-					out ErrorCode status);
-			*/
-/**
- * Sets the variable top to a collation element value supplied. Variable top is
- * set to the upper 16 bits.
- * Lower 16 bits are ignored.
- * @param coll collator which variable top needs to be changed
- * @param varTop CE value, as returned by ucol_setVariableTop or ucol)getVariableTop
- * @param status error code (not changed by function)
- * @see ucol_getVariableTop
- * @see ucol_setVariableTop
- * @stable ICU 2.0
- */
+			/**
+			 * Gets the variable top value of a Collator.
+			 * Lower 16 bits are undefined and should be ignored.
+			 * @param coll collator which variable top needs to be retrieved
+			 * @param status error code (not changed by function). If error code is set,
+			 *               the return value is undefined.
+			 * @return the variable top value of a Collator.
+			 * @see ucol_setVariableTop
+			 * @see ucol_restoreVariableTop
+			 * @stable ICU 2.0
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_restoreVariableTop" + ICU_VERSION_SUFFIX)]
+						[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getVariableTop" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
+						public static extern UInt32 ucol_getVariableTop(
+								SafeRuleBasedCollatorHandle collator,
+								out ErrorCode status);
+						*/
+			/**
+			 * Sets the variable top to a collation element value supplied. Variable top is
+			 * set to the upper 16 bits.
+			 * Lower 16 bits are ignored.
+			 * @param coll collator which variable top needs to be changed
+			 * @param varTop CE value, as returned by ucol_setVariableTop or ucol)getVariableTop
+			 * @param status error code (not changed by function)
+			 * @see ucol_getVariableTop
+			 * @see ucol_setVariableTop
+			 * @stable ICU 2.0
+			 */
+			/*
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_restoreVariableTop" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern void ucol_restoreVariableTop(
 					SafeRuleBasedCollatorHandle collator,
 					UInt32 varTop,
 					out ErrorCode status);
 			*/
-/**
- * Thread safe cloning operation. The result is a clone of a given collator.
- * @param coll collator to be cloned
- * @param stackBuffer user allocated space for the new clone.
- * If NULL new memory will be allocated.
- *  If buffer is not large enough, new memory will be allocated.
- *  Clients can use the U_COL_SAFECLONE_BUFFERSIZE.
- *  This will probably be enough to avoid memory allocations.
- * @param pBufferSize pointer to size of allocated space.
- *  If *pBufferSize == 0, a sufficient size for use in cloning will
- *  be returned ('pre-flighting')
- *  If *pBufferSize is not enough for a stack-based safe clone,
- *  new memory will be allocated.
- * @param status to indicate whether the operation went on smoothly or there were errors
- *    An informational status value, U_SAFECLONE_ALLOCATED_ERROR, is used if any
- * allocations were necessary.
- * @return pointer to the new clone
- * @see ucol_open
- * @see ucol_openRules
- * @see ucol_close
- * @stable ICU 2.0
- */
+			/**
+			 * Thread safe cloning operation. The result is a clone of a given collator.
+			 * @param coll collator to be cloned
+			 * @param stackBuffer user allocated space for the new clone.
+			 * If NULL new memory will be allocated.
+			 *  If buffer is not large enough, new memory will be allocated.
+			 *  Clients can use the U_COL_SAFECLONE_BUFFERSIZE.
+			 *  This will probably be enough to avoid memory allocations.
+			 * @param pBufferSize pointer to size of allocated space.
+			 *  If *pBufferSize == 0, a sufficient size for use in cloning will
+			 *  be returned ('pre-flighting')
+			 *  If *pBufferSize is not enough for a stack-based safe clone,
+			 *  new memory will be allocated.
+			 * @param status to indicate whether the operation went on smoothly or there were errors
+			 *    An informational status value, U_SAFECLONE_ALLOCATED_ERROR, is used if any
+			 * allocations were necessary.
+			 * @return pointer to the new clone
+			 * @see ucol_open
+			 * @see ucol_openRules
+			 * @see ucol_close
+			 * @stable ICU 2.0
+			 */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_safeClone" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_safeClone" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern SafeRuleBasedCollatorHandle ucol_safeClone(SafeRuleBasedCollatorHandle collator,
 																			IntPtr stackBuffer,
 																			ref Int32 pBufferSize,
@@ -1177,30 +1177,30 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRulesEx" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRulesEx" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32 ucol_getRulesEx(
 					SafeRuleBasedCollatorHandle collator,
 					CollationRuleOption delta,
 					[MarshalAs(UnmanagedType.LPWStr)] StringBuilder buffer,
 					Int32 bufferLen);
 			*/
-/**
- * gets the locale name of the collator. If the collator
- * is instantiated from the rules, then this function returns
- * NULL.
- * @param coll The UCollator for which the locale is needed
- * @param type You can choose between requested, valid and actual
- *             locale. For description see the definition of
- *             ULocDataLocaleType in uloc.h
- * @param status error code of the operation
- * @return real locale name from which the collation data comes.
- *         If the collator was instantiated from rules, returns
- *         NULL.
- * @stable ICU 2.8
- *
- */
+			/**
+			 * gets the locale name of the collator. If the collator
+			 * is instantiated from the rules, then this function returns
+			 * NULL.
+			 * @param coll The UCollator for which the locale is needed
+			 * @param type You can choose between requested, valid and actual
+			 *             locale. For description see the definition of
+			 *             ULocDataLocaleType in uloc.h
+			 * @param status error code of the operation
+			 * @return real locale name from which the collation data comes.
+			 *         If the collator was instantiated from rules, returns
+			 *         NULL.
+			 * @stable ICU 2.8
+			 *
+			 */
 
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern IntPtr
 					ucol_getLocaleByType(SafeRuleBasedCollatorHandle collator, LocaleType type,
 										 out ErrorCode status);
@@ -1216,48 +1216,48 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.4
  */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getTailoredSet" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getTailoredSet" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern IntPtr
 					ucol_getTailoredSet(SafeRuleBasedCollatorHandle collator, out ErrorCode status);
 			*/
 
-/** Creates a binary image of a collator. This binary image can be stored and
- *  later used to instantiate a collator using ucol_openBinary.
- *  This API supports preflighting.
- *  @param coll Collator
- *  @param buffer a fill-in buffer to receive the binary image
- *  @param capacity capacity of the destination buffer
- *  @param status for catching errors
- *  @return size of the image
- *  @see ucol_openBinary
- *  @stable ICU 3.2
- */
+			/** Creates a binary image of a collator. This binary image can be stored and
+			 *  later used to instantiate a collator using ucol_openBinary.
+			 *  This API supports preflighting.
+			 *  @param coll Collator
+			 *  @param buffer a fill-in buffer to receive the binary image
+			 *  @param capacity capacity of the destination buffer
+			 *  @param status for catching errors
+			 *  @return size of the image
+			 *  @see ucol_openBinary
+			 *  @stable ICU 3.2
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_cloneBinary" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_cloneBinary" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern Int32
 					ucol_cloneBinary(SafeRuleBasedCollatorHandle collator,
 									 [MarshalAs(UnmanagedType.U1)] out int buffer, Int32 capacity,
 									 out ErrorCode status);
 			*/
-/** Opens a collator from a collator binary image created using
- *  ucol_cloneBinary. Binary image used in instantiation of the
- *  collator remains owned by the user and should stay around for
- *  the lifetime of the collator. The API also takes a base collator
- *  which usualy should be UCA.
- *  @param bin binary image owned by the user and required through the
- *             lifetime of the collator
- *  @param length size of the image. If negative, the API will try to
- *                figure out the length of the image
- *  @param base fallback collator, usually UCA. Base is required to be
- *              present through the lifetime of the collator. Currently
- *              it cannot be NULL.
- *  @param status for catching errors
- *  @return newly created collator
- *  @see ucol_cloneBinary
- *  @stable ICU 3.2
- */
+			/** Opens a collator from a collator binary image created using
+			 *  ucol_cloneBinary. Binary image used in instantiation of the
+			 *  collator remains owned by the user and should stay around for
+			 *  the lifetime of the collator. The API also takes a base collator
+			 *  which usualy should be UCA.
+			 *  @param bin binary image owned by the user and required through the
+			 *             lifetime of the collator
+			 *  @param length size of the image. If negative, the API will try to
+			 *                figure out the length of the image
+			 *  @param base fallback collator, usually UCA. Base is required to be
+			 *              present through the lifetime of the collator. Currently
+			 *              it cannot be NULL.
+			 *  @param status for catching errors
+			 *  @return newly created collator
+			 *  @see ucol_cloneBinary
+			 *  @stable ICU 3.2
+			 */
 			/*
-			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openBinary" + ICU_VERSION_SUFFIX)]
+			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openBinary" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 			public static extern SafeRuleBasedCollatorHandle
 					ucol_openBinary(byte[] bin, Int32 length,
 									SafeRuleBasedCollatorHandle baseCollator,
