@@ -2,7 +2,7 @@
 
   <Target Name="JustVersion">
 	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="0.1.3">
+	<CreateProperty Value="*.*.*">
 	  <Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 
@@ -22,10 +22,10 @@
   </Target>
 
 	<ItemGroup>
-		<AssemblyInfoFiles Include="$(RootDir)/src/**/AssemblyInfo.cs"/>
+		<AssemblyInfoFiles Include="$(RootDir)/source/**/AssemblyInfo.cs"/>
 	</ItemGroup>
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
-	  <StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
+	  <StampAssemblies Version="$(Version)" FileVersion="$(Version).$(BuildCounter)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
 	</Target>
 
 	<PropertyGroup>

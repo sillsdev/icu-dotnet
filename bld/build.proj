@@ -15,7 +15,7 @@
 	<Message Text="Build Complete"/>
   </Target>
 
-  <Import Project="$(RootDir)/build/build.common.proj" />
+  <Import Project="$(RootDir)/bld/build.common.proj" />
 
   <Target Name="Compile" DependsOnTargets="SetAssemblyVersion">
 	<MSBuild Projects="$(teamcity_build_checkoutDir)\source\$(Solution)"
