@@ -1,0 +1,93 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="StampAssemblies" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
+  <!-- <UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" /> -->
+  <UsingTask TaskName="Split" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="FileUpdate" AssemblyFile="$(teamcity_build_checkoutDir)/bld/Palaso.BuildTasks.dll" />
+  <UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"/>
+
+  <PropertyGroup>
+	<Solution>icu.net.sln</Solution>
+	<ApplicationName>libicu-cil</ApplicationName>
+  </PropertyGroup>
+
+  <Target Name="Build">
+	<CallTarget Targets="Compile"/>
+	<Message Text="Build Complete"/>
+  </Target>
+
+  <Import Project="$(RootDir)/bld/build.common.proj" />
+
+  <Target Name="Compile" DependsOnTargets="SetAssemblyVersion">
+	<MSBuild Projects="$(teamcity_build_checkoutDir)\source\$(Solution)"
+			 Targets="Rebuild"
+			 Properties="Configuration=Release" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+	<ItemGroup>
+	  <TestAssemblies Include="$(teamcity_build_checkoutDir)/output/Release/*Tests.dll;" Exclude="" />
+	</ItemGroup>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="SkipOnTeamCity" />
+  </Target>
+
+  <Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
+
+	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
+	<Copy SourceFiles ="$(teamcity_build_checkoutDir)\installer\DownloadPointers.htm"
+		   DestinationFolder ="$(teamcity_build_checkoutDir)\output\Installer"/>
+
+	<!-- replace some parts of the file with the version number & date -->
+
+	<FileUpdate File="$(teamcity_build_checkoutDir)\output\Installer\DownloadPointers.htm"
+				DatePlaceholder='DEV_RELEASE_DATE'
+				Regex='DEV_VERSION_NUMBER'
+				ReplacementText="$(Version)" />
+
+	<!-- push up to the web so that on our downloads page, we can give a link to the latest version -->
+
+	<Message Text="Attempting rsync of DownloadPointers.htm" Importance="high"/>
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/DownloadPointers.htm" bob@palaso.org:/var/www/virtual/palaso.org/solid/htdocs/files/DownloadPointers.htm' />
+  </Target>
+
+  <Target Name="Upload" DependsOnTargets="VersionNumbers; Installer" >
+	<Message Text="Attempting rsync of $(ApplicationName)Installer.$(Version).exe" Importance="high"/>
+
+	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vz -p --chmod=ug+rw -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=C:\BuildAgent\conf\bob.key -l bob"  "../output/installer/$(ApplicationName)Installer.$(Version).exe" bob@palaso.org:/var/www/virtual/palaso.org/solid/htdocs/files/$(ApplicationName)Installer.$(Version).exe' />
+
+	<CallTarget Targets ='MakeDownloadPointers'/>
+  </Target>
+
+
+  <Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
+
+	<ItemGroup>
+		<InstallerOutputFiles Include="$(teamcity_build_checkoutDir)/output/installer/*;" Exclude="" />
+	</ItemGroup>
+	<Delete Files="@(InstallerOutputFiles)" TreatErrorsAsWarnings="false" />
+
+	<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\installer\setup.iss"
+		  DestinationFiles="$(teamcity_build_checkoutDir)\installer\setup-tmp.iss"
+	/>
+
+	<FileUpdate File="$(teamcity_build_checkoutDir)\installer\setup-tmp.iss" Regex='#define MyAppVersion.*'
+				ReplacementText = '#define MyAppVersion "$(Version)"' />
+
+	<Message Text="Making Installer Version: $(Version)" Importance="high"  />
+
+	<Exec Command='"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" ..\installer\setup-tmp.iss' />
+
+	<!-- remove the setup-tmp file -->
+	<Delete Files="$(teamcity_build_checkoutDir)\installer\setup-tmp.iss" TreatErrorsAsWarnings="false" />
+
+	<!-- remove an existing one with the same name, if necessary -->
+	<Delete Files="$(teamcity_build_checkoutDir)\output\installer\$(ApplicationName)Installer.$(Version).exe" TreatErrorsAsWarnings="false" />
+	<Copy SourceFiles="$(teamcity_build_checkoutDir)\installer\output\$(ApplicationName)Installer.exe"
+		  DestinationFiles="$(teamcity_build_checkoutDir)\output\installer\$(ApplicationName)Installer.$(Version).exe" />
+
+	<!-- remove the installer which has no version number (wouldn't need this if the copy above was a move, instead) -->
+	<Delete Files="$(teamcity_build_checkoutDir)\installer\output\$(ApplicationName)Installer.exe" TreatErrorsAsWarnings="false" />
+
+  </Target>
+
+</Project>
