@@ -1,14 +1,14 @@
 Source: libicu-cil
-Section: cli-mono
+Section: libs
 Priority: optional
 Maintainer: Martin Hosken <mhosken@sil.org>
-Build-Depends: debhelper (>=7), cli-common-dev (>=0.7),mono-gmcs (>=2.0), mono-gac (>=2.0), mono-xbuild, libmono-system-data2.0-cil, nunit-console, libicu-dev
-Standards-Version: 3.9.2
+Build-Depends: debhelper (>=5), mono-gmcs (>=2.0), nant (> 0.85), mono-gac (>=2.0), libmono-nunit2.2-cil
+Standards-Version: 3.7.3
 
 Package: libicu-cil
-Section: cli-mono
-Architecture: all
-Depends: libmono-corlib2.0-cil (>= 2.0), libmono-system2.0-cil (>=2.0), ${misc:Depends}, ${cli:Depends}, ${shlibs:Depends}
-Description: C# wrapper for ICU 4.0 and later
- libicu-cil is a C# library to allow interaction with the
+Section: libs
+Architecture: any
+Depends: libmono-corlib2.0-cil (>= 2.0), libmono-system2.0-cil (>=2.0), libicu40
+Description: mono/.net wrapper for ICU 4.0 and later
+ libicu-cil is a mono/.net library to allow interaction with the
  ICU library.

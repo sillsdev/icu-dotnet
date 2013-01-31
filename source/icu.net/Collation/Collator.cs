@@ -56,7 +56,7 @@ namespace Icu.Collation
 			{
 				throw new ArgumentNullException();
 			}
-			return Create(cultureInfo.Name.Replace('-','_'), fallback);
+			return Create(cultureInfo.IetfLanguageTag, fallback);
 		}
 
 		static public SortKey CreateSortKey(string originalString, byte[] keyData)
