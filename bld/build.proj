@@ -11,13 +11,14 @@
   </PropertyGroup>
 
   <Target Name="Build">
+	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
 
   <Import Project="$(RootDir)/bld/build.common.proj" />
 
-  <Target Name="Compile" DependsOnTargets="SetAssemblyVersion">
+  <Target Name="Compile">
 	<MSBuild Projects="$(teamcity_build_checkoutDir)\source\$(Solution)"
 			 Targets="Rebuild"
 			 Properties="Configuration=Release" />
