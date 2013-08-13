@@ -22,6 +22,7 @@ namespace Icu.Collation
 			protected override bool ReleaseHandle()
 			{
 				NativeMethods.ucol_close(handle);
+				handle = IntPtr.Zero;
 				return true;
 			}
 
@@ -346,10 +347,12 @@ namespace Icu.Collation
 
 		public static new Collator Create(string localeId, Fallback fallback)
 		{
+			if (localeId == "")
+				localeId = "root";
 			RuleBasedCollator instance = new RuleBasedCollator();
 			ErrorCode status;
 			instance.collatorHandle = NativeMethods.ucol_open(localeId, out status);
-			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
+			if (localeId != instance.Id && fallback == Fallback.NoFallback)
 			{
 				throw new ArgumentException("Could only create Collator by falling back to '" +
 											instance.Id +
@@ -382,9 +385,10 @@ namespace Icu.Collation
 		 get
 		 {
 			 ErrorCode status;
-			 string result = NativeMethods.ucol_getLocaleByType(collatorHandle,
-														 NativeMethods.LocaleType.ActualLocale,
-														 out status);
+			 // See NativeMethods.ucol_getLocaleByType for marshal information.
+			 string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(collatorHandle,
+													 NativeMethods.LocaleType.ValidLocale,
+													 out status));
 			 if(status != ErrorCode.NoErrors)
 			 {
 				 return string.Empty;
@@ -429,10 +433,15 @@ namespace Icu.Collation
 
 		private static class NativeMethods
 		{
+#if !__MonoCS__
 			private const string ICU_I18N_LIB = "icuin40.dll";
 			private const string ICU_COMMON_LIB = "icuuc40.dll";
 			private const string ICU_VERSION_SUFFIX = "_4_0";
-
+#else
+			private const string ICU_I18N_LIB = "icuin48.dll";
+			private const string ICU_COMMON_LIB = "icuuc48.dll";
+			private const string ICU_VERSION_SUFFIX = "_48";
+#endif
 			/**
 			 * Function type declaration for uenum_close().
 			 *
@@ -1151,9 +1160,13 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  *
  */
 
+			// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling
+			// creates a copy of the string and tries to de-allocate the C memory used by the
+			// char*. Using IntPtr will not create a copy of any object and therefore will not
+			// try to de-allocate memory. De-allocating memory from a string literal is not a
+			// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));
 			[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX)]
-			[return : MarshalAs(UnmanagedType.LPStr)]
-			public static extern string
+			public static extern IntPtr
 					ucol_getLocaleByType(SafeRuleBasedCollatorHandle collator, LocaleType type,
 										 out ErrorCode status);
 

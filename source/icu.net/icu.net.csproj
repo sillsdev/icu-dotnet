@@ -80,15 +80,18 @@
 	<None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="..\..\lib\icu\icudt40.dll">
+	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icudt40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Include="..\..\lib\icu\icuin40.dll">
+	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icuin40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Include="..\..\lib\icu\icuuc40.dll">
+	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icuuc40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
+	<None Condition="'$(OS)'=='Unix'" Include="icudt48.dll" />
+	<None Condition="'$(OS)'=='Unix'" Include="icuin48.dll" />
+	<None Condition="'$(OS)'=='Unix'" Include="icuuc48.dll" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
