@@ -3,6 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<icu_ver Condition=" '$(icu_ver)' == '' ">40</icu_ver>
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}</ProjectGuid>
@@ -38,7 +39,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>TRACE;DEBUG</DefineConstants>
+	<DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -48,7 +49,7 @@
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
+	<DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -76,18 +77,18 @@
 	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icudt40.dll">
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icudt40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icuin40.dll">
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuin40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(OS)'=='Windows_NT'" Include="..\..\lib\icu\icuuc40.dll">
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuuc40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(OS)'=='Unix'" Include="icudt48.dll" />
-	<None Condition="'$(OS)'=='Unix'" Include="icuin48.dll" />
-	<None Condition="'$(OS)'=='Unix'" Include="icuuc48.dll" />
+	<None Condition="'$(icu_ver)'=='48'" Include="icudt48.dll" />
+	<None Condition="'$(icu_ver)'=='48'" Include="icuin48.dll" />
+	<None Condition="'$(icu_ver)'=='48'" Include="icuuc48.dll" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

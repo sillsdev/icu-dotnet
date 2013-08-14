@@ -433,7 +433,7 @@ namespace Icu.Collation
 
 		private static class NativeMethods
 		{
-#if !__MonoCS__
+#if ICU_VER_40
 			private const string ICU_I18N_LIB = "icuin40.dll";
 			private const string ICU_COMMON_LIB = "icuuc40.dll";
 			private const string ICU_VERSION_SUFFIX = "_4_0";
