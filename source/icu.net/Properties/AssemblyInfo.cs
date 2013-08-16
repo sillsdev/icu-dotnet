@@ -31,6 +31,8 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
+// (The AssemblyVersion needs to match the version that Palaso builds against.)
+// (The AssemblyFileVersion matches the ICU version number we're building against.)
 [assembly: AssemblyVersion("4.2.1.0")]
 [assembly: AssemblyFileVersion("4.8.1.1")]
 
