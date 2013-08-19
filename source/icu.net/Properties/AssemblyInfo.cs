@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("4.2.1.0")]
 #if ICU_VERSION_40
 [assembly: AssemblyFileVersion("4.2.1.*")]
-#if ICU_VERSION_48
+#elif ICU_VERSION_48
 [assembly: AssemblyFileVersion("4.8.1.1")]
 #else
 [assembly: AssemblyFileVersion("5.0.0.2")]
