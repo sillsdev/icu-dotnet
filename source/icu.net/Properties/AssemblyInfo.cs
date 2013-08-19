@@ -34,7 +34,12 @@ using System.Runtime.InteropServices;
 // (The AssemblyVersion needs to match the version that Palaso builds against.)
 // (The AssemblyFileVersion matches the ICU version number we're building against.)
 [assembly: AssemblyVersion("4.2.1.0")]
+#if ICU_VERSION_40
+[assembly: AssemblyFileVersion("4.2.1.*")]
+#if ICU_VERSION_48
 [assembly: AssemblyFileVersion("4.8.1.1")]
-
+#else
+[assembly: AssemblyFileVersion("5.0.0.2")]
+#endif
 //Location of the public/private key pair for strong naming this assembly --TA 7 Oct 2008
 [assembly: AssemblyKeyFile("icu.net.snk")]
