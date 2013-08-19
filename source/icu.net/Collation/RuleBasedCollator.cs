@@ -437,10 +437,14 @@ namespace Icu.Collation
 			private const string ICU_I18N_LIB = "icuin40.dll";
 			private const string ICU_COMMON_LIB = "icuuc40.dll";
 			private const string ICU_VERSION_SUFFIX = "_4_0";
-#else
+#elif ICU_VER_48
 			private const string ICU_I18N_LIB = "icuin48.dll";
 			private const string ICU_COMMON_LIB = "icuuc48.dll";
 			private const string ICU_VERSION_SUFFIX = "_48";
+#else
+			private const string ICU_I18N_LIB = "icuin50.dll";
+			private const string ICU_COMMON_LIB = "icuuc50.dll";
+			private const string ICU_VERSION_SUFFIX = "_50";
 #endif
 			/**
 			 * Function type declaration for uenum_close().
