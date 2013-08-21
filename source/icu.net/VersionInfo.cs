@@ -6,6 +6,16 @@ namespace Icu
 	[StructLayout(LayoutKind.Sequential)]
 	public struct VersionInfo
 	{
+		#if ICU_VER_40
+		internal const string ICU_I18N_LIB = "icuin40.dll";
+		internal const string ICU_COMMON_LIB = "icuuc40.dll";
+		internal const string ICU_VERSION_SUFFIX = "_4_0";
+		#else
+		internal const string ICU_I18N_LIB = "icuin48.dll";
+		internal const string ICU_COMMON_LIB = "icuuc48.dll";
+		internal const string ICU_VERSION_SUFFIX = "_48";
+		#endif
+
 		public Byte Major;
 		public Byte Minor;
 		public Byte Micro;

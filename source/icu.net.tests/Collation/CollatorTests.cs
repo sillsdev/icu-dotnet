@@ -3,7 +3,7 @@ using System.Globalization;
 using Icu.Collation;
 using NUnit.Framework;
 
-namespace icu.net.tests.Collation
+namespace Icu.Tests.Collation
 {
 	[TestFixture]
 	public class CollatorTests

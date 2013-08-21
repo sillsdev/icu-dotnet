@@ -3,21 +3,32 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Icu.Collation
 {
 	public abstract class Collator : IComparer<string>, ICloneable
 	{
-		public abstract CollationStrength Strength{get;set;}
-		public abstract NormalizationMode NormalizationMode{get;set;}
-		public abstract FrenchCollation FrenchCollation{get;set;}
-		public abstract CaseLevel CaseLevel{get;set;}
-		public abstract HiraganaQuaternary HiraganaQuaternary{get;set;}
-		public abstract NumericCollation NumericCollation{get;set;}
-		public abstract CaseFirst CaseFirst{get;set;}
-		public abstract AlternateHandling AlternateHandling{get;set;}
+		public abstract CollationStrength Strength{ get; set; }
+
+		public abstract NormalizationMode NormalizationMode{ get; set; }
+
+		public abstract FrenchCollation FrenchCollation{ get; set; }
+
+		public abstract CaseLevel CaseLevel{ get; set; }
+
+		public abstract HiraganaQuaternary HiraganaQuaternary{ get; set; }
+
+		public abstract NumericCollation NumericCollation{ get; set; }
+
+		public abstract CaseFirst CaseFirst{ get; set; }
+
+		public abstract AlternateHandling AlternateHandling{ get; set; }
+
 		public abstract SortKey GetSortKey(string source);
+
 		public abstract int Compare(string source, string target);
+
 		public abstract object Clone();
 
 		public enum Fallback
@@ -78,7 +89,7 @@ namespace Icu.Collation
 			{
 				throw new ArgumentNullException("keyData");
 			}
-			if(0 > keyDataLength || keyDataLength > keyData.Length)
+			if (0 > keyDataLength || keyDataLength > keyData.Length)
 			{
 				throw new ArgumentOutOfRangeException("keyDataLength");
 			}
@@ -90,7 +101,8 @@ namespace Icu.Collation
 			return sortKey;
 		}
 
-		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength) {
+		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
+		{
 			byte[] keyDataCopy = new byte[keyDataLength];
 			Array.Copy(keyData, keyDataCopy, keyDataLength);
 
@@ -105,7 +117,8 @@ namespace Icu.Collation
 
 		}
 
-		private static void SetInternalOriginalStringField(SortKey sortKey, string originalString) {
+		private static void SetInternalOriginalStringField(SortKey sortKey, string originalString)
+		{
 			string propertyName = "SortKey.OriginalString";
 			string monoInternalFieldName = "source";
 			string netInternalFieldName = "m_String";
@@ -130,20 +143,20 @@ namespace Icu.Collation
 			{
 				fieldInfo = type.GetField(monoInternalFieldName,
 										  BindingFlags.Instance
-										  | BindingFlags.NonPublic);
+					| BindingFlags.NonPublic);
 			}
 			else //Is Running On .Net
 			{
 				fieldInfo = type.GetField(netInternalFieldName,
 										  BindingFlags.Instance
-										  | BindingFlags.NonPublic);
+					| BindingFlags.NonPublic);
 			}
 
 			Debug.Assert(fieldInfo != null,
 						 "Unsupported runtime",
 						 "Could not figure out an internal field for" + propertyName);
 
-			if(fieldInfo == null)
+			if (fieldInfo == null)
 			{
 				throw new NotImplementedException("Not implemented for this runtime");
 			}
@@ -154,6 +167,111 @@ namespace Icu.Collation
 		private static bool IsRunningOnMono()
 		{
 			return Type.GetType("Mono.Runtime") != null;
+		}
+
+		/// <summary>
+		/// Simple class to allow passing collation error info back to the caller of CheckRules.
+		/// </summary>
+		public class CollationRuleErrorInfo
+		{
+			/// <summary>Line number (1-based) containing the error</summary>
+			public int Line;
+			/// <summary>Character offset (1-based) on Line where the error was detected</summary>
+			public int Offset;
+			/// <summary>Characters preceding the the error</summary>
+			public String PreContext;
+			/// <summary>Characters following the the error</summary>
+			public String PostContext;
+		}
+
+		// REVIEW: We might want to integrate the methods below in a better way.
+
+		/// <summary>
+		/// Test collation rules and return an object with error information if it fails.
+		/// </summary>
+		/// <param name="rules">String containing the collation rules to check</param>
+		/// <returns>A CollationRuleErrorInfo object with error information; or <c>null</c> if
+		/// no errors are found.</returns>
+		public static CollationRuleErrorInfo CheckRules(string rules)
+		{
+			if (rules == null)
+				return null;
+
+			ErrorCode err;
+			ParseError parseError;
+			IntPtr col = NativeMethods.ucol_openRules(rules, rules.Length, UColAttributeValue.UCOL_DEFAULT,
+				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
+			try
+			{
+				if (err == ErrorCode.NoErrors)
+					return null;
+
+				return new CollationRuleErrorInfo
+					{
+						Line = parseError.Line + 1,
+						Offset = parseError.Offset + 1,
+						PreContext = parseError.PreContext,
+						PostContext = parseError.PostContext
+					};
+			}
+			finally
+			{
+				NativeMethods.ucol_close(col);
+			}
+		}
+
+		/// <summary>
+		/// Gets the collation rules for the specified locale.
+		/// </summary>
+		/// <param name="locale">The locale.</param>
+		/// <returns></returns>
+		public static string GetCollationRules(string locale)
+		{
+			string sortRules = null;
+			ErrorCode err;
+			RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err);
+			if (!coll.IsInvalid && err == ErrorCode.NoErrors)
+			{
+				const int len = 1000;
+				IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
+				try
+				{
+					int actualLen = NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, len);
+					if (actualLen > len)
+					{
+						Marshal.FreeCoTaskMem(buffer);
+						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
+						NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, actualLen);
+					}
+					sortRules = Marshal.PtrToStringUni(buffer);
+				}
+				finally
+				{
+					Marshal.FreeCoTaskMem(buffer);
+				}
+			}
+			return sortRules;
+		}
+
+		/// <summary>
+		/// Produces a bound for a given sort key.
+		/// </summary>
+		/// <param name="sortKey">The sort key.</param>
+		/// <param name="boundType">Type of the bound.</param>
+		/// <param name="result">The result.</param>
+		public static void GetSortKeyBound(byte[] sortKey, UColBoundMode boundType, ref byte[] result)
+		{
+			ErrorCode err;
+			int size = NativeMethods.ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
+			if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
+				throw new Exception("Collator.GetSortKeyBound() failed with code " + err);
+			if (size > result.Length)
+			{
+				result = new byte[size + 1];
+				NativeMethods.ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
+				if (err != ErrorCode.NoErrors)
+					throw new Exception("Collator.GetSortKeyBound() failed with code " + err);
+			}
 		}
 
 	}
