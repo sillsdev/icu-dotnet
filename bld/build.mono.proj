@@ -49,7 +49,7 @@
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
+			ExcludeCategory="ICU50 Deprecated;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
 			NUnitVersion="NUnit-2.5.5" />
 	</Target>
 

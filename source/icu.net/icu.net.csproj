@@ -104,6 +104,9 @@
 	<None Condition="'$(icu_ver)'=='48'" Include="icudt48.dll" />
 	<None Condition="'$(icu_ver)'=='48'" Include="icuin48.dll" />
 	<None Condition="'$(icu_ver)'=='48'" Include="icuuc48.dll" />
+	<None Condition="'$(icu_ver)'=='50'" Include="icudt50.dll" />
+	<None Condition="'$(icu_ver)'=='50'" Include="icuin50.dll" />
+	<None Condition="'$(icu_ver)'=='50'" Include="icuuc50.dll" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

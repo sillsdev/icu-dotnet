@@ -18,11 +18,16 @@ namespace Icu
 		public const string ICU_I18N_LIB = "icuin40.dll";
 		public const string ICU_COMMON_LIB = "icuuc40.dll";
 		public const string ICU_VERSION_SUFFIX = "_4_0";
+		#elif ICU_VER_48
+		private const string ICU_I18N_LIB = "icuin48.dll";
+		private const string ICU_COMMON_LIB = "icuuc48.dll";
+		private const string ICU_VERSION_SUFFIX = "_48";
 		#else
-		public const string ICU_I18N_LIB = "icuin48.dll";
-		public const string ICU_COMMON_LIB = "icuuc48.dll";
-		public const string ICU_VERSION_SUFFIX = "_48";
+		private const string ICU_I18N_LIB = "icuin50.dll";
+		private const string ICU_COMMON_LIB = "icuuc50.dll";
+		private const string ICU_VERSION_SUFFIX = "_50";
 		#endif
+
 		/**
 			 * Function type declaration for uenum_close().
 			 *
