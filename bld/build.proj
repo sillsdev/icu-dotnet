@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <Target Name="Build">
-	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
