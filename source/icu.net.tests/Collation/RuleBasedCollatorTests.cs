@@ -296,6 +296,7 @@ namespace Icu.Tests.Collation
 		}
 
 		[Test]
+		[Category("ICU50 Deprecated")]
 		public void HiraganaQuarternary_Off()
 		{
 			/* Compatibility with JIS x 4061 requires the introduction of an 
