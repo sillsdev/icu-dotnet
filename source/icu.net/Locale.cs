@@ -110,7 +110,7 @@ namespace Icu
 		/// </summary>
 		public string Iso3Language
 		{
-			get { return Marshal.PtrToStringAuto(NativeMethods.uloc_getISO3Language(Id)); }
+			get { return Marshal.PtrToStringAnsi(NativeMethods.uloc_getISO3Language(Id)); }
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace Icu
 		/// </summary>
 		public string Iso3Country
 		{
-			get { return Marshal.PtrToStringAuto(NativeMethods.uloc_getISO3Country(Id)); }
+			get { return Marshal.PtrToStringAnsi(NativeMethods.uloc_getISO3Country(Id)); }
 		}
 
 		public int Lcid

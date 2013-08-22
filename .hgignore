@@ -4,3 +4,6 @@ output/
 obj/
 test-results/
 *.userprefs
+*.user
+*.swp
+*.suo

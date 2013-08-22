@@ -201,6 +201,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void DisplayLanguage()
 		{
 			Locale locale = new Locale("en-US");
@@ -209,6 +210,7 @@ namespace Icu.Tests
 
 		[Test]
 		[SetUICulture("de-DE")]
+		[Category("Full ICU")]
 		public void DisplayLanguage_DifferentDefaultLocale()
 		{
 			Locale locale = new Locale("en-US");
@@ -216,6 +218,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void GetDisplayLanguage()
 		{
 			Locale locale = new Locale("en-US");
@@ -223,6 +226,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void GetDisplayName()
 		{
 			Locale locale = new Locale("en_US_POSIX");
@@ -237,6 +241,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void AvailableLocales()
 		{
 			var locales = Locale.AvailableLocales;

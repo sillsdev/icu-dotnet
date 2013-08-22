@@ -349,12 +349,10 @@ namespace Icu.Collation
 
 		public static new Collator Create(string localeId, Fallback fallback)
 		{
-			if (localeId == "")
-				localeId = "root";
 			RuleBasedCollator instance = new RuleBasedCollator();
 			ErrorCode status;
 			instance.collatorHandle = NativeMethods.ucol_open(localeId, out status);
-			if (localeId != instance.Id && fallback == Fallback.NoFallback)
+			if (status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
 			{
 				throw new ArgumentException("Could only create Collator by falling back to '" +
 											instance.Id +
@@ -384,19 +382,20 @@ namespace Icu.Collation
 
 		private string Id
 		{
-		 get
-		 {
-			 ErrorCode status;
-			 // See NativeMethods.ucol_getLocaleByType for marshal information.
-			 string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(collatorHandle,
-													 NativeMethods.LocaleType.ValidLocale,
-													 out status));
-			 if(status != ErrorCode.NoErrors)
-			 {
-				 return string.Empty;
-			 }
-			 return result;
-		 }
+			get
+			{
+				ErrorCode status;
+				if (collatorHandle.IsInvalid)
+					return string.Empty;
+				// See NativeMethods.ucol_getLocaleByType for marshal information.
+				string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
+					collatorHandle, NativeMethods.LocaleType.ValidLocale, out status));
+				if (status != ErrorCode.NoErrors)
+				{
+					return string.Empty;
+				}
+				return result;
+			}
 		}
 
 		#endregion

@@ -38,6 +38,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void ToTitle()
 		{
 			Assert.That(UnicodeString.ToTitle("ABc", "en-US"), Is.EqualTo("Abc"));
@@ -50,6 +51,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void ToTitleWithNormalization_NFC_LetterIWithDotAbove()
 		{
 			var result = UnicodeString.ToTitle("ibc", "tr", Normalizer.UNormalizationMode.UNORM_NFC);
@@ -58,6 +60,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void ToTitleWithNormalization_NFD_LetterIWithDotAbove()
 		{
 			var result = UnicodeString.ToTitle("\u0131\u0307bc", "tr", Normalizer.UNormalizationMode.UNORM_NFD);

@@ -133,6 +133,7 @@ namespace Icu.Tests
 
 		[Test]
 		[SetUICulture("en-US")]
+		[Category("Full ICU")]
 		public void GetPrettyICUCharName()
 		{
 			Assert.That(Character.GetPrettyICUCharName("a"), Is.EqualTo("Latin Small Letter A"));
@@ -142,6 +143,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[Category("Full ICU")]
 		public void GetCharName()
 		{
 			Assert.That(Character.GetCharName(65), Is.EqualTo("LATIN CAPITAL LETTER A"));

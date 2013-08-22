@@ -18,11 +18,10 @@ namespace Icu.Tests
 		public void UnicodeVersion()
 		{
 			var result = Wrapper.UnicodeVersion;
-			Assert.That(result.Length >= 3);
+			Assert.That(result.Length, Is.GreaterThanOrEqualTo(3));
 			Assert.That(result.IndexOf("."), Is.GreaterThan(0));
 			int major;
 			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".")), out major), Is.True);
-			Assert.That(major >= 6);
 		}
 	}
 }

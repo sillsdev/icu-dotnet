@@ -35,7 +35,7 @@ namespace Icu
 			 *
 			 * @param en enumeration to be closed
 			 */
-		[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_close" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_close" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern void uenum_close(IntPtr en);
 
 		/**
@@ -50,7 +50,7 @@ namespace Icu
 			 * @return next element as UChar *,
 			 *         or NULL after all elements haven been enumerated
 			 */
-		[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uenum_unext" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr uenum_unext(
 			RuleBasedCollator.SafeEnumeratorHandle en,
 			out int resultLength,
@@ -69,7 +69,7 @@ namespace Icu
 		/// <param name="status">A pointer to an ErrorCode to receive any errors
 		///</param>
 		/// <returns>pointer to a Collator or 0 if an error occurred</returns>
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_open"+ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_open" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		public static extern RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_open(
 			[MarshalAs(UnmanagedType.LPStr)] string loc,
 			out ErrorCode status);
@@ -100,7 +100,7 @@ namespace Icu
 		/// <param name="status">A pointer to an ErrorCode to receive any errors</param>
 		/// <returns>A pointer to a UCollator. It is not guaranteed that NULL be returned in case
 		///         of error - please use status argument to check for errors.</returns>
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules"+ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRules(
 			[MarshalAs(UnmanagedType.LPWStr)] string rules,
 			int rulesLength,
@@ -181,7 +181,7 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_strcoll"+ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_strcoll" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern CollationResult ucol_strcoll(RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 														  [MarshalAs(UnmanagedType.LPWStr)] string source,
 														  Int32 sourceLength,
@@ -261,7 +261,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @see ucol_getAvailable
  * @stable ICU 2.0
  */
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable"+ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_countAvailable" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern Int32 ucol_countAvailable();
 
 
@@ -273,7 +273,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * responsible for closing the result.
  * @stable ICU 3.0
  */
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales"+ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openAvailableLocales" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status);
 
 
@@ -436,7 +436,7 @@ public static extern CollationStrength ucol_getStrength(SafeRuleBasedCollatorHan
  * @stable ICU 2.0
  */
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getSortKey" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getSortKey" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern Int32 ucol_getSortKey(RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 												   [MarshalAs(UnmanagedType.LPWStr)] string source,
 												   Int32 sourceLength,
@@ -604,7 +604,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setAttribute" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_setAttribute" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern void ucol_setAttribute(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			CollationAttribute attr,
@@ -623,7 +623,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAttribute" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getAttribute" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern CollationAttributeValue ucol_getAttribute(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			CollationAttribute attr,
@@ -714,7 +714,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  * @stable ICU 2.0
  */
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_safeClone" + ICU_VERSION_SUFFIX)]
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_safeClone" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
 		public static extern RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_safeClone(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			IntPtr stackBuffer,
@@ -756,12 +756,8 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  *
  */
 
-		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling
-		// creates a copy of the string and tries to de-allocate the C memory used by the
-		// char*. Using IntPtr will not create a copy of any object and therefore will not
-		// try to de-allocate memory. De-allocating memory from a string literal is not a
-		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX)]
+		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling		// creates a copy of the string and tries to de-allocate the C memory used by the		// char*. Using IntPtr will not create a copy of any object and therefore will not		// try to de-allocate memory. De-allocating memory from a string literal is not a		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX,
+			CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr
 			ucol_getLocaleByType(RuleBasedCollator.SafeRuleBasedCollatorHandle collator, LocaleType type,
 								 out ErrorCode status);

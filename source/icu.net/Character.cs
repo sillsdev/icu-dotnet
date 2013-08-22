@@ -414,8 +414,12 @@ namespace Icu
 				ErrorCode error;
 				int nResult = NativeMethods.u_CharName(code, nameChoice, resPtr, nSize, out error);
 				if (error != ErrorCode.NoErrors)
+				{
 					nResult = -1;
-				name = Marshal.PtrToStringAnsi(resPtr);
+					name = null;
+				}
+				else
+					name = Marshal.PtrToStringAnsi(resPtr);
 				return nResult;
 			}
 			finally

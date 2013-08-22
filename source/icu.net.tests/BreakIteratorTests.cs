@@ -13,6 +13,7 @@ using NUnit.Framework;
 namespace Icu.Tests
 {
 	[TestFixture]
+	[Category("Full ICU")]
 	public class BreakIteratorTests
 	{
 		[Test]
