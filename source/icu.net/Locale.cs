@@ -128,15 +128,27 @@ namespace Icu
 
 		public string DisplayLanguage
 		{
-			get
-			{
-				return GetString(NativeMethods.uloc_getDisplayLanguage, Id, new Locale().Id);
-			}
+			get { return GetDisplayLanguage(new Locale().Id); }
 		}
 
 		public string GetDisplayLanguage(Locale displayLocale)
 		{
 			return GetString(NativeMethods.uloc_getDisplayLanguage, Id, displayLocale.Id);
+		}
+
+		public string DisplayCountry
+		{
+			get { return GetDisplayCountry(new Locale().Id); }
+		}
+
+		public string GetDisplayCountry(Locale displayLocale)
+		{
+			return GetString(NativeMethods.uloc_getDisplayCountry, Id, displayLocale.Id);
+		}
+
+		public string DisplayName
+		{
+			get { return GetDisplayName(new Locale().Id); }
 		}
 
 		public string GetDisplayName(Locale displayLocale)
@@ -158,6 +170,11 @@ namespace Icu
 					locales.Add(new Locale(Marshal.PtrToStringAnsi(NativeMethods.uloc_getAvailable(i))));
 				return locales;
 			}
+		}
+
+		public static implicit operator Locale(string localeId)
+		{
+			return new Locale(localeId);
 		}
 
 		#region ICU wrapper methods
