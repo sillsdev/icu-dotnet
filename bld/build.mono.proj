@@ -18,7 +18,6 @@
 
   <Target Name="Build">
 	<CallTarget Targets="Clean"/>
-	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -49,7 +48,7 @@
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="ICU50 Deprecated;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
+			ExcludeCategory="ICU50 Deprecated;Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
 			NUnitVersion="NUnit-2.6.2" />
 	</Target>
 

@@ -15,9 +15,9 @@ namespace Icu
 	internal static class NativeMethods
 	{
 		#if ICU_VER_40
-		public const string ICU_I18N_LIB = "icuin40.dll";
-		public const string ICU_COMMON_LIB = "icuuc40.dll";
-		public const string ICU_VERSION_SUFFIX = "_4_0";
+		public const string ICU_I18N_LIB = "icuin42.dll";
+		public const string ICU_COMMON_LIB = "icuuc42.dll";
+		public const string ICU_VERSION_SUFFIX = "_4_2";
 		#elif ICU_VER_48
 		private const string ICU_I18N_LIB = "icuin48.dll";
 		private const string ICU_COMMON_LIB = "icuuc48.dll";
@@ -756,7 +756,12 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  *
  */
 
-		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling		// creates a copy of the string and tries to de-allocate the C memory used by the		// char*. Using IntPtr will not create a copy of any object and therefore will not		// try to de-allocate memory. De-allocating memory from a string literal is not a		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX,
+		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling
+		// creates a copy of the string and tries to de-allocate the C memory used by the
+		// char*. Using IntPtr will not create a copy of any object and therefore will not
+		// try to de-allocate memory. De-allocating memory from a string literal is not a
+		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX,
 			CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr
 			ucol_getLocaleByType(RuleBasedCollator.SafeRuleBasedCollatorHandle collator, LocaleType type,
