@@ -1,0 +1,21 @@
+* text=auto whitespace=space-before-tab,indent-with-non-tab,blank-at-eol,tabwidth=4
+
+*.cs    diff=csharp
+*.cpp   diff=cpp
+*.h     diff=cpp
+*.idh   diff=cpp
+
+# Don't check whitespace for generated files
+*.csproj -whitespace
+*.resx -whitespace
+*.Designer.cs -whitespace
+*.vdproj -whitespace
+*.config -whitespace
+*.settings -whitespace
+*.ReSharper -whitespace
+*.vcxproj -whitespace
+*.vcxproj.filters -whitespace
+*.patch -whitespace
+*.svg -whitespace
+*.xml -whitespace
+changelog -whitespace
