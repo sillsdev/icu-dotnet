@@ -1,3 +1,4 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
@@ -44,6 +45,13 @@ Global
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Win32.ActiveCfg = Release|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|x86.ActiveCfg = Release|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = icu.net\icu.net.csproj
+		Policies = $0
+		$0.StandardHeader = $1
+		$1.Text = @Copyright (c) ${Year} SIL International\nThis software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+		$1.IncludeInNewFiles = True
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,5 @@
-// --------------------------------------------------------------------------------------------
-// <copyright from='2013' to='2013' company='SIL International'>
-// 	Copyright (c) 2013, SIL International. All Rights Reserved.
-//
-// 	Distributable under the terms of either the Common Public License or the
-// 	GNU Lesser General Public License, as specified in the LICENSING.txt file.
-// </copyright>
-// --------------------------------------------------------------------------------------------
+// Copyright (c) 2013 SIL International
+// This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using NUnit.Framework;
 using Icu;
