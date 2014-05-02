@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <Target Name="Build">
+	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -27,7 +28,7 @@
 	<ItemGroup>
 	  <TestAssemblies Include="$(teamcity_build_checkoutDir)/output/Release/*Tests.dll;" Exclude="" />
 	</ItemGroup>
-	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="Full ICU" NUnitVersion="NUnit-2.6.2"/>
+	<NUnitTeamCity Assemblies="@(TestAssemblies)" ExcludeCategory="ICU50 Deprecated;Full ICU" NUnitVersion="NUnit-2.6.2"/>
   </Target>
 
 </Project>
