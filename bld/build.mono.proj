@@ -25,13 +25,18 @@
 
 
 	<ItemGroup>
+		<!-- We would like to Include "$(RootDir)/**/obj/**/*" as well, but the Mono 3 xbuild -->
+		<!-- treats that pattern the same as "$(RootDir)/**/*", which has unfortunate results! -->
 		<ExistingObjectFiles
-			Include="$(RootDir)/**/obj/**/*;$(RootDir)/output/$(Configuration)/**/*"
-			Exclude="$(RootDir)/.hg/**/*"
+			Include="$(RootDir)/output/$(Configuration)/**/*"
+			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
 		/>
 	</ItemGroup>
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
+		<Exec
+			Command="find . -path '*/obj/$(Configuration)' -type d -print0 | xargs -0 rm -rvf"
+			WorkingDirectory="$(RootDir)" />
 	</Target>
 
 	<Target Name="Compile">
