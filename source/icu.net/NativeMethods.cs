@@ -81,6 +81,7 @@ namespace Icu
 			out int resultLength,
 			out ErrorCode status);
 
+		#region Unicode collator
 		/// <summary>
 		/// Open a Collator for comparing strings.
 		/// Collator pointer is used in all the calls to the Collation
@@ -781,7 +782,12 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
  *
  */
 
-		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling		// creates a copy of the string and tries to de-allocate the C memory used by the		// char*. Using IntPtr will not create a copy of any object and therefore will not		// try to de-allocate memory. De-allocating memory from a string literal is not a		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX,
+		// Return IntPtr instead of marshalling string as unmanaged LPStr. By default, marshalling
+		// creates a copy of the string and tries to de-allocate the C memory used by the
+		// char*. Using IntPtr will not create a copy of any object and therefore will not
+		// try to de-allocate memory. De-allocating memory from a string literal is not a
+		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...));
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getLocaleByType" + ICU_VERSION_SUFFIX,
 			CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr
 			ucol_getLocaleByType(RuleBasedCollator.SafeRuleBasedCollatorHandle collator, LocaleType type,
@@ -845,6 +851,22 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 									SafeRuleBasedCollatorHandle baseCollator,
 									out ErrorCode status);
 			*/
+
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRulesEx" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern int ucol_getRulesEx(RuleBasedCollator.SafeRuleBasedCollatorHandle coll, UColRuleOption delta, IntPtr buffer, int bufferLen);
+		/// <summary>Test the rules to see if they are valid.</summary>
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern IntPtr ucol_openRules(string rules, int rulesLength, UColAttributeValue normalizationMode,
+													UColAttributeValue strength, out ParseError parseError, out ErrorCode status);
+
+		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getBound" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern int ucol_getBound(byte[] source, int sourceLength, UColBoundMode boundType, int noOfLevels,
+												byte[] result, int resultLength, out ErrorCode status);
+
+		#endregion Unicode collator
 
 		/*
 			public enum CollationRuleOption
@@ -1099,6 +1121,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		public static extern bool u_isspace(
 			int characterCode);
 
+		#region LCID
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the ICU LCID for a locale</summary>
 		/// ------------------------------------------------------------------------------------
@@ -1277,6 +1300,8 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		public static extern int uloc_canonicalize(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err);
 
+		#endregion
+
 		/// <summary>Return the lower case equivalent of the string.</summary>
 		[DllImport(ICU_COMMON_LIB, EntryPoint = "u_strToLower" + ICU_VERSION_SUFFIX,
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -1298,20 +1323,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 			int destCapacity, string src, int srcLength,
 			[MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode);
 
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getRulesEx" + ICU_VERSION_SUFFIX,
-				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		public static extern int ucol_getRulesEx(RuleBasedCollator.SafeRuleBasedCollatorHandle coll, UColRuleOption delta, IntPtr buffer, int bufferLen);
-		/// <summary>Test the rules to see if they are valid.</summary>
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_openRules" + ICU_VERSION_SUFFIX,
-				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		public static extern IntPtr ucol_openRules(string rules, int rulesLength, UColAttributeValue normalizationMode,
-													UColAttributeValue strength, out ParseError parseError, out ErrorCode status);
-
-		[DllImport(ICU_I18N_LIB, EntryPoint = "ucol_getBound" + ICU_VERSION_SUFFIX,
-				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		public static extern int ucol_getBound(byte[] source, int sourceLength, UColBoundMode boundType, int noOfLevels,
-												byte[] result, int resultLength, out ErrorCode status);
-
+		#region normalize
 		/// <summary>
 		/// Normalize a string according to the given mode and options.
 		/// </summary>
@@ -1329,6 +1341,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		// Note that ICU's UBool type is typedef to an 8-bit integer.
 		public static extern byte unorm_isNormalized(string source, int sourceLength,
 													 Normalizer.UNormalizationMode mode, out ErrorCode errorCode);
+		#endregion normalize
 
 		#region Break iterator
 
@@ -1382,5 +1395,98 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		public static extern int ubrk_getRuleStatus(IntPtr bi);
 		#endregion Break iterator
 
+		#region Unicode set
+
+		/// <summary>
+		/// Disposes of the storage used by Unicode set.  This function should be called exactly once for objects returned by uset_open()
+		/// </summary>
+		/// <param name="set">Unicode set to dispose of </param>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_close" + ICU_VERSION_SUFFIX, CallingConvention = CallingConvention.Cdecl)]
+		public static extern void uset_close(IntPtr set);
+
+		/// <summary>
+		/// Creates a Unicode set that contains the range of characters start..end, inclusive.
+		/// If start > end then an empty set is created (same as using uset_openEmpty()).
+		/// </summary>
+		/// <param name="start">First character of the range, inclusive</param>
+		/// <param name="end">Last character of the range, inclusive</param>
+		/// <returns>Unicode set of characters.  The caller must call uset_close() on it when done</returns>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_open" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern IntPtr uset_open(char start, char end);
+
+		/// <summary>
+		/// Creates a set from the given pattern.
+		/// </summary>
+		/// <param name="pattern">A string specifying what characters are in the set</param>
+		/// <param name="patternLength">Length of the pattern, or -1 if null terminated</param>
+		/// <param name="status">The error code</param>
+		/// <returns>Unicode set</returns>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_openPattern" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern IntPtr uset_openPattern(string pattern, int patternLength, ref ErrorCode status);
+
+		/// <summary>
+		/// Adds the given character to the given Unicode set.  After this call, uset_contains(set, c) will return TRUE.  A frozen set will not be modified.
+		/// </summary>
+		/// <param name="set">The object to which to add the character</param>
+		/// <param name="c">The character to add</param>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_add" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern void uset_add(IntPtr set, char c);
+
+		/// <summary>
+		/// Returns a string representation of this set.  If the result of calling this function is 
+		/// passed to a uset_openPattern(), it will produce another set that is equal to this one.
+		/// </summary>
+		/// <param name="set">The Unicode set</param>
+		/// <param name="result">The string to receive the rules, may be NULL</param>
+		/// <param name="resultCapacity">The capacity of result, may be 0 if result is NULL</param>
+		/// <param name="escapeUnprintable">if TRUE then convert unprintable characters to their hex escape representations,
+		/// \uxxxx or \Uxxxxxxxx. Unprintable characters are those other than U+000A, U+0020..U+007E.</param>
+		/// <param name="status">Error code</param>
+		/// <returns>Length of string, possibly larger than resultCapacity</returns>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_toPattern" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern int uset_toPattern(IntPtr set, IntPtr result, int resultCapacity,
+			bool escapeUnprintable, ref ErrorCode status);
+
+		/// <summary>
+		/// Adds the given string to the given Unicode set
+		/// </summary>
+		/// <param name="set">The Unicode set to which to add the string</param>
+		/// <param name="str">The string to add</param>
+		/// <param name="strLen">The length of the string or -1 if null</param>
+		/// 
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_addString" + ICU_VERSION_SUFFIX,
+				CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern void uset_addString(IntPtr set, string str, int strLen);
+
+		/// <summary>
+		/// Returns an item of this Unicode set.  An item is either a range of characters or a single multicharacter string.
+		/// </summary>
+		/// <param name="set">The Unicode set</param>
+		/// <param name="itemIndex">A non-negative integer in the range 0..uset_getItemCount(set)-1</param>
+		/// <param name="start">Pointer to variable to receive first character in range, inclusive</param>
+		/// <param name="end">POinter to variable to receive the last character in range, inclusive</param>
+		/// <param name="str">Buffer to receive the string, may be NULL</param>
+		/// <param name="strCapacity">Capcacity of str, or 0 if str is NULL</param>
+		/// <param name="ec">Error Code</param>
+		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it is the range *start..*end, or -1 if itemIndex is out of range</returns>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_getItem" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern int uset_getItem(IntPtr set, int itemIndex, out char start, out char end, IntPtr str,
+			int strCapacity, ref ErrorCode ec);
+
+		/// <summary>
+		/// Returns the number of items in this set.  An item is either a range of characters or a single multicharacter string
+		/// </summary>
+		/// <param name="set">The Unicode set</param>
+		/// <returns>A non-negative integer counting the character ranges and/or strings contained in the set</returns>
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_getItemCount" + ICU_VERSION_SUFFIX,
+				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		public static extern int uset_getItemCount(IntPtr set);
+
+		#endregion Unicode set
 	}
 }
