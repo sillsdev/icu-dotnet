@@ -116,6 +116,7 @@
 	<Compile Include="LocaleTests.cs" />
 	<Compile Include="CharacterTests.cs" />
 	<Compile Include="UnicodeStringTests.cs" />
+	<Compile Include="UnicodeSetTests.cs" />
 	<Compile Include="NormalizerTests.cs" />
 	<Compile Include="BreakIteratorTests.cs" />
 	<Compile Include="IcuWrapperTests.cs" />

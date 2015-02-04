@@ -134,6 +134,7 @@
 	<Compile Include="Collation\UColAttributeValue.cs" />
 	<Compile Include="Collation\UColBoundMode.cs" />
 	<Compile Include="UnicodeString.cs" />
+	<Compile Include="UnicodeSet.cs" />
 	<Compile Include="Normalizer.cs" />
 	<Compile Include="BreakIterator.cs" />
   </ItemGroup>
