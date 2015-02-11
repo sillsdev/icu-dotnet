@@ -1475,7 +1475,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it is the range *start..*end, or -1 if itemIndex is out of range</returns>
 		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_getItem" + ICU_VERSION_SUFFIX,
 				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		public static extern int uset_getItem(IntPtr set, int itemIndex, out char start, out char end, IntPtr str,
+		public static extern int uset_getItem(IntPtr set, int itemIndex, out int start, out int end, IntPtr str,
 			int strCapacity, ref ErrorCode ec);
 
 		/// <summary>
