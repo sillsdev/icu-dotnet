@@ -69,7 +69,7 @@ namespace Icu
 			}
 
 			var err = ErrorCode.ZERO_ERROR;
-			IntPtr result = NativeMethods.uset_openPattern(pattern, pattern.Length, ref err);
+			IntPtr result = NativeMethods.uset_openPattern(pattern, -1, ref err);
 			try
 			{
 				if (err != ErrorCode.NoErrors)
@@ -79,13 +79,12 @@ namespace Icu
 				// Parse the number of items in the Unicode set
 				for (int i = 0; i < NativeMethods.uset_getItemCount(result); i++)
 				{
-					char startChar;
-					char endChar;
+					int startChar, endChar;
 					int strLength = NativeMethods.uset_getItem(result, i, out startChar, out endChar, IntPtr.Zero, 0, ref err);
 					if (strLength == 0)
 					{
 						// Add a character range to the set
-						for (int j = startChar; j <= (int) endChar; j++)
+						for (int j = startChar; j <= endChar; j++)
 						{
 							output.Add(((char) j).ToString(CultureInfo.InvariantCulture));
 						}
@@ -99,7 +98,7 @@ namespace Icu
 							err = ErrorCode.ZERO_ERROR;
 							strLength = NativeMethods.uset_getItem(result, i, out startChar, out endChar, buffer, strLength, ref err);
 							if (err > ErrorCode.NoErrors)
-								throw new Exception("UnicodeSet.Tocharacters() failed with code " + err);
+								throw new Exception("UnicodeSet.ToCharacters() failed with code " + err);
 							output.Add(Marshal.PtrToStringUni(buffer, strLength));
 						}
 						finally

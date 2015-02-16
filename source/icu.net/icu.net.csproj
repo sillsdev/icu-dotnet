@@ -142,21 +142,16 @@
 	<None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-	<None Condition="'$(icu_ver)'=='42'" Include="..\..\lib\icu\icudt42.dll">
+	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icudt40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='42'" Include="..\..\lib\icu\icuin42.dll">
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuin40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='42'" Include="..\..\lib\icu\icuuc42.dll">
+	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuuc40.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='48'" Include="icudt48.dll" />
-	<None Condition="'$(icu_ver)'=='48'" Include="icuin48.dll" />
-	<None Condition="'$(icu_ver)'=='48'" Include="icuuc48.dll" />
-	<None Condition="'$(icu_ver)'=='50'" Include="..\..\lib\icu\icudt50.dll" />
-	<None Condition="'$(icu_ver)'=='50'" Include="..\..\lib\icu\icuin50.dll" />
-	<None Condition="'$(icu_ver)'=='50'" Include="..\..\lib\icu\icuuc50.dll" />
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -174,9 +169,6 @@
 	  <ProductName>Windows Installer 3.1</ProductName>
 	  <Install>true</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<None Include="icu.net.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

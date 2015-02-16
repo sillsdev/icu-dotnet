@@ -9,17 +9,48 @@ namespace Icu
 	internal static class NativeMethods
 	{
 		#if ICU_VER_40
-		public const string ICU_I18N_LIB = "icuin42.dll";
-		public const string ICU_COMMON_LIB = "icuuc42.dll";
-		public const string ICU_VERSION_SUFFIX = "_4_2";
+		internal const string ICU_I18N_LIB = "icuin40.dll";
+		internal const string ICU_COMMON_LIB = "icuuc40.dll";
+		internal const string ICU_VERSION_SUFFIX = "_4_0";
 		#elif ICU_VER_48
-		private const string ICU_I18N_LIB = "icuin48.dll";
-		private const string ICU_COMMON_LIB = "icuuc48.dll";
-		private const string ICU_VERSION_SUFFIX = "_48";
+		internal const string ICU_I18N_LIB = "icuin48.dll";
+		internal const string ICU_COMMON_LIB = "icuuc48.dll";
+		internal const string ICU_VERSION_SUFFIX = "_48";
+		#elif ICU_VER_49
+		internal const string ICU_I18N_LIB = "icuin49.dll";
+		internal const string ICU_COMMON_LIB = "icuuc49.dll";
+		internal const string ICU_VERSION_SUFFIX = "_49";
+		#elif ICU_VER_50
+		internal const string ICU_I18N_LIB = "icuin50.dll";
+		internal const string ICU_COMMON_LIB = "icuuc50.dll";
+		internal const string ICU_VERSION_SUFFIX = "_50";
+		#elif ICU_VER_51
+		internal const string ICU_I18N_LIB = "icuin51.dll";
+		internal const string ICU_COMMON_LIB = "icuuc51.dll";
+		internal const string ICU_VERSION_SUFFIX = "_51";
+		#elif ICU_VER_52
+		internal const string ICU_I18N_LIB = "icuin52.dll";
+		internal const string ICU_COMMON_LIB = "icuuc52.dll";
+		internal const string ICU_VERSION_SUFFIX = "_52";
+		// Provide a bit of future proofing...
+		#elif ICU_VER_53
+		internal const string ICU_I18N_LIB = "icuin53.dll";
+		internal const string ICU_COMMON_LIB = "icuuc53.dll";
+		internal const string ICU_VERSION_SUFFIX = "_53";
+		#elif ICU_VER_54
+		internal const string ICU_I18N_LIB = "icuin54.dll";
+		internal const string ICU_COMMON_LIB = "icuuc54.dll";
+		internal const string ICU_VERSION_SUFFIX = "_54";
+		#elif ICU_VER_55
+		internal const string ICU_I18N_LIB = "icuin55.dll";
+		internal const string ICU_COMMON_LIB = "icuuc55.dll";
+		internal const string ICU_VERSION_SUFFIX = "_55";
+		#elif ICU_VER_56
+		internal const string ICU_I18N_LIB = "icuin56.dll";
+		internal const string ICU_COMMON_LIB = "icuuc56.dll";
+		internal const string ICU_VERSION_SUFFIX = "_56";
 		#else
-		private const string ICU_I18N_LIB = "icuin50.dll";
-		private const string ICU_COMMON_LIB = "icuuc50.dll";
-		private const string ICU_VERSION_SUFFIX = "_50";
+		#error We need to update the code for newer version of ICU after 56 (or older version before 4.8)
 		#endif
 
 		/**
@@ -1444,7 +1475,7 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it is the range *start..*end, or -1 if itemIndex is out of range</returns>
 		[DllImport(ICU_COMMON_LIB, EntryPoint = "uset_getItem" + ICU_VERSION_SUFFIX,
 				   CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		public static extern int uset_getItem(IntPtr set, int itemIndex, out char start, out char end, IntPtr str,
+		public static extern int uset_getItem(IntPtr set, int itemIndex, out int start, out int end, IntPtr str,
 			int strCapacity, ref ErrorCode ec);
 
 		/// <summary>
