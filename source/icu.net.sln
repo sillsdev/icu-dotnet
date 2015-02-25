@@ -13,10 +13,18 @@ Global
 		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|Win32 = Debug|Win32
 		Debug|x86 = Debug|x86
+		DebugMono|Any CPU = DebugMono|Any CPU
+		DebugMono|Mixed Platforms = DebugMono|Mixed Platforms
+		DebugMono|Win32 = DebugMono|Win32
+		DebugMono|x86 = DebugMono|x86
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 		Release|x86 = Release|x86
+		ReleaseMono|Any CPU = ReleaseMono|Any CPU
+		ReleaseMono|Mixed Platforms = ReleaseMono|Mixed Platforms
+		ReleaseMono|Win32 = ReleaseMono|Win32
+		ReleaseMono|x86 = ReleaseMono|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
