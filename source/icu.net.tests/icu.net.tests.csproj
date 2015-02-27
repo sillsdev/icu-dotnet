@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<icu_ver Condition=" '$(icu_ver)' == '' ">50</icu_ver>
+	<icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}</ProjectGuid>
@@ -40,10 +40,10 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>DEBUG;TRACE;ICU_VER_$(icu_ver)</DefineConstants>
+	<DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
+	<PlatformTarget>AnyCPU</PlatformTarget>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -54,40 +54,40 @@
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
+	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>MONO;DEBUG;TRACE;ICU_VER_$(icu_ver)</DefineConstants>
+	<DefineConstants>TRACE;DEBUG;MONO;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
+	<PlatformTarget>AnyCPU</PlatformTarget>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
 	<Optimize>true</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
-	<DefineConstants>MONO;TRACE;ICU_VER=ICU_VER_$(icu_ver)</DefineConstants>
+	<DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 	<DebugSymbols>true</DebugSymbols>
-	<OutputPath>bin\x86\$(Configuration)</OutputPath>
-	<DefineConstants>DEBUG;TRACE;ICU_VER=ICU_VER_$(icu_ver)</DefineConstants>
+	<OutputPath>..\..\output\Debug\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
 	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<ErrorReport>prompt</ErrorReport>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-	<OutputPath>bin\x86\$(Configuration)</OutputPath>
-	<DefineConstants>TRACE;ICU_VER=ICU_VER_$(icu_ver)</DefineConstants>
+	<OutputPath>..\..\output\Release\</OutputPath>
+	<DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
 	<Optimize>true</Optimize>
 	<DebugType>pdbonly</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
@@ -96,9 +96,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|x86'">
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="System" />
@@ -129,13 +135,13 @@
   </ItemGroup>
   <ItemGroup>
 	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icudt40.dll">
+	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icudt54.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuin40.dll">
+	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuin54.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='40'" Include="..\..\lib\icu\icuuc40.dll">
+	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuuc54.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
   </ItemGroup>

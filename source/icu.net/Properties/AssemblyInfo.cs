@@ -40,6 +40,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("4.2.1.*")]
 #elif ICU_VERSION_48
 [assembly: AssemblyFileVersion("4.8.1.1")]
-#else
+#elif ICU_VERSION_50
 [assembly: AssemblyFileVersion("5.0.0.2")]
+#elif ICU_VERSION_54
+[assembly: AssemblyFileVersion("5.4.0.2")]
 #endif
