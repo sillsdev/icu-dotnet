@@ -69,6 +69,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>AnyCPU</PlatformTarget>
 	<Optimize>true</Optimize>
 	<OutputPath>..\..\output\$(Configuration)</OutputPath>
 	<DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
@@ -147,7 +148,7 @@
   <ItemGroup>
 	<None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
 	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
 	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icudt54.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

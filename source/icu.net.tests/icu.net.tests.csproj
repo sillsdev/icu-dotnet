@@ -74,6 +74,7 @@
 	<DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>AnyCPU</PlatformTarget>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -95,7 +96,9 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
+	<DebugSymbols>true</DebugSymbols>
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugType>full</DebugType>
 	<PlatformTarget>x86</PlatformTarget>
 	<OutputPath>..\..\output\DebugMono\</OutputPath>
 	<DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
@@ -133,7 +136,7 @@
 	  <Name>icu.net</Name>
 	</ProjectReference>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
 	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
 	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icudt54.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
