@@ -51,9 +51,13 @@
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
-		<NUnitTeamCity
+		<NUnitTeamCity Condition="'$(icu_ver)' &gt;= '50'"
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="ICU50 Deprecated;Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
+			ExcludeCategory="Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
+			NUnitVersion="NUnit-2.6.2" />
+		<NUnitTeamCity Condition="'$(icu_ver)' &lt; '50'"
+			Assemblies="@(TestAssemblies)"
+			ExcludeCategory="ICULessThan50;Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
 			NUnitVersion="NUnit-2.6.2" />
 	</Target>
 
