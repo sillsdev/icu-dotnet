@@ -47,17 +47,18 @@
 			Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 
+	<!-- Assmption: only Precise (which is using ICU 48) is using an ICU version <= 50 -->
+	<PropertyGroup>
+		<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+		<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+	</PropertyGroup>
+
 	<Target Name="Test" DependsOnTargets="Build">
 		<CreateItem
 			Include="$(RootDir)/output/$(Configuration)/icu.net.tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
-		<!-- Assmption: only Precise (which is using ICU 48) is using an ICU version <= 50 -->
-		<PropertyGroup>
-			<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
-			<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
-		</PropertyGroup>
 		<NUnitTeamCity 
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="$(ExcludeCategory)"
