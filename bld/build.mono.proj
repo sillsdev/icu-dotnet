@@ -50,7 +50,7 @@
 	<!-- Assmption: only Precise (which is using ICU 48) is using an ICU version <= 50 -->
 	<PropertyGroup>
 		<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
-		<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+		<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50;Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
 	</PropertyGroup>
 
 	<Target Name="Test" DependsOnTargets="Build">
