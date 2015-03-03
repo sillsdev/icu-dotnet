@@ -54,8 +54,10 @@
 		</CreateItem>
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
 		<!-- Assmption: only Precise (which is using ICU 48) is using an ICU version <= 50 -->
-		<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
-		<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+		<PropertyGroup>
+			<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+			<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+		</PropertyGroup>
 		<NUnitTeamCity 
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="$(ExcludeCategory)"
