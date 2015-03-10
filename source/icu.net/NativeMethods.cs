@@ -997,7 +997,17 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 
 		[DllImport(ICU_COMMON_LIB, EntryPoint = "u_getUnicodeVersion" + ICU_VERSION_SUFFIX,
 				   CallingConvention = CallingConvention.Cdecl)]
-		public static extern void u_getUnicodeVersion(byte[] versionInfo);
+		public static extern void u_getUnicodeVersion(out VersionInfo versionArray);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the ICU release version.
+		/// </summary>
+		/// <param name="versionArray">Stores the version information for ICU.</param>
+		/// ------------------------------------------------------------------------------------
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "u_getVersion" + ICU_VERSION_SUFFIX,
+			CallingConvention = CallingConvention.Cdecl)]
+		public static extern void u_getVersion(out VersionInfo versionArray);
 
 		/// <summary>
 		/// Get the general character type.

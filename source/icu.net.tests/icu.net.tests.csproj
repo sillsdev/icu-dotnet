@@ -129,6 +129,7 @@
 	<Compile Include="NormalizerTests.cs" />
 	<Compile Include="BreakIteratorTests.cs" />
 	<Compile Include="IcuWrapperTests.cs" />
+	<Compile Include="VersionInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\icu.net\icu.net.csproj">
