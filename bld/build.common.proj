@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 	</PropertyGroup>
 	<Target Name="VersionNumbers">
 		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
