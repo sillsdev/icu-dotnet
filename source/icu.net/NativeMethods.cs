@@ -32,7 +32,6 @@ namespace Icu
 		internal const string ICU_I18N_LIB = "icuin52.dll";
 		internal const string ICU_COMMON_LIB = "icuuc52.dll";
 		internal const string ICU_VERSION_SUFFIX = "_52";
-		// Provide a bit of future proofing...
 		#elif ICU_VER_53
 		internal const string ICU_I18N_LIB = "icuin53.dll";
 		internal const string ICU_COMMON_LIB = "icuuc53.dll";
@@ -997,7 +996,17 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 
 		[DllImport(ICU_COMMON_LIB, EntryPoint = "u_getUnicodeVersion" + ICU_VERSION_SUFFIX,
 				   CallingConvention = CallingConvention.Cdecl)]
-		public static extern void u_getUnicodeVersion(byte[] versionInfo);
+		public static extern void u_getUnicodeVersion(out VersionInfo versionArray);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the ICU release version.
+		/// </summary>
+		/// <param name="versionArray">Stores the version information for ICU.</param>
+		/// ------------------------------------------------------------------------------------
+		[DllImport(ICU_COMMON_LIB, EntryPoint = "u_getVersion" + ICU_VERSION_SUFFIX,
+			CallingConvention = CallingConvention.Cdecl)]
+		public static extern void u_getVersion(out VersionInfo versionArray);
 
 		/// <summary>
 		/// Get the general character type.

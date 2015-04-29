@@ -1,15 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using Microsoft.Win32;
-using Icu.Collation;
 
 namespace Icu
 {
@@ -25,9 +17,24 @@ namespace Icu
 		{
 			get
 			{
-				var arg = new byte[4];
-				NativeMethods.u_getUnicodeVersion(arg);
-				return string.Format("{0}.{1}", arg[0], arg[1]);
+				VersionInfo arg;
+				NativeMethods.u_getUnicodeVersion(out arg);
+				return arg.ToString();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Get the current version of ICU.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string IcuVersion
+		{
+			get
+			{
+				VersionInfo arg;
+				NativeMethods.u_getVersion(out arg);
+				return arg.ToString();
 			}
 		}
 		#endregion

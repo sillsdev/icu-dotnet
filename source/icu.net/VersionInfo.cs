@@ -10,11 +10,18 @@ namespace Icu
 	{
 		public Byte Major;
 		public Byte Minor;
-		public Byte Micro;
 		public Byte Milli;
+		public Byte Micro;
 		public override string ToString()
 		{
-			return Major + "." + Minor + "." + Micro + "." + Milli;
+			// Only include Milli and Micro portions if they're non-zero
+			var milliMicro = string.Empty;
+			if (Micro > 0)
+				milliMicro = "." + Milli + "." + Micro;
+			else if (Milli > 0)
+				milliMicro = "." + Milli;
+
+			return string.Format("{0}.{1}{2}", Major, Minor, milliMicro);
 		}
 	}
 }

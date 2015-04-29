@@ -33,13 +33,28 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
-// (The AssemblyVersion needs to match the version that Palaso builds against.)
-// (The AssemblyFileVersion matches the ICU version number we're building against.)
-[assembly: AssemblyVersion("4.2.1.0")]
-#if ICU_VERSION_40
-[assembly: AssemblyFileVersion("4.2.1.*")]
-#elif ICU_VERSION_48
-[assembly: AssemblyFileVersion("4.8.1.1")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
+#if ICU_VER_40
+[assembly: AssemblyInformationalVersion("4.0.0.0")]
+#elif ICU_VER_48
+[assembly: AssemblyInformationalVersion("4.8.0.0")]
+#elif ICU_VER_49
+[assembly: AssemblyInformationalVersion("49.0.0.0")]
+#elif ICU_VER_50
+[assembly: AssemblyInformationalVersion("50.0.0.0")]
+#elif ICU_VER_51
+[assembly: AssemblyInformationalVersion("51.0.0.0")]
+#elif ICU_VER_52
+[assembly: AssemblyInformationalVersion("52.0.0.0")]
+#elif ICU_VER_53
+[assembly: AssemblyInformationalVersion("53.0.0.0")]
+#elif ICU_VER_54
+[assembly: AssemblyInformationalVersion("54.0.0.0")]
+#elif ICU_VER_55
+[assembly: AssemblyInformationalVersion("55.0.0.0")]
+#elif ICU_VER_56
+[assembly: AssemblyInformationalVersion("56.0.0.0")]
 #else
-[assembly: AssemblyFileVersion("5.0.0.2")]
+#error We need to update the code for newer version of ICU after 56 (or older version before 4.8)
 #endif

@@ -245,7 +245,7 @@ namespace Icu.Collation
 						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
 						NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, actualLen);
 					}
-					sortRules = Marshal.PtrToStringUni(buffer);
+					sortRules = Marshal.PtrToStringUni(buffer, actualLen);
 				}
 				finally
 				{

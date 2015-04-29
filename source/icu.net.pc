@@ -1,0 +1,9 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+
+
+Name: ICU Dot Net
+Description: ICU Dot Net - .NET Binding for the ICU library.
+Version: 0.1
+Libs: -r:${libdir}/cil/icu-cil-0.1/icu.net.dll

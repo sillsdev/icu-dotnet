@@ -12,13 +12,14 @@
   <PropertyGroup>
 	<Solution>icu.net.sln</Solution>
 	<ApplicationName>libicu-cil</ApplicationName>
+	<Configuration>ReleaseMono</Configuration>
+	<Platform>Any CPU</Platform>
   </PropertyGroup>
 
   <Import Project="$(RootDir)/bld/build.common.proj" />
 
   <Target Name="Build">
 	<CallTarget Targets="Clean"/>
-	<CallTarget Targets="SetAssemblyVersion"/>
 	<CallTarget Targets="Compile"/>
 	<Message Text="Build Complete"/>
   </Target>
@@ -43,8 +44,14 @@
 		<MSBuild
 			Projects="$(RootDir)\source\$(Solution)"
 			Targets="Build"
-			Properties="Configuration=$(Configuration)" />
+			Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
+
+	<!-- Assmption: only Precise (which is using ICU 48) is using an ICU version <= 50 -->
+	<PropertyGroup>
+		<ExcludeCategory Condition="'$(icu_ver)' != '48'">Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+		<ExcludeCategory Condition="'$(icu_ver)' == '48'">ICULessThan50;Full ICU;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms</ExcludeCategory>
+	</PropertyGroup>
 
 	<Target Name="Test" DependsOnTargets="Build">
 		<CreateItem
@@ -52,10 +59,10 @@
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<Message Text="Testing assemblies '@(TestAssemblies)'" />
-		<NUnitTeamCity
+		<NUnitTeamCity 
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="ICU50 Deprecated;SkipOnBuildServer;SkipOnTeamCity;KnownMonoIssue;NUnit Windows Forms"
-			NUnitVersion="NUnit-2.6.2" />
+			ExcludeCategory="$(ExcludeCategory)"
+			NUnitVersion="NUnit-2.5.5" />
 	</Target>
 
 	<!-- Source Package -->
