@@ -3,6 +3,7 @@ build/Dependencies.files
 build/NuGet.exe
 lib/
 output/
+bin/
 obj/
 test-results/
 .idea/
@@ -15,3 +16,12 @@ source/NuGetBuild/
 
 # Visual Studio 2015 cache/options directory
 .vs/
+
+# DNX
+*project.lock.json
+*project.fragment.lock.json
+artifacts/
+
+# NuGet v3's project.json files produces more ignoreable files
+*.nuget.props
+*.nuget.targets
