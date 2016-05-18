@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
+	<icu_ver Condition=" '$(icu_ver)' == '' ">56</icu_ver>
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}</ProjectGuid>
@@ -36,141 +36,141 @@
 	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONO;ICU_VER_$(icu_ver)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;DEBUG;MONO;ICU_VER_$(icu_ver)</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>..\..\output\$(Configuration)</OutputPath>
+	<DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>AnyCPU</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugSymbols>true</DebugSymbols>
+	<OutputPath>..\..\output\Debug\</OutputPath>
+	<DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\..\output\Release\</OutputPath>
-    <DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<OutputPath>..\..\output\Release\</OutputPath>
+	<DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
+	<Optimize>true</Optimize>
+	<DebugType>pdbonly</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\output\DebugMono\</OutputPath>
-    <DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
+	<DebugSymbols>true</DebugSymbols>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<DebugType>full</DebugType>
+	<PlatformTarget>x86</PlatformTarget>
+	<OutputPath>..\..\output\DebugMono\</OutputPath>
+	<DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|x86'">
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\..\output\ReleaseMono\</OutputPath>
-    <DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
+	<OutputPath>..\..\output\ReleaseMono\</OutputPath>
+	<DefineConstants>MONO;ICU_VER_$(icu_ver)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\lib\nunit.framework.dll</HintPath>
-    </Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Data" />
+	<Reference Include="System.Xml" />
+	<Reference Include="nunit.framework">
+	  <HintPath>..\..\lib\nunit.framework.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreakIteratorTests.Chinese.cs" />
-    <Compile Include="Collation\CollatorTests.cs" />
-    <Compile Include="Collation\SortKeyTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Collation\RuleBasedCollatorTests.cs" />
-    <Compile Include="LocaleTests.cs" />
-    <Compile Include="CharacterTests.cs" />
-    <Compile Include="UnicodeStringTests.cs" />
-    <Compile Include="UnicodeSetTests.cs" />
-    <Compile Include="NormalizerTests.cs" />
-    <Compile Include="BreakIteratorTests.cs" />
-    <Compile Include="IcuWrapperTests.cs" />
-    <Compile Include="VersionInfoTests.cs" />
+	<Compile Include="BreakIteratorTests.Chinese.cs" />
+	<Compile Include="Collation\CollatorTests.cs" />
+	<Compile Include="Collation\SortKeyTests.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Collation\RuleBasedCollatorTests.cs" />
+	<Compile Include="LocaleTests.cs" />
+	<Compile Include="CharacterTests.cs" />
+	<Compile Include="UnicodeStringTests.cs" />
+	<Compile Include="UnicodeSetTests.cs" />
+	<Compile Include="NormalizerTests.cs" />
+	<Compile Include="BreakIteratorTests.cs" />
+	<Compile Include="IcuWrapperTests.cs" />
+	<Compile Include="VersionInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\icu.net\icu.net.csproj">
-      <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
-      <Name>icu.net</Name>
-    </ProjectReference>
+	<ProjectReference Include="..\icu.net\icu.net.csproj">
+	  <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
+	  <Name>icu.net</Name>
+	</ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
-    <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icudt56.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuin56.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuuc56.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icudt56.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuin56.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuuc56.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+	  <Visible>False</Visible>
+	  <ProductName>Windows Installer 3.1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -181,6 +181,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent />
+	<PreBuildEvent />
   </PropertyGroup>
 </Project>

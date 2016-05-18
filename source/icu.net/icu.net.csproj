@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
+	<icu_ver Condition=" '$(icu_ver)' == '' ">56</icu_ver>
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{28A0072F-AE0B-449A-8494-B53F09756273}</ProjectGuid>
@@ -151,13 +151,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
 	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icudt54.dll">
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icudt56.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuin54.dll">
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuin56.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-	<None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuuc54.dll">
+	<None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuuc56.dll">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
   </ItemGroup>
