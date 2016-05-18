@@ -89,7 +89,7 @@ namespace Icu
 
 			ErrorCode err;
 			IntPtr bi = NativeMethods.ubrk_open(type, locale, text, text.Length, out err);
-			if (err != ErrorCode.NoErrors)
+			if (err.IsFailure())
 				throw new Exception("BreakIterator.Split() failed with code " + err);
 			var tokens = new List<string>();
 			int cur = NativeMethods.ubrk_first(bi);
