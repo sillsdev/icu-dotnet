@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
+    <icu_ver Condition=" '$(icu_ver)' == '' ">56</icu_ver>
     <ProjectGuid>{28A0072F-AE0B-449A-8494-B53F09756273}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -156,16 +156,16 @@
     <None Include="NuGetAssets\icu.net-Linux.nuspec" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
-	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
+    <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
     <None Include="..\..\lib\icu\icudt$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuin$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuuc$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

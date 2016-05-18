@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
+    <icu_ver Condition=" '$(icu_ver)' == '' ">56</icu_ver>
     <ProjectGuid>{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -44,23 +44,23 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>AnyCPU</PlatformTarget>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -122,62 +122,62 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="BreakIteratorTests.Chinese.cs" />
-	<Compile Include="Collation\CollatorTests.cs" />
-	<Compile Include="Collation\SortKeyTests.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Collation\RuleBasedCollatorTests.cs" />
-	<Compile Include="LocaleTests.cs" />
-	<Compile Include="CharacterTests.cs" />
-	<Compile Include="UnicodeStringTests.cs" />
-	<Compile Include="UnicodeSetTests.cs" />
-	<Compile Include="NormalizerTests.cs" />
-	<Compile Include="BreakIteratorTests.cs" />
-	<Compile Include="IcuWrapperTests.cs" />
-	<Compile Include="VersionInfoTests.cs" />
+    <Compile Include="BreakIteratorTests.Chinese.cs" />
+    <Compile Include="Collation\CollatorTests.cs" />
+    <Compile Include="Collation\SortKeyTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Collation\RuleBasedCollatorTests.cs" />
+    <Compile Include="LocaleTests.cs" />
+    <Compile Include="CharacterTests.cs" />
+    <Compile Include="UnicodeStringTests.cs" />
+    <Compile Include="UnicodeSetTests.cs" />
+    <Compile Include="NormalizerTests.cs" />
+    <Compile Include="BreakIteratorTests.cs" />
+    <Compile Include="IcuWrapperTests.cs" />
+    <Compile Include="VersionInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\icu.net\icu.net.csproj">
-	  <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
-	  <Name>icu.net</Name>
-	</ProjectReference>
+    <ProjectReference Include="..\icu.net\icu.net.csproj">
+      <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
+      <Name>icu.net</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">    
-	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
+  <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
+    <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
     <None Include="..\..\lib\icu\icudt$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuin$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuuc$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-  <None Include="packages.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -188,6 +188,6 @@
   </Target>
   -->
   <PropertyGroup>
-	<PreBuildEvent />
+    <PreBuildEvent />
   </PropertyGroup>
 </Project>
