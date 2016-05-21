@@ -62,7 +62,7 @@
 		<NUnitTeamCity 
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="$(ExcludeCategory)"
-			NUnitVersion="NUnit-2.5.5" />
+			NUnitVersion="NUnit-2.6.4" />
 	</Target>
 
 	<!-- Source Package -->
