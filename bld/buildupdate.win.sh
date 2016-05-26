@@ -72,7 +72,7 @@ cd -
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt471
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"icudt54.dll"=>"lib/icu", "icuin54.dll"=>"lib/icu", "icuuc54.dll"=>"lib/icu"}
+#     paths: {"icudt56.dll"=>"lib/icu", "icuin56.dll"=>"lib/icu", "icuuc56.dll"=>"lib/icu"}
 # [1] build: palaso-win32-master Continuous (bt223)
 #     project: libpalaso
 #     URL: http://build.palaso.org/viewType.html?buildTypeId=bt223
@@ -86,8 +86,8 @@ mkdir -p ../bld
 mkdir -p ../lib/icu
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icudt54.dll ../lib/icu/icudt54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icuin54.dll ../lib/icu/icuin54.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icuuc54.dll ../lib/icu/icuuc54.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icudt56.dll ../lib/icu/icudt56.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icuin56.dll ../lib/icu/icuin56.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt471/latest.lastSuccessful/icuuc56.dll ../lib/icu/icuuc56.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.BuildTasks.dll ../bld/Palaso.BuildTasks.dll
 # End of script
