@@ -5,17 +5,17 @@ namespace Icu
 	/// <summary>
 	/// Specifies the start and end indexes of a word, line, sentence or character.
 	/// </summary>
-	public struct Boundary
+	public class Boundary
 	{
 		/// <summary>
 		/// Starting index of a boundary
 		/// </summary>
-		public int Start;
+		public readonly int Start;
 
 		/// <summary>
 		/// End index of a boundary
 		/// </summary>
-		public int End;
+		public readonly int End;
 
 		/// <summary>
 		/// Creates a boundary with the specified start and end. The word would lie
@@ -34,14 +34,11 @@ namespace Icu
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is Boundary))
-			{
-				return false;
-			}
+			var compared = obj as Boundary;
 
-			var compared = (Boundary)obj;
-
-			return Start == compared.Start && End == compared.End;
+			return compared != null 
+				&& Start == compared.Start 
+				&& End == compared.End;
 		}
 
 		public override int GetHashCode()
