@@ -95,8 +95,11 @@ namespace Icu
 		/// <summary>
 		/// Gets word boundaries for given text.
 		/// </summary>
-		/// <param name="includeSpacesAndPunctuation">true to include spaces and punctuation in the
-		/// boundaries; false otherwise.</param>
+		/// <param name="includeSpacesAndPunctuation">ICU's UBreakIteratorType.WORD analysis considers
+		/// spaces and punctuation as boundaries for words. Set parameter to true if all boundaries
+		/// are desired; false otherwise.
+		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
+		/// </param>
 		public static IEnumerable<Boundary> GetWordBoundaries(Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
 			return GetWordBoundaries(locale.Id, text, includeSpacesAndPunctuation);
