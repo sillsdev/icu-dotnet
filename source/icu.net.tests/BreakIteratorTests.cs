@@ -95,17 +95,21 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void GetWordBoundaries()
+		public void GetWordBoundaries_IgnoreSpacesAndPunctuation()
 		{
 			var onlyWords = BreakIterator.GetWordBoundaries(new Locale("en-US"), WordBoundaryTestData.Text, false);
-			var allBoundaries = BreakIterator.GetWordBoundaries(new Locale("en-US"), WordBoundaryTestData.Text, true);
 
 			Assert.That(onlyWords.Count(), Is.EqualTo(WordBoundaryTestData.ExpectedOnlyWords.Length));
 			Assert.That(onlyWords.ToArray(), Is.EquivalentTo(WordBoundaryTestData.ExpectedOnlyWords));
+		}
+
+		[Test]
+		public void GetWordBoundaries_IncludeSpacesAndPunctuation()
+		{
+			var allBoundaries = BreakIterator.GetWordBoundaries(new Locale("en-US"), WordBoundaryTestData.Text, true);
 
 			Assert.That(allBoundaries.Count(), Is.EqualTo(WordBoundaryTestData.ExpectedAllBoundaries.Length));
 			Assert.That(allBoundaries.ToArray(), Is.EquivalentTo(WordBoundaryTestData.ExpectedAllBoundaries));
-
 		}
 
 		/// <summary>
