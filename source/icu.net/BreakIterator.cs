@@ -6,9 +6,8 @@ using System.Linq;
 
 namespace Icu
 {
-	public class BreakIterator
+	public static class BreakIterator
 	{
-
 		/// <summary>
 		/// The possible types of text boundaries.
 		/// </summary>
@@ -85,24 +84,72 @@ namespace Icu
 		public static IEnumerable<string> Split(UBreakIteratorType type, string locale, string text)
 		{
 			if (string.IsNullOrEmpty(text))
-				return Enumerable.Empty<string>();
+				yield break;
+
+			foreach (var boundary in GetBoundaries(type, locale, text, includeSpacesAndPunctuation: false))
+			{
+				yield return text.Substring(boundary.Start, boundary.End - boundary.Start);
+			}
+		}
+
+		/// <summary>
+		/// Gets word boundaries for given text.
+		/// </summary>
+		/// <param name="includeSpacesAndPunctuation">ICU's UBreakIteratorType.WORD analysis considers
+		/// spaces and punctuation as boundaries for words. Set parameter to true if all boundaries
+		/// are desired; false otherwise.
+		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
+		/// </param>
+		public static IEnumerable<Boundary> GetWordBoundaries(Locale locale, string text, bool includeSpacesAndPunctuation)
+		{
+			return GetWordBoundaries(locale.Id, text, includeSpacesAndPunctuation);
+		}
+
+		public static IEnumerable<Boundary> GetWordBoundaries(string locale, string text, bool includeSpacesAndPunctuation)
+		{
+			return GetBoundaries(UBreakIteratorType.WORD, locale, text, includeSpacesAndPunctuation);
+		}
+
+		/// <summary>
+		/// Gets the sentence/line/word/character boundaries for the text. Spaces and punctuations
+		/// are not returned for UBreakIteratorType.WORD.
+		/// </summary>
+		public static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, Locale locale, string text)
+		{
+			return GetBoundaries(type, locale.Id, text, false);
+		}
+
+		private static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, string locale, string text, bool includeSpacesAndPunctuation)
+		{
+			if (string.IsNullOrEmpty(text))
+				yield break;
 
 			ErrorCode err;
 			IntPtr bi = NativeMethods.ubrk_open(type, locale, text, text.Length, out err);
 			if (err != ErrorCode.NoErrors)
 				throw new Exception("BreakIterator.Split() failed with code " + err);
-			var tokens = new List<string>();
+
 			int cur = NativeMethods.ubrk_first(bi);
+
 			while (cur != DONE)
 			{
 				int next = NativeMethods.ubrk_next(bi);
 				int status = NativeMethods.ubrk_getRuleStatus(bi);
-				if (next != DONE && AddToken(type, status))
-					tokens.Add(text.Substring(cur, next - cur));
+				
+				if (next == DONE)
+				{
+					break;
+				}
+
+				if (includeSpacesAndPunctuation || AddToken(type, status))
+				{
+					yield return new Boundary(cur, next);
+				}
+
 				cur = next;
 			}
+
 			NativeMethods.ubrk_close(bi);
-			return tokens;
 		}
 
 		private static bool AddToken(UBreakIteratorType type, int status)
@@ -119,6 +166,5 @@ namespace Icu
 			}
 			return false;
 		}
-
 	}
 }

@@ -144,6 +144,7 @@
 	<Compile Include="UnicodeSet.cs" />
 	<Compile Include="Normalizer.cs" />
 	<Compile Include="BreakIterator.cs" />
+	<Compile Include="Boundary.cs" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
