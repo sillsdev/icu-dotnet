@@ -13,9 +13,9 @@
 			number (not on TeamCity, not in the assemblies). -->
 		<Version>1.2</Version>
 		<excludedCategories>ICU50 Deprecated;Full ICU;ByHand;</excludedCategories>
+		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories);KnownMonoIssue</excludedCategories>
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
-		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">;KnownMonoIssue</ExtraExcludeCategories>
 		<icu_ver Condition="'$(icu_ver)' == ''">54</icu_ver>
 	</PropertyGroup>
 
