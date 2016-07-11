@@ -5,6 +5,8 @@ icu-dotnet is the C# wrapper for a subset of [ICU4C] (http://site.icu-project.or
 
 ## Status
 
+|     |     |
+| --- | --- |
 | Linux | [![Build Status](https://jenkins.lsdev.sil.org/view/IcuDotNet/view/All/job/IcuDotNet-Linux-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/IcuDotNet/view/All/job/IcuDotNet-Linux-any-master-release/) |
 | Windows | [![Build Status](https://jenkins.lsdev.sil.org/view/IcuDotNet/view/All/job/IcuDotNet-Win-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/IcuDotNet/view/All/job/IcuDotNet-Win-any-master-release/) |
 
