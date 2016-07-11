@@ -12,7 +12,7 @@
 		<!-- Note, after some thought, we've decided this is the best place to keep the version
 			number (not on TeamCity, not in the assemblies). -->
 		<Version>1.2</Version>
-		<excludedCategories>ICU50 Deprecated;Full ICU;</excludedCategories>
+		<excludedCategories>ICU50 Deprecated;Full ICU;ByHand;</excludedCategories>
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
 		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">;KnownMonoIssue</ExtraExcludeCategories>
@@ -110,12 +110,12 @@
 
 	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*Tests.dll"/>
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="$(excludedCategories)SkipOnTeamCity;ByHand$(ExtraExcludeCategories)"
+			ExcludeCategory="$(excludedCategories)SkipOnTeamCity;$(ExtraExcludeCategories)"
 			NUnitVersion="NUnit-2.6.4" />
 	</Target>
 
