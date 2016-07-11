@@ -1,4 +1,6 @@
-bld/Palaso.BuildTasks.dll
+build/Palaso.BuildTasks.dll
+build/Dependencies.files
+build/NuGet.exe
 lib/
 output/
 obj/
@@ -7,3 +9,4 @@ test-results/
 *.user
 *.swp
 *.suo
+source/packages/

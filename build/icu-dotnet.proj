@@ -1,0 +1,136 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<RootDir Condition="'$(teamcity_version)' == '' Or '$(OS)'!='Windows_NT'">$(MSBuildProjectDirectory)\..</RootDir>
+		<RootDir Condition="'$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'">$(teamcity_build_checkoutDir)</RootDir>
+		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
+		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
+		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(OS)'!='Windows_NT'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
+		<Solution>icu.net.sln</Solution>
+		<SolutionDir>$(RootDir)/source</SolutionDir>
+		<ApplicationName>libicu-cil</ApplicationName>
+		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">1.2.3.4</BUILD_NUMBER>
+		<!-- Note, after some thought, we've decided this is the best place to keep the version
+			number (not on TeamCity, not in the assemblies). -->
+		<Version>1.2</Version>
+		<excludedCategories>ICU50 Deprecated;Full ICU;</excludedCategories>
+		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
+		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
+		<ExtraExcludeCategories Condition="'$(OS)'!='Windows_NT'">;KnownMonoIssue</ExtraExcludeCategories>
+		<icu_ver Condition="'$(icu_ver)' == ''">54</icu_ver>
+	</PropertyGroup>
+
+	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
+	<UsingTask TaskName="NUnitTeamCity"
+		AssemblyFile="$(agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
+		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
+
+	<Import Project="NuGet.targets"/>
+
+	<Target Name="VersionNumbers" DependsOnTargets="DownloadDependencies">
+		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
+
+		<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
+			<Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
+		</Split>
+
+		<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
+
+		<CreateProperty Value="$(Version).$(BuildCounter).0">
+			<Output PropertyName="FileVersion" TaskParameter="Value"/>
+		</CreateProperty>
+
+		<Message Text="Version: $(FileVersion)" Importance="high"/>
+	</Target>
+
+	<ItemGroup>
+		<AssemblyInfoFiles Include="$(RootDir)/**/AssemblyInfo.cs"/>
+	</ItemGroup>
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+		<StampAssemblies Version="$(Version).0.0" FileVersion="$(FileVersion)"
+			InputAssemblyPaths="@(AssemblyInfoFiles)" />
+	</Target>
+
+	<ItemGroup>
+		<AllBuildDependencyTasksFiles Include="$(SolutionDir)/packages/BuildDependencyTasks*/**"/>
+		<AllBuildDependencyTasksDirs Include="@(AllBuildDependencyTasksFiles->'%(RootDir)%(Directory)')"/>
+	</ItemGroup>
+
+	<Target Name="RemoveOldBuildDependencyTaskPackages">
+		<!-- Delete BuildDependencyTasks.* package directories so that we end up with having only the desired version -->
+		<!-- NOTE: because of limited functionality of msbuild on Linux we always delete the directories even when we have only one. -->
+		<RemoveDir Directories="@(AllBuildDependencyTasksDirs)" />
+	</Target>
+
+	<Target Name="DownloadDependencies" DependsOnTargets="RemoveOldBuildDependencyTaskPackages;RestorePackages">
+		<MSBuild
+			Projects="DownloadDeps.targets"
+			Targets="DownloadDependenciesTarget"
+			Properties="Configuration=$(Configuration);RootDir=$(RootDir);SolutionDir=$(SolutionDir)" />
+	</Target>
+
+	<Target Name="Build">
+		<CallTarget Targets="Clean"/>
+		<CallTarget Targets="SetAssemblyVersion"/>
+		<CallTarget Targets="Compile"/>
+		<Message Text="Build Complete"/>
+	</Target>
+
+	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
+		<MSBuild Projects="$(SolutionDir)/$(Solution)"
+			Targets="Rebuild"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
+	<ItemGroup>
+		<ExistingObjectFiles
+			Include="$(RootDir)/output/$(Configuration)/**/*"
+			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
+		/>
+	</ItemGroup>
+
+	<Target Name="Clean">
+		<Delete Files="@(ExistingObjectFiles)" />
+		<Delete Condition="'$(OS)'=='Windows_NT'"
+			 Files="$(RootDir)/**/obj/**/*" />
+		<Exec Condition="'$(OS)'!='Windows_NT'"
+			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
+			WorkingDirectory="$(RootDir)" />
+	</Target>
+
+	<Target Name="Test" DependsOnTargets="Build">
+		<CallTarget Targets="TestOnly"/>
+	</Target>
+
+	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit"/>
+
+	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
+		<ItemGroup>
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*Tests.dll"/>
+		</ItemGroup>
+
+		<NUnitTeamCity
+			Assemblies="@(TestAssemblies)"
+			ExcludeCategory="$(excludedCategories)SkipOnTeamCity;ByHand$(ExtraExcludeCategories)"
+			NUnitVersion="NUnit-2.6.4" />
+	</Target>
+
+	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
+		<ItemGroup>
+			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
+		</ItemGroup>
+
+		<NUnit Assemblies="@(TestAssemblies)"
+			ToolPath="$(SolutionDir)/packages/NUnit.Runners.Net4.2.6.4/tools"
+			TestInNewThread="false"
+			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"/>
+	</Target>
+</Project>

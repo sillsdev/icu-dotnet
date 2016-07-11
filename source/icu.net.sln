@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.tests", "icu.net.tests\icu.net.tests.csproj", "{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{ADD2D664-A179-47DE-BE36-94AF75330E29}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +36,7 @@ Global
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|Mixed Platforms.ActiveCfg = DebugMono|Any CPU
+		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|Mixed Platforms.Build.0 = DebugMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|x86.ActiveCfg = DebugMono|x86
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|x86.Build.0 = DebugMono|x86
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +47,7 @@ Global
 		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|Mixed Platforms.ActiveCfg = ReleaseMono|Any CPU
+		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|Mixed Platforms.Build.0 = ReleaseMono|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|x86.ActiveCfg = ReleaseMono|x86
 		{28A0072F-AE0B-449A-8494-B53F09756273}.ReleaseMono|x86.Build.0 = ReleaseMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -51,6 +58,7 @@ Global
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|Any CPU.ActiveCfg = DebugMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|Any CPU.Build.0 = DebugMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|Mixed Platforms.ActiveCfg = DebugMono|Any CPU
+		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|Mixed Platforms.Build.0 = DebugMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|x86.ActiveCfg = DebugMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|x86.Build.0 = DebugMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,17 +69,20 @@ Global
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|Any CPU.ActiveCfg = ReleaseMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|Any CPU.Build.0 = ReleaseMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|Mixed Platforms.ActiveCfg = ReleaseMono|Any CPU
+		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|Mixed Platforms.Build.0 = ReleaseMono|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|x86.ActiveCfg = ReleaseMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.ReleaseMono|x86.Build.0 = ReleaseMono|x86
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = icu.net\icu.net.csproj
 		Policies = $0
 		$0.StandardHeader = $1
 		$1.Text = @Copyright (c) ${Year} SIL International\nThis software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 		$1.IncludeInNewFiles = True
+		StartupItem = icu.net\icu.net.csproj
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

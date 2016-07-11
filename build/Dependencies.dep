@@ -1,0 +1,31 @@
+# This file lists dependencies
+# It can be edited with the BuildDependencyManager application.
+# See https://github.com/ermshiperete/BuildDependency for more information.
+
+[[TC]]
+Type=TeamCity
+Url=http://build.palaso.org
+
+[TC::bt471]
+Name=icu4c-54-win32-minimal
+RevisionName=lastSuccessful
+RevisionValue=latest.lastSuccessful
+Condition=Windows
+Path=icudt54.dll=>lib/icu
+icuin54.dll=>lib/icu
+icuuc54.dll=>lib/icu
+
+[TC::bt223]
+Name=palaso-win32-master Continuous
+RevisionName=lastSuccessful
+RevisionValue=latest.lastSuccessful
+Condition=Windows
+Path=Palaso.BuildTasks.dll=>build
+
+[TC::bt324]
+Name=palaso-trusty64-master Continuous
+RevisionName=lastSuccessful
+RevisionValue=latest.lastSuccessful
+Condition=Linux
+Path=Palaso.BuildTasks.dll=>build
+

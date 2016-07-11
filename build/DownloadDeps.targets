@@ -1,0 +1,14 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<RootDir Condition="'$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
+		<SolutionDir Condition="'$(SolutionDir)'==''">$(RootDir)</SolutionDir>
+		<KeepJobsFile Condition="'$(KeepJobsFile)'==''">true</KeepJobsFile>
+	</PropertyGroup>
+
+	<Import Project="$(SolutionDir)/packages/BuildDependencyTasks.*/tools/BuildDependencyTasks.targets"/>
+
+	<Target Name="DownloadDependenciesTarget">
+		<Dependencies DependencyFile="Dependencies.dep"
+			UseDependencyFile="true" KeepJobsFile="$(KeepJobsFile)" WorkingDir="$(RootDir)" />
+	</Target>
+</Project>
