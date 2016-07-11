@@ -48,8 +48,24 @@ namespace Icu
 		internal const string ICU_I18N_LIB = "icuin56.dll";
 		internal const string ICU_COMMON_LIB = "icuuc56.dll";
 		internal const string ICU_VERSION_SUFFIX = "_56";
+		#elif ICU_VER_57
+		internal const string ICU_I18N_LIB = "icuin57.dll";
+		internal const string ICU_COMMON_LIB = "icuuc57.dll";
+		internal const string ICU_VERSION_SUFFIX = "_57";
+		#elif ICU_VER_58
+		internal const string ICU_I18N_LIB = "icuin58.dll";
+		internal const string ICU_COMMON_LIB = "icuuc58.dll";
+		internal const string ICU_VERSION_SUFFIX = "_58";
+		#elif ICU_VER_569
+		internal const string ICU_I18N_LIB = "icuin59.dll";
+		internal const string ICU_COMMON_LIB = "icuuc59.dll";
+		internal const string ICU_VERSION_SUFFIX = "_59";
+		#elif ICU_VER_60
+		internal const string ICU_I18N_LIB = "icuin60.dll";
+		internal const string ICU_COMMON_LIB = "icuuc60.dll";
+		internal const string ICU_VERSION_SUFFIX = "_60";
 		#else
-		#error We need to update the code for newer version of ICU after 56 (or older version before 4.8)
+		#error We need to update the code for newer version of ICU after 60 (or older version before 4.8)
 		#endif
 
 		/**

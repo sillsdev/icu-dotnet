@@ -150,6 +150,7 @@
     <Compile Include="Normalizer.cs" />
     <Compile Include="BreakIterator.cs" />
     <Compile Include="Boundary.cs" />
+    <Compile Include="Properties\AssemblyInformationalVersions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
