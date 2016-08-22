@@ -6,8 +6,8 @@
 Type=TeamCity
 Url=http://build.palaso.org
 
-[TC::bt471]
-Name=icu4c-54-win32-minimal
+[TC::Libraries_Icu4cWin32minimumStaticallyLinkedContinuous]
+Name=icu4c-54-win32-minimum-statically-linked Continuous
 RevisionName=lastSuccessful
 RevisionValue=latest.lastSuccessful
 Condition=Windows
