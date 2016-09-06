@@ -37,7 +37,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\output\Debug</OutputPath>
+    <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;DEBUG;ICU_VER_$(icu_ver)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,7 +47,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\output\Release</OutputPath>
+    <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;ICU_VER_$(icu_ver)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -58,7 +58,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\output\DebugMono</OutputPath>
+    <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <DefineConstants>TRACE;DEBUG;MONO;ICU_VER_$(icu_ver)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -68,7 +68,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\output\ReleaseMono</OutputPath>
     <DefineConstants>TRACE;MONO;ICU_VER_$(icu_ver)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -123,6 +122,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakIteratorTests.Chinese.cs" />
     <Compile Include="Collation\CollatorTests.cs" />
     <Compile Include="Collation\SortKeyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -144,13 +144,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
     <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-    <None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icudt54.dll">
+    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icudt56.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuin54.dll">
+    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuin56.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Condition="'$(icu_ver)'=='54'" Include="..\..\lib\icu\icuuc54.dll">
+    <None Condition="'$(icu_ver)'=='56'" Include="..\..\lib\icu\icuuc56.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
