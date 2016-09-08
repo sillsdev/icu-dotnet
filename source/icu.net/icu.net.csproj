@@ -154,6 +154,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="NuGetAssets\Install.ps1" />
+    <None Include="packages.config" />
+    <None Include="NuGetAssets\icu.net.nuspec" />
+    <None Include="NuGetAssets\icu.net-Linux.nuspec" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
     <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
@@ -185,14 +189,36 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
+      <IcuDotNetFiles Include="$(TargetDir)/icu.net.dll*" />
+      <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
+      <IcuFiles Include="../../lib/icu/*" />
+    </ItemGroup>
+    <CreateProperty Value="0" Condition=" '$(BuildCounter)' == ''">
+        <Output PropertyName="BuildCounter" TaskParameter="Value"/>
+    </CreateProperty>
+    <Delete Files="@(FilesToDelete)" />
+    <MakeDir Directories="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net-Linux.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" Condition="'$(OS)'=='Unix'" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" Condition="'$(OS)'!='Unix'" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets/Install.ps1" DestinationFolder="$(SolutionDir)NuGetBuild/tools" Condition="'$(OS)'!='Unix'" />
+    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
+    <Copy SourceFiles="@(IcuFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/content" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)"
+      Version="$(icu_ver).0.$(BuildCounter)" />
+  </Target>
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="NuGetAssets\" />
+  </ItemGroup>
 </Project>

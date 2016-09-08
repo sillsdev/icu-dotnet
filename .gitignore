@@ -10,3 +10,4 @@ test-results/
 *.swp
 *.suo
 source/packages/
+source/NuGetBuild/
