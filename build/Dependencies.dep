@@ -6,14 +6,15 @@
 Type=TeamCity
 Url=http://build.palaso.org
 
-[TC::Libraries_Icu4cWin32minimumStaticallyLinkedContinuous]
-Name=icu4c-54-win32-minimum-statically-linked Continuous
+[TC::Libraries_Icu4c56win32minimumStaticallyLinkedContinuous]
+Name=icu4c-56-win32-minimum-statically-linked Continuous
 RevisionName=lastSuccessful
 RevisionValue=latest.lastSuccessful
 Condition=Windows
-Path=icudt54.dll=>lib/icu
-icuin54.dll=>lib/icu
-icuuc54.dll=>lib/icu
+Path=icudt56.dll=>lib/icu
+icuin56.dll=>lib/icu
+icuuc56.dll=>lib/icu
+
 
 [TC::bt223]
 Name=palaso-win32-master Continuous
@@ -22,10 +23,12 @@ RevisionValue=latest.lastSuccessful
 Condition=Windows
 Path=Palaso.BuildTasks.dll=>build
 
+
 [TC::bt324]
 Name=palaso-trusty64-master Continuous
 RevisionName=lastSuccessful
 RevisionValue=latest.lastSuccessful
 Condition=Linux
 Path=Palaso.BuildTasks.dll=>build
+
 
