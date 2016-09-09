@@ -198,8 +198,8 @@
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
       <IcuFiles Include="../../lib/icu/*" />
     </ItemGroup>
-    <CreateProperty Value="0" Condition=" '$(build_counter)' == ''">
-        <Output PropertyName="build_counter" TaskParameter="Value"/>
+    <CreateProperty Value="0" Condition=" '$(BuildCounter)' == ''">
+        <Output PropertyName="BuildCounter" TaskParameter="Value"/>
     </CreateProperty>
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
@@ -209,7 +209,7 @@
     <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
     <Copy SourceFiles="@(IcuFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/content" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)"
-      Version="$(icu_ver).0.$(build_counter)" />
+      Version="$(icu_ver).0.$(BuildCounter)" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent />
