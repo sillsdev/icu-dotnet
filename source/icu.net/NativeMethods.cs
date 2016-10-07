@@ -9,8 +9,29 @@ namespace Icu
 {
 	internal static class NativeMethods
 	{
-		private const int minIcuVersion = 44;
-		private const int maxIcuVersion = 60;
+		private const int MinIcuVersionDefault = 44;
+		private const int MaxIcuVersionDefault = 60;
+		private static int minIcuVersion = MinIcuVersionDefault;
+		private static int maxIcuVersion = MaxIcuVersionDefault;
+
+		public static void SetMinMaxIcuVersions(int minVersion = MinIcuVersionDefault,
+			int maxVersion = MaxIcuVersionDefault)
+		{
+			if (minVersion < MinIcuVersionDefault || minVersion > MaxIcuVersionDefault)
+			{
+				throw new ArgumentOutOfRangeException("minVersion",
+					string.Format("supported ICU versions are between {0} and {1}",
+					MinIcuVersionDefault, MaxIcuVersionDefault));
+			}
+			if (maxVersion < MinIcuVersionDefault || maxVersion > MaxIcuVersionDefault)
+			{
+				throw new ArgumentOutOfRangeException("maxVersion",
+					string.Format("supported ICU versions are between {0} and {1}",
+					MinIcuVersionDefault, MaxIcuVersionDefault));
+			}
+			minIcuVersion = Math.Min(minVersion, maxVersion);
+			maxIcuVersion = Math.Max(minVersion, maxVersion);
+		}
 
 		#region Dynamic method loading
 
