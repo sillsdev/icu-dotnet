@@ -39,25 +39,6 @@ namespace Icu
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Limits the ICU versions that are considered when trying to dynamically load ICU.
-		/// </summary>
-		/// <remarks>This method allows an application to select a specific ICU version. Otherwise
-		/// the highest found supported ICU libraries will be used.</remarks>
-		/// <param name="minIcuVersion">Minimum ICU version. Needs to be greater or equal to the
-		/// minimum supported ICU version (currently 44).</param>
-		/// <param name="maxIcuVersion">Maximum ICU version. Needs to be less or equal to the
-		/// maximum supported ICU version (currently 60). Set to <c>-1</c> to use the same value
-		/// as <paramref name="minIcuVersion"/>.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void ConfineIcuVersions(int minIcuVersion, int maxIcuVersion = -1)
-		{
-			if (maxIcuVersion == -1)
-				maxIcuVersion = minIcuVersion;
-			NativeMethods.SetMinMaxIcuVersions(minIcuVersion, maxIcuVersion);
-		}
-
 		#region Public wrappers around the ICU methods
 
 

@@ -406,7 +406,7 @@ namespace Icu
 			try
 			{
 				ErrorCode error;
-				int nResult = NativeMethods.u_charName(code, nameChoice, resPtr, nSize, out error);
+				int nResult = NativeMethods.u_CharName(code, nameChoice, resPtr, nSize, out error);
 				if (error != ErrorCode.NoErrors)
 				{
 					nResult = -1;
