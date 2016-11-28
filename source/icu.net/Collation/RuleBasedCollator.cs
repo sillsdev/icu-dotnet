@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Globalization;
-using Icu;
 
 namespace Icu.Collation
 {
@@ -42,8 +41,9 @@ namespace Icu.Collation
 			}
 		}
 
-		private SafeRuleBasedCollatorHandle collatorHandle;
-		readonly ParseError parseError = new ParseError();
+		private SafeRuleBasedCollatorHandle _collatorHandle;
+
+		private RuleBasedCollator() {}
 
 		/// <summary>
 		/// RuleBasedCollator constructor.
@@ -74,7 +74,8 @@ namespace Icu.Collation
 								 CollationStrength collationStrength)
 		{
 			ErrorCode status;
-			collatorHandle = NativeMethods.ucol_openRules(rules,
+			var parseError = new ParseError();
+			_collatorHandle = NativeMethods.ucol_openRules(rules,
 														  rules.Length,
 														  normalizationMode,
 														  collationStrength,
@@ -82,6 +83,7 @@ namespace Icu.Collation
 														  out status);
 			ExceptionFromErrorCode.ThrowIfError(status, parseError.ToString(rules));
 		}
+
 
 		/// <summary>The collation strength.
 		/// The usual strength for most locales (except Japanese) is tertiary.
@@ -219,7 +221,7 @@ namespace Icu.Collation
 			int actualLength;
 			for (;;)
 			{
-				actualLength = NativeMethods.ucol_getSortKey(collatorHandle,
+				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle,
 															 source,
 															 source.Length,
 															 keyData,
@@ -237,7 +239,7 @@ namespace Icu.Collation
 		private NativeMethods.CollationAttributeValue GetAttribute(NativeMethods.CollationAttribute attr)
 		{
 			ErrorCode e;
-			NativeMethods.CollationAttributeValue value = NativeMethods.ucol_getAttribute(collatorHandle, attr, out e);
+			NativeMethods.CollationAttributeValue value = NativeMethods.ucol_getAttribute(_collatorHandle, attr, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 			return value;
 		}
@@ -245,7 +247,7 @@ namespace Icu.Collation
 		private void SetAttribute(NativeMethods.CollationAttribute attr, NativeMethods.CollationAttributeValue value)
 		{
 			ErrorCode e;
-			NativeMethods.ucol_setAttribute(collatorHandle, attr, value, out e);
+			NativeMethods.ucol_setAttribute(_collatorHandle, attr, value, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -336,7 +338,7 @@ namespace Icu.Collation
 			RuleBasedCollator copy = new RuleBasedCollator();
 			ErrorCode status;
 			int buffersize = 512;
-			copy.collatorHandle = NativeMethods.ucol_safeClone(collatorHandle,
+			copy._collatorHandle = NativeMethods.ucol_safeClone(_collatorHandle,
 															   IntPtr.Zero,
 															   ref buffersize,
 															   out status);
@@ -353,7 +355,7 @@ namespace Icu.Collation
 		{
 			RuleBasedCollator instance = new RuleBasedCollator();
 			ErrorCode status;
-			instance.collatorHandle = NativeMethods.ucol_open(localeId, out status);
+			instance._collatorHandle = NativeMethods.ucol_open(localeId, out status);
 			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
 			{
 				throw new ArgumentException("Could only create Collator '" +
@@ -391,18 +393,16 @@ namespace Icu.Collation
 			return instance;
 		}
 
-		private RuleBasedCollator() {}
-
 		private string ActualId
 		{
 			get
 			{
 				ErrorCode status;
-				if (collatorHandle.IsInvalid)
+				if (_collatorHandle.IsInvalid)
 					return string.Empty;
 				// See NativeMethods.ucol_getLocaleByType for marshal information.
 				string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
-					collatorHandle, NativeMethods.LocaleType.ActualLocale, out status));
+					_collatorHandle, NativeMethods.LocaleType.ActualLocale, out status));
 				if (status != ErrorCode.NoErrors)
 				{
 					return string.Empty;
@@ -416,11 +416,11 @@ namespace Icu.Collation
 			get
 			{
 				ErrorCode status;
-				if (collatorHandle.IsInvalid)
+				if (_collatorHandle.IsInvalid)
 					return string.Empty;
 				// See NativeMethods.ucol_getLocaleByType for marshal information.
 				string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
-					collatorHandle, NativeMethods.LocaleType.ValidLocale, out status));
+					_collatorHandle, NativeMethods.LocaleType.ValidLocale, out status));
 				if (status != ErrorCode.NoErrors)
 				{
 					return string.Empty;
@@ -453,7 +453,7 @@ namespace Icu.Collation
 			{
 				return 1;
 			}
-			return (int) NativeMethods.ucol_strcoll(collatorHandle,
+			return (int) NativeMethods.ucol_strcoll(_collatorHandle,
 													string1,
 													string1.Length,
 													string2,

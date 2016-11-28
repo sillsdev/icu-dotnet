@@ -229,11 +229,12 @@ namespace Icu.Collation
 		/// <returns></returns>
 		public static string GetCollationRules(string locale)
 		{
-			string sortRules = null;
 			ErrorCode err;
-			RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err);
-			if (!coll.IsInvalid && err == ErrorCode.NoErrors)
+			using (RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err))
 			{
+				if (coll.IsInvalid || err != ErrorCode.NoErrors)
+					return null;
+
 				const int len = 1000;
 				IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
 				try
@@ -245,14 +246,13 @@ namespace Icu.Collation
 						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
 						NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, actualLen);
 					}
-					sortRules = Marshal.PtrToStringUni(buffer, actualLen);
+					return Marshal.PtrToStringUni(buffer, actualLen);
 				}
 				finally
 				{
 					Marshal.FreeCoTaskMem(buffer);
 				}
 			}
-			return sortRules;
 		}
 
 		/// <summary>
