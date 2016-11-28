@@ -200,25 +200,20 @@ namespace Icu.Collation
 				return null;
 
 			ErrorCode err;
-			ParseError parseError;
-			IntPtr col = NativeMethods.ucol_openRules(rules, rules.Length, UColAttributeValue.UCOL_DEFAULT,
-				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
-			try
+			var parseError = new ParseError();
+			using (NativeMethods.ucol_openRules(rules, rules.Length, NormalizationMode.Default,
+				CollationStrength.Default, ref parseError, out err))
 			{
 				if (err == ErrorCode.NoErrors)
 					return null;
 
 				return new CollationRuleErrorInfo
-					{
-						Line = parseError.Line + 1,
-						Offset = parseError.Offset + 1,
-						PreContext = parseError.PreContext,
-						PostContext = parseError.PostContext
-					};
-			}
-			finally
-			{
-				NativeMethods.ucol_close(col);
+				{
+					Line = parseError.Line + 1,
+					Offset = parseError.Offset + 1,
+					PreContext = parseError.PreContext,
+					PostContext = parseError.PostContext
+				};
 			}
 		}
 

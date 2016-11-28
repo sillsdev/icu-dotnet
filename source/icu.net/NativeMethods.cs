@@ -230,25 +230,6 @@ namespace Icu
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openDelegate2(
-			byte[] loc,
-			out ErrorCode err);
-
-		private static ucol_openDelegate2 _ucol_open2;
-
-		/// <summary>
-		/// Open a UCollator for comparing strings.
-		/// </summary>
-		public static RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_open(
-			byte[] loc,
-			out ErrorCode err)
-		{
-			if (_ucol_open2 == null)
-				_ucol_open2 = GetMethod<ucol_openDelegate2>(IcuI18NLibHandle, "ucol_open");
-			return _ucol_open2(loc, out err);
-		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRulesDelegate(
 			[MarshalAs(UnmanagedType.LPWStr)] string rules,
 			int rulesLength,
@@ -1344,23 +1325,6 @@ ucol_nextSortKeyPart(SafeRuleBasedCollatorHandle collator,
 			if (_ucol_getRulesEx == null)
 				_ucol_getRulesEx = GetMethod<ucol_getRulesExDelegate>(IcuI18NLibHandle, "ucol_getRulesEx");
 			return _ucol_getRulesEx(coll, delta, buffer, bufferLen);
-		}
-
-		/// <summary>Test the rules to see if they are valid.</summary>
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr ucol_openRulesDelegate2(string rules, int rulesLength,
-			UColAttributeValue normalizationMode, UColAttributeValue strength,
-			out ParseError parseError, out ErrorCode status);
-
-		private static ucol_openRulesDelegate2 _ucol_openRules2;
-
-		public static IntPtr ucol_openRules(string rules, int rulesLength,
-			UColAttributeValue normalizationMode, UColAttributeValue strength,
-			out ParseError parseError, out ErrorCode status)
-		{
-			if (_ucol_openRules2 == null)
-				_ucol_openRules2 = GetMethod<ucol_openRulesDelegate2>(IcuI18NLibHandle, "ucol_openRules");
-			return _ucol_openRules2(rules, rulesLength, normalizationMode, strength, out parseError, out status);
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
