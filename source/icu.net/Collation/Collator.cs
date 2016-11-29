@@ -200,25 +200,20 @@ namespace Icu.Collation
 				return null;
 
 			ErrorCode err;
-			ParseError parseError;
-			IntPtr col = NativeMethods.ucol_openRules(rules, rules.Length, UColAttributeValue.UCOL_DEFAULT,
-				UColAttributeValue.UCOL_DEFAULT_STRENGTH, out parseError, out err);
-			try
+			var parseError = new ParseError();
+			using (NativeMethods.ucol_openRules(rules, rules.Length, NormalizationMode.Default,
+				CollationStrength.Default, ref parseError, out err))
 			{
 				if (err == ErrorCode.NoErrors)
 					return null;
 
 				return new CollationRuleErrorInfo
-					{
-						Line = parseError.Line + 1,
-						Offset = parseError.Offset + 1,
-						PreContext = parseError.PreContext,
-						PostContext = parseError.PostContext
-					};
-			}
-			finally
-			{
-				NativeMethods.ucol_close(col);
+				{
+					Line = parseError.Line + 1,
+					Offset = parseError.Offset + 1,
+					PreContext = parseError.PreContext,
+					PostContext = parseError.PostContext
+				};
 			}
 		}
 
@@ -229,11 +224,12 @@ namespace Icu.Collation
 		/// <returns></returns>
 		public static string GetCollationRules(string locale)
 		{
-			string sortRules = null;
 			ErrorCode err;
-			RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err);
-			if (!coll.IsInvalid && err == ErrorCode.NoErrors)
+			using (RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err))
 			{
+				if (coll.IsInvalid || err != ErrorCode.NoErrors)
+					return null;
+
 				const int len = 1000;
 				IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
 				try
@@ -245,14 +241,13 @@ namespace Icu.Collation
 						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
 						NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, actualLen);
 					}
-					sortRules = Marshal.PtrToStringUni(buffer, actualLen);
+					return Marshal.PtrToStringUni(buffer, actualLen);
 				}
 				finally
 				{
 					Marshal.FreeCoTaskMem(buffer);
 				}
 			}
-			return sortRules;
 		}
 
 		/// <summary>

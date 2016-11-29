@@ -15,7 +15,7 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the en locale.
 		public void Create_Locale()
 		{
-			Assert.IsNotNull(Collator.Create("en"));
+			Assert.That(Collator.Create("en"), Is.Not.Null);
 		}
 
 		[Test]
@@ -23,7 +23,7 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
-			Assert.IsNotNull(Collator.Create("root"));
+			Assert.That(Collator.Create("root"), Is.Not.Null);
 		}
 
 		[Test]
@@ -31,34 +31,31 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocaleAsEmpty()
 		{
-			Assert.IsNotNull(Collator.Create(string.Empty));
+			Assert.That(Collator.Create(string.Empty), Is.Not.Null);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void Create_nonexistent_throws()
 		{
-			Assert.IsNotNull(Collator.Create("non-existent"));
+			Assert.That(() => Collator.Create("non-existent"), Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
 		public void Create_nonexistentFallbackAllowed_fallsbackToUca()
 		{
-			Assert.IsNotNull(Collator.Create("non-existent", Collator.Fallback.FallbackAllowed));
+			Assert.That(Collator.Create("non-existent", Collator.Fallback.FallbackAllowed), Is.Not.Null);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Create_NullString()
 		{
-			Collator.Create((string)null);
+			Assert.That(() => Collator.Create((string)null), Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Create_NullCultureInfo()
 		{
-			Collator.Create((CultureInfo)null);
+			Assert.That(() => Collator.Create((CultureInfo)null), Throws.TypeOf<ArgumentNullException>());
 		}
 
 	}

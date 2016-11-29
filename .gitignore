@@ -5,6 +5,7 @@ lib/
 output/
 obj/
 test-results/
+.idea/
 *.userprefs
 *.user
 *.swp
