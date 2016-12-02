@@ -353,9 +353,14 @@ namespace Icu.Collation
 
 		public static new Collator Create(string localeId, Fallback fallback)
 		{
+			// Culture identifiers in .NET are created using '-', while ICU
+			// expects '_'.  We want to make sure that the localeId is the
+			// format that ICU expects.
+			var locale = new Locale(localeId);
+
 			RuleBasedCollator instance = new RuleBasedCollator();
 			ErrorCode status;
-			instance._collatorHandle = NativeMethods.ucol_open(localeId, out status);
+			instance._collatorHandle = NativeMethods.ucol_open(locale.Id, out status);
 			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
 			{
 				throw new ArgumentException("Could only create Collator '" +
@@ -364,8 +369,8 @@ namespace Icu.Collation
 											instance.ActualId +
 											"'. You can use the fallback option to create this.");
 			}
-			if(status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback && instance.ValidId != localeId &&
-				 localeId.Length > 0 && localeId != "root")
+			if(status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback && !instance.ValidId.Equals(locale.Id) &&
+				 locale.Id.Length > 0 && !locale.Id.Equals("root"))
 			{
 				throw new ArgumentException("Could only create Collator '" +
 											localeId +

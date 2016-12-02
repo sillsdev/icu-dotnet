@@ -20,6 +20,23 @@ namespace Icu.Tests.Collation
 
 		[Test]
 		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the en-US locale.
+		public void Create_LocaleWithCultureInfo()
+		{
+			var cultureInfo = new CultureInfo("en-US");
+			Assert.That(Collator.Create(cultureInfo.Name), Is.Not.Null);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the en-US locale.
+		public void Create_LocaleWithICUCultureId()
+		{
+			Assert.That(Collator.Create("en_US"), Is.Not.Null);
+		}
+
+		[Test]
+		[Category("Full ICU")]
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
