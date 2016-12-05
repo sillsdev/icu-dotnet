@@ -151,18 +151,6 @@
     <None Include="packages.config" />
     <None Include="NuGetAssets\icu.net.nuspec" />
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
-    <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-    <None Include="..\..\lib\icu\icudt$(icu_ver).dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\lib\icu\icuin$(icu_ver).dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\lib\icu\icuuc$(icu_ver).dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>

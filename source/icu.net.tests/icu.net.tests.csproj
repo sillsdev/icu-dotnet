@@ -32,6 +32,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,23 +46,23 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>AnyCPU</PlatformTarget>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -106,13 +108,11 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
-  
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver)</DefineConstants>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
   </PropertyGroup>
-  
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -122,62 +122,53 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="BreakIteratorTests.Chinese.cs" />
-	<Compile Include="Collation\CollatorTests.cs" />
-	<Compile Include="Collation\SortKeyTests.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Collation\RuleBasedCollatorTests.cs" />
-	<Compile Include="LocaleTests.cs" />
-	<Compile Include="CharacterTests.cs" />
-	<Compile Include="UnicodeStringTests.cs" />
-	<Compile Include="UnicodeSetTests.cs" />
-	<Compile Include="NormalizerTests.cs" />
-	<Compile Include="BreakIteratorTests.cs" />
-	<Compile Include="IcuWrapperTests.cs" />
-	<Compile Include="VersionInfoTests.cs" />
+    <Compile Include="BreakIteratorTests.Chinese.cs" />
+    <Compile Include="Collation\CollatorTests.cs" />
+    <Compile Include="Collation\SortKeyTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Collation\RuleBasedCollatorTests.cs" />
+    <Compile Include="LocaleTests.cs" />
+    <Compile Include="CharacterTests.cs" />
+    <Compile Include="UnicodeStringTests.cs" />
+    <Compile Include="UnicodeSetTests.cs" />
+    <Compile Include="NormalizerTests.cs" />
+    <Compile Include="BreakIteratorTests.cs" />
+    <Compile Include="IcuWrapperTests.cs" />
+    <Compile Include="VersionInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\icu.net\icu.net.csproj">
-	  <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
-	  <Name>icu.net</Name>
-	</ProjectReference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">    
-	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
-    <None Include="..\..\lib\icu\icudt$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-    <None Include="..\..\lib\icu\icuin$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-    <None Include="..\..\lib\icu\icuuc$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <ProjectReference Include="..\icu.net\icu.net.csproj">
+      <Project>{28A0072F-AE0B-449A-8494-B53F09756273}</Project>
+      <Name>icu.net</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-  <None Include="packages.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="icu4c.readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -188,6 +179,13 @@
   </Target>
   -->
   <PropertyGroup>
-	<PreBuildEvent />
+    <PreBuildEvent />
   </PropertyGroup>
+  <Import Project="..\packages\Icu4c.Win.56.1.3-beta3\build\Icu4c.Win.targets" Condition="Exists('..\packages\Icu4c.Win.56.1.3-beta3\build\Icu4c.Win.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Icu4c.Win.56.1.3-beta3\build\Icu4c.Win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.56.1.3-beta3\build\Icu4c.Win.targets'))" />
+  </Target>
 </Project>
