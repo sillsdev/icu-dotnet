@@ -54,10 +54,8 @@ Rather than using the full version of ICU (which can be ~25 MB), a custom minimu
         ```
 4. Build ICU VS solution in *icu/source/allinone/allinone.sln*.
     - Choose Configuration **Release** and Target Platform **Win32**.  There will be errors about "tstfiles.mk not found" that can be ignored.
-5. Upload dlls from *icu/bin* to [downloads.palaso.org](http://downloads.palaso.org/icu/icu4c-54.1-win32-min/ "icu4c-54.1-win32-min")
 
 #### What's in the minimum build
-- BreakIterator
 - Characters
 - ErrorCodes
 - Locale
