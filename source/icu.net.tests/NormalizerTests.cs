@@ -2,6 +2,7 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Text;
+using Icu.Collation;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -9,69 +10,23 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NormalizerTests
 	{
-		[Test]
-		public void Normalize_NFC()
+		[TestCase("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFC, Result = "X\u00C4bc")]
+		[TestCase("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFD, Result = "XA\u0308bc")]
+		[TestCase("tést", Normalizer.UNormalizationMode.UNORM_NFD, Result = "te\u0301st")]
+		[TestCase("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFC, Result = "tést")]
+		[TestCase("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFD, Result = "te\u0301st")]
+		public string Normalize(string src, Normalizer.UNormalizationMode mode)
 		{
-			Assert.That(Normalizer.Normalize("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFC),
-				Is.EqualTo("X\u00C4bc"));
+			return Normalizer.Normalize(src, mode);
 		}
 
-		[Test]
-		public void Normalize_NFD()
+		[TestCase("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFC, Result = true)]
+		[TestCase("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFC, Result = false)]
+		[TestCase("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFD, Result = false)]
+		[TestCase("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFD, Result = true)]
+		public bool IsNormalized(string src, Normalizer.UNormalizationMode expectNormalizationMode)
 		{
-			Assert.That(Normalizer.Normalize("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFD),
-				Is.EqualTo("XA\u0308bc"));
-		}
-
-		[Test]
-		public void Normalize_NFC2NFC()
-		{
-			var normalizedString = Normalizer.Normalize("tést", Normalizer.UNormalizationMode.UNORM_NFC);
-			Assert.That(normalizedString, Is.EqualTo("tést"));
-			Assert.That(normalizedString.IsNormalized(NormalizationForm.FormC), Is.True);
-		}
-
-		[Test]
-		public void Normalize_NFC2NFD()
-		{
-			var normalizedString = Normalizer.Normalize("tést", Normalizer.UNormalizationMode.UNORM_NFD);
-			Assert.That(normalizedString[2], Is.EqualTo('\u0301'));
-			Assert.That(normalizedString, Is.EqualTo("te\u0301st"));
-			Assert.That(normalizedString.IsNormalized(NormalizationForm.FormD), Is.True);
-		}
-
-		[Test]
-		public void Normalize_NFD2NFC()
-		{
-			var normalizedString = Normalizer.Normalize("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFC);
-			Assert.That(normalizedString, Is.EqualTo("tést"));
-			Assert.That(normalizedString.IsNormalized(NormalizationForm.FormC), Is.True);
-		}
-
-		[Test]
-		public void Normalize_NFD2NFD()
-		{
-			var normalizedString = Normalizer.Normalize("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFD);
-			Assert.That(normalizedString, Is.EqualTo("te\u0301st"));
-			Assert.That(normalizedString.IsNormalized(NormalizationForm.FormD), Is.True);
-		}
-
-		[Test]
-		public void IsNormalized_NFC()
-		{
-			Assert.That(Normalizer.IsNormalized("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFC),
-				Is.True);
-			Assert.That(Normalizer.IsNormalized("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFC),
-				Is.False);
-		}
-
-		[Test]
-		public void IsNormalized_NFD()
-		{
-			Assert.That(Normalizer.IsNormalized("XA\u0308bc", Normalizer.UNormalizationMode.UNORM_NFD),
-				Is.True);
-			Assert.That(Normalizer.IsNormalized("X\u00C4bc", Normalizer.UNormalizationMode.UNORM_NFD),
-				Is.False);
+			return Normalizer.IsNormalized(src, expectNormalizationMode);
 		}
 	}
 }
