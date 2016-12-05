@@ -104,7 +104,6 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
-
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
@@ -149,23 +148,20 @@
     <Compile Include="Properties\AssemblyInformationalVersions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="NuGetAssets\Install.ps1" />
     <None Include="packages.config" />
     <None Include="NuGetAssets\icu.net.nuspec" />
-    <None Include="NuGetAssets\icu.net-Linux.nuspec" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release'">
-	<!-- If we want to use our custom Windows DLLs, copy them over to output. -->
+    <!-- If we want to use our custom Windows DLLs, copy them over to output. -->
     <None Include="..\..\lib\icu\icudt$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuin$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\lib\icu\icuuc$(icu_ver).dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -196,25 +192,20 @@
       <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.dll*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
-      <IcuFiles Include="../../lib/icu/*" />
     </ItemGroup>
     <CreateProperty Value="0" Condition=" '$(BuildCounter)' == ''">
-        <Output PropertyName="BuildCounter" TaskParameter="Value"/>
+      <Output PropertyName="BuildCounter" TaskParameter="Value" />
     </CreateProperty>
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net-Linux.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" Condition="'$(OS)'=='Unix'" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" Condition="'$(OS)'!='Unix'" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets/Install.ps1" DestinationFolder="$(SolutionDir)NuGetBuild/tools" Condition="'$(OS)'!='Unix'" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
-    <Copy SourceFiles="@(IcuFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/content" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)"
-      Version="$(icu_ver).0.$(BuildCounter)" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(icu_ver).0.$(BuildCounter)" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="NuGetAssets\" />
+    <Folder Include="NuGetAssets" />
   </ItemGroup>
 </Project>
