@@ -141,7 +141,7 @@ namespace Icu
 			_IcuI18NLibHandle = IntPtr.Zero;
 		}
 
-		private static T GetMethod<T>(IntPtr handle, string methodName) where T: class
+		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T: class
 		{
 			var versionedMethodName = string.Format("{0}_{1}", methodName, IcuVersion);
 			var methodPointer = IsWindows ?
@@ -151,6 +151,12 @@ namespace Icu
 			{
 				return Marshal.GetDelegateForFunctionPointer(
 					methodPointer, typeof(T)) as T;
+			}
+			if (missingInMinimal)
+			{
+				throw new MissingMemberException(
+					string.Format("Do you have the full version of ICU installed? " +
+					"The method '{0}' is not included in the minimal version of ICU.", methodName));
 			}
 			return default(T);
 		}
@@ -1348,7 +1354,7 @@ namespace Icu
 			out ErrorCode errorCode)
 		{
 			if (_u_strToTitle == null)
-				_u_strToTitle = GetMethod<u_strToTitleDelegate>(IcuCommonLibHandle, "u_strToTitle");
+				_u_strToTitle = GetMethod<u_strToTitleDelegate>(IcuCommonLibHandle, "u_strToTitle", true);
 			return _u_strToTitle(dest, destCapacity, src, srcLength, titleIter,
 				locale, out errorCode);
 		}
@@ -1431,7 +1437,7 @@ namespace Icu
 			string locale, string text, int textLength, out ErrorCode errorCode)
 		{
 			if (_ubrk_open == null)
-				_ubrk_open = GetMethod<ubrk_openDelegate>(IcuCommonLibHandle, "ubrk_open");
+				_ubrk_open = GetMethod<ubrk_openDelegate>(IcuCommonLibHandle, "ubrk_open", true);
 			return _ubrk_open(type, locale, text, textLength, out errorCode);
 		}
 
@@ -1447,7 +1453,7 @@ namespace Icu
 		public static void ubrk_close(IntPtr bi)
 		{
 			if (_ubrk_close == null)
-				_ubrk_close = GetMethod<ubrk_closeDelegate>(IcuCommonLibHandle, "ubrk_close");
+				_ubrk_close = GetMethod<ubrk_closeDelegate>(IcuCommonLibHandle, "ubrk_close", true);
 			_ubrk_close(bi);
 		}
 
@@ -1464,7 +1470,7 @@ namespace Icu
 		public static int ubrk_first(IntPtr bi)
 		{
 			if (_ubrk_first == null)
-				_ubrk_first = GetMethod<ubrk_firstDelegate>(IcuCommonLibHandle, "ubrk_first");
+				_ubrk_first = GetMethod<ubrk_firstDelegate>(IcuCommonLibHandle, "ubrk_first", true);
 			return _ubrk_first(bi);
 		}
 
@@ -1481,7 +1487,7 @@ namespace Icu
 		public static int ubrk_next(IntPtr bi)
 		{
 			if (_ubrk_next == null)
-				_ubrk_next = GetMethod<ubrk_nextDelegate>(IcuCommonLibHandle, "ubrk_next");
+				_ubrk_next = GetMethod<ubrk_nextDelegate>(IcuCommonLibHandle, "ubrk_next", true);
 			return _ubrk_next(bi);
 		}
 
@@ -1498,7 +1504,7 @@ namespace Icu
 		public static int ubrk_getRuleStatus(IntPtr bi)
 		{
 			if (_ubrk_getRuleStatus == null)
-				_ubrk_getRuleStatus = GetMethod<ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus");
+				_ubrk_getRuleStatus = GetMethod<ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus", true);
 			return _ubrk_getRuleStatus(bi);
 		}
 
