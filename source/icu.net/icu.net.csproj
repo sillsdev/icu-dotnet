@@ -148,6 +148,7 @@
     <Compile Include="Properties\AssemblyInformationalVersions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="NuGetAssets\icu.net.nuspec" />
   </ItemGroup>
