@@ -32,6 +32,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -145,7 +147,6 @@
     <Compile Include="Normalizer.cs" />
     <Compile Include="BreakIterator.cs" />
     <Compile Include="Boundary.cs" />
-    <Compile Include="Properties\AssemblyInformationalVersions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -189,7 +190,8 @@
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(icu_ver).0.$(BuildCounter)" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
+    <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))"/>
   </Target>
   <PropertyGroup>
     <PreBuildEvent />
@@ -197,4 +199,11 @@
   <ItemGroup>
     <Folder Include="NuGetAssets" />
   </ItemGroup>
+  <Import Project="..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets'))" />
+  </Target>
 </Project>
