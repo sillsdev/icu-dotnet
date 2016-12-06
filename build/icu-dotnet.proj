@@ -7,20 +7,15 @@
 		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(OS)'!='Windows_NT'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
 		<SolutionDir>$(RootDir)/source</SolutionDir>
-		<ApplicationName>libicu-cil</ApplicationName>
-		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">1.2.3.4</BUILD_NUMBER>
-		<!-- Note, after some thought, we've decided this is the best place to keep the version
-			number (not on TeamCity, not in the assemblies). -->
-		<Version>1.2</Version>
-		<excludedCategories>ICU50 Deprecated;Full ICU;ByHand;</excludedCategories>
+		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
 		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
-		<icu_ver Condition="'$(icu_ver)' == ''">54</icu_ver>
 	</PropertyGroup>
 
-	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
-	<UsingTask TaskName="Split" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
+	<!-- To increment the version number create and push a new tag in git -->
+
 	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
@@ -30,30 +25,6 @@
 		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
 
 	<Import Project="NuGet.targets"/>
-
-	<Target Name="VersionNumbers" DependsOnTargets="DownloadDependencies">
-		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
-
-		<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-			<Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
-		</Split>
-
-		<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
-
-		<CreateProperty Value="$(Version).$(BuildCounter).0">
-			<Output PropertyName="FileVersion" TaskParameter="Value"/>
-		</CreateProperty>
-
-		<Message Text="Version: $(FileVersion)" Importance="high"/>
-	</Target>
-
-	<ItemGroup>
-		<AssemblyInfoFiles Include="$(RootDir)/**/AssemblyInfo.cs"/>
-	</ItemGroup>
-	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
-		<StampAssemblies Version="$(Version).0.0" FileVersion="$(FileVersion)"
-			InputAssemblyPaths="@(AssemblyInfoFiles)" />
-	</Target>
 
 	<ItemGroup>
 		<AllBuildDependencyTasksFiles Include="$(SolutionDir)/packages/BuildDependencyTasks*/**"/>
@@ -75,7 +46,6 @@
 
 	<Target Name="Build">
 		<CallTarget Targets="Clean"/>
-		<CallTarget Targets="SetAssemblyVersion"/>
 		<CallTarget Targets="Compile"/>
 		<Message Text="Build Complete"/>
 	</Target>
