@@ -813,5 +813,43 @@ namespace Icu.Tests.Collation
 				() => new RuleBasedCollator(IcuStart + "a << \udc00\ud800")
 			);
 		}
+
+		/// <summary>
+		/// Tailored rules were obtained from:
+		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/sr.txt
+		/// </summary>
+		[Test]
+		public void GetSortRules_Serbian()
+		{
+			const string rules = "[reorder Cyrl][suppressContractions [Ии]]";
+			const string language = "sr";
+			var locale = new Locale(language);
+
+			var collationRules = Collator.GetCollationRules(locale);
+			var collationRules2 = Collator.GetCollationRules(language);
+
+			Assert.AreEqual(rules, collationRules);
+			Assert.AreEqual(collationRules, collationRules2);
+		}
+
+		/// <summary>
+		/// Getting CollationRules for English should return some content.
+		/// Before it would return NULL because the ErrorCode returned was
+		/// ErrorCode.USING_DEFAULT_WARNING which is not a failure.
+		///
+		/// Double-check this to make sure the rules are correct.
+		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/en.txt
+		/// </summary>
+		[Test]
+		public void GetSortRules_English()
+		{
+			var locale = new Locale("en-US");
+
+			var tailoredRules = Collator.GetCollationRules(locale);
+			var collationRules = Collator.GetCollationRules(locale, UColRuleOption.UCOL_FULL_RULES);
+
+			Assert.IsEmpty(tailoredRules);
+			Assert.IsNotNullOrEmpty(collationRules);
+		}
 	}
 }
