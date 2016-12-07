@@ -221,25 +221,35 @@ namespace Icu.Collation
 		/// Gets the collation rules for the specified locale.
 		/// </summary>
 		/// <param name="locale">The locale.</param>
-		/// <returns></returns>
-		public static string GetCollationRules(string locale)
+		/// <param name="collatorRuleOption">UColRuleOption to use. Default is UColRuleOption.UCOL_TAILORING_ONLY</param>
+		public static string GetCollationRules(string locale, UColRuleOption collatorRuleOption = UColRuleOption.UCOL_TAILORING_ONLY)
+		{
+			return GetCollationRules(new Locale(locale), collatorRuleOption);
+		}
+
+		/// <summary>
+		/// Gets the collation rules for the specified locale.
+		/// </summary>
+		/// <param name="locale">The locale.</param>
+		/// <param name="collatorRuleOption">UColRuleOption to use. Default is UColRuleOption.UCOL_TAILORING_ONLY</param>
+		public static string GetCollationRules(Locale locale, UColRuleOption collatorRuleOption = UColRuleOption.UCOL_TAILORING_ONLY)
 		{
 			ErrorCode err;
-			using (RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale, out err))
+			using (RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale.Id, out err))
 			{
-				if (coll.IsInvalid || err != ErrorCode.NoErrors)
+				if (coll.IsInvalid || err.IsFailure())
 					return null;
 
 				const int len = 1000;
 				IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
 				try
 				{
-					int actualLen = NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, len);
+					int actualLen = NativeMethods.ucol_getRulesEx(coll, collatorRuleOption, buffer, len);
 					if (actualLen > len)
 					{
 						Marshal.FreeCoTaskMem(buffer);
 						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
-						NativeMethods.ucol_getRulesEx(coll, UColRuleOption.UCOL_TAILORING_ONLY, buffer, actualLen);
+						NativeMethods.ucol_getRulesEx(coll, collatorRuleOption, buffer, actualLen);
 					}
 					return Marshal.PtrToStringUni(buffer, actualLen);
 				}
