@@ -20,6 +20,9 @@ namespace Icu.Tests
 		[Test]
 		public void Split_Word()
 		{
+			if (string.CompareOrdinal(Wrapper.IcuVersion, "52.1") < 0)
+				Assert.Ignore("This test requires ICU 52 or higher");
+
 			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.WORD, "zh-HK", "今晚、我會睡著。一隻狗");
 			var expected = new[] { "今晚", "我會", "睡著", "一隻", "狗" };
 
