@@ -819,8 +819,12 @@ namespace Icu.Tests.Collation
 		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/sr.txt
 		/// </summary>
 		[Test]
+		[Category("Full ICU")]
 		public void GetSortRules_Serbian()
 		{
+			if (string.CompareOrdinal(Wrapper.IcuVersion, "55.1") < 0)
+				Assert.Ignore("This test requires ICU 55 or higher");
+
 			const string rules = "[reorder Cyrl][suppressContractions [Ии]]";
 			const string language = "sr";
 			var locale = new Locale(language);
@@ -841,6 +845,7 @@ namespace Icu.Tests.Collation
 		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/en.txt
 		/// </summary>
 		[Test]
+		[Category("Full ICU")]
 		public void GetSortRules_English()
 		{
 			var locale = new Locale("en-US");
