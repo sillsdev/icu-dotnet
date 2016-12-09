@@ -125,6 +125,7 @@
     <Compile Include="BreakIteratorTests.Chinese.cs" />
     <Compile Include="Collation\CollatorTests.cs" />
     <Compile Include="Collation\SortKeyTests.cs" />
+    <Compile Include="NativeMethodsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collation\RuleBasedCollatorTests.cs" />
     <Compile Include="LocaleTests.cs" />
@@ -187,5 +188,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Icu4c.Win.Full.Lib.56.1.5\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Full.Lib.56.1.5\build\Icu4c.Win.Full.Lib.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets'))" />
   </Target>
+  <Import Project="..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
 </Project>

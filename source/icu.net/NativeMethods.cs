@@ -2,6 +2,8 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Icu.Collation;
 
@@ -64,6 +66,7 @@ namespace Icu
 		#endregion
 
 		private static int IcuVersion;
+		private static string _IcuPath;
 		private static IntPtr _IcuCommonLibHandle;
 		private static IntPtr _IcuI18NLibHandle;
 
@@ -92,8 +95,34 @@ namespace Icu
 			}
 		}
 
+		private static string DirectoryOfThisAssembly
+		{
+			get { return Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath); }
+		}
+
+
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{
+			if (IcuVersion <= 0)
+			{
+				var files = Directory.EnumerateFiles(DirectoryOfThisAssembly,
+					IsWindows ? libraryName + "*.dll" : "lib" + libraryName + ".so.*").ToList();
+				if (files.Count > 0)
+				{
+					// Do a reverse sort so that we use the highest version
+					files.Sort((x, y) => string.CompareOrdinal(y, x));
+					var filePath = files[0];
+					var version = IsWindows
+						? Path.GetFileNameWithoutExtension(filePath).Substring(5)
+						: Path.GetFileName(filePath).Substring(12);
+					int icuVersion;
+					if (int.TryParse(version, out icuVersion))
+					{
+						IcuVersion = icuVersion;
+						_IcuPath = DirectoryOfThisAssembly;
+					}
+				}
+			}
 			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
 			if (handle == IntPtr.Zero)
 				throw new FileLoadException("Can't load ICU library", libraryName);
@@ -107,12 +136,15 @@ namespace Icu
 			IntPtr handle;
 			if (IsWindows)
 			{
-				handle = LoadLibrary(string.Format("{0}{1}.dll", basename, icuVersion));
+				var libName = string.Format("{0}{1}.dll", basename, icuVersion);
+				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+				handle = LoadLibrary(libPath);
 			}
 			else
 			{
 				var libName = string.Format("lib{0}.so.{1}", basename, icuVersion);
-				handle = dlopen(libName, RTLD_NOW);
+				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+				handle = dlopen(libPath, RTLD_NOW);
 			}
 			if (handle == IntPtr.Zero)
 				return GetIcuLibHandle(basename, icuVersion - 1);
