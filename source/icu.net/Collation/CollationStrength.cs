@@ -52,6 +52,6 @@ namespace Icu.Collation
 		/// </summary>
 		/// <remarks>Identical strength is rarely useful, as it amounts to
 		/// codepoints of the NFD form of the string</remarks>
-		Identical
+		Identical = 15
 	}
 }
