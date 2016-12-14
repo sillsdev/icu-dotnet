@@ -1,7 +1,8 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
-using System.Linq;
 using NUnit.Framework;
+using System;
+using System.Linq;
 
 namespace Icu.Tests
 {
@@ -136,6 +137,90 @@ namespace Icu.Tests
 
 			Assert.That(lineBoundaries.Count(), Is.EqualTo(expectedLines.Length));
 			Assert.That(lineBoundaries.ToArray(), Is.EquivalentTo(expectedLines));
+		}
+
+		[Test]
+		public void CreateChracterInstanceTest()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-bye, dear!";
+			var expected = new[] {
+				new Boundary(0, 1), new Boundary(1, 2), new Boundary(2, 3), new Boundary(3, 4),
+				new Boundary(4, 5), new Boundary(5, 6), new Boundary(6, 7), new Boundary(7, 8),
+				new Boundary(8, 9), new Boundary(9, 10), new Boundary(10, 11), new Boundary(11, 12),
+				new Boundary(12, 13), new Boundary(13, 14), new Boundary(14, 15)
+			};
+
+			using (var bi = BreakIterator.CreateCharacterInstance(locale, text))
+			{
+				Assert.AreEqual(locale, bi.Locale);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+			}
+		}
+
+		[Test]
+		public void CreateSentenceInstanceTest()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-bye, dear! That was a delicious dinner.";
+			var expected = new[] { new Boundary(0, 16), new Boundary(16, 44) };
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			{
+				Assert.AreEqual(locale, bi.Locale);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+			}
+		}
+
+		[Test]
+		public void CreateWordInstanceTest()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var expectedWords = new[] {
+				new Boundary(0, 4), new Boundary(5, 8), new Boundary(10, 14), new Boundary(15, 18)
+			};
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: false))
+			{
+				Assert.AreEqual(locale, bi.Locale);
+				CollectionAssert.AreEqual(expectedWords, bi.Boundaries);
+			}
+		}
+
+		[Test]
+		public void CreateWordInstanceTest_IncludeSpacesAndPunctuation()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var expected = new[] {
+				new Boundary(0, 4), new Boundary(4, 5),
+				new Boundary(5, 8), new Boundary(8, 9), new Boundary(9, 10),
+				new Boundary(10, 14), new Boundary(14, 15), new Boundary(15, 18),
+				new Boundary(18, 19), new Boundary(19, 20)
+			};
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: true))
+			{
+				Assert.AreEqual(locale, bi.Locale);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+			}
+		}
+
+		[Test]
+		public void CreateLineInstanceTest()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var expected = new[] {
+				new Boundary(0, 5), new Boundary(5, 10), new Boundary(10, 15), new Boundary(15, 20)
+			};
+
+			using (var bi = BreakIterator.CreateLineInstance(locale, text))
+			{
+				Assert.AreEqual(locale, bi.Locale);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+			}
 		}
 
 		/// <summary>
