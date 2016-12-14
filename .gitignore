@@ -12,3 +12,6 @@ test-results/
 *.suo
 source/packages/
 source/NuGetBuild/
+
+# Visual Studio 2015 cache/options directory
+.vs/

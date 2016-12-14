@@ -6,12 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Implement `RuleBasedBreakIterator` class (Connie Yau)
+- Make `BreakIterator` closer to `Icu::BreakIterator` (Connie Yau)
+
 ## [2.0.1] - 2016-12-19
 
 ### Fixed
 - Prefer local directory when loading unmanaged ICU binaries. This addresses
   [#20](https://github.com/sillsdev/icu-dotnet/issues/20).
-- Fix `CollationStrength.Identical` value to match value used by unamanaged
+- Fix `CollationStrength.Identical` value to match value used by unmanaged
   binaries.
 - Fix casing of a few native methods.
 

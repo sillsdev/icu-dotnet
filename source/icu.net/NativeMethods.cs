@@ -492,7 +492,7 @@ namespace Icu
 		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...);
 
 		public static IntPtr ucol_getLocaleByType(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator, 
+			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			LocaleType type,
 			out ErrorCode status)
 		{
@@ -828,6 +828,10 @@ namespace Icu
 				string locale, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
+				string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void ubrk_closeDelegate(IntPtr bi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -838,6 +842,26 @@ namespace Icu
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
+
+			/// <summary>
+			/// Get the statuses from the break rules that determined the most
+			/// recently returned break position.  The values appear in the rule
+			/// source within brackets, {123}, for example.The default status value
+			/// for rules that do not explicitly provide one is zero.
+			///
+			/// For word break iterators, the possible values are defined in
+			/// <see cref="Icu.BreakIterator.UWordBreak"/>
+			/// </summary>
+			/// <returns>The number of rule status values that determined the most recent
+			/// boundary returned from the break iterator.</returns>
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
+				[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
+				Int32 capacity,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_closeDelegate(IntPtr set);
@@ -864,6 +888,7 @@ namespace Icu
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int uset_getItemCountDelegate(IntPtr set);
+
 
 			internal u_initDelegate u_init;
 			internal u_cleanupDelegate u_cleanup;
@@ -919,10 +944,13 @@ namespace Icu
 			internal unorm_normalizeDelegate _unorm_normalize;
 			internal unorm_isNormalizedDelegate _unorm_isNormalized;
 			internal ubrk_openDelegate ubrk_open;
+			internal ubrk_openRulesDelegate ubrk_openRules;
 			internal ubrk_closeDelegate ubrk_close;
 			internal ubrk_firstDelegate ubrk_first;
 			internal ubrk_nextDelegate ubrk_next;
 			internal ubrk_getRuleStatusDelegate ubrk_getRuleStatus;
+			internal ubrk_getRuleStatusVecDelegate ubrk_getRuleStatusVec;
+			internal ubrk_setTextDelegate ubrk_setText;
 			internal uset_closeDelegate uset_close;
 			internal uset_openDelegate uset_open;
 			internal uset_openPatternDelegate uset_openPattern;
@@ -1400,7 +1428,7 @@ namespace Icu
 		#endregion
 
 		/// <summary>Return the lower case equivalent of the string.</summary>
-		public static int u_strToLower(IntPtr dest, int destCapacity, string src, 
+		public static int u_strToLower(IntPtr dest, int destCapacity, string src,
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode)
 		{
 			if (Methods.u_strToLower == null)
@@ -1478,6 +1506,37 @@ namespace Icu
 		}
 
 		/// <summary>
+		/// Open a new BreakIterator that uses the given rules to break text.
+		/// </summary>
+		/// <param name="rules">The rules to use for break iterator</param>
+		/// <param name="rulesLength">The length of the rules.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="textLength">Length of the text.</param>
+		/// <param name="errorCode">The error code.</param>
+		/// <returns></returns>
+		public static IntPtr ubrk_openRules(
+			string rules, int rulesLength,
+			string text, int textLength,
+			out ParseError parseError, out ErrorCode errorCode)
+		{
+			if (Methods.ubrk_openRules == null)
+				Methods.ubrk_openRules = GetMethod<MethodsContainer.ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
+			return Methods.ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
+		}
+
+		/// <summary>
+		/// Sets the iterator to a new text
+		/// </summary>
+		/// <param name="bi">The break iterator.</param>
+		/// <param name="text">Text to examine</param>
+		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
+		{
+			if (Methods.ubrk_setText == null)
+				Methods.ubrk_setText = GetMethod<MethodsContainer.ubrk_setTextDelegate>(IcuCommonLibHandle, "ubrk_setText", true);
+			Methods.ubrk_setText(bi, text, textLength, out errorCode);
+		}
+
+		/// <summary>
 		/// Close a UBreakIterator.
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
@@ -1522,6 +1581,21 @@ namespace Icu
 			if (Methods.ubrk_getRuleStatus == null)
 				Methods.ubrk_getRuleStatus = GetMethod<MethodsContainer.ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus", true);
 			return Methods.ubrk_getRuleStatus(bi);
+		}
+
+		/// <summary>
+		/// Return the status from the break rule that determined the most recently returned break position.
+		/// </summary>
+		/// <param name="bi">The break iterator.</param>
+		/// <returns></returns>
+		public static int ubrk_getRuleStatusVec(IntPtr bi,
+			[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
+			Int32 capacity,
+			out ErrorCode status)
+		{
+			if (Methods.ubrk_getRuleStatusVec == null)
+				Methods.ubrk_getRuleStatusVec = GetMethod<MethodsContainer.ubrk_getRuleStatusVecDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatusVec", true);
+			return Methods.ubrk_getRuleStatusVec(bi, fillInVector, capacity, out status);
 		}
 
 		#endregion Break iterator
@@ -1580,7 +1654,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Returns a string representation of this set.  If the result of calling this function is 
+		/// Returns a string representation of this set.  If the result of calling this function is
 		/// passed to a uset_openPattern(), it will produce another set that is equal to this one.
 		/// </summary>
 		/// <param name="set">The Unicode set</param>
