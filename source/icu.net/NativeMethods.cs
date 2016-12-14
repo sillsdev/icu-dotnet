@@ -1442,6 +1442,24 @@ namespace Icu
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
+
+		private static ubrk_setTextDelegate _ubrk_setText;
+
+		/// <summary>
+		/// Sets the iterator to a new text
+		/// </summary>
+		/// <param name="bi">The break iterator.</param>
+		/// <param name="text">Text to examine</param>
+		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
+		{
+			if (_ubrk_setText == null)
+				_ubrk_setText = GetMethod<ubrk_setTextDelegate>(IcuCommonLibHandle, "ubrk_setText", true);
+
+			_ubrk_setText(bi, text, textLength, out errorCode);
+		}
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private delegate void ubrk_closeDelegate(IntPtr bi);
 
 		private static ubrk_closeDelegate _ubrk_close;
