@@ -154,7 +154,237 @@ namespace Icu.Tests
 			using (var bi = BreakIterator.CreateCharacterInstance(locale, text))
 			{
 				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
+			}
+		}
+
+		/// <summary>
+		/// Checking that when a break iterator is created with null or ""
+		/// that it returns the correct properties.
+		/// </summary>
+		[Test]
+		public void BreakIteratorThatIsEmptyOrNull()
+		{
+			var locale = new Locale("de-DE");
+
+			Action<BreakIterator, string> Verify = (BreakIterator iterator, string t) => 
+			{
+				Assert.AreEqual(locale, iterator.Locale);
+				Assert.AreEqual(t, iterator.Text);
+				Assert.AreEqual(0, iterator.Boundaries.Length);
+
+				Assert.Null(iterator.Current);
+				Assert.Null(iterator.Next);
+				Assert.Null(iterator.First);
+				Assert.Null(iterator.Last);
+				Assert.Null(iterator.Previous);
+			};
+
+			using (var bi = BreakIterator.CreateCharacterInstance(locale, string.Empty))
+			{
+				Verify(bi, string.Empty);
+			}
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, null, true))
+			{
+				Verify(bi, null);
+			}
+		}
+
+		[Test]
+		public void CanIterateForwards()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var expected = new[] {
+				new Boundary(0, 4), new Boundary(5, 8), new Boundary(10, 14), new Boundary(15, 18)
+			};
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: false))
+			{
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+
+				int current = 0;
+				var currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Current);
+				
+				// increment the index and verify that the next Boundary is correct.
+				current++;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				current++;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				current++;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				// We've moved past the last word, it should return null.
+				Assert.Null(bi.Next);
+				Assert.Null(bi.Current);
+
+				// Verify that the first element is correct now that we've moved to the end.
+				Assert.AreEqual(expected[0], bi.First);
+				Assert.AreEqual(expected[0], bi.Current);
+			}
+		}
+
+		[Test]
+		public void CanIterateBackwards()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var expected = new[] {
+				new Boundary(0, 5), new Boundary(5, 10), new Boundary(10, 15), new Boundary(15, 20)
+			};
+
+			using (var bi = BreakIterator.CreateLineInstance(locale, text))
+			{
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+
+				int current = 0;
+				var currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				// Increment the index and verify that the next Boundary is correct.
+				current++;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				current++;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				current--;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Previous);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				current--;
+				currentBoundary = expected[current];
+				Assert.AreEqual(currentBoundary, bi.Previous);
+				Assert.AreEqual(currentBoundary, bi.Current);
+
+				// We've moved past the first word, it should return null.
+				Assert.Null(bi.Previous);
+				Assert.Null(bi.Current);
+
+				// Verify that the element is correct now that we've moved to the end.
+				Assert.AreEqual(expected[3], bi.Last);
+				Assert.AreEqual(expected[3], bi.Current);
+			}
+		}
+
+		[Test]
+		public void CanSetNewText()
+		{
+			var locale = new Locale("en-US");
+			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
+			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
+
+			var secondText = "It is my birthday!  I hope something exciting happens.";
+			var secondExpected = new[] { new Boundary(0, 20), new Boundary(20, 54) };
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			{
+				Assert.AreEqual(text, bi.Text);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+
+				// Move the iterator to the next boundary
+				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.Current);
+
+				// Assert that the new set of boundaries were found.
+				bi.SetText(secondText);
+				Assert.AreEqual(secondText, bi.Text);
+
+				// Assert that the iterator was reset back to the first element
+				// when we set new text.
+				Assert.AreEqual(secondExpected[0], bi.Current);
+
+				CollectionAssert.AreEqual(secondExpected, bi.Boundaries);
+			}
+		}
+
+		/// <summary>
+		/// Assert that when we set the text to empty that it will reset all the values.
+		/// </summary>
+		[Test]
+		public void CanSetNewText_Empty()
+		{
+			var locale = new Locale("en-US");
+			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
+			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
+
+			var secondText = string.Empty;
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			{
+				Assert.AreEqual(text, bi.Text);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+
+				// Move the iterator to the next boundary
+				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.Current);
+
+				// Assert that the new set of boundaries were found.
+				bi.SetText(secondText);
+				Assert.AreEqual(secondText, bi.Text);
+
+				// Assert that the iterator was reset back to the first element
+				// and is now null.
+				Assert.Null(bi.Current);
+				Assert.Null(bi.Next);
+				Assert.Null(bi.First);
+				Assert.Null(bi.Last);
+				Assert.Null(bi.Previous);
+
+				CollectionAssert.IsEmpty(bi.Boundaries);
+			}
+		}
+
+		/// <summary>
+		/// Assert that when we set the text to null that it will reset all the values.
+		/// </summary>
+		[Test]
+		public void CanSetNewText_Null()
+		{
+			var locale = new Locale("en-US");
+			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
+			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
+
+			string secondText = null;
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			{
+				Assert.AreEqual(text, bi.Text);
+				CollectionAssert.AreEqual(expected, bi.Boundaries);
+
+				// Move the iterator to the next boundary
+				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.Current);
+
+				// Assert that the new set of boundaries were found.
+				bi.SetText(secondText);
+				Assert.AreEqual(secondText, bi.Text);
+
+				// Assert that the iterator was reset back to the first element
+				// and is now null.
+				Assert.Null(bi.Current);
+				Assert.Null(bi.Next);
+				Assert.Null(bi.First);
+				Assert.Null(bi.Last);
+				Assert.Null(bi.Previous);
+
+				CollectionAssert.IsEmpty(bi.Boundaries);
 			}
 		}
 
@@ -168,6 +398,7 @@ namespace Icu.Tests
 			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
 			{
 				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 			}
 		}
@@ -184,6 +415,7 @@ namespace Icu.Tests
 			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: false))
 			{
 				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expectedWords, bi.Boundaries);
 			}
 		}
@@ -203,6 +435,7 @@ namespace Icu.Tests
 			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: true))
 			{
 				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 			}
 		}
