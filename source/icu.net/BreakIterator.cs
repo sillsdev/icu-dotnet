@@ -76,17 +76,25 @@ namespace Icu
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The text.</param>
 		/// <returns>The tokens.</returns>
-		public static IEnumerable<string> Split(UBreakIteratorType type, Locale locale, string text)
+		public static IEnumerable<string> Split(UBreakIteratorType type, string locale, string text)
 		{
-			return Split(type, locale.Id, text);
+			return Split(type, new Locale(locale), text);
 		}
 
-		public static IEnumerable<string> Split(UBreakIteratorType type, string locale, string text)
+		/// <summary>
+		/// Splits the specified text along the specified type of boundaries. Spaces and punctuations
+		/// are not returned.
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="locale">The locale.</param>
+		/// <param name="text">The text.</param>
+		/// <returns>The tokens.</returns>
+		public static IEnumerable<string> Split(UBreakIteratorType type, Locale locale, string text)
 		{
 			if (string.IsNullOrEmpty(text))
 				yield break;
 
-			foreach (var boundary in GetBoundaries(type, locale, text, includeSpacesAndPunctuation: false))
+			foreach (var boundary in GetBoundaries(type, locale.Id, text, includeSpacesAndPunctuation: false))
 			{
 				yield return text.Substring(boundary.Start, boundary.End - boundary.Start);
 			}
@@ -100,12 +108,12 @@ namespace Icu
 		/// are desired; false otherwise.
 		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
 		/// </param>
-		public static IEnumerable<Boundary> GetWordBoundaries(Locale locale, string text, bool includeSpacesAndPunctuation)
+		public static IEnumerable<Boundary> GetWordBoundaries(string locale, string text, bool includeSpacesAndPunctuation)
 		{
-			return GetWordBoundaries(locale.Id, text, includeSpacesAndPunctuation);
+			return GetWordBoundaries(new Locale(locale), text, includeSpacesAndPunctuation);
 		}
 
-		public static IEnumerable<Boundary> GetWordBoundaries(string locale, string text, bool includeSpacesAndPunctuation)
+		public static IEnumerable<Boundary> GetWordBoundaries(Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
 			return GetBoundaries(UBreakIteratorType.WORD, locale, text, includeSpacesAndPunctuation);
 		}
@@ -116,16 +124,16 @@ namespace Icu
 		/// </summary>
 		public static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, Locale locale, string text)
 		{
-			return GetBoundaries(type, locale.Id, text, false);
+			return GetBoundaries(type, locale, text, false);
 		}
 
-		private static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, string locale, string text, bool includeSpacesAndPunctuation)
+		private static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
 			if (string.IsNullOrEmpty(text))
 				yield break;
 
 			ErrorCode err;
-			IntPtr bi = NativeMethods.ubrk_open(type, locale, text, text.Length, out err);
+			IntPtr bi = NativeMethods.ubrk_open(type, locale.Id, text, text.Length, out err);
 			if (err.IsFailure())
 				throw new Exception("BreakIterator.Split() failed with code " + err);
 
