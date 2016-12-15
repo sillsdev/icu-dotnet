@@ -74,7 +74,7 @@ namespace Icu
 		private readonly bool _includeSpacesAndPunctuation;
 		private readonly UBreakIteratorType _iteratorType;
 		private readonly Locale _locale;
-		
+
 		private int _currentIndex = DONE;
 		private bool _disposingValue = false; // To detect redundant calls
 		private string _text;
@@ -118,27 +118,15 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Increments the iterator and returns the next Boundary.
-		/// Returns null if there are no boundaries left to return.
+		/// Gets all of the Boundaries for the given text.
+		/// Returns Boundary[0] if the text was empty or null.
 		/// </summary>
-		public virtual Boundary Next
-		{
-			get
-			{
-				if (_currentIndex == DONE)
-					return default(Boundary);
+		public virtual Boundary[] Boundaries { get; protected set; }
 
-				_currentIndex++;
-
-				if (_currentIndex >= Boundaries.Length)
-				{
-					_currentIndex = DONE;
-					return default(Boundary);
-				}
-
-				return Boundaries[_currentIndex];
-			}
-		}
+		/// <summary>
+		/// Gets the text being examined by this BreakIterator.
+		/// </summary>
+		public virtual string Text { get { return _text; } }
 
 		/// <summary>
 		/// The current Boundary.
@@ -159,64 +147,64 @@ namespace Icu
 		/// Decrements the iterator and returns the previous Boundary.
 		/// Returns null if the iterator moves past the first Boundary.
 		/// </summary>
-		public virtual Boundary Previous
+		public virtual Boundary MovePrevious()
 		{
-			get
+			if (_currentIndex == 0 || _currentIndex == DONE)
 			{
-				if (_currentIndex == 0 || _currentIndex == DONE)
-				{
-					_currentIndex = DONE;
-					return default(Boundary);
-				}
-
-				_currentIndex--;
-
-				return Boundaries[_currentIndex];
+				_currentIndex = DONE;
+				return default(Boundary);
 			}
+
+			_currentIndex--;
+
+			return Boundaries[_currentIndex];
+		}
+
+		/// <summary>
+		/// Increments the iterator and returns the next Boundary.
+		/// Returns null if there are no boundaries left to return.
+		/// </summary>
+		public virtual Boundary MoveNext()
+		{
+			if (_currentIndex == DONE)
+				return default(Boundary);
+
+			_currentIndex++;
+
+			if (_currentIndex >= Boundaries.Length)
+			{
+				_currentIndex = DONE;
+				return default(Boundary);
+			}
+
+			return Boundaries[_currentIndex];
 		}
 
 		/// <summary>
 		/// Sets the iterator to the first Boundary and returns it.
 		/// Returns null if there was no text set.
 		/// </summary>
-		public virtual Boundary First
+		public virtual Boundary MoveFirst()
 		{
-			get
-			{
-				if (Boundaries.Length == 0)
-					return default(Boundary);
+			if (Boundaries.Length == 0)
+				return default(Boundary);
 
-				_currentIndex = 0;
-				return Boundaries[_currentIndex];
-			}
+			_currentIndex = 0;
+			return Boundaries[_currentIndex];
 		}
 
 		/// <summary>
 		/// Sets the iterator to the last Boundary and returns it.
 		/// Returns null if there was no text set.
 		/// </summary>
-		public virtual Boundary Last
+		public virtual Boundary MoveLast()
 		{
-			get
-			{
-				if (Boundaries.Length == 0)
-					return default(Boundary);
+			if (Boundaries.Length == 0)
+				return default(Boundary);
 
-				_currentIndex = Boundaries.Length - 1;
-				return Boundaries[_currentIndex];
-			}
+			_currentIndex = Boundaries.Length - 1;
+			return Boundaries[_currentIndex];
 		}
-
-		/// <summary>
-		/// Gets all of the Boundaries for the given text.
-		/// Returns Boundary[0] if the text was empty or null.
-		/// </summary>
-		public virtual Boundary[] Boundaries { get; protected set; }
-
-		/// <summary>
-		/// Gets the text being examined by this BreakIterator.
-		/// </summary>
-		public virtual string Text { get { return _text; } }
 
 		/// <summary>
 		/// Sets the current text being examined to the given text.

@@ -175,10 +175,10 @@ namespace Icu.Tests
 				Assert.AreEqual(0, iterator.Boundaries.Length);
 
 				Assert.Null(iterator.Current);
-				Assert.Null(iterator.Next);
-				Assert.Null(iterator.First);
-				Assert.Null(iterator.Last);
-				Assert.Null(iterator.Previous);
+				Assert.Null(iterator.MoveNext());
+				Assert.Null(iterator.MoveFirst());
+				Assert.Null(iterator.MoveLast());
+				Assert.Null(iterator.MovePrevious());
 			};
 
 			using (var bi = BreakIterator.CreateCharacterInstance(locale, string.Empty))
@@ -212,25 +212,25 @@ namespace Icu.Tests
 				// increment the index and verify that the next Boundary is correct.
 				current++;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				current++;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				current++;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				// We've moved past the last word, it should return null.
-				Assert.Null(bi.Next);
+				Assert.Null(bi.MoveNext());
 				Assert.Null(bi.Current);
 
 				// Verify that the first element is correct now that we've moved to the end.
-				Assert.AreEqual(expected[0], bi.First);
+				Assert.AreEqual(expected[0], bi.MoveFirst());
 				Assert.AreEqual(expected[0], bi.Current);
 			}
 		}
@@ -255,30 +255,30 @@ namespace Icu.Tests
 				// Increment the index and verify that the next Boundary is correct.
 				current++;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				current++;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Next);
+				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				current--;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Previous);
+				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				current--;
 				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Previous);
+				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
 
 				// We've moved past the first word, it should return null.
-				Assert.Null(bi.Previous);
+				Assert.Null(bi.MovePrevious());
 				Assert.Null(bi.Current);
 
 				// Verify that the element is correct now that we've moved to the end.
-				Assert.AreEqual(expected[3], bi.Last);
+				Assert.AreEqual(expected[3], bi.MoveLast());
 				Assert.AreEqual(expected[3], bi.Current);
 			}
 		}
@@ -299,7 +299,7 @@ namespace Icu.Tests
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
 				// Move the iterator to the next boundary
-				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
 
 				// Assert that the new set of boundaries were found.
@@ -332,7 +332,7 @@ namespace Icu.Tests
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
 				// Move the iterator to the next boundary
-				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
 
 				// Assert that the new set of boundaries were found.
@@ -342,10 +342,10 @@ namespace Icu.Tests
 				// Assert that the iterator was reset back to the first element
 				// and is now null.
 				Assert.Null(bi.Current);
-				Assert.Null(bi.Next);
-				Assert.Null(bi.First);
-				Assert.Null(bi.Last);
-				Assert.Null(bi.Previous);
+				Assert.Null(bi.MoveNext());
+				Assert.Null(bi.MoveFirst());
+				Assert.Null(bi.MoveLast());
+				Assert.Null(bi.MovePrevious());
 
 				CollectionAssert.IsEmpty(bi.Boundaries);
 			}
@@ -369,7 +369,7 @@ namespace Icu.Tests
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
 				// Move the iterator to the next boundary
-				Assert.AreEqual(expected[1], bi.Next);
+				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
 
 				// Assert that the new set of boundaries were found.
@@ -379,10 +379,10 @@ namespace Icu.Tests
 				// Assert that the iterator was reset back to the first element
 				// and is now null.
 				Assert.Null(bi.Current);
-				Assert.Null(bi.Next);
-				Assert.Null(bi.First);
-				Assert.Null(bi.Last);
-				Assert.Null(bi.Previous);
+				Assert.Null(bi.MoveNext());
+				Assert.Null(bi.MoveFirst());
+				Assert.Null(bi.MoveLast());
+				Assert.Null(bi.MovePrevious());
 
 				CollectionAssert.IsEmpty(bi.Boundaries);
 			}
