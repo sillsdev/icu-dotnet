@@ -318,50 +318,13 @@ namespace Icu.Tests
 		/// Assert that when we set the text to empty that it will reset all the values.
 		/// </summary>
 		[Test]
-		public void CanSetNewText_Empty()
+		[TestCase("")]
+		[TestCase(null)]
+		public void CanSetNewText_EmptyOrNull(string secondText)
 		{
 			var locale = new Locale("en-US");
 			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
 			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
-
-			var secondText = string.Empty;
-
-			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
-			{
-				Assert.AreEqual(text, bi.Text);
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
-
-				// Move the iterator to the next boundary
-				Assert.AreEqual(expected[1], bi.MoveNext());
-				Assert.AreEqual(expected[1], bi.Current);
-
-				// Assert that the new set of boundaries were found.
-				bi.SetText(secondText);
-				Assert.AreEqual(secondText, bi.Text);
-
-				// Assert that the iterator was reset back to the first element
-				// and is now null.
-				Assert.Null(bi.Current);
-				Assert.Null(bi.MoveNext());
-				Assert.Null(bi.MoveFirst());
-				Assert.Null(bi.MoveLast());
-				Assert.Null(bi.MovePrevious());
-
-				CollectionAssert.IsEmpty(bi.Boundaries);
-			}
-		}
-
-		/// <summary>
-		/// Assert that when we set the text to null that it will reset all the values.
-		/// </summary>
-		[Test]
-		public void CanSetNewText_Null()
-		{
-			var locale = new Locale("en-US");
-			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
-			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
-
-			string secondText = null;
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
 			{
