@@ -44,13 +44,38 @@ namespace Icu
 			/// Upper bound for tags for uncategorized words.
 			/// </summary>
 			NONE_LIMIT     = 100,
+			/// <summary>
+			/// Tag value for words that appear to be numbers, lower limit.
+			/// </summary>
 			NUMBER         = 100,
+			/// <summary>
+			/// Tag value for words that appear to be numbers, upper limit.
+			/// </summary>
 			NUMBER_LIMIT   = 200,
+			/// <summary>
+			/// Tag value for words that contain letters, excluding hiragana,
+			/// katakana or ideographic characters, lower limit.
+			/// </summary>
 			LETTER         = 200,
+			/// <summary>
+			/// Tag value for words containing letters, upper limit.
+			/// </summary>
 			LETTER_LIMIT   = 300,
+			/// <summary>
+			/// Tag value for words containing kana characters, lower limit.
+			/// </summary>
 			KANA           = 300,
+			/// <summary>
+			/// Tag value for words containing kana characters, upper limit.
+			/// </summary>
 			KANA_LIMIT     = 400,
+			/// <summary>
+			/// Tag value for words containing ideographic characters, lower limit.
+			/// </summary>
 			IDEO           = 400,
+			/// <summary>
+			/// Tag value for words containing ideographic characters, upper limit.
+			/// </summary>
 			IDEO_LIMIT     = 500,
 		}
 
