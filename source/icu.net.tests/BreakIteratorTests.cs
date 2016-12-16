@@ -175,31 +175,28 @@ namespace Icu.Tests
 		/// that it returns the correct properties.
 		/// </summary>
 		[Test]
-		public void BreakIteratorThatIsEmptyOrNull()
+		[TestCase("")]
+		[TestCase(null)]
+		public void BreakIteratorThatIsEmptyOrNull(string text)
 		{
 			var locale = new Locale("de-DE");
 
-			Action<BreakIterator, string> Verify = (BreakIterator iterator, string t) => 
+			using (var bi = BreakIterator.CreateCharacterInstance(locale, text))
 			{
-				Assert.AreEqual(locale, iterator.Locale);
-				Assert.AreEqual(t, iterator.Text);
-				Assert.AreEqual(0, iterator.Boundaries.Length);
+				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
+				Assert.AreEqual(0, bi.Boundaries.Length);
 
-				Assert.AreEqual(BreakIterator.DONE, iterator.Current);
-				Assert.AreEqual(BreakIterator.DONE, iterator.MoveNext());
-				Assert.AreEqual(BreakIterator.DONE, iterator.MoveFirst());
-				Assert.AreEqual(BreakIterator.DONE, iterator.MoveLast());
-				Assert.AreEqual(BreakIterator.DONE, iterator.MovePrevious());
-			};
+				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				Assert.AreEqual(BreakIterator.DONE, bi.MoveNext());
+				Assert.AreEqual(BreakIterator.DONE, bi.MoveFirst());
+				Assert.AreEqual(BreakIterator.DONE, bi.MoveLast());
+				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
 
-			using (var bi = BreakIterator.CreateCharacterInstance(locale, string.Empty))
-			{
-				Verify(bi, string.Empty);
-			}
-
-			using (var bi = BreakIterator.CreateWordInstance(locale, null)) // true
-			{
-				Verify(bi, null);
+				// Default value is 0 when there was no rule applied.
+				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				// When iterator is at DONE, it returns the default rule status vector.
+				CollectionAssert.AreEqual(new[] { 0 }, bi.GetRuleStatusVector());
 			}
 		}
 
@@ -223,9 +220,13 @@ namespace Icu.Tests
 				{
 					int current = bi.Current;
 					int status = bi.GetRuleStatus();
+					int[] ruleStatusVector = bi.GetRuleStatusVector();
 
 					Assert.AreEqual(expected[i], current);
 					Assert.AreEqual((int)ruleStatus[i], status);
+					// There should only be one rule that parsed these.
+					Assert.AreEqual(1, ruleStatusVector.Length);
+					Assert.AreEqual((int)ruleStatus[i], ruleStatusVector[0]);
 
 					bi.MoveNext();
 				}
@@ -250,6 +251,9 @@ namespace Icu.Tests
 			var locale = new Locale("de-DE");
 			var text = "Good-day, kind sir !";
 			var expected = new int[] { 0, 5, 10, 15, 20 };
+			// RuleStatus only applies to BreakIterator.UBreakIteratorType.WORD.
+			var expectedStatusRuleVector = new[] { (int)BreakIterator.UWordBreak.NONE };
+			var expectedEmptyRuleStatusVector = new[] { 0 };
 
 			using (var bi = BreakIterator.CreateLineInstance(locale, text))
 			{
@@ -257,8 +261,10 @@ namespace Icu.Tests
 
 				int current = 0;
 				var currentBoundary = expected[current];
+
 				Assert.AreEqual(currentBoundary, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 
 				// Increment the index and verify that the next Boundary is correct.
 				current++;
@@ -266,35 +272,40 @@ namespace Icu.Tests
 				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 
 				current++;
 				currentBoundary = expected[current];
 				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 
 				current--;
 				currentBoundary = expected[current];
 				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 
 				current--;
 				currentBoundary = expected[current];
 				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 
 				// We've moved past the first word, it should return null.
 				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
 				Assert.AreEqual(BreakIterator.DONE, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedEmptyRuleStatusVector, bi.GetRuleStatusVector());
 
 				// Verify that the element is correct now that we've moved to the end.
 				var last = expected.Last();
 				Assert.AreEqual(last, bi.MoveLast());
 				Assert.AreEqual(last, bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
-
+				CollectionAssert.AreEqual(expectedStatusRuleVector, bi.GetRuleStatusVector());
 			}
 		}
 
@@ -304,6 +315,8 @@ namespace Icu.Tests
 			var locale = new Locale("en-US");
 			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
 			var expected = new[] { 0, 22, 52, 70 };
+			// RuleStatus only applies to BreakIterator.UBreakIteratorType.WORD.
+			var expectedRuleStatusVector = new[] { (int)BreakIterator.UWordBreak.NONE };
 
 			var secondText = "It is my birthday!  I hope something exciting happens.";
 			var secondExpected = new[] { 0, 20, 54 };
@@ -317,6 +330,7 @@ namespace Icu.Tests
 				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedRuleStatusVector, bi.GetRuleStatusVector());
 
 				// Assert that the new set of boundaries were found.
 				bi.SetText(secondText);
@@ -326,6 +340,7 @@ namespace Icu.Tests
 				// when we set new text.
 				Assert.AreEqual(secondExpected[0], bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedRuleStatusVector, bi.GetRuleStatusVector());
 
 				CollectionAssert.AreEqual(secondExpected, bi.Boundaries);
 			}
@@ -342,6 +357,8 @@ namespace Icu.Tests
 			var locale = new Locale("en-US");
 			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
 			var expected = new[] { 0, 22, 52, 70 };
+			// RuleStatus only applies to BreakIterator.UBreakIteratorType.WORD.
+			var expectedRuleStatusVector = new[] { (int)BreakIterator.UWordBreak.NONE };
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
 			{
@@ -352,6 +369,7 @@ namespace Icu.Tests
 				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				CollectionAssert.AreEqual(expectedRuleStatusVector, bi.GetRuleStatusVector());
 
 				// Assert that the new set of boundaries were found.
 				bi.SetText(secondText);
@@ -365,6 +383,7 @@ namespace Icu.Tests
 				Assert.AreEqual(BreakIterator.DONE, bi.MoveLast());
 				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
 				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				Assert.AreEqual(new [] { 0 }, bi.GetRuleStatusVector());
 
 				CollectionAssert.IsEmpty(bi.Boundaries);
 			}
