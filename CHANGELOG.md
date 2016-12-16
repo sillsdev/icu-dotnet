@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [#20](https://github.com/sillsdev/icu-dotnet/issues/20).
 - Fix `CollationStrength.Identical` value to match value used by unamanaged
   binaries.
+- Fix casing of a few native methods
+
+### Changed
+- Call native cleanup from Wrapper.Cleanup
+- Reset ICU version and method pointers on cleanup.
 
 ### Removed
 - Removed obsolete debian packaging files

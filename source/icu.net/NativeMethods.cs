@@ -35,6 +35,13 @@ namespace Icu
 			maxIcuVersion = Math.Max(minVersion, maxVersion);
 		}
 
+		private static MethodsContainer Methods;
+
+		static NativeMethods()
+		{
+			Methods = new MethodsContainer();
+		}
+
 		#region Dynamic method loading
 
 		#region Native methods for Linux
@@ -155,6 +162,7 @@ namespace Icu
 
 		public static void Cleanup()
 		{
+			u_cleanup();
 			if (IsWindows)
 			{
 				if (_IcuCommonLibHandle != IntPtr.Zero)
@@ -171,6 +179,9 @@ namespace Icu
 			}
 			_IcuCommonLibHandle = IntPtr.Zero;
 			_IcuI18NLibHandle = IntPtr.Zero;
+			IcuVersion = 0;
+			_IcuPath = null;
+			Methods = new MethodsContainer();
 		}
 
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T: class
@@ -195,29 +206,16 @@ namespace Icu
 
 		#endregion
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void uenum_closeDelegate(IntPtr en);
-
-		private static uenum_closeDelegate _uenum_close;
-
 		/// <summary>
 		/// This function does cleanup of the enumerator object
 		/// </summary>
 		/// <param name="en">Enumeration to be closed</param>
 		public static void uenum_close(IntPtr en)
 		{
-			if (_uenum_close == null)
-				_uenum_close = GetMethod<uenum_closeDelegate>(IcuCommonLibHandle, "uenum_close");
-			_uenum_close(en);
+			if (Methods.uenum_close == null)
+				Methods.uenum_close = GetMethod<MethodsContainer.uenum_closeDelegate>(IcuCommonLibHandle, "uenum_close");
+			Methods.uenum_close(en);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr uenum_unextDelegate(
-			RuleBasedCollator.SafeEnumeratorHandle en,
-			out int resultLength,
-			out ErrorCode status);
-
-		private static uenum_unextDelegate _uenum_unext;
 
 		/// <summary>
 		/// This function returns the next element as a string, or <c>null</c> after all
@@ -230,20 +228,12 @@ namespace Icu
 			out int resultLength,
 			out ErrorCode status)
 		{
-			if (_uenum_unext == null)
-				_uenum_unext = GetMethod<uenum_unextDelegate>(IcuCommonLibHandle, "uenum_unext");
-			return _uenum_unext(en, out resultLength, out status);
+			if (Methods.uenum_unext == null)
+				Methods.uenum_unext = GetMethod<MethodsContainer.uenum_unextDelegate>(IcuCommonLibHandle, "uenum_unext");
+			return Methods.uenum_unext(en, out resultLength, out status);
 		}
 
-
 		#region Unicode collator
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openDelegate(
-			[MarshalAs(UnmanagedType.LPStr)] string loc,
-			out ErrorCode status);
-
-		private static ucol_openDelegate _ucol_open;
 
 		/// <summary>
 		/// Open a Collator for comparing strings.
@@ -262,21 +252,10 @@ namespace Icu
 			[MarshalAs(UnmanagedType.LPStr)] string loc,
 			out ErrorCode status)
 		{
-			if (_ucol_open == null)
-				_ucol_open = GetMethod<ucol_openDelegate>(IcuI18NLibHandle, "ucol_open");
-			return _ucol_open(loc, out status);
+			if (Methods.ucol_open == null)
+				Methods.ucol_open = GetMethod<MethodsContainer.ucol_openDelegate>(IcuI18NLibHandle, "ucol_open");
+			return Methods.ucol_open(loc, out status);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRulesDelegate(
-			[MarshalAs(UnmanagedType.LPWStr)] string rules,
-			int rulesLength,
-			NormalizationMode normalizationMode,
-			CollationStrength strength,
-			ref ParseError parseError,
-			out ErrorCode status);
-
-		private static ucol_openRulesDelegate _ucol_openRules;
 
 		///<summary>
 		/// Produce an Collator instance according to the rules supplied.
@@ -303,16 +282,11 @@ namespace Icu
 			ref ParseError parseError,
 			out ErrorCode status)
 		{
-			if (_ucol_openRules == null)
-				_ucol_openRules = GetMethod<ucol_openRulesDelegate>(IcuI18NLibHandle, "ucol_openRules");
-			return _ucol_openRules(rules, rulesLength, normalizationMode, strength, ref parseError,
+			if (Methods.ucol_openRules == null)
+				Methods.ucol_openRules = GetMethod<MethodsContainer.ucol_openRulesDelegate>(IcuI18NLibHandle, "ucol_openRules");
+			return Methods.ucol_openRules(rules, rulesLength, normalizationMode, strength, ref parseError,
 				out status);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void ucol_closeDelegate(IntPtr coll);
-
-		private static ucol_closeDelegate _ucol_close;
 
 		/// <summary>
 		/// Close a UCollator.
@@ -322,9 +296,9 @@ namespace Icu
 		/// <param name="coll">The UCollator to close.</param>
 		public static void ucol_close(IntPtr coll)
 		{
-			if (_ucol_close == null)
-				_ucol_close = GetMethod<ucol_closeDelegate>(IcuI18NLibHandle, "ucol_close");
-			_ucol_close(coll);
+			if (Methods.ucol_close == null)
+				Methods.ucol_close = GetMethod<MethodsContainer.ucol_closeDelegate>(IcuI18NLibHandle, "ucol_close");
+			Methods.ucol_close(coll);
 		}
 
 		/**
@@ -343,16 +317,6 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate CollationResult ucol_strcollDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			[MarshalAs(UnmanagedType.LPWStr)] string source,
-			Int32 sourceLength,
-			[MarshalAs(UnmanagedType.LPWStr)] string target,
-			Int32 targetLength);
-
-		private static ucol_strcollDelegate _ucol_strcoll;
-
 		public static CollationResult ucol_strcoll(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			[MarshalAs(UnmanagedType.LPWStr)] string source,
@@ -360,9 +324,9 @@ namespace Icu
 			[MarshalAs(UnmanagedType.LPWStr)] string target,
 			Int32 targetLength)
 		{
-			if (_ucol_strcoll == null)
-				_ucol_strcoll = GetMethod<ucol_strcollDelegate>(IcuI18NLibHandle, "ucol_strcoll");
-			return _ucol_strcoll(collator, source, sourceLength, target, targetLength);
+			if (Methods.ucol_strcoll == null)
+				Methods.ucol_strcoll = GetMethod<MethodsContainer.ucol_strcollDelegate>(IcuI18NLibHandle, "ucol_strcoll");
+			return Methods.ucol_strcoll(collator, source, sourceLength, target, targetLength);
 		}
 
 		/**
@@ -373,16 +337,12 @@ namespace Icu
  * @see ucol_getAvailable
  * @stable ICU 2.0
  */
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate Int32 ucol_countAvailableDelegate();
-
-		private static ucol_countAvailableDelegate _ucol_countAvailable;
 
 		public static Int32 ucol_countAvailable()
 		{
-			if (_ucol_countAvailable == null)
-				_ucol_countAvailable = GetMethod<ucol_countAvailableDelegate>(IcuI18NLibHandle, "ucol_countAvailable");
-			return _ucol_countAvailable();
+			if (Methods.ucol_countAvailable == null)
+				Methods.ucol_countAvailable = GetMethod<MethodsContainer.ucol_countAvailableDelegate>(IcuI18NLibHandle, "ucol_countAvailable");
+			return Methods.ucol_countAvailable();
 		}
 
 		/**
@@ -393,16 +353,12 @@ namespace Icu
  * responsible for closing the result.
  * @stable ICU 3.0
  */
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocalesDelegate(out ErrorCode status);
-
-		private static ucol_openAvailableLocalesDelegate _ucol_openAvailableLocales;
 
 		public static RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status)
 		{
-			if (_ucol_openAvailableLocales == null)
-				_ucol_openAvailableLocales = GetMethod<ucol_openAvailableLocalesDelegate>(IcuI18NLibHandle, "ucol_openAvailableLocales");
-			return _ucol_openAvailableLocales(out status);
+			if (Methods.ucol_openAvailableLocales == null)
+				Methods.ucol_openAvailableLocales = GetMethod<MethodsContainer.ucol_openAvailableLocalesDelegate>(IcuI18NLibHandle, "ucol_openAvailableLocales");
+			return Methods.ucol_openAvailableLocales(out status);
 		}
 
 
@@ -419,16 +375,6 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate Int32 ucol_getSortKeyDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			[MarshalAs(UnmanagedType.LPWStr)] string source,
-			Int32 sourceLength,
-			[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result,
-			Int32 resultLength);
-
-		private static ucol_getSortKeyDelegate _ucol_getSortKey;
-
 		public static Int32 ucol_getSortKey(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			[MarshalAs(UnmanagedType.LPWStr)] string source,
@@ -436,9 +382,9 @@ namespace Icu
 			[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result,
 			Int32 resultLength)
 		{
-			if (_ucol_getSortKey == null)
-				_ucol_getSortKey = GetMethod<ucol_getSortKeyDelegate>(IcuI18NLibHandle, "ucol_getSortKey");
-			return _ucol_getSortKey(collator, source, sourceLength, result, resultLength);
+			if (Methods.ucol_getSortKey == null)
+				Methods.ucol_getSortKey = GetMethod<MethodsContainer.ucol_getSortKeyDelegate>(IcuI18NLibHandle, "ucol_getSortKey");
+			return Methods.ucol_getSortKey(collator, source, sourceLength, result, resultLength);
 		}
 
 		/**
@@ -453,24 +399,15 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void ucol_setAttributeDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			CollationAttribute attr,
-			CollationAttributeValue value,
-			out ErrorCode status);
-
-		private static ucol_setAttributeDelegate _ucol_setAttribute;
-
 		public static void ucol_setAttribute(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			CollationAttribute attr,
 			CollationAttributeValue value,
 			out ErrorCode status)
 		{
-			if (_ucol_setAttribute == null)
-				_ucol_setAttribute = GetMethod<ucol_setAttributeDelegate>(IcuI18NLibHandle, "ucol_setAttribute");
-			_ucol_setAttribute(collator, attr, value, out status);
+			if (Methods.ucol_setAttribute == null)
+				Methods.ucol_setAttribute = GetMethod<MethodsContainer.ucol_setAttributeDelegate>(IcuI18NLibHandle, "ucol_setAttribute");
+			Methods.ucol_setAttribute(collator, attr, value, out status);
 		}
 
 		/**
@@ -485,22 +422,14 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate CollationAttributeValue ucol_getAttributeDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			CollationAttribute attr,
-			out ErrorCode status);
-
-		private static ucol_getAttributeDelegate _ucol_getAttribute;
-
 		public static CollationAttributeValue ucol_getAttribute(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			CollationAttribute attr,
 			out ErrorCode status)
 		{
-			if (_ucol_getAttribute == null)
-				_ucol_getAttribute = GetMethod<ucol_getAttributeDelegate>(IcuI18NLibHandle, "ucol_getAttribute");
-			return _ucol_getAttribute(collator, attr, out status);
+			if (Methods.ucol_getAttribute == null)
+				Methods.ucol_getAttribute = GetMethod<MethodsContainer.ucol_getAttributeDelegate>(IcuI18NLibHandle, "ucol_getAttribute");
+			return Methods.ucol_getAttribute(collator, attr, out status);
 		}
 
 		/**
@@ -526,24 +455,15 @@ namespace Icu
  * @stable ICU 2.0
  */
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_safeCloneDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			IntPtr stackBuffer,
-			ref Int32 pBufferSize,
-			out ErrorCode status);
-
-		private static ucol_safeCloneDelegate _ucol_safeClone;
-
 		public static RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_safeClone(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			IntPtr stackBuffer,
 			ref Int32 pBufferSize,
 			out ErrorCode status)
 		{
-			if (_ucol_safeClone == null)
-				_ucol_safeClone = GetMethod<ucol_safeCloneDelegate>(IcuI18NLibHandle, "ucol_safeClone");
-			return _ucol_safeClone(collator, stackBuffer, ref pBufferSize, out status);
+			if (Methods.ucol_safeClone == null)
+				Methods.ucol_safeClone = GetMethod<MethodsContainer.ucol_safeCloneDelegate>(IcuI18NLibHandle, "ucol_safeClone");
+			return Methods.ucol_safeClone(collator, stackBuffer, ref pBufferSize, out status);
 		}
 
 		/**
@@ -567,33 +487,17 @@ namespace Icu
 		// char*. Using IntPtr will not create a copy of any object and therefore will not
 		// try to de-allocate memory. De-allocating memory from a string literal is not a
 		// good Idea. To call the function use Marshal.PtrToString*(ucol_getLocaleByType(...);
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr ucol_getLocaleByTypeDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			LocaleType type,
-			out ErrorCode status);
-
-		private static ucol_getLocaleByTypeDelegate _ucol_getLocaleByType;
 
 		public static IntPtr ucol_getLocaleByType(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator, 
 			LocaleType type,
 			out ErrorCode status)
 		{
-			if (_ucol_getLocaleByType == null)
-				_ucol_getLocaleByType = GetMethod<ucol_getLocaleByTypeDelegate>(IcuI18NLibHandle, "ucol_getLocaleByType");
-			return _ucol_getLocaleByType(collator, type, out status);
+			if (Methods.ucol_getLocaleByType == null)
+				Methods.ucol_getLocaleByType = GetMethod<MethodsContainer.ucol_getLocaleByTypeDelegate>(IcuI18NLibHandle, "ucol_getLocaleByType");
+			return Methods.ucol_getLocaleByType(collator, type, out status);
 		}
 
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ucol_getRulesExDelegate(
-			RuleBasedCollator.SafeRuleBasedCollatorHandle coll,
-			UColRuleOption delta,
-			IntPtr buffer,
-			int bufferLen);
-
-		private static ucol_getRulesExDelegate _ucol_getRulesEx;
 
 		public static int ucol_getRulesEx(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle coll,
@@ -601,42 +505,22 @@ namespace Icu
 			IntPtr buffer,
 			int bufferLen)
 		{
-			if (_ucol_getRulesEx == null)
-				_ucol_getRulesEx = GetMethod<ucol_getRulesExDelegate>(IcuI18NLibHandle, "ucol_getRulesEx");
-			return _ucol_getRulesEx(coll, delta, buffer, bufferLen);
+			if (Methods.ucol_getRulesEx == null)
+				Methods.ucol_getRulesEx = GetMethod<MethodsContainer.ucol_getRulesExDelegate>(IcuI18NLibHandle, "ucol_getRulesEx");
+			return Methods.ucol_getRulesEx(coll, delta, buffer, bufferLen);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ucol_getBoundDelegate(byte[] source, int sourceLength,
-			UColBoundMode boundType, int noOfLevels, byte[] result, int resultLength,
-			out ErrorCode status);
-
-		private static ucol_getBoundDelegate _ucol_getBound;
 
 		public static int ucol_getBound(byte[] source, int sourceLength,
 			UColBoundMode boundType, int noOfLevels, byte[] result, int resultLength,
 			out ErrorCode status)
 		{
-			if (_ucol_getBound == null)
-				_ucol_getBound = GetMethod<ucol_getBoundDelegate>(IcuI18NLibHandle, "ucol_getBound");
-			return _ucol_getBound(source, sourceLength, boundType, noOfLevels, result, resultLength, out status);
+			if (Methods.ucol_getBound == null)
+				Methods.ucol_getBound = GetMethod<MethodsContainer.ucol_getBoundDelegate>(IcuI18NLibHandle, "ucol_getBound");
+			return Methods.ucol_getBound(source, sourceLength, boundType, noOfLevels, result, resultLength, out status);
 		}
 
 		#endregion // Unicode collator
 
-		/*
-			public enum CollationRuleOption
-			{
-				/// <summary>
-				/// Retrieve tailoring only
-				/// </summary>
-				TailoringOnly,
-				/// <summary>
-				/// Retrieve UCA rules and tailoring
-				/// </summary>
-				FullRules
-			}
-		*/
 		public enum  LocaleType
 		{
 			/// <summary>
@@ -690,69 +574,394 @@ namespace Icu
 			Less = -1
 		}
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void u_InitDelegate(out ErrorCode errorCode);
+		private class MethodsContainer
+		{
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void u_initDelegate(out ErrorCode errorCode);
 
-		private static u_InitDelegate _u_Init;
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void u_cleanupDelegate();
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr u_getDataDirectoryDelegate();
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void u_setDataDirectoryDelegate(
+				[MarshalAs(UnmanagedType.LPStr)]string directory);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_charNameDelegate(
+				int code,
+				Character.UCharNameChoice nameChoice,
+				IntPtr buffer,
+				int bufferLength,
+				out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_digitDelegate(
+				int characterCode,
+				byte radix);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_getIntPropertyValueDelegate(
+				int characterCode,
+				Character.UProperty choice);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void u_getUnicodeVersionDelegate(out VersionInfo versionArray);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void u_getVersionDelegate(out VersionInfo versionArray);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_charTypeDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate double u_getNumericValueDelegate(
+				int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+			// which are usually zero, especially in debug builds...but one day we will be sorry.
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool u_ispunctDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+			// which are usually zero, especially in debug builds...but one day we will be sorry.
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool u_isMirroredDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+			// which are usually zero, especially in debug builds...but one day we will be sorry.
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool u_iscntrlDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+			// which are usually zero, especially in debug builds...but one day we will be sorry.
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool u_isspaceDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void uenum_closeDelegate(IntPtr en);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr uenum_unextDelegate(
+				RuleBasedCollator.SafeEnumeratorHandle en,
+				out int resultLength,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)]string localeID);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int uloc_getLocaleForLCIDDelegate(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate IntPtr uloc_getISO3CountryDelegate(
+				[MarshalAs(UnmanagedType.LPStr)]string locale);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate IntPtr uloc_getISO3LanguageDelegate(
+				[MarshalAs(UnmanagedType.LPStr)]string locale);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openDelegate(
+				[MarshalAs(UnmanagedType.LPStr)] string loc,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRulesDelegate(
+				[MarshalAs(UnmanagedType.LPWStr)] string rules,
+				int rulesLength,
+				NormalizationMode normalizationMode,
+				CollationStrength strength,
+				ref ParseError parseError,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ucol_closeDelegate(IntPtr coll);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate CollationResult ucol_strcollDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				[MarshalAs(UnmanagedType.LPWStr)] string source,
+				Int32 sourceLength,
+				[MarshalAs(UnmanagedType.LPWStr)] string target,
+				Int32 targetLength);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate Int32 ucol_countAvailableDelegate();
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocalesDelegate(out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate Int32 ucol_getSortKeyDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				[MarshalAs(UnmanagedType.LPWStr)] string source,
+				Int32 sourceLength,
+				[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result,
+				Int32 resultLength);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ucol_setAttributeDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				CollationAttribute attr,
+				CollationAttributeValue value,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate CollationAttributeValue ucol_getAttributeDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				CollationAttribute attr,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_safeCloneDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				IntPtr stackBuffer,
+				ref int pBufferSize,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ucol_getLocaleByTypeDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
+				LocaleType type,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ucol_getRulesExDelegate(
+				RuleBasedCollator.SafeRuleBasedCollatorHandle coll,
+				UColRuleOption delta,
+				IntPtr buffer,
+				int bufferLen);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ucol_getBoundDelegate(byte[] source, int sourceLength,
+				UColBoundMode boundType, int noOfLevels, byte[] result, int resultLength,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_countAvailableDelegate();
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate IntPtr uloc_getAvailableDelegate(int n);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getLanguageDelegate(string localeID, IntPtr language,
+				int languageCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getScriptDelegate(string localeID, IntPtr script,
+				int scriptCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getCountryDelegate(string localeID, IntPtr country,
+				int countryCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getVariantDelegate(string localeID, IntPtr variant,
+				int variantCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getDisplayNameDelegate(string localeID, string inLocaleID,
+				IntPtr result, int maxResultSize, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getDisplayLanguageDelegate(string localeID, string displayLocaleID,
+				IntPtr result, int maxResultSize, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getDisplayScriptDelegate(string localeID, string displayLocaleID,
+				IntPtr result, int maxResultSize, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getDisplayCountryDelegate(string localeID, string displayLocaleID,
+				IntPtr result, int maxResultSize, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getDisplayVariantDelegate(string localeID, string displayLocaleID,
+				IntPtr result, int maxResultSize, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getNameDelegate(string localeID, IntPtr name,
+				int nameCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_getBaseNameDelegate(string localeID, IntPtr name,
+				int nameCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			internal delegate int uloc_canonicalizeDelegate(string localeID, IntPtr name,
+				int nameCapacity, out ErrorCode err);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_strToLowerDelegate(IntPtr dest, int destCapacity, string src,
+				int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_strToTitleDelegate(IntPtr dest, int destCapacity, string src,
+				int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale,
+				out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_strToUpperDelegate(IntPtr dest, int destCapacity, string src,
+				int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int unorm_normalizeDelegate(string source, int sourceLength,
+				Normalizer.UNormalizationMode mode, int options,
+				IntPtr result, int resultLength, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate byte unorm_isNormalizedDelegate(string source, int sourceLength,
+				Normalizer.UNormalizationMode mode, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
+				string locale, string text, int textLength, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ubrk_closeDelegate(IntPtr bi);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ubrk_firstDelegate(IntPtr bi);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ubrk_nextDelegate(IntPtr bi);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void uset_closeDelegate(IntPtr set);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr uset_openDelegate(char start, char end);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr uset_openPatternDelegate(string pattern, int patternLength, ref ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void uset_addDelegate(IntPtr set, char c);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int uset_toPatternDelegate(IntPtr set, IntPtr result, int resultCapacity,
+				bool escapeUnprintable, ref ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void uset_addStringDelegate(IntPtr set, string str, int strLen);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int uset_getItemDelegate(IntPtr set, int itemIndex, out int start,
+				out int end, IntPtr str, int strCapacity, ref ErrorCode ec);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int uset_getItemCountDelegate(IntPtr set);
+
+			internal u_initDelegate u_init;
+			internal u_cleanupDelegate u_cleanup;
+			internal u_getDataDirectoryDelegate u_getDataDirectory;
+			internal u_setDataDirectoryDelegate u_setDataDirectory;
+			internal u_charNameDelegate u_charName;
+			internal u_digitDelegate u_digit;
+			internal u_getIntPropertyValueDelegate u_getIntPropertyValue;
+			internal u_getUnicodeVersionDelegate u_getUnicodeVersion;
+			internal u_getVersionDelegate u_getVersion;
+			internal u_charTypeDelegate u_charType;
+			internal u_getNumericValueDelegate u_getNumericValue;
+			internal u_ispunctDelegate u_ispunct;
+			internal u_isMirroredDelegate u_isMirrored;
+			internal u_iscntrlDelegate u_iscntrl;
+			internal u_isspaceDelegate u_isspace;
+			internal uenum_closeDelegate uenum_close;
+			internal uenum_unextDelegate uenum_unext;
+			internal ucol_openDelegate ucol_open;
+			internal ucol_openRulesDelegate ucol_openRules;
+			internal ucol_closeDelegate ucol_close;
+			internal ucol_strcollDelegate ucol_strcoll;
+			internal ucol_countAvailableDelegate ucol_countAvailable;
+			internal ucol_openAvailableLocalesDelegate ucol_openAvailableLocales;
+			internal ucol_getSortKeyDelegate ucol_getSortKey;
+			internal ucol_setAttributeDelegate ucol_setAttribute;
+			internal ucol_getAttributeDelegate ucol_getAttribute;
+			internal ucol_safeCloneDelegate ucol_safeClone;
+			internal ucol_getLocaleByTypeDelegate ucol_getLocaleByType;
+			internal ucol_getRulesExDelegate ucol_getRulesEx;
+			internal ucol_getBoundDelegate ucol_getBound;
+			internal uloc_countAvailableDelegate uloc_countAvailable;
+			internal uloc_getLCIDDelegate uloc_getLCID;
+			internal uloc_getLocaleForLCIDDelegate uloc_getLocaleForLCID;
+			internal uloc_getISO3CountryDelegate uloc_getISO3Country;
+			internal uloc_getISO3LanguageDelegate uloc_getISO3Language;
+			internal uloc_getAvailableDelegate uloc_getAvailable;
+			internal uloc_getLanguageDelegate uloc_getLanguage;
+			internal uloc_getScriptDelegate uloc_getScript;
+			internal uloc_getCountryDelegate uloc_getCountry;
+			internal uloc_getVariantDelegate uloc_getVariant;
+			internal uloc_getDisplayNameDelegate uloc_getDisplayName;
+			internal uloc_getDisplayLanguageDelegate uloc_getDisplayLanguage;
+			internal uloc_getDisplayScriptDelegate uloc_getDisplayScript;
+			internal uloc_getDisplayCountryDelegate uloc_getDisplayCountry;
+			internal uloc_getDisplayVariantDelegate uloc_getDisplayVariant;
+			internal uloc_getNameDelegate uloc_getName;
+			internal uloc_getBaseNameDelegate uloc_getBaseName;
+			internal uloc_canonicalizeDelegate uloc_canonicalize;
+			internal u_strToLowerDelegate u_strToLower;
+			internal u_strToTitleDelegate u_strToTitle;
+			internal u_strToUpperDelegate u_strToUpper;
+			internal unorm_normalizeDelegate _unorm_normalize;
+			internal unorm_isNormalizedDelegate _unorm_isNormalized;
+			internal ubrk_openDelegate ubrk_open;
+			internal ubrk_closeDelegate ubrk_close;
+			internal ubrk_firstDelegate ubrk_first;
+			internal ubrk_nextDelegate ubrk_next;
+			internal ubrk_getRuleStatusDelegate ubrk_getRuleStatus;
+			internal uset_closeDelegate uset_close;
+			internal uset_openDelegate uset_open;
+			internal uset_openPatternDelegate uset_openPattern;
+			internal uset_addDelegate uset_add;
+			internal uset_toPatternDelegate uset_toPattern;
+			internal uset_addStringDelegate uset_addString;
+			internal uset_getItemDelegate uset_getItem;
+			internal uset_getItemCountDelegate uset_getItemCount;
+		}
 
 		/// <summary>get the name of an ICU code point</summary>
-		public static void u_Init(out ErrorCode errorCode)
+		public static void u_init(out ErrorCode errorCode)
 		{
-			if (_u_Init == null)
-				_u_Init = GetMethod<u_InitDelegate>(IcuCommonLibHandle, "u_Init");
-			_u_Init(out errorCode);
+			if (Methods.u_init == null)
+				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(IcuCommonLibHandle, "u_init");
+			Methods.u_init(out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void u_CleanupDelegate();
-
-		private static u_CleanupDelegate _u_Cleanup;
 
 		/// <summary>Clean up the ICU files that could be locked</summary>
-		public static void u_Cleanup()
+		public static void u_cleanup()
 		{
-			if (_u_Cleanup == null)
-				_u_Cleanup = GetMethod<u_CleanupDelegate>(IcuCommonLibHandle, "u_Cleanup");
-			_u_Cleanup();
+			if (Methods.u_cleanup == null)
+				Methods.u_cleanup = GetMethod<MethodsContainer.u_cleanupDelegate>(IcuCommonLibHandle, "u_cleanup");
+			Methods.u_cleanup();
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr u_GetDataDirectoryDelegate();
-
-		private static u_GetDataDirectoryDelegate _u_GetDataDirectory;
 
 		/// <summary>Return the ICU data directory</summary>
-		public static IntPtr u_GetDataDirectory()
+		public static IntPtr u_getDataDirectory()
 		{
-			if (_u_GetDataDirectory == null)
-				_u_GetDataDirectory = GetMethod<u_GetDataDirectoryDelegate>(IcuCommonLibHandle, "u_GetDataDirectory");
-			return _u_GetDataDirectory();
+			if (Methods.u_getDataDirectory == null)
+				Methods.u_getDataDirectory = GetMethod<MethodsContainer.u_getDataDirectoryDelegate>(IcuCommonLibHandle, "u_getDataDirectory");
+			return Methods.u_getDataDirectory();
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void u_SetDataDirectoryDelegate(
-			[MarshalAs(UnmanagedType.LPStr)]string directory);
-
-		private static u_SetDataDirectoryDelegate _u_SetDataDirectory;
 
 		/// <summary>Set the ICU data directory</summary>
-		public static void u_SetDataDirectory(
+		public static void u_setDataDirectory(
 			[MarshalAs(UnmanagedType.LPStr)]string directory)
 		{
-			if (_u_SetDataDirectory == null)
-				_u_SetDataDirectory = GetMethod<u_SetDataDirectoryDelegate>(IcuCommonLibHandle, "u_SetDataDirectory");
-			_u_SetDataDirectory(directory);
+			if (Methods.u_setDataDirectory == null)
+				Methods.u_setDataDirectory = GetMethod<MethodsContainer.u_setDataDirectoryDelegate>(IcuCommonLibHandle, "u_setDataDirectory");
+			Methods.u_setDataDirectory(directory);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_charNameDelegate(
-			int code,
-			Character.UCharNameChoice nameChoice,
-			IntPtr buffer,
-			int bufferLength,
-			out ErrorCode errorCode);
-
-		private static u_charNameDelegate _u_charName;
 
 		/// <summary>get the name of an ICU code point</summary>
 		public static int u_charName(
@@ -762,17 +971,10 @@ namespace Icu
 			int bufferLength,
 			out ErrorCode errorCode)
 		{
-			if (_u_charName == null)
-				_u_charName = GetMethod<u_charNameDelegate>(IcuCommonLibHandle, "u_charName");
-			return _u_charName(code, nameChoice, buffer, bufferLength, out errorCode);
+			if (Methods.u_charName == null)
+				Methods.u_charName = GetMethod<MethodsContainer.u_charNameDelegate>(IcuCommonLibHandle, "u_charName");
+			return Methods.u_charName(code, nameChoice, buffer, bufferLength, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_digitDelegate(
-			int characterCode,
-			byte radix);
-
-		private static u_digitDelegate _u_digit;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -783,17 +985,10 @@ namespace Icu
 			int characterCode,
 			byte radix)
 		{
-			if (_u_digit == null)
-				_u_digit = GetMethod<u_digitDelegate>(IcuCommonLibHandle, "u_digit");
-			return _u_digit(characterCode, radix);
+			if (Methods.u_digit == null)
+				Methods.u_digit = GetMethod<MethodsContainer.u_digitDelegate>(IcuCommonLibHandle, "u_digit");
+			return Methods.u_digit(characterCode, radix);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_getIntPropertyValueDelegate(
-			int characterCode,
-			Character.UProperty choice);
-
-		private static u_getIntPropertyValueDelegate _u_getIntPropertyValue;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -811,27 +1006,17 @@ namespace Icu
 			int characterCode,
 			Character.UProperty choice)
 		{
-			if (_u_getIntPropertyValue == null)
-				_u_getIntPropertyValue = GetMethod<u_getIntPropertyValueDelegate>(IcuCommonLibHandle, "u_getIntPropertyValue");
-			return _u_getIntPropertyValue(characterCode, choice);
+			if (Methods.u_getIntPropertyValue == null)
+				Methods.u_getIntPropertyValue = GetMethod<MethodsContainer.u_getIntPropertyValueDelegate>(IcuCommonLibHandle, "u_getIntPropertyValue");
+			return Methods.u_getIntPropertyValue(characterCode, choice);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void u_getUnicodeVersionDelegate(out VersionInfo versionArray);
-
-		private static u_getUnicodeVersionDelegate _u_getUnicodeVersion;
 
 		public static void u_getUnicodeVersion(out VersionInfo versionArray)
 		{
-			if (_u_getUnicodeVersion == null)
-				_u_getUnicodeVersion = GetMethod<u_getUnicodeVersionDelegate>(IcuCommonLibHandle, "u_getUnicodeVersion");
-			_u_getUnicodeVersion(out versionArray);
+			if (Methods.u_getUnicodeVersion == null)
+				Methods.u_getUnicodeVersion = GetMethod<MethodsContainer.u_getUnicodeVersionDelegate>(IcuCommonLibHandle, "u_getUnicodeVersion");
+			Methods.u_getUnicodeVersion(out versionArray);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void u_getVersionDelegate(out VersionInfo versionArray);
-
-		private static u_getVersionDelegate _u_getVersion;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -841,15 +1026,10 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		public static void u_getVersion(out VersionInfo versionArray)
 		{
-			if (_u_getVersion == null)
-				_u_getVersion = GetMethod<u_getVersionDelegate>(IcuCommonLibHandle, "u_getVersion");
-			_u_getVersion(out versionArray);
+			if (Methods.u_getVersion == null)
+				Methods.u_getVersion = GetMethod<MethodsContainer.u_getVersionDelegate>(IcuCommonLibHandle, "u_getVersion");
+			Methods.u_getVersion(out versionArray);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_charTypeDelegate(int characterCode);
-
-		private static u_charTypeDelegate _u_charType;
 
 		/// <summary>
 		/// Get the general character type.
@@ -858,16 +1038,10 @@ namespace Icu
 		/// <returns></returns>
 		public static int u_charType(int characterCode)
 		{
-			if (_u_charType == null)
-				_u_charType = GetMethod<u_charTypeDelegate>(IcuCommonLibHandle, "u_charType");
-			return _u_charType(characterCode);
+			if (Methods.u_charType == null)
+				Methods.u_charType = GetMethod<MethodsContainer.u_charTypeDelegate>(IcuCommonLibHandle, "u_charType");
+			return Methods.u_charType(characterCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate double u_getNumericValueDelegate(
-			int characterCode);
-
-		private static u_getNumericValueDelegate _u_getNumericValue;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -892,18 +1066,10 @@ namespace Icu
 		public static double u_getNumericValue(
 			int characterCode)
 		{
-			if (_u_getNumericValue == null)
-				_u_getNumericValue = GetMethod<u_getNumericValueDelegate>(IcuCommonLibHandle, "u_getNumericValue");
-			return _u_getNumericValue(characterCode);
+			if (Methods.u_getNumericValue == null)
+				Methods.u_getNumericValue = GetMethod<MethodsContainer.u_getNumericValueDelegate>(IcuCommonLibHandle, "u_getNumericValue");
+			return Methods.u_getNumericValue(characterCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
-		// which are usually zero, especially in debug builds...but one day we will be sorry.
-		[return: MarshalAs(UnmanagedType.I1)]
-		private delegate bool u_ispunctDelegate(int characterCode);
-
-		private static u_ispunctDelegate _u_ispunct;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -914,18 +1080,10 @@ namespace Icu
 		public static bool u_ispunct(
 			int characterCode)
 		{
-			if (_u_ispunct == null)
-				_u_ispunct = GetMethod<u_ispunctDelegate>(IcuCommonLibHandle, "u_ispunct");
-			return _u_ispunct(characterCode);
+			if (Methods.u_ispunct == null)
+				Methods.u_ispunct = GetMethod<MethodsContainer.u_ispunctDelegate>(IcuCommonLibHandle, "u_ispunct");
+			return Methods.u_ispunct(characterCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
-		// which are usually zero, especially in debug builds...but one day we will be sorry.
-		[return: MarshalAs(UnmanagedType.I1)]
-		private delegate bool u_isMirroredDelegate(int characterCode);
-
-		private static u_isMirroredDelegate _u_isMirrored;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -949,18 +1107,10 @@ namespace Icu
 		public static bool u_isMirrored(
 			int characterCode)
 		{
-			if (_u_isMirrored == null)
-				_u_isMirrored = GetMethod<u_isMirroredDelegate>(IcuCommonLibHandle, "u_isMirrored");
-			return _u_isMirrored(characterCode);
+			if (Methods.u_isMirrored == null)
+				Methods.u_isMirrored = GetMethod<MethodsContainer.u_isMirroredDelegate>(IcuCommonLibHandle, "u_isMirrored");
+			return Methods.u_isMirrored(characterCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
-		// which are usually zero, especially in debug builds...but one day we will be sorry.
-		[return: MarshalAs(UnmanagedType.I1)]
-		private delegate bool u_iscntrlDelegate(int characterCode);
-
-		private static u_iscntrlDelegate _u_iscntrl;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -979,18 +1129,10 @@ namespace Icu
 		public static bool u_iscntrl(
 			int characterCode)
 		{
-			if (_u_iscntrl == null)
-				_u_iscntrl = GetMethod<u_iscntrlDelegate>(IcuCommonLibHandle, "u_iscntrl");
-			return _u_iscntrl(characterCode);
+			if (Methods.u_iscntrl == null)
+				Methods.u_iscntrl = GetMethod<MethodsContainer.u_iscntrlDelegate>(IcuCommonLibHandle, "u_iscntrl");
+			return Methods.u_iscntrl(characterCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
-		// which are usually zero, especially in debug builds...but one day we will be sorry.
-		[return: MarshalAs(UnmanagedType.I1)]
-		private delegate bool u_isspaceDelegate(int characterCode);
-
-		private static u_isspaceDelegate _u_isspace;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1012,48 +1154,32 @@ namespace Icu
 		public static bool u_isspace(
 			int characterCode)
 		{
-			if (_u_isspace == null)
-				_u_isspace = GetMethod<u_isspaceDelegate>(IcuCommonLibHandle, "u_isspace");
-			return _u_isspace(characterCode);
+			if (Methods.u_isspace == null)
+				Methods.u_isspace = GetMethod<MethodsContainer.u_isspaceDelegate>(IcuCommonLibHandle, "u_isspace");
+			return Methods.u_isspace(characterCode);
 		}
 
 		#region LCID
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)]string localeID);
-
-		private static uloc_getLCIDDelegate _uloc_getLCID;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the ICU LCID for a locale</summary>
 		/// ------------------------------------------------------------------------------------
 		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)]string localeID)
 		{
-			if (_uloc_getLCID == null)
-				_uloc_getLCID = GetMethod<uloc_getLCIDDelegate>(IcuCommonLibHandle, "uloc_getLCID");
-			return _uloc_getLCID(localeID);
+			if (Methods.uloc_getLCID == null)
+				Methods.uloc_getLCID = GetMethod<MethodsContainer.uloc_getLCIDDelegate>(IcuCommonLibHandle, "uloc_getLCID");
+			return Methods.uloc_getLCID(localeID);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int uloc_getLocaleForLCIDDelegate(int lcid,IntPtr locale,int localeCapacity,out ErrorCode err);
-
-		private static uloc_getLocaleForLCIDDelegate _uloc_getLocaleForLCID;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Gets the ICU locale ID for the specified Win32 LCID value. </summary>
 		/// ------------------------------------------------------------------------------------
 		public static int uloc_getLocaleForLCID(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err)
 		{
-			if (_uloc_getLocaleForLCID == null)
-				_uloc_getLocaleForLCID = GetMethod<uloc_getLocaleForLCIDDelegate>(IcuCommonLibHandle, "uloc_getLocaleForLCID");
-			return _uloc_getLocaleForLCID(lcid, locale, localeCapacity, out err);
+			if (Methods.uloc_getLocaleForLCID == null)
+				Methods.uloc_getLocaleForLCID = GetMethod<MethodsContainer.uloc_getLocaleForLCIDDelegate>(IcuCommonLibHandle, "uloc_getLocaleForLCID");
+			return Methods.uloc_getLocaleForLCID(lcid, locale, localeCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate IntPtr uloc_getISO3CountryDelegate(
-			[MarshalAs(UnmanagedType.LPStr)]string locale);
-
-		private static uloc_getISO3CountryDelegate _uloc_getISO3Country;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
@@ -1061,16 +1187,10 @@ namespace Icu
 		public static IntPtr uloc_getISO3Country(
 			[MarshalAs(UnmanagedType.LPStr)]string locale)
 		{
-			if (_uloc_getISO3Country == null)
-				_uloc_getISO3Country = GetMethod<uloc_getISO3CountryDelegate>(IcuCommonLibHandle, "uloc_getISO3Country");
-			return _uloc_getISO3Country(locale);
+			if (Methods.uloc_getISO3Country == null)
+				Methods.uloc_getISO3Country = GetMethod<MethodsContainer.uloc_getISO3CountryDelegate>(IcuCommonLibHandle, "uloc_getISO3Country");
+			return Methods.uloc_getISO3Country(locale);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate IntPtr uloc_getISO3LanguageDelegate(
-			[MarshalAs(UnmanagedType.LPStr)]string locale);
-
-		private static uloc_getISO3LanguageDelegate _uloc_getISO3Language;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
@@ -1078,15 +1198,10 @@ namespace Icu
 		public static IntPtr uloc_getISO3Language(
 			[MarshalAs(UnmanagedType.LPStr)]string locale)
 		{
-			if (_uloc_getISO3Language == null)
-				_uloc_getISO3Language = GetMethod<uloc_getISO3LanguageDelegate>(IcuCommonLibHandle, "uloc_getISO3Language");
-			return _uloc_getISO3Language(locale);
+			if (Methods.uloc_getISO3Language == null)
+				Methods.uloc_getISO3Language = GetMethod<MethodsContainer.uloc_getISO3LanguageDelegate>(IcuCommonLibHandle, "uloc_getISO3Language");
+			return Methods.uloc_getISO3Language(locale);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_countAvailableDelegate();
-
-		private static uloc_countAvailableDelegate _uloc_countAvailable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1096,15 +1211,10 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		public static int uloc_countAvailable()
 		{
-			if (_uloc_countAvailable == null)
-				_uloc_countAvailable = GetMethod<uloc_countAvailableDelegate>(IcuCommonLibHandle, "uloc_countAvailable");
-			return _uloc_countAvailable();
+			if (Methods.uloc_countAvailable == null)
+				Methods.uloc_countAvailable = GetMethod<MethodsContainer.uloc_countAvailableDelegate>(IcuCommonLibHandle, "uloc_countAvailable");
+			return Methods.uloc_countAvailable();
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate IntPtr uloc_getAvailableDelegate(int n);
-
-		private static uloc_getAvailableDelegate _uloc_getAvailable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1118,16 +1228,10 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		public static IntPtr uloc_getAvailable(int n)
 		{
-			if (_uloc_getAvailable == null)
-				_uloc_getAvailable = GetMethod<uloc_getAvailableDelegate>(IcuCommonLibHandle, "uloc_getAvailable");
-			return _uloc_getAvailable(n);
+			if (Methods.uloc_getAvailable == null)
+				Methods.uloc_getAvailable = GetMethod<MethodsContainer.uloc_getAvailableDelegate>(IcuCommonLibHandle, "uloc_getAvailable");
+			return Methods.uloc_getAvailable(n);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getLanguageDelegate(string localeID, IntPtr language,
-			int languageCapacity, out ErrorCode err);
-
-		private static uloc_getLanguageDelegate _uloc_getLanguage;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1144,16 +1248,10 @@ namespace Icu
 		public static int uloc_getLanguage(string localeID, IntPtr language,
 			int languageCapacity, out ErrorCode err)
 		{
-			if (_uloc_getLanguage == null)
-				_uloc_getLanguage = GetMethod<uloc_getLanguageDelegate>(IcuCommonLibHandle, "uloc_getLanguage");
-			return _uloc_getLanguage(localeID, language, languageCapacity, out err);
+			if (Methods.uloc_getLanguage == null)
+				Methods.uloc_getLanguage = GetMethod<MethodsContainer.uloc_getLanguageDelegate>(IcuCommonLibHandle, "uloc_getLanguage");
+			return Methods.uloc_getLanguage(localeID, language, languageCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getScriptDelegate(string localeID, IntPtr script,
-			int scriptCapacity, out ErrorCode err);
-
-		private static uloc_getScriptDelegate _uloc_getScript;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1170,16 +1268,10 @@ namespace Icu
 		public static int uloc_getScript(string localeID, IntPtr script,
 			int scriptCapacity, out ErrorCode err)
 		{
-			if (_uloc_getScript == null)
-				_uloc_getScript = GetMethod<uloc_getScriptDelegate>(IcuCommonLibHandle, "uloc_getScript");
-			return _uloc_getScript(localeID, script, scriptCapacity, out err);
+			if (Methods.uloc_getScript == null)
+				Methods.uloc_getScript = GetMethod<MethodsContainer.uloc_getScriptDelegate>(IcuCommonLibHandle, "uloc_getScript");
+			return Methods.uloc_getScript(localeID, script, scriptCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getCountryDelegate(string localeID, IntPtr country,
-			int countryCapacity,out ErrorCode err);
-
-		private static uloc_getCountryDelegate _uloc_getCountry;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1196,16 +1288,10 @@ namespace Icu
 		public static int uloc_getCountry(string localeID, IntPtr country,
 			int countryCapacity,out ErrorCode err)
 		{
-			if (_uloc_getCountry == null)
-				_uloc_getCountry = GetMethod<uloc_getCountryDelegate>(IcuCommonLibHandle, "uloc_getCountry");
-			return _uloc_getCountry(localeID, country, countryCapacity, out err);
+			if (Methods.uloc_getCountry == null)
+				Methods.uloc_getCountry = GetMethod<MethodsContainer.uloc_getCountryDelegate>(IcuCommonLibHandle, "uloc_getCountry");
+			return Methods.uloc_getCountry(localeID, country, countryCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getVariantDelegate(string localeID, IntPtr variant,
-			int variantCapacity, out ErrorCode err);
-
-		private static uloc_getVariantDelegate _uloc_getVariant;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1222,16 +1308,10 @@ namespace Icu
 		public static int uloc_getVariant(string localeID, IntPtr variant,
 			int variantCapacity, out ErrorCode err)
 		{
-			if (_uloc_getVariant == null)
-				_uloc_getVariant = GetMethod<uloc_getVariantDelegate>(IcuCommonLibHandle, "uloc_getVariant");
-			return _uloc_getVariant(localeID, variant, variantCapacity, out err);
+			if (Methods.uloc_getVariant == null)
+				Methods.uloc_getVariant = GetMethod<MethodsContainer.uloc_getVariantDelegate>(IcuCommonLibHandle, "uloc_getVariant");
+			return Methods.uloc_getVariant(localeID, variant, variantCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getDisplayNameDelegate(string localeID, string inLocaleID,
-			IntPtr result, int maxResultSize, out ErrorCode err);
-
-		private static uloc_getDisplayNameDelegate _uloc_getDisplayName;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1252,168 +1332,100 @@ namespace Icu
 		public static int uloc_getDisplayName(string localeID, string inLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
-			if (_uloc_getDisplayName == null)
-				_uloc_getDisplayName = GetMethod<uloc_getDisplayNameDelegate>(IcuCommonLibHandle, "uloc_getDisplayName");
-			return _uloc_getDisplayName(localeID, inLocaleID, result, maxResultSize, out err);
+			if (Methods.uloc_getDisplayName == null)
+				Methods.uloc_getDisplayName = GetMethod<MethodsContainer.uloc_getDisplayNameDelegate>(IcuCommonLibHandle, "uloc_getDisplayName");
+			return Methods.uloc_getDisplayName(localeID, inLocaleID, result, maxResultSize, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getDisplayLanguageDelegate(string localeID, string displayLocaleID,
-			IntPtr result, int maxResultSize, out ErrorCode err);
-
-		private static uloc_getDisplayLanguageDelegate _uloc_getDisplayLanguage;
 
 		public static int uloc_getDisplayLanguage(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
-			if (_uloc_getDisplayLanguage == null)
-				_uloc_getDisplayLanguage = GetMethod<uloc_getDisplayLanguageDelegate>(IcuCommonLibHandle, "uloc_getDisplayLanguage");
-			return _uloc_getDisplayLanguage(localeID, displayLocaleID, result, maxResultSize, out err);
+			if (Methods.uloc_getDisplayLanguage == null)
+				Methods.uloc_getDisplayLanguage = GetMethod<MethodsContainer.uloc_getDisplayLanguageDelegate>(IcuCommonLibHandle, "uloc_getDisplayLanguage");
+			return Methods.uloc_getDisplayLanguage(localeID, displayLocaleID, result, maxResultSize, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getDisplayScriptDelegate(string localeID, string displayLocaleID,
-			IntPtr result, int maxResultSize, out ErrorCode err);
-
-		private static uloc_getDisplayScriptDelegate _uloc_getDisplayScript;
 
 		public static int uloc_getDisplayScript(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
-			if (_uloc_getDisplayScript == null)
-				_uloc_getDisplayScript = GetMethod<uloc_getDisplayScriptDelegate>(IcuCommonLibHandle, "uloc_getDisplayScript");
-			return _uloc_getDisplayScript(localeID, displayLocaleID, result, maxResultSize, out err);
+			if (Methods.uloc_getDisplayScript == null)
+				Methods.uloc_getDisplayScript = GetMethod<MethodsContainer.uloc_getDisplayScriptDelegate>(IcuCommonLibHandle, "uloc_getDisplayScript");
+			return Methods.uloc_getDisplayScript(localeID, displayLocaleID, result, maxResultSize, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getDisplayCountryDelegate(string localeID, string displayLocaleID,
-			IntPtr result, int maxResultSize, out ErrorCode err);
-
-		private static uloc_getDisplayCountryDelegate _uloc_getDisplayCountry;
 
 		public static int uloc_getDisplayCountry(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
-			if (_uloc_getDisplayCountry == null)
-				_uloc_getDisplayCountry = GetMethod<uloc_getDisplayCountryDelegate>(IcuCommonLibHandle, "uloc_getDisplayCountry");
-			return _uloc_getDisplayCountry(localeID, displayLocaleID, result, maxResultSize, out err);
+			if (Methods.uloc_getDisplayCountry == null)
+				Methods.uloc_getDisplayCountry = GetMethod<MethodsContainer.uloc_getDisplayCountryDelegate>(IcuCommonLibHandle, "uloc_getDisplayCountry");
+			return Methods.uloc_getDisplayCountry(localeID, displayLocaleID, result, maxResultSize, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getDisplayVariantDelegate(string localeID, string displayLocaleID,
-			IntPtr result, int maxResultSize, out ErrorCode err);
-
-		private static uloc_getDisplayVariantDelegate _uloc_getDisplayVariant;
 
 		public static int uloc_getDisplayVariant(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
-			if (_uloc_getDisplayVariant == null)
-				_uloc_getDisplayVariant = GetMethod<uloc_getDisplayVariantDelegate>(IcuCommonLibHandle, "uloc_getDisplayVariant");
-			return _uloc_getDisplayVariant(localeID, displayLocaleID, result, maxResultSize, out err);
+			if (Methods.uloc_getDisplayVariant == null)
+				Methods.uloc_getDisplayVariant = GetMethod<MethodsContainer.uloc_getDisplayVariantDelegate>(IcuCommonLibHandle, "uloc_getDisplayVariant");
+			return Methods.uloc_getDisplayVariant(localeID, displayLocaleID, result, maxResultSize, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getNameDelegate(string localeID, IntPtr name,
-			int nameCapacity, out ErrorCode err);
-
-		private static uloc_getNameDelegate _uloc_getName;
 
 		public static int uloc_getName(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
-			if (_uloc_getName == null)
-				_uloc_getName = GetMethod<uloc_getNameDelegate>(IcuCommonLibHandle, "uloc_getName");
-			return _uloc_getName(localeID, name, nameCapacity, out err);
+			if (Methods.uloc_getName == null)
+				Methods.uloc_getName = GetMethod<MethodsContainer.uloc_getNameDelegate>(IcuCommonLibHandle, "uloc_getName");
+			return Methods.uloc_getName(localeID, name, nameCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_getBaseNameDelegate(string localeID, IntPtr name,
-			int nameCapacity, out ErrorCode err);
-
-		private static uloc_getBaseNameDelegate _uloc_getBaseName;
 
 		public static int uloc_getBaseName(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
-			if (_uloc_getBaseName == null)
-				_uloc_getBaseName = GetMethod<uloc_getBaseNameDelegate>(IcuCommonLibHandle, "uloc_getBaseName");
-			return _uloc_getBaseName(localeID, name, nameCapacity, out err);
+			if (Methods.uloc_getBaseName == null)
+				Methods.uloc_getBaseName = GetMethod<MethodsContainer.uloc_getBaseNameDelegate>(IcuCommonLibHandle, "uloc_getBaseName");
+			return Methods.uloc_getBaseName(localeID, name, nameCapacity, out err);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-		private delegate int uloc_canonicalizeDelegate(string localeID, IntPtr name,
-			int nameCapacity, out ErrorCode err);
-
-		private static uloc_canonicalizeDelegate _uloc_canonicalize;
 
 		public static int uloc_canonicalize(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
-			if (_uloc_canonicalize == null)
-				_uloc_canonicalize = GetMethod<uloc_canonicalizeDelegate>(IcuCommonLibHandle, "uloc_canonicalize");
-			var res = _uloc_canonicalize(localeID, name, nameCapacity, out err);
+			if (Methods.uloc_canonicalize == null)
+				Methods.uloc_canonicalize = GetMethod<MethodsContainer.uloc_canonicalizeDelegate>(IcuCommonLibHandle, "uloc_canonicalize");
+			var res = Methods.uloc_canonicalize(localeID, name, nameCapacity, out err);
 			return res;
 		}
 
 		#endregion
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_strToLowerDelegate(IntPtr dest, int destCapacity, string src, 
-			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode);
-
-		private static u_strToLowerDelegate _u_strToLower;
-
 		/// <summary>Return the lower case equivalent of the string.</summary>
 		public static int u_strToLower(IntPtr dest, int destCapacity, string src, 
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode)
 		{
-			if (_u_strToLower == null)
-				_u_strToLower = GetMethod<u_strToLowerDelegate>(IcuCommonLibHandle, "u_strToLower");
-			return _u_strToLower(dest, destCapacity, src, srcLength, locale, out errorCode);
+			if (Methods.u_strToLower == null)
+				Methods.u_strToLower = GetMethod<MethodsContainer.u_strToLowerDelegate>(IcuCommonLibHandle, "u_strToLower");
+			return Methods.u_strToLower(dest, destCapacity, src, srcLength, locale, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_strToTitleDelegate(IntPtr dest, int destCapacity, string src,
-			int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale,
-			out ErrorCode errorCode);
-
-		private static u_strToTitleDelegate _u_strToTitle;
 
 		/// <summary>Return the title case equivalent of the string.</summary>
 		public static int u_strToTitle(IntPtr dest, int destCapacity, string src,
 			int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale,
 			out ErrorCode errorCode)
 		{
-			if (_u_strToTitle == null)
-				_u_strToTitle = GetMethod<u_strToTitleDelegate>(IcuCommonLibHandle, "u_strToTitle", true);
-			return _u_strToTitle(dest, destCapacity, src, srcLength, titleIter,
+			if (Methods.u_strToTitle == null)
+				Methods.u_strToTitle = GetMethod<MethodsContainer.u_strToTitleDelegate>(IcuCommonLibHandle, "u_strToTitle", true);
+			return Methods.u_strToTitle(dest, destCapacity, src, srcLength, titleIter,
 				locale, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int u_strToUpperDelegate(IntPtr dest, int destCapacity, string src,
-			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode);
-
-		private static u_strToUpperDelegate _u_strToUpper;
 
 		/// <summary>Return the upper case equivalent of the string.</summary>
 		public static int u_strToUpper(IntPtr dest, int destCapacity, string src,
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode)
 		{
-			if (_u_strToUpper == null)
-				_u_strToUpper = GetMethod<u_strToUpperDelegate>(IcuCommonLibHandle, "u_strToUpper");
-			return _u_strToUpper(dest, destCapacity, src, srcLength, locale, out errorCode);
+			if (Methods.u_strToUpper == null)
+				Methods.u_strToUpper = GetMethod<MethodsContainer.u_strToUpperDelegate>(IcuCommonLibHandle, "u_strToUpper");
+			return Methods.u_strToUpper(dest, destCapacity, src, srcLength, locale, out errorCode);
 		}
 
 		#region normalize
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int unorm_normalizeDelegate(string source, int sourceLength,
-			Normalizer.UNormalizationMode mode, int options,
-			IntPtr result, int resultLength, out ErrorCode errorCode);
-
-		private static unorm_normalizeDelegate _unorm_normalize;
 
 		/// <summary>
 		/// Normalize a string according to the given mode and options.
@@ -1422,18 +1434,13 @@ namespace Icu
 			Normalizer.UNormalizationMode mode, int options,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
-			if (_unorm_normalize == null)
-				_unorm_normalize = GetMethod<unorm_normalizeDelegate>(IcuCommonLibHandle, "unorm_normalize");
-			return _unorm_normalize(source, sourceLength, mode, options, result,
+			if (Methods._unorm_normalize == null)
+				Methods._unorm_normalize = GetMethod<MethodsContainer.unorm_normalizeDelegate>(IcuCommonLibHandle, "unorm_normalize");
+			return Methods._unorm_normalize(source, sourceLength, mode, options, result,
 				resultLength, out errorCode);
 		}
 
 		// Note that ICU's UBool type is typedef to an 8-bit integer.
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate byte unorm_isNormalizedDelegate(string source,int sourceLength,
-			Normalizer.UNormalizationMode mode,out ErrorCode errorCode);
-
-		private static unorm_isNormalizedDelegate _unorm_isNormalized;
 
 		/// <summary>
 		/// Check whether a string is normalized according to the given mode and options.
@@ -1441,20 +1448,14 @@ namespace Icu
 		public static byte unorm_isNormalized(string source, int sourceLength,
 			Normalizer.UNormalizationMode mode, out ErrorCode errorCode)
 		{
-			if (_unorm_isNormalized == null)
-				_unorm_isNormalized = GetMethod<unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
-			return _unorm_isNormalized(source, sourceLength, mode, out errorCode);
+			if (Methods._unorm_isNormalized == null)
+				Methods._unorm_isNormalized = GetMethod<MethodsContainer.unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
+			return Methods._unorm_isNormalized(source, sourceLength, mode, out errorCode);
 		}
 
 		#endregion normalize
 
 		#region Break iterator
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
-			string locale, string text, int textLength, out ErrorCode errorCode);
-
-		private static ubrk_openDelegate _ubrk_open;
 
 		/// <summary>
 		/// Open a new UBreakIterator for locating text boundaries for a specified locale.
@@ -1468,15 +1469,10 @@ namespace Icu
 		public static IntPtr ubrk_open(BreakIterator.UBreakIteratorType type,
 			string locale, string text, int textLength, out ErrorCode errorCode)
 		{
-			if (_ubrk_open == null)
-				_ubrk_open = GetMethod<ubrk_openDelegate>(IcuCommonLibHandle, "ubrk_open", true);
-			return _ubrk_open(type, locale, text, textLength, out errorCode);
+			if (Methods.ubrk_open == null)
+				Methods.ubrk_open = GetMethod<MethodsContainer.ubrk_openDelegate>(IcuCommonLibHandle, "ubrk_open", true);
+			return Methods.ubrk_open(type, locale, text, textLength, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void ubrk_closeDelegate(IntPtr bi);
-
-		private static ubrk_closeDelegate _ubrk_close;
 
 		/// <summary>
 		/// Close a UBreakIterator.
@@ -1484,15 +1480,10 @@ namespace Icu
 		/// <param name="bi">The break iterator.</param>
 		public static void ubrk_close(IntPtr bi)
 		{
-			if (_ubrk_close == null)
-				_ubrk_close = GetMethod<ubrk_closeDelegate>(IcuCommonLibHandle, "ubrk_close", true);
-			_ubrk_close(bi);
+			if (Methods.ubrk_close == null)
+				Methods.ubrk_close = GetMethod<MethodsContainer.ubrk_closeDelegate>(IcuCommonLibHandle, "ubrk_close", true);
+			Methods.ubrk_close(bi);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ubrk_firstDelegate(IntPtr bi);
-
-		private static ubrk_firstDelegate _ubrk_first;
 
 		/// <summary>
 		/// Determine the index of the first character in the text being scanned.
@@ -1501,15 +1492,10 @@ namespace Icu
 		/// <returns></returns>
 		public static int ubrk_first(IntPtr bi)
 		{
-			if (_ubrk_first == null)
-				_ubrk_first = GetMethod<ubrk_firstDelegate>(IcuCommonLibHandle, "ubrk_first", true);
-			return _ubrk_first(bi);
+			if (Methods.ubrk_first == null)
+				Methods.ubrk_first = GetMethod<MethodsContainer.ubrk_firstDelegate>(IcuCommonLibHandle, "ubrk_first", true);
+			return Methods.ubrk_first(bi);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ubrk_nextDelegate(IntPtr bi);
-
-		private static ubrk_nextDelegate _ubrk_next;
 
 		/// <summary>
 		/// Determine the text boundary following the current text boundary.
@@ -1518,15 +1504,10 @@ namespace Icu
 		/// <returns></returns>
 		public static int ubrk_next(IntPtr bi)
 		{
-			if (_ubrk_next == null)
-				_ubrk_next = GetMethod<ubrk_nextDelegate>(IcuCommonLibHandle, "ubrk_next", true);
-			return _ubrk_next(bi);
+			if (Methods.ubrk_next == null)
+				Methods.ubrk_next = GetMethod<MethodsContainer.ubrk_nextDelegate>(IcuCommonLibHandle, "ubrk_next", true);
+			return Methods.ubrk_next(bi);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
-
-		private static ubrk_getRuleStatusDelegate _ubrk_getRuleStatus;
 
 		/// <summary>
 		/// Return the status from the break rule that determined the most recently returned break position.
@@ -1535,19 +1516,14 @@ namespace Icu
 		/// <returns></returns>
 		public static int ubrk_getRuleStatus(IntPtr bi)
 		{
-			if (_ubrk_getRuleStatus == null)
-				_ubrk_getRuleStatus = GetMethod<ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus", true);
-			return _ubrk_getRuleStatus(bi);
+			if (Methods.ubrk_getRuleStatus == null)
+				Methods.ubrk_getRuleStatus = GetMethod<MethodsContainer.ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus", true);
+			return Methods.ubrk_getRuleStatus(bi);
 		}
 
 		#endregion Break iterator
 
 		#region Unicode set
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void uset_closeDelegate(IntPtr set);
-
-		private static uset_closeDelegate _uset_close;
 
 		/// <summary>
 		/// Disposes of the storage used by Unicode set.  This function should be called exactly once for objects returned by uset_open()
@@ -1555,15 +1531,10 @@ namespace Icu
 		/// <param name="set">Unicode set to dispose of </param>
 		public static void uset_close(IntPtr set)
 		{
-			if (_uset_close == null)
-				_uset_close = GetMethod<uset_closeDelegate>(IcuCommonLibHandle, "uset_close");
-			_uset_close(set);
+			if (Methods.uset_close == null)
+				Methods.uset_close = GetMethod<MethodsContainer.uset_closeDelegate>(IcuCommonLibHandle, "uset_close");
+			Methods.uset_close(set);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr uset_openDelegate(char start,char end);
-
-		private static uset_openDelegate _uset_open;
 
 		/// <summary>
 		/// Creates a Unicode set that contains the range of characters start..end, inclusive.
@@ -1574,15 +1545,10 @@ namespace Icu
 		/// <returns>Unicode set of characters.  The caller must call uset_close() on it when done</returns>
 		public static IntPtr uset_open(char start, char end)
 		{
-			if (_uset_open == null)
-				_uset_open = GetMethod<uset_openDelegate>(IcuCommonLibHandle, "uset_open");
-			return _uset_open(start, end);
+			if (Methods.uset_open == null)
+				Methods.uset_open = GetMethod<MethodsContainer.uset_openDelegate>(IcuCommonLibHandle, "uset_open");
+			return Methods.uset_open(start, end);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr uset_openPatternDelegate(string pattern,int patternLength,ref ErrorCode status);
-
-		private static uset_openPatternDelegate _uset_openPattern;
 
 		/// <summary>
 		/// Creates a set from the given pattern.
@@ -1593,15 +1559,10 @@ namespace Icu
 		/// <returns>Unicode set</returns>
 		public static IntPtr uset_openPattern(string pattern, int patternLength, ref ErrorCode status)
 		{
-			if (_uset_openPattern == null)
-				_uset_openPattern = GetMethod<uset_openPatternDelegate>(IcuCommonLibHandle, "uset_openPattern");
-			return _uset_openPattern(pattern, patternLength, ref status);
+			if (Methods.uset_openPattern == null)
+				Methods.uset_openPattern = GetMethod<MethodsContainer.uset_openPatternDelegate>(IcuCommonLibHandle, "uset_openPattern");
+			return Methods.uset_openPattern(pattern, patternLength, ref status);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void uset_addDelegate(IntPtr set,char c);
-
-		private static uset_addDelegate _uset_add;
 
 		/// <summary>
 		/// Adds the given character to the given Unicode set.  After this call, uset_contains(set, c) will return TRUE.  A frozen set will not be modified.
@@ -1610,16 +1571,10 @@ namespace Icu
 		/// <param name="c">The character to add</param>
 		public static void uset_add(IntPtr set, char c)
 		{
-			if (_uset_add == null)
-				_uset_add = GetMethod<uset_addDelegate>(IcuCommonLibHandle, "uset_add");
-			_uset_add(set, c);
+			if (Methods.uset_add == null)
+				Methods.uset_add = GetMethod<MethodsContainer.uset_addDelegate>(IcuCommonLibHandle, "uset_add");
+			Methods.uset_add(set, c);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int uset_toPatternDelegate(IntPtr set, IntPtr result, int resultCapacity,
-			bool escapeUnprintable, ref ErrorCode status);
-
-		private static uset_toPatternDelegate _uset_toPattern;
 
 		/// <summary>
 		/// Returns a string representation of this set.  If the result of calling this function is 
@@ -1635,15 +1590,10 @@ namespace Icu
 		public static int uset_toPattern(IntPtr set, IntPtr result, int resultCapacity,
 			bool escapeUnprintable, ref ErrorCode status)
 		{
-			if (_uset_toPattern == null)
-				_uset_toPattern = GetMethod<uset_toPatternDelegate>(IcuCommonLibHandle, "uset_toPattern");
-			return _uset_toPattern(set, result, resultCapacity, escapeUnprintable, ref status);
+			if (Methods.uset_toPattern == null)
+				Methods.uset_toPattern = GetMethod<MethodsContainer.uset_toPatternDelegate>(IcuCommonLibHandle, "uset_toPattern");
+			return Methods.uset_toPattern(set, result, resultCapacity, escapeUnprintable, ref status);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void uset_addStringDelegate(IntPtr set,string str,int strLen);
-
-		private static uset_addStringDelegate _uset_addString;
 
 		/// <summary>
 		/// Adds the given string to the given Unicode set
@@ -1653,16 +1603,10 @@ namespace Icu
 		/// <param name="strLen">The length of the string or -1 if null</param>
 		public static void uset_addString(IntPtr set, string str, int strLen)
 		{
-			if (_uset_addString == null)
-				_uset_addString = GetMethod<uset_addStringDelegate>(IcuCommonLibHandle, "uset_addString");
-			_uset_addString(set, str, strLen);
+			if (Methods.uset_addString == null)
+				Methods.uset_addString = GetMethod<MethodsContainer.uset_addStringDelegate>(IcuCommonLibHandle, "uset_addString");
+			Methods.uset_addString(set, str, strLen);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int uset_getItemDelegate(IntPtr set, int itemIndex, out int start,
-			out int end, IntPtr str, int strCapacity, ref ErrorCode ec);
-
-		private static uset_getItemDelegate _uset_getItem;
 
 		/// <summary>
 		/// Returns an item of this Unicode set.  An item is either a range of characters or a single multicharacter string.
@@ -1679,15 +1623,10 @@ namespace Icu
 		public static int uset_getItem(IntPtr set, int itemIndex, out int start,
 			out int end, IntPtr str, int strCapacity, ref ErrorCode ec)
 		{
-			if (_uset_getItem == null)
-				_uset_getItem = GetMethod<uset_getItemDelegate>(IcuCommonLibHandle, "uset_getItem");
-			return _uset_getItem(set, itemIndex, out start, out end, str, strCapacity, ref ec);
+			if (Methods.uset_getItem == null)
+				Methods.uset_getItem = GetMethod<MethodsContainer.uset_getItemDelegate>(IcuCommonLibHandle, "uset_getItem");
+			return Methods.uset_getItem(set, itemIndex, out start, out end, str, strCapacity, ref ec);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int uset_getItemCountDelegate(IntPtr set);
-
-		private static uset_getItemCountDelegate _uset_getItemCount;
 
 		/// <summary>
 		/// Returns the number of items in this set.  An item is either a range of characters or a single multicharacter string
@@ -1696,9 +1635,9 @@ namespace Icu
 		/// <returns>A non-negative integer counting the character ranges and/or strings contained in the set</returns>
 		public static int uset_getItemCount(IntPtr set)
 		{
-			if (_uset_getItemCount == null)
-				_uset_getItemCount = GetMethod<uset_getItemCountDelegate>(IcuCommonLibHandle, "uset_getItemCount");
-			return _uset_getItemCount(set);
+			if (Methods.uset_getItemCount == null)
+				Methods.uset_getItemCount = GetMethod<MethodsContainer.uset_getItemCountDelegate>(IcuCommonLibHandle, "uset_getItemCount");
+			return Methods.uset_getItemCount(set);
 		}
 
 		#endregion // Unicode set
