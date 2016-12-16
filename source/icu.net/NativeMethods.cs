@@ -1526,6 +1526,39 @@ namespace Icu
 			return _ubrk_getRuleStatus(bi);
 		}
 
+		/// <summary>
+		/// Get the statuses from the break rules that determined the most
+		/// recently returned break position.  The values appear in the rule
+		/// source within brackets, {123}, for example.The default status value
+		/// for rules that do not explicitly provide one is zero.
+		///
+		/// For word break iterators, the possible values are defined in
+		/// <see cref="Icu.BreakIterator.UWordBreak"/>
+		/// </summary>
+		/// <returns>The number of rule status values that determined the most recent boundary returned from the break iterator.</returns>
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
+			[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
+			Int32 capacity,
+			out ErrorCode status);
+
+		private static ubrk_getRuleStatusVecDelegate _ubrk_getRuleStatusVec;
+
+		/// <summary>
+		/// Return the status from the break rule that determined the most recently returned break position.
+		/// </summary>
+		/// <param name="bi">The break iterator.</param>
+		/// <returns></returns>
+		public static int ubrk_getRuleStatusVec(IntPtr bi,
+			[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
+			Int32 capacity,
+			out ErrorCode status)
+		{
+			if (_ubrk_getRuleStatusVec == null)
+				_ubrk_getRuleStatusVec = GetMethod<ubrk_getRuleStatusVecDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatusVec", true);
+			return _ubrk_getRuleStatusVec(bi, fillInVector, capacity, out status);
+		}
+
 		#endregion Break iterator
 
 		#region Unicode set
