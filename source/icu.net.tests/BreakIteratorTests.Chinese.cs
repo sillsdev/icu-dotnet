@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -62,39 +63,39 @@ namespace Icu.Tests
 			var text = "你是中国人么？ 我喜欢你们的国家。";
 			var locale = new Locale("zh");
 			var expected = new[] {
-				new Boundary(0, 2), new Boundary(2, 5), new Boundary(5, 6), // 你是中国人么
-				new Boundary(6,7), new Boundary(7,8), new Boundary(8, 9), //？ 我
-				new Boundary(9, 11), new Boundary(11, 13), new Boundary(13, 14), // 喜欢你们的
-                new Boundary(14, 16), new Boundary(16, 17) // 国家。
-            };
+				0, 2, 5, 6,		//你是中国人么
+				7, 8, 9, 11,	//？ 我喜欢
+				13, 14, 16, 17	//的国家。
+			};
+			var none = (int)BreakIterator.UWordBreak.NONE;
+			var ideographic = (int)BreakIterator.UWordBreak.IDEO; //ideographic character
+			var ruleStatus = new[] {
+				none, ideographic, ideographic, ideographic,
+				none, none, ideographic, ideographic,
+				ideographic, ideographic, ideographic, none
+			};
 
-			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: true))
+			using (var bi = BreakIterator.CreateWordInstance(locale, text))
 			{
 				Assert.AreEqual(text, bi.Text);
 				Assert.AreEqual(locale, bi.Locale);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
-			}
-		}
 
-		[Test]
-		public void CreateWordInstanceTest_IgnoreSpacesAndPunctuation()
-		{
-			if (string.CompareOrdinal(Wrapper.IcuVersion, "52.1") < 0)
-				Assert.Ignore("This test requires ICU 52 or higher");
+				// Verify each boundary and rule status.
+				for (int i = 0; i < expected.Length; i++)
+				{
+					int current = bi.Current;
+					int status = bi.GetRuleStatus();
 
-			var text = "你是中国人么？ 我喜欢你们的国家。";
-			var locale = new Locale("zh");
-			var expected = new[] {
-				new Boundary(0, 2), new Boundary(2, 5), new Boundary(5, 6), // 你是中国人么
-                new Boundary(8, 9), new Boundary(9, 11), new Boundary(11, 13), // 我喜欢你们
-                new Boundary(13, 14), new Boundary(14, 16) // 的国家
-            };
+					Assert.AreEqual(expected[i], current);
+					Assert.AreEqual(ruleStatus[i], status);
 
-			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: false))
-			{
-				Assert.AreEqual(text, bi.Text);
-				Assert.AreEqual(locale, bi.Locale);
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+					bi.MoveNext();
+				}
+
+				// Verify that the BreakIterator is exhausted because we've
+				// moved past every item.
+				Assert.AreEqual(BreakIterator.DONE, bi.Current);
 			}
 		}
 
@@ -103,48 +104,75 @@ namespace Icu.Tests
 		{
 			var text = "供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。";
 			var locale = new Locale("zh");
-			var expected = new[] { new Boundary(0, 18), new Boundary(18, 35), new Boundary(35, 53) };
+			var expected = new[] { 0, 18, 35, 53 };
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
 			{
 				Assert.AreEqual(locale, bi.Locale);
+				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 			}
 		}
 
 		[Test]
-		public void CanIterateForwards()
+		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, 
+			"供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。",
+			new[] { 0, 18, 35, 53 }, 
+			new[] { 0, 0, 0, 0 })]
+		[TestCase(BreakIterator.UBreakIteratorType.WORD,
+			"你是中国人么？ 我喜欢你们的国家。",
+			new[] { 0, 2, 5, 6,	7, 8, 9, 11, 13, 14, 16, 17	}, 
+			new[] { 0, 400, 400, 400, 0, 0, 400, 400, 400, 400, 400, 0 })]
+		public void CanIterateForwards(BreakIterator.UBreakIteratorType type, string text, int[] expected, BreakIterator.UWordBreak[] ruleStatus)
 		{
-			var text = "供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。";
 			var locale = new Locale("zh");
-			var expected = new[] { new Boundary(0, 18), new Boundary(18, 35), new Boundary(35, 53) };
 
-			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			BreakIterator bi = default(BreakIterator);
+
+			try
 			{
+				switch (type)
+				{
+					case BreakIterator.UBreakIteratorType.SENTENCE:
+						bi = BreakIterator.CreateSentenceInstance(locale, text);
+						break;
+					case BreakIterator.UBreakIteratorType.WORD:
+						bi = BreakIterator.CreateWordInstance(locale, text);
+						break;
+					default:
+						throw new NotSupportedException("This iterator type is not supported in this test yet. [" + type + "]");
+				}
+
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
-				int current = 0;
-				var currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.Current);
+				// Verify each boundary for the sentences
+				for (int i = 0; i < expected.Length; i++)
+				{
+					int current = bi.Current;
+					int status = bi.GetRuleStatus();
 
-				// increment the index and verify that the next Boundary is correct.
-				current++;
-				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.MoveNext());
-				Assert.AreEqual(currentBoundary, bi.Current);
+					Assert.AreEqual(expected[i], current);
+					Assert.AreEqual((int)ruleStatus[i], status);
 
-				current++;
-				currentBoundary = expected[current];
-				Assert.AreEqual(currentBoundary, bi.MoveNext());
-				Assert.AreEqual(currentBoundary, bi.Current);
+					bi.MoveNext();
+				}
 
-				// We've moved past the last word, it should return null.
-				Assert.Null(bi.MoveNext());
-				Assert.Null(bi.Current);
+				// Verify that the BreakIterator is exhausted because we've
+				// moved past every item.
+				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+
+				// And if we try to move again, it'll return DONE.
+				Assert.AreEqual(BreakIterator.DONE, bi.MoveNext());
+				Assert.AreEqual(BreakIterator.DONE, bi.Current);
 
 				// Verify that the first element is correct now that we've moved to the end.
 				Assert.AreEqual(expected[0], bi.MoveFirst());
 				Assert.AreEqual(expected[0], bi.Current);
+			}
+			finally
+			{
+				if (bi != default(BreakIterator))
+					bi.Dispose();
 			}
 		}
 
@@ -157,43 +185,61 @@ namespace Icu.Tests
 			var text = "你是中国人么？ 我喜欢你们的国家。";
 			var locale = new Locale("zh");
 			var expected = new[] {
-				new Boundary(0, 2), new Boundary(2, 5), new Boundary(5, 6), // 你是中国人么
-                new Boundary(8, 9), new Boundary(9, 11), new Boundary(11, 13), // 我喜欢你们
-                new Boundary(13, 14), new Boundary(14, 16) // 的国家
-            };
+				0, 2, 5, 6,		//你是中国人么
+				7, 8, 9, 11,	//？ 我喜欢
+				13, 14, 16, 17	//的国家。
+			};
+			var none = (int)BreakIterator.UWordBreak.NONE;
+			var ideographic = (int)BreakIterator.UWordBreak.IDEO; //ideographic character
+			var ruleStatus = new[] {
+				none, ideographic, ideographic, ideographic,
+				none, none, ideographic, ideographic,
+				ideographic, ideographic, ideographic, none
+			};
 
-			using (var bi = BreakIterator.CreateWordInstance(locale, text, includeSpacesAndPunctuation: false))
+			using (var bi = BreakIterator.CreateWordInstance(locale, text))
 			{
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
 				int current = 0;
 				var currentBoundary = expected[current];
+				var currentStatus = ruleStatus[current];
 				Assert.AreEqual(currentBoundary, bi.Current);
+				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 
 				// Increment the index and verify that the next Boundary is correct.
 				current++;
 				currentBoundary = expected[current];
+				currentStatus = ruleStatus[current];
 				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
+				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 
 				current++;
 				currentBoundary = expected[current];
+				currentStatus = ruleStatus[current];
 				Assert.AreEqual(currentBoundary, bi.MoveNext());
 				Assert.AreEqual(currentBoundary, bi.Current);
+				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 
 				current--;
 				currentBoundary = expected[current];
+				currentStatus = ruleStatus[current];
 				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
+				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 
 				current--;
 				currentBoundary = expected[current];
+				currentStatus = ruleStatus[current];
 				Assert.AreEqual(currentBoundary, bi.MovePrevious());
 				Assert.AreEqual(currentBoundary, bi.Current);
+				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 
 				// We've moved past the first word, it should return null.
-				Assert.Null(bi.MovePrevious());
-				Assert.Null(bi.Current);
+				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
+				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				Assert.AreEqual(0, bi.GetRuleStatus()); // this by default returns 0.
 
 				// Verify that the element is correct now that we've moved to the end.
 				var last = expected.Last();
@@ -207,10 +253,10 @@ namespace Icu.Tests
 		{
 			var locale = new Locale("zh");
 			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
-			var expected = new[] { new Boundary(0, 22), new Boundary(22, 52), new Boundary(52, 70) };
+			var expected = new[] { 0, 22, 52, 70 };
 
 			var secondText = "供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。";
-			var secondExpected = new[] { new Boundary(0, 18), new Boundary(18, 35), new Boundary(35, 53) };
+			var secondExpected = new[] { 0, 18, 35, 53 };
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
 			{
@@ -220,14 +266,15 @@ namespace Icu.Tests
 				// Move the iterator to the next boundary
 				Assert.AreEqual(expected[1], bi.MoveNext());
 				Assert.AreEqual(expected[1], bi.Current);
+				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
 
-				// Assert that the new set of boundaries were found.
 				bi.SetText(secondText);
 				Assert.AreEqual(secondText, bi.Text);
 
 				// Assert that the iterator was reset back to the first element
 				// when we set new text.
 				Assert.AreEqual(secondExpected[0], bi.Current);
+				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
 
 				CollectionAssert.AreEqual(secondExpected, bi.Boundaries);
 			}

@@ -2,12 +2,16 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Icu
 {
 	/// <summary>
 	/// The BreakIterator implements methods for finding the location of
 	/// boundaries in text.
+	/// When using BreakIterator class, it will iterate over the boundaries
+	/// as described here: http://userguide.icu-project.org/boundaryanalysis
+	/// for all UBreakIteratorTypes (including UBreakIteratorType.Word).
 	/// </summary>
 	public class BreakIterator : IDisposable
 	{
@@ -71,13 +75,14 @@ namespace Icu
 		/// </summary>
 		public const int DONE = -1;
 
-		private readonly bool _includeSpacesAndPunctuation;
 		private readonly UBreakIteratorType _iteratorType;
 		private readonly Locale _locale;
 
 		private int _currentIndex = DONE;
 		private bool _disposingValue = false; // To detect redundant calls
+		private int[] _ruleBreakStatuses = new int[0];
 		private string _text;
+
 		protected internal IntPtr _breakIterator = IntPtr.Zero;
 
 		/// <summary>
@@ -93,35 +98,16 @@ namespace Icu
 		/// desired <see cref="BreakIterator(UBreakIteratorType, Locale, string, bool)"/>.
 		/// </remarks>
 		protected BreakIterator(UBreakIteratorType iteratorType, Locale locale, string text)
-			: this(iteratorType, locale, text, includeSpacesAndPunctuation: false)
-		{ }
-
-		/// <summary>
-		/// Creates a BreakIterator with the given BreakIteratorType, Locale
-		/// and sets the initial text.
-		/// </summary>
-		/// <param name="iteratorType">Break type.</param>
-		/// <param name="locale">The locale.</param>
-		/// <param name="text">Initial text.</param>
-		/// <param name="includeSpacesAndPunctuation">
-		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
-		/// punctuation as boundaries for words. Set parameter to true if all
-		/// boundaries are desired; false otherwise.
-		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
-		/// </param>
-		protected BreakIterator(UBreakIteratorType iteratorType, Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
-			_includeSpacesAndPunctuation = includeSpacesAndPunctuation;
 			_iteratorType = iteratorType;
 			_locale = locale;
 			SetText(text);
 		}
 
 		/// <summary>
-		/// Gets all of the Boundaries for the given text.
-		/// Returns Boundary[0] if the text was empty or null.
+		/// Gets all of the boundaries for the given text.
 		/// </summary>
-		public virtual Boundary[] Boundaries { get; protected set; }
+		public virtual int[] Boundaries { get; protected set; }
 
 		/// <summary>
 		/// Gets the text being examined by this BreakIterator.
@@ -130,14 +116,14 @@ namespace Icu
 
 		/// <summary>
 		/// The current Boundary.
-		/// Returns null if there are no boundaries left to return.
+		/// Returns <see cref="DONE"/> if there are no boundaries left to return.
 		/// </summary>
-		public virtual Boundary Current
+		public virtual int Current
 		{
 			get
 			{
 				if (_currentIndex == DONE)
-					return default(Boundary);
+					return DONE;
 
 				return Boundaries[_currentIndex];
 			}
@@ -147,13 +133,13 @@ namespace Icu
 		/// Decrements the iterator and returns the previous Boundary.
 		/// Returns null if the iterator moves past the first Boundary.
 		/// </summary>
-		public virtual Boundary MovePrevious()
+		public virtual int MovePrevious()
 		{
-			if (_currentIndex == 0 || _currentIndex == DONE)
-			{
+			if (_currentIndex == 0)
 				_currentIndex = DONE;
-				return default(Boundary);
-			}
+
+			if (_currentIndex == DONE)
+				return DONE;
 
 			_currentIndex--;
 
@@ -164,17 +150,17 @@ namespace Icu
 		/// Increments the iterator and returns the next Boundary.
 		/// Returns null if there are no boundaries left to return.
 		/// </summary>
-		public virtual Boundary MoveNext()
+		public virtual int MoveNext()
 		{
 			if (_currentIndex == DONE)
-				return default(Boundary);
+				return DONE;
 
 			_currentIndex++;
 
 			if (_currentIndex >= Boundaries.Length)
 			{
 				_currentIndex = DONE;
-				return default(Boundary);
+				return DONE;
 			}
 
 			return Boundaries[_currentIndex];
@@ -184,10 +170,10 @@ namespace Icu
 		/// Sets the iterator to the first Boundary and returns it.
 		/// Returns null if there was no text set.
 		/// </summary>
-		public virtual Boundary MoveFirst()
+		public virtual int MoveFirst()
 		{
 			if (Boundaries.Length == 0)
-				return default(Boundary);
+				return DONE;
 
 			_currentIndex = 0;
 			return Boundaries[_currentIndex];
@@ -197,13 +183,26 @@ namespace Icu
 		/// Sets the iterator to the last Boundary and returns it.
 		/// Returns null if there was no text set.
 		/// </summary>
-		public virtual Boundary MoveLast()
+		public virtual int MoveLast()
 		{
 			if (Boundaries.Length == 0)
-				return default(Boundary);
+				return DONE;
 
 			_currentIndex = Boundaries.Length - 1;
 			return Boundaries[_currentIndex];
+		}
+
+		/// <summary>
+		/// Returns the status tag from the break rule that determined the
+		/// most recently returned break position.  For break iterator types
+		/// that do not support a rule status, a default value of 0 is returned.
+		/// </summary>
+		public virtual int GetRuleStatus()
+		{
+			if (_currentIndex == DONE)
+				return 0;
+
+			return _ruleBreakStatuses[_currentIndex];
 		}
 
 		/// <summary>
@@ -217,7 +216,7 @@ namespace Icu
 
 			if (string.IsNullOrEmpty(Text))
 			{
-				Boundaries = new Boundary[0];
+				Boundaries = new int[0];
 				_currentIndex = DONE;
 				return;
 			}
@@ -236,29 +235,37 @@ namespace Icu
 			if (err.IsFailure())
 				throw new Exception("BreakIterator.Split() failed with code " + err);
 
-			List<Boundary> boundaries = new List<Boundary>();
+			//List<Boundary> boundaries = new List<Boundary>();
+			List<int> boundaries = new List<int>();
+			List<int> ruleBreakStatuses = new List<int>();
 
 			int cur = NativeMethods.ubrk_first(_breakIterator);
+			int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
+
+			if (cur != DONE)
+			{
+				boundaries.Add(cur);
+				ruleBreakStatuses.Add(status);
+			}
 
 			while (cur != DONE)
 			{
 				int next = NativeMethods.ubrk_next(_breakIterator);
-				int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
+				status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
 
 				if (next == DONE)
 				{
 					break;
 				}
 
-				if (_includeSpacesAndPunctuation || AddToken(_iteratorType, status))
-				{
-					boundaries.Add(new Boundary(cur, next));
-				}
-
+				boundaries.Add(next);
+				ruleBreakStatuses.Add(status);
+				
 				cur = next;
 			}
 
 			Boundaries = boundaries.ToArray();
+			_ruleBreakStatuses = ruleBreakStatuses.ToArray();
 			_currentIndex = 0;
 		}
 
@@ -279,18 +286,17 @@ namespace Icu
 
 		/// <summary>
 		/// Creates a BreakIterator that splits on words for the given locale.
+		/// It iterates over boundaries as described in the "Word Boundary"
+		/// section http://userguide.icu-project.org/boundaryanalysis.
+		/// If you want to ignore spaces and punctuation, consider using:
+		/// <see cref="BreakIterator.Split(UBreakIteratorType, Locale, string)"/>
+		/// or <see cref="BreakIterator.GetWordBoundaries(Locale, string, bool)"/>,
 		/// </summary>
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The initial text.</param>
-		/// <param name="includeSpacesAndPunctuation">
-		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
-		/// punctuation as boundaries for words. Set parameter to true if all
-		/// boundaries are desired; false otherwise.
-		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
-		/// </param>
-		public static BreakIterator CreateWordInstance(Locale locale, string text, bool includeSpacesAndPunctuation)
+		public static BreakIterator CreateWordInstance(Locale locale, string text)
 		{
-			return new BreakIterator(UBreakIteratorType.WORD, locale, text, includeSpacesAndPunctuation);
+			return new BreakIterator(UBreakIteratorType.WORD, locale, text);
 		}
 
 		/// <summary>
@@ -384,10 +390,32 @@ namespace Icu
 
 		private static IEnumerable<Boundary> GetBoundaries(UBreakIteratorType type, Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
-			using (var breakIterator = new BreakIterator(type, locale, text, includeSpacesAndPunctuation))
+			List<Boundary> boundaries = new List<Boundary>();
+
+			using (var breakIterator = new BreakIterator(type, locale, text))
 			{
-				return breakIterator.Boundaries;
+				int current = breakIterator.Current;
+
+				while (current != DONE)
+				{
+					int next = breakIterator.MoveNext();
+					int status = breakIterator.GetRuleStatus();
+
+					if (next == DONE)
+					{
+						break;
+					}
+
+					if (includeSpacesAndPunctuation || AddToken(type, status))
+					{
+						boundaries.Add(new Boundary(current, next));
+					}
+
+					current = next;
+				}
 			}
+
+			return boundaries;
 		}
 
 		private static bool AddToken(UBreakIteratorType type, int status)
