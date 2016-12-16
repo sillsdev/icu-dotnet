@@ -14,7 +14,7 @@ namespace Icu.Tests
 	public class NativeMethodsTests
 	{
 		private string _tmpDir;
-		private string _path;
+		private string _pathEnvironmentVariable;
 
 		private static void CopyFile(string srcPath, string dstDir)
 		{
@@ -27,8 +27,11 @@ namespace Icu.Tests
 			get { return Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath); }
 		}
 
-		private string RunTestHelper(string dir)
+		private string RunTestHelper(string dir, string exeDir = null)
 		{
+			if (string.IsNullOrEmpty(exeDir))
+				exeDir = _tmpDir;
+
 			using (var process = new Process())
 			{
 				process.StartInfo.RedirectStandardError = false;
@@ -36,7 +39,7 @@ namespace Icu.Tests
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
 				process.StartInfo.WorkingDirectory = dir;
-				process.StartInfo.FileName = Path.Combine(_tmpDir, "TestHelper.exe");
+				process.StartInfo.FileName = Path.Combine(exeDir, "TestHelper.exe");
 
 				process.Start();
 				var output = process.StandardOutput.ReadToEnd();
@@ -54,17 +57,18 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(sourceDir, "TestHelper.exe"), _tmpDir);
 			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), _tmpDir);
 
-			_path = Environment.GetEnvironmentVariable("PATH");
+			_pathEnvironmentVariable = Environment.GetEnvironmentVariable("PATH");
 			var path = string.Format("{0}{1}{2}", OutputDirectory, Path.PathSeparator,
-				_path);
+				_pathEnvironmentVariable);
 			Environment.SetEnvironmentVariable("PATH", path);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			Directory.Delete(_tmpDir, true);
-			Environment.SetEnvironmentVariable("PATH", _path);
+			Wrapper.Cleanup();
+			new DirectoryInfo(_tmpDir).Delete(true);
+			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
 		}
 
 		[Test]
@@ -96,5 +100,19 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(OutputDirectory, "icuuc54.dll"), _tmpDir);
 			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo("54.1"));
 		}
+
+		[Test]
+		public void LoadIcuLibrary_LoadLocalVersion_DirectoryWithSpaces()
+		{
+			var subdir = Path.Combine(_tmpDir, "Dir With Spaces");
+			Directory.CreateDirectory(subdir);
+			CopyFile(Path.Combine(_tmpDir, "TestHelper.exe"), subdir);
+			CopyFile(Path.Combine(_tmpDir, "icu.net.dll"), subdir);
+			CopyFile(Path.Combine(OutputDirectory, "icudt54.dll"), subdir);
+			CopyFile(Path.Combine(OutputDirectory, "icuin54.dll"), subdir);
+			CopyFile(Path.Combine(OutputDirectory, "icuuc54.dll"), subdir);
+			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo("54.1"));
+		}
+
 	}
 }
