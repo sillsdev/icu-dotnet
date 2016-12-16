@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   [#20](https://github.com/sillsdev/icu-dotnet/issues/20).
 - Fix `CollationStrength.Identical` value to match value used by unamanaged
   binaries.
-- Fix casing of a few native methods
+- Fix casing of a few native methods.
+- Fix loading of native binaries from path with a space in the name.
 
 ### Changed
 - Call native cleanup from Wrapper.Cleanup

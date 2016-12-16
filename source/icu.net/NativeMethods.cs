@@ -104,9 +104,12 @@ namespace Icu
 
 		private static string DirectoryOfThisAssembly
 		{
-			get { return Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath); }
+			get
+			{
+				var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+				return Path.GetDirectoryName(uri.LocalPath);
+			}
 		}
-
 
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{

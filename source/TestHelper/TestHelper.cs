@@ -12,6 +12,7 @@ namespace Icu.Tests
 			try
 			{
 				Console.WriteLine(Wrapper.IcuVersion);
+				Wrapper.Cleanup();
 			}
 			catch (FileLoadException)
 			{
