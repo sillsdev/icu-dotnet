@@ -227,6 +227,64 @@ namespace Icu
 		}
 
 		/// <summary>
+		/// Returns true if the specfied position is a boundary position.
+		/// As a side effect, leaves the iterator pointing to the first
+		/// boundary position at or after "offset".
+		/// </summary>
+		public virtual bool IsBoundary(int offset)
+		{
+			// When the text is null or empty, there are no boundaries
+			// The current offset is already be at BreakIterator.DONE.
+			if (_textBoundaries.Length == 0)
+			{
+				return false;
+			}
+
+			// the beginning index of the iterator is always a boundary position by definition
+			if (offset == 0)
+			{
+				MoveFirst(); // For side effects on current position, tag values.
+				return true;
+			}
+
+			int lastOffset = _textBoundaries.Last().Offset;
+
+			if (offset == lastOffset)
+			{
+				MoveLast(); 
+				return true;
+			}
+
+			// out-of-range indexes are never boundary positions
+			if (offset < 0)
+			{
+				MoveFirst();
+				return false;
+			}
+
+			if (offset > lastOffset)
+			{
+				MoveLast();
+				return false;
+			}
+
+			var current = MoveFirst();
+
+			while (current != DONE)
+			{
+				if (current == offset)
+					return true;
+
+				if (current > offset)
+					return false;
+
+				current = MoveNext();
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Returns the status tag from the break rule that determined the
 		/// current position.  For break iterator types that do not support a
 		/// rule status, a default value of 0 is returned.
@@ -353,6 +411,8 @@ namespace Icu
 				return true;
 			};
 
+			// Start at the the beginning of the text and iterate until all
+			// of the boundaries are consumed.
 			int cur = NativeMethods.ubrk_first(_breakIterator);
 
 			if (!checkOffsetAndAddRuleStatus(cur))
