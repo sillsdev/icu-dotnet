@@ -180,6 +180,59 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		[TestCase(
+			BreakIterator.UBreakIteratorType.SENTENCE,
+			"供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。",
+			new[] { -1, 35, 17, 54, 0, 53, 30, 27 },
+			new[] { false, true, false, false, true, true, false, false },
+			new[] { 0, 35, 18, 53, 0, 53, 35, 35 })]
+		[TestCase(
+			BreakIterator.UBreakIteratorType.WORD,
+			"你是中国人么？ 我喜欢你们的国家。",
+			new[] { 12, 18, 0, 6, -10 },
+			new[] { false, false, true, true, false },
+			new[] { 13, 17, 0, 6, 0 })]
+		public void IsBoundary(BreakIterator.UBreakIteratorType type,
+			string text, 
+			int[] offsetsToTest, 
+			bool[] expectedIsBoundary, 
+			int[] expectedOffsets) // expected BreakIterator.Current after calling IsBoundary.
+		{
+			var locale = new Locale("zh");
+
+			BreakIterator bi = default(BreakIterator);
+
+			try
+			{
+				switch (type)
+				{
+					case BreakIterator.UBreakIteratorType.SENTENCE:
+						bi = BreakIterator.CreateSentenceInstance(locale, text);
+						break;
+					case BreakIterator.UBreakIteratorType.WORD:
+						bi = BreakIterator.CreateWordInstance(locale, text);
+						break;
+					default:
+						throw new NotSupportedException("This iterator type is not supported in this test yet. [" + type + "]");
+				}
+
+				for (int i = 0; i < offsetsToTest.Length; i++)
+				{
+					var isBoundary = bi.IsBoundary(offsetsToTest[i]);
+
+					Assert.AreEqual(expectedIsBoundary[i], isBoundary, "Expected IsBoundary was not equal at i: {0}, offset: {1}", i, offsetsToTest[i]);
+					Assert.AreEqual(expectedOffsets[i], bi.Current);
+				}
+
+			}
+			finally
+			{
+				if (bi != default(BreakIterator))
+					bi.Dispose();
+			}
+		}
+
+		[Test]
 		public void CanIterateBackwards()
 		{
 			if (string.CompareOrdinal(Wrapper.IcuVersion, "52.1") < 0)

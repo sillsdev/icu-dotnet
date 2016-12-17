@@ -434,6 +434,46 @@ namespace Icu.Tests
 			}
 		}
 
+		[Test]
+		[TestCase("")]
+		[TestCase(null)]
+		public void IsBoundaryTest_EmptyOrNull(string text)
+		{
+			var offsetsToTest = new[] { 0, -1, 100 };
+			var locale = new Locale("de-DE");
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text))
+			{
+				for (int i = 0; i < offsetsToTest.Length; i++)
+				{
+					var isBoundary = bi.IsBoundary(offsetsToTest[i]);
+					Assert.IsFalse(isBoundary);
+					Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				}
+			}
+		}
+
+		[Test]
+		public void IsBoundaryTest()
+		{
+			var locale = new Locale("de-DE");
+			var text = "Good-day, kind sir !";
+			var offsetsToTest = new[] { -1, 21, 11, 5, 0, 20 };
+			var expectedIsBoundary = new[] { false, false, false, true, true, true };
+			var expectedOffsets = new[] { 0, 20, 14, 5, 0, 20 };
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text))
+			{
+				for (int i = 0; i < offsetsToTest.Length; i++)
+				{
+					var isBoundary = bi.IsBoundary(offsetsToTest[i]);
+
+					Assert.AreEqual(expectedIsBoundary[i], isBoundary, "Expected IsBoundary was not equal at i: {0}, offset: {1}", i, offsetsToTest[i]);
+					Assert.AreEqual(expectedOffsets[i], bi.Current);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Test data for GetBoundaries_Word and GetWordBoundaries  tests
 		/// </summary>
