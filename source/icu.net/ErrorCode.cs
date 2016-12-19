@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Icu
 {
-	internal enum ErrorCode
+	public enum ErrorCode
 	{
 		USING_FALLBACK_WARNING = -128,   /** A resource bundle lookup returned a fallback result (not an error) */
 
