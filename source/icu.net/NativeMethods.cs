@@ -1442,6 +1442,31 @@ namespace Icu
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
+			string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
+
+		private static ubrk_openRulesDelegate _ubrk_openRules;
+
+		/// <summary>
+		/// Open a new BreakIterator that uses the given rules to break text.
+		/// </summary>
+		/// <param name="rules">The rules to use for break iterator</param>
+		/// <param name="rulesLength">The length of the rules.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="textLength">Length of the text.</param>
+		/// <param name="errorCode">The error code.</param>
+		/// <returns></returns>
+		public static IntPtr ubrk_openRules(
+			string rules, int rulesLength,
+			string text, int textLength,
+			out ParseError parseError, out ErrorCode errorCode)
+		{
+			if (_ubrk_openRules == null)
+				_ubrk_openRules = GetMethod<ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
+			return _ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
+		}
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
 
 		private static ubrk_setTextDelegate _ubrk_setText;
