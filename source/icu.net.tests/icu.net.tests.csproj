@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreakIteratorTests.Chinese.cs" />
+    <Compile Include="BreakIteratorTests.JDKCompatibility.cs" />
     <Compile Include="Collation\CollatorTests.cs" />
     <Compile Include="Collation\SortKeyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
