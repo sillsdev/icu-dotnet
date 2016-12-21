@@ -221,10 +221,121 @@ namespace Icu
 		/// </summary>
 		public virtual int MoveLast()
 		{
-			if (string.IsNullOrEmpty(Text))
+			if (Text == null)
+			{
+				return DONE;
+			}
+			else if (Text.Equals(string.Empty))
+			{
 				return 0;
+			}
 
 			_currentIndex = Boundaries.Length - 1;
+			return _textBoundaries[_currentIndex].Offset;
+		}
+
+		/// <summary>
+		/// Sets the iterator to refer to the first boundary position following
+		/// the specified position.
+		/// </summary>
+		/// <param name="offset">The position from which to begin searching for
+		/// a break position.</param>
+		/// <returns>The position of the first break after the current position.
+		/// The value returned is always greater than offset, or <see cref="BreakIterator.DONE"/>
+		/// </returns>
+		public virtual int MoveFollowing(int offset)
+		{
+			// if the offset passed in is already past the end of the text,
+			// just return DONE; if it's before the beginning, return the
+			// text's starting offset
+			if (Text == null || offset >= Text.Length)
+			{
+				MoveLast();
+				return MoveNext();
+			}
+			else if (offset < 0)
+			{
+				return MoveFirst();
+			}
+
+			if (offset == _textBoundaries[0].Offset)
+			{
+				_currentIndex = 0;
+				return MoveNext();
+			}
+			else if (offset == _textBoundaries[_textBoundaries.Length - 1].Offset)
+			{
+				_currentIndex = _textBoundaries.Length - 1;
+				return MoveNext();
+			}
+			else
+			{
+				int index = 1;
+				// We are guaranteed not to leave the array due to range test above
+				while (offset >= _textBoundaries[index].Offset)
+				{
+					index++;
+				}
+
+				_currentIndex = index;
+				return _textBoundaries[_currentIndex].Offset;
+			}
+		}
+
+		/// <summary>
+		/// Sets the iterator to refer to the last boundary position before the
+		/// specified position.
+		/// </summary>
+		/// <param name="offset">The position to begin searching for a break from.</param>
+		/// <returns>The position of the last boundary before the starting
+		/// position. The value returned is always smaller than the offset
+		/// or the value <see cref="BreakIterator.DONE"/></returns>
+		public virtual int MovePreceding(int offset)
+		{
+			if (Text == null || offset > Text.Length)
+			{
+				return MoveLast();
+			}
+			else if (offset < 0)
+			{
+				return MoveFirst();
+			}
+
+			// If the offset is less than the first boundary, return the first
+			// boundary. Else if, the offset is greater than the last boundary,
+			// return the last boundary.
+			// Otherwise, the offset is somewhere in the middle. So we start
+			// iterating through the boundaries until we get to a point where
+			// the current boundary we are at has a greater offset than the given
+			// one. So we return that.
+			if (_textBoundaries.Length == 0 || offset == _textBoundaries[0].Offset)
+			{
+				_currentIndex = 0;
+				return DONE;
+			}
+			else if (offset < _textBoundaries[0].Offset)
+			{
+				_currentIndex = 0;
+			}
+			else if (offset > _textBoundaries[_textBoundaries.Length - 1].Offset)
+			{
+				_currentIndex = _textBoundaries.Length - 1;
+			}
+			else
+			{
+				int index = 0;
+
+				while (index < _textBoundaries.Length
+					  && offset > _textBoundaries[index].Offset)
+				{
+					index++;
+				}
+
+				index--;
+
+				_currentIndex = index;
+			}
+
 			return _textBoundaries[_currentIndex].Offset;
 		}
 
