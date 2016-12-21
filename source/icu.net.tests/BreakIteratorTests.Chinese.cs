@@ -90,12 +90,25 @@ namespace Icu.Tests
 					Assert.AreEqual(expected[i], current);
 					Assert.AreEqual(ruleStatus[i], status);
 
-					bi.MoveNext();
+					int moveNext = bi.MoveNext();
+					int next = i + 1;
+
+					if (next < expected.Length)
+					{
+						Assert.AreEqual(expected[next], moveNext);
+					}
+					else
+					{
+						// Verify that the BreakIterator is exhausted because we've
+						// moved past every item.
+						Assert.AreEqual(BreakIterator.DONE, moveNext);
+					}
 				}
 
 				// Verify that the BreakIterator is exhausted because we've
-				// moved past every item.
-				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				// moved past every item, so current should be the last offset.
+				int lastIndex = expected.Length - 1;
+				Assert.AreEqual(expected[lastIndex], bi.Current);
 			}
 		}
 
@@ -157,16 +170,27 @@ namespace Icu.Tests
 					Assert.AreEqual(expectedStatus, status);
 					CollectionAssert.AreEqual(new[] { expectedStatus }, bi.GetRuleStatusVector());
 
-					bi.MoveNext();
+					int moveNext = bi.MoveNext();
+					int next = i + 1;
+
+					if (next < expected.Length)
+					{
+						Assert.AreEqual(expected[next], moveNext);
+					}
+					else
+					{
+						// Verify that the BreakIterator is exhausted because we've
+						// moved past every item.
+						Assert.AreEqual(BreakIterator.DONE, moveNext);
+					}
 				}
 
-				// Verify that the BreakIterator is exhausted because we've
-				// moved past every item.
-				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				int lastIndex = expected.Length - 1;
+				Assert.AreEqual(expected[lastIndex], bi.Current);
 
-				// And if we try to move again, it'll return DONE.
+				// We've moved past the last word, it should return the last offset.
 				Assert.AreEqual(BreakIterator.DONE, bi.MoveNext());
-				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				Assert.AreEqual(expected[lastIndex], bi.Current);
 
 				// Verify that the first element is correct now that we've moved to the end.
 				Assert.AreEqual(expected[0], bi.MoveFirst());
@@ -298,9 +322,9 @@ namespace Icu.Tests
 				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
 				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
 
-				// We've moved past the first word, it should return null.
+				// We've moved past the first word, it should return 0.
 				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
-				Assert.AreEqual(BreakIterator.DONE, bi.Current);
+				Assert.AreEqual(0, bi.Current);
 				Assert.AreEqual(0, bi.GetRuleStatus()); // this by default returns 0.
 				CollectionAssert.AreEqual(new[] { 0 }, bi.GetRuleStatusVector()); // default returns 0 in the status vector
 

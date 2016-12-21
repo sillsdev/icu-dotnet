@@ -108,7 +108,7 @@ namespace Icu
 		private readonly UBreakIteratorType _iteratorType;
 		private readonly Locale _locale;
 
-		private int _currentIndex = DONE;
+		private int _currentIndex = 0;
 		private bool _disposingValue = false; // To detect redundant calls
 		private TextBoundary[] _textBoundaries = new TextBoundary[0];
 		private string _text;
@@ -155,8 +155,8 @@ namespace Icu
 		{
 			get
 			{
-				if (_currentIndex == DONE)
-					return DONE;
+				if (string.IsNullOrEmpty(Text))
+					return 0;
 
 				return _textBoundaries[_currentIndex].Offset;
 			}
@@ -168,11 +168,11 @@ namespace Icu
 		/// </summary>
 		public virtual int MovePrevious()
 		{
+			// If we are trying to go into negative indices, return DONE.
 			if (_currentIndex == 0)
-				_currentIndex = DONE;
-
-			if (_currentIndex == DONE)
+			{
 				return DONE;
+			}
 
 			_currentIndex--;
 
@@ -185,15 +185,17 @@ namespace Icu
 		/// </summary>
 		public virtual int MoveNext()
 		{
-			if (_currentIndex == DONE)
-				return DONE;
+			int nextIndex = _currentIndex + 1;
 
-			_currentIndex++;
-
-			if (_currentIndex >= Boundaries.Length)
+			// If the next index is going to move this out of boundaries, do
+			// not incremement the index.
+			if (nextIndex >= Boundaries.Length)
 			{
-				_currentIndex = DONE;
 				return DONE;
+			}
+			else
+			{
+				_currentIndex = nextIndex;
 			}
 
 			return _textBoundaries[_currentIndex].Offset;
@@ -205,8 +207,8 @@ namespace Icu
 		/// </summary>
 		public virtual int MoveFirst()
 		{
-			if (Boundaries.Length == 0)
-				return DONE;
+			if (string.IsNullOrEmpty(Text))
+				return 0;
 
 			_currentIndex = 0;
 			return _textBoundaries[_currentIndex].Offset;
@@ -219,22 +221,22 @@ namespace Icu
 		/// </summary>
 		public virtual int MoveLast()
 		{
-			if (Boundaries.Length == 0)
-				return DONE;
+			if (string.IsNullOrEmpty(Text))
+				return 0;
 
 			_currentIndex = Boundaries.Length - 1;
 			return _textBoundaries[_currentIndex].Offset;
 		}
 
 		/// <summary>
-		/// Returns true if the specfied position is a boundary position.
-		/// As a side effect, leaves the iterator pointing to the first
-		/// boundary position at or after "offset".
+		/// Returns true if the specified position is a boundary position and
+		/// false, otherwise. In addition, it leaves the iterator pointing to
+		/// the first boundary position at or after "offset".
 		/// </summary>
 		public virtual bool IsBoundary(int offset)
 		{
 			// When the text is null or empty, there are no boundaries
-			// The current offset is already be at BreakIterator.DONE.
+			// The current offset is already at BreakIterator.DONE.
 			if (_textBoundaries.Length == 0)
 			{
 				return false;
@@ -295,7 +297,7 @@ namespace Icu
 		/// </remarks>
 		public virtual int GetRuleStatus()
 		{
-			if (_currentIndex == DONE)
+			if (string.IsNullOrEmpty(Text))
 				return 0;
 
 			return _textBoundaries[_currentIndex].RuleStatus;
@@ -318,7 +320,7 @@ namespace Icu
 		/// </remarks>
 		public virtual int[] GetRuleStatusVector()
 		{
-			if (_currentIndex == DONE)
+			if (string.IsNullOrEmpty(Text))
 				return EmptyRuleStatusVector;
 
 			return _textBoundaries[_currentIndex].RuleStatusVector;
@@ -329,14 +331,21 @@ namespace Icu
 		/// Sets the current index back to the first element.
 		/// </summary>
 		/// <param name="text">New text.</param>
+		/// <exception cref="ArgumentNullException">Thrown when given text is
+		/// null. </exception>
 		public virtual void SetText(string text)
 		{
+			if (text == null)
+			{
+				throw new ArgumentNullException("text");
+			}
+
 			_text = text;
 
 			if (string.IsNullOrEmpty(Text))
 			{
 				_textBoundaries = new TextBoundary[0];
-				_currentIndex = DONE;
+				_currentIndex = 0;
 				return;
 			}
 
@@ -397,16 +406,7 @@ namespace Icu
 					ruleStatuses = vector;
 				}
 
-				// According to the documentation, in the event that there are
-				// multiple values in ubrk_getRuleStatusVec(), a call to
-				// ubrk_getRuleStatus() will return the numerically largest
-				// from the vector.  We are saving a PInvoke by finding the max
-				// value.
-				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values 
-				int status = ruleStatuses.Length > 0 ? ruleStatuses.Max() : 0;
-				//int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
-
-				textBoundaries.Add(new TextBoundary(offset, status, ruleStatuses));
+				textBoundaries.Add(new TextBoundary(offset, ruleStatuses));
 
 				return true;
 			};
@@ -647,11 +647,19 @@ namespace Icu
 			public readonly int RuleStatus;
 			public readonly int[] RuleStatusVector;
 
-			public TextBoundary(int index, int ruleStatus, int[] ruleStatusVector)
+			public TextBoundary(int index, int[] ruleStatusVector)
 			{
 				Offset = index;
-				RuleStatus = ruleStatus;
 				RuleStatusVector = ruleStatusVector;
+
+				// According to the documentation, in the event that there are
+				// multiple values in ubrk_getRuleStatusVec(), a call to
+				// ubrk_getRuleStatus() will return the numerically largest
+				// from the vector.  We are saving a PInvoke by finding the max
+				// value.
+				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values 
+				//int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
+				RuleStatus = ruleStatusVector.Max();
 			}
 		}
 	}
