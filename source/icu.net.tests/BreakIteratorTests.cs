@@ -16,7 +16,7 @@ namespace Icu.Tests
 			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.CHARACTER, "en-US", "abc");
 
 			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "a", "b", "c"}));
+			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "a", "b", "c" }));
 		}
 
 		[Test]
@@ -24,7 +24,7 @@ namespace Icu.Tests
 		{
 			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.WORD, "en-US", "Aa Bb. Cc");
 			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa", "Bb", "Cc"}));
+			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa", "Bb", "Cc" }));
 		}
 
 		[Test]
@@ -32,14 +32,14 @@ namespace Icu.Tests
 		{
 			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.LINE, "en-US", "Aa Bb. Cc");
 			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa ", "Bb. ", "Cc"}));
+			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa ", "Bb. ", "Cc" }));
 		}
 
 		[Test]
 		public void Split_Sentence()
 		{
 			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.SENTENCE, "en-US", "Aa bb. Cc 3.5 x? Y?x! Z");
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ","Z"}));
+			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z" }));
 			Assert.That(parts.Count(), Is.EqualTo(5));
 		}
 
@@ -90,7 +90,7 @@ namespace Icu.Tests
 			};
 
 			var parts = BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType.SENTENCE, new Locale("en-US"), text);
-			
+
 			Assert.That(parts.Count(), Is.EqualTo(expected.Length));
 			Assert.That(parts.ToArray(), Is.EquivalentTo(expected));
 		}
@@ -237,7 +237,7 @@ namespace Icu.Tests
 
 			var none = BreakIterator.UWordBreak.NONE;
 			var letter = BreakIterator.UWordBreak.LETTER;
-			var ruleStatus = new [] { none, letter, none, letter, none, none, letter, none, letter, none, none };
+			var ruleStatus = new[] { none, letter, none, letter, none, none, letter, none, letter, none, none };
 
 			using (var bi = BreakIterator.CreateWordInstance(locale, text))
 			{
@@ -423,7 +423,7 @@ namespace Icu.Tests
 				Assert.AreEqual(0, bi.MoveLast());
 				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
 				Assert.AreEqual(0, bi.GetRuleStatus());
-				Assert.AreEqual(new [] { 0 }, bi.GetRuleStatusVector());
+				Assert.AreEqual(new[] { 0 }, bi.GetRuleStatusVector());
 
 				CollectionAssert.IsEmpty(bi.Boundaries);
 			}
@@ -526,6 +526,86 @@ namespace Icu.Tests
 
 				Assert.AreEqual(expectedIsBoundary, isBoundary);
 				Assert.AreEqual(expectedOffset, bi.Current);
+			}
+		}
+
+		[Test]
+		[TestCase(-10, 0, 0)] // Offset < 0 returns the first offset.
+		[TestCase(0, 22, 22)] // Offset equals to the first offset should give the 2nd offset.
+		[TestCase(75, BreakIterator.DONE, 70)]
+		[TestCase(70, BreakIterator.DONE, 70)] // Expect that if we give it an exact offset, it will return us one previous.
+		[TestCase(30, 52, 52)]
+		[TestCase(52, 70, 70)]
+		public void MoveFollowingTest(int offset, int expectedOffset, int expectedCurrent)
+		{
+			var locale = new Locale("de-DE");
+			var expected = new[] { 0, 22, 52, 70 };
+			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			{
+				int actualOffset = bi.MoveFollowing(offset);
+
+				Assert.AreEqual(expectedOffset, actualOffset);
+				Assert.AreEqual(expectedCurrent, bi.Current);
+			}
+		}
+
+		[Test]
+		[TestCase(-10, 0, 0)]
+		[TestCase(0, BreakIterator.DONE, 0)]
+		[TestCase(10, BreakIterator.DONE, 0)]
+		public void MoveFollowingTest_Empty(int offset, int expectedOffset, int expectedCurrent)
+		{
+			var locale = new Locale("de-DE");
+			var expected = new[] { 0, 22, 52, 70 };
+
+			using (var bi = BreakIterator.CreateSentenceInstance(locale, string.Empty))
+			{
+				int actualOffset = bi.MoveFollowing(offset);
+
+				Assert.AreEqual(expectedOffset, actualOffset);
+				Assert.AreEqual(expectedCurrent, bi.Current);
+			}
+		}
+
+		[Test]
+		[TestCase(-1, 0, 0)] // Offset < 0 returns the first offset.
+		[TestCase(0, BreakIterator.DONE, 0)]
+		[TestCase(25, 20, 20)] // Offset > length of text should return last offset.
+		[TestCase(20, 19, 19)] // Expect that if we give it an exact offset, it will return us one previous.
+		[TestCase(7, 5, 5)]
+		[TestCase(14, 10, 10)]
+		public void MovePrecedingTest(int offset, int expectedOffset, int expectedCurrent)
+		{
+			var text = "Good-day, kind sir !";
+			var locale = new Locale("de-DE");
+			var expected = new int[] { 0, 4, 5, 8, 9, 10, 14, 15, 18, 19, 20 };
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, text))
+			{
+				int actualOffset = bi.MovePreceding(offset);
+
+				Assert.AreEqual(expectedOffset, actualOffset);
+				Assert.AreEqual(expectedCurrent, bi.Current);
+			}
+		}
+
+		[Test]
+		[TestCase(0, BreakIterator.DONE, 0)]
+		[TestCase(-5, 0, 0)]
+		[TestCase(10, 0, 0)]
+		public void MovePrecedingTest_Empty(int offset, int expectedOffset, int expectedCurrent)
+		{
+			var locale = new Locale("de-DE");
+			var expected = new int[] { 0, 4, 5, 8, 9, 10, 14, 15, 18, 19, 20 };
+
+			using (var bi = BreakIterator.CreateWordInstance(locale, string.Empty))
+			{
+				int actualOffset = bi.MovePreceding(offset);
+
+				Assert.AreEqual(expectedOffset, actualOffset);
+				Assert.AreEqual(expectedCurrent, bi.Current);
 			}
 		}
 
