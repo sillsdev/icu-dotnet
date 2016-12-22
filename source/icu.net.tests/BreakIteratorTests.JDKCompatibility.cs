@@ -17,7 +17,7 @@ namespace Icu.Tests
 
         private BreakIterator GetWordInstance(System.Globalization.CultureInfo locale)
         {
-            return BreakIterator.CreateWordInstance(new Locale(locale.Name), string.Empty);
+            return BreakIterator.CreateWordInstance(new Locale(locale.Name));
         }
 
         [Test]
@@ -175,7 +175,7 @@ namespace Icu.Tests
 
         private BreakIterator GetSentenceInstance(System.Globalization.CultureInfo locale)
         {
-            return BreakIterator.CreateSentenceInstance(new Locale(locale.Name), string.Empty);
+            return BreakIterator.CreateSentenceInstance(new Locale(locale.Name));
         }
 
         [Test]
@@ -256,8 +256,8 @@ namespace Icu.Tests
 
         private BreakIterator GetLineInstance(System.Globalization.CultureInfo locale)
         {
-            return BreakIterator.CreateLineInstance(new Locale(locale.Name), string.Empty);
-        }
+			return BreakIterator.CreateLineInstance(new Locale(locale.Name));
+		}
 
         [Test]
         public void TestLineIteration()

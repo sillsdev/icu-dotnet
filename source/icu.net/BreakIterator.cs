@@ -450,12 +450,9 @@ namespace Icu
 		/// Creates a BreakIterator that splits on characters for the given locale.
 		/// </summary>
 		/// <param name="locale">The locale.</param>
-		/// <param name="text">The initial text.</param>
-		public static BreakIterator CreateCharacterInstance(Locale locale, string text)
+		public static BreakIterator CreateCharacterInstance(Locale locale)
 		{
-			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.CHARACTER, locale);
-			iterator.SetText(text);
-			return iterator;
+			return new RuleBasedBreakIterator(UBreakIteratorType.CHARACTER, locale);
 		}
 
 		/// <summary>
@@ -467,12 +464,9 @@ namespace Icu
 		/// or <see cref="BreakIterator.GetWordBoundaries(Locale, string, bool)"/>,
 		/// </summary>
 		/// <param name="locale">The locale.</param>
-		/// <param name="text">The initial text.</param>
-		public static BreakIterator CreateWordInstance(Locale locale, string text)
+		public static BreakIterator CreateWordInstance(Locale locale)
 		{
-			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.WORD, locale);
-			iterator.SetText(text);
-			return iterator;
+			return new RuleBasedBreakIterator(UBreakIteratorType.WORD, locale);
 		}
 
 		/// <summary>
@@ -480,11 +474,9 @@ namespace Icu
 		/// </summary>
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The initial text.</param>
-		public static BreakIterator CreateLineInstance(Locale locale, string text)
+		public static BreakIterator CreateLineInstance(Locale locale)
 		{
-			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.LINE, locale);
-			iterator.SetText(text);
-			return iterator;
+			return new RuleBasedBreakIterator(UBreakIteratorType.LINE, locale);
 		}
 
 		/// <summary>
@@ -492,11 +484,9 @@ namespace Icu
 		/// </summary>
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The initial text.</param>
-		public static BreakIterator CreateSentenceInstance(Locale locale, string text)
+		public static BreakIterator CreateSentenceInstance(Locale locale)
 		{
-			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.SENTENCE, locale);
-			iterator.SetText(text);
-			return iterator;
+			return new RuleBasedBreakIterator(UBreakIteratorType.SENTENCE, locale);
 		}
 
 		/// <summary>

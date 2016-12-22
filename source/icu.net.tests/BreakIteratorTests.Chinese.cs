@@ -75,8 +75,10 @@ namespace Icu.Tests
 				ideographic, ideographic, ideographic, none
 			};
 
-			using (var bi = BreakIterator.CreateWordInstance(locale, text))
+			using (var bi = BreakIterator.CreateWordInstance(locale))
 			{
+				bi.SetText(text);
+
 				Assert.AreEqual(text, bi.Text);
 				Assert.AreEqual(locale, bi.Locale);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
@@ -119,8 +121,10 @@ namespace Icu.Tests
 			var locale = new Locale("zh");
 			var expected = new[] { 0, 18, 35, 53 };
 
-			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			using (var bi = BreakIterator.CreateSentenceInstance(locale))
 			{
+				bi.SetText(text);
+
 				Assert.AreEqual(locale, bi.Locale);
 				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
@@ -147,14 +151,16 @@ namespace Icu.Tests
 				switch (type)
 				{
 					case BreakIterator.UBreakIteratorType.SENTENCE:
-						bi = BreakIterator.CreateSentenceInstance(locale, text);
+						bi = BreakIterator.CreateSentenceInstance(locale);
 						break;
 					case BreakIterator.UBreakIteratorType.WORD:
-						bi = BreakIterator.CreateWordInstance(locale, text);
+						bi = BreakIterator.CreateWordInstance(locale);
 						break;
 					default:
 						throw new NotSupportedException("This iterator type is not supported in this test yet. [" + type + "]");
 				}
+
+				bi.SetText(text);
 
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
@@ -231,14 +237,16 @@ namespace Icu.Tests
 				switch (type)
 				{
 					case BreakIterator.UBreakIteratorType.SENTENCE:
-						bi = BreakIterator.CreateSentenceInstance(locale, text);
+						bi = BreakIterator.CreateSentenceInstance(locale);
 						break;
 					case BreakIterator.UBreakIteratorType.WORD:
-						bi = BreakIterator.CreateWordInstance(locale, text);
+						bi = BreakIterator.CreateWordInstance(locale);
 						break;
 					default:
 						throw new NotSupportedException("This iterator type is not supported in this test yet. [" + type + "]");
 				}
+
+				bi.SetText(text);
 
 				for (int i = 0; i < offsetsToTest.Length; i++)
 				{
@@ -277,8 +285,10 @@ namespace Icu.Tests
 				ideographic, ideographic, ideographic, none
 			};
 
-			using (var bi = BreakIterator.CreateWordInstance(locale, text))
+			using (var bi = BreakIterator.CreateWordInstance(locale))
 			{
+				bi.SetText(text);
+
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
 				int current = 0;
@@ -349,8 +359,10 @@ namespace Icu.Tests
 			var secondText = "供重呼車遊踏持図質腰大野明会掲歌? 方図強候準素能物第毎止田作昼野集。霊一起続時筑腺算掲断詳山住死示流投。";
 			var secondExpected = new[] { 0, 18, 35, 53 };
 
-			using (var bi = BreakIterator.CreateSentenceInstance(locale, text))
+			using (var bi = BreakIterator.CreateSentenceInstance(locale))
 			{
+				bi.SetText(text);
+
 				Assert.AreEqual(text, bi.Text);
 				CollectionAssert.AreEqual(expected, bi.Boundaries);
 
