@@ -13,7 +13,7 @@ namespace Icu
 	/// as described here: http://userguide.icu-project.org/boundaryanalysis
 	/// for all UBreakIteratorTypes (including UBreakIteratorType.Word).
 	/// </summary>
-	public class BreakIterator : IDisposable
+	public abstract class BreakIterator : IDisposable
 	{
 		/// <summary>
 		/// The possible types of text boundaries.
@@ -103,35 +103,22 @@ namespace Icu
 		/// <summary>
 		/// Default RuleStatus vector returns 0.
 		/// </summary>
-		private readonly static int[] EmptyRuleStatusVector = new int[] { 0 };
+		protected readonly static int[] EmptyRuleStatusVector = new int[] { 0 };
+		protected readonly static Locale DefaultLocale = new Locale();
 
-		private readonly UBreakIteratorType _iteratorType;
-		private readonly Locale _locale;
+		protected readonly Locale _locale;
 
-		private int _currentIndex = 0;
-		private bool _disposingValue = false; // To detect redundant calls
-		private TextBoundary[] _textBoundaries = new TextBoundary[0];
-		private string _text;
-
-		protected internal IntPtr _breakIterator = IntPtr.Zero;
+		protected int _currentIndex = 0;
+		protected TextBoundary[] _textBoundaries = new TextBoundary[0];
+		protected string _text;
 
 		/// <summary>
-		/// Creates a BreakIterator with the given BreakIteratorType, Locale
-		/// and sets the initial text.
+		/// Creates a BreakIterator
 		/// </summary>
-		/// <param name="iteratorType">Break type.</param>
-		/// <param name="locale">The locale.</param>
-		/// <param name="text">Initial text.</param>
-		/// <remarks>
-		/// If iterator type is UBreakIteratorType.WORD, it will NOT include
-		/// spaces and punctuation as boundaries for words.  If this is 
-		/// desired <see cref="BreakIterator(UBreakIteratorType, Locale, string, bool)"/>.
-		/// </remarks>
-		protected BreakIterator(UBreakIteratorType iteratorType, Locale locale, string text)
+		/// <param name="locale">The locale to use.</param>
+		protected BreakIterator(Locale locale)
 		{
-			_iteratorType = iteratorType;
 			_locale = locale;
-			SetText(text);
 		}
 
 		/// <summary>
@@ -452,95 +439,6 @@ namespace Icu
 			}
 
 			_text = text;
-
-			if (string.IsNullOrEmpty(Text))
-			{
-				_textBoundaries = new TextBoundary[0];
-				_currentIndex = 0;
-				return;
-			}
-
-			ErrorCode err;
-
-			if (_breakIterator == IntPtr.Zero)
-			{
-				_breakIterator = NativeMethods.ubrk_open(_iteratorType, _locale.Id, Text, Text.Length, out err);
-			}
-			else
-			{
-				NativeMethods.ubrk_setText(_breakIterator, Text, Text.Length, out err);
-			}
-
-			if (err.IsFailure())
-				throw new Exception("BreakIterator.Split() failed with code " + err);
-
-			List<TextBoundary> textBoundaries = new List<TextBoundary>();
-
-			// Function that checks if the offset is valid, gets the RuleStatus
-			// and RuleStatusVector for the offset and then adds it to
-			// textBoundaries.  Returns true if the boundary was not DONE.
-			Func<int, bool> checkOffsetAndAddRuleStatus = (int offset) => {
-
-				if (offset == DONE)
-					return false;
-
-				const int length = 128;
-
-				int[] vector = new int[length];
-
-				ErrorCode errorCode;
-				int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, length, out errorCode);
-
-				if (errorCode.IsFailure())
-					throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
-
-				if (actualLen > length)
-				{
-					vector = new int[actualLen];
-					NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, vector.Length, out errorCode);
-
-					if (errorCode.IsFailure())
-						throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
-				}
-
-				int[] ruleStatuses;
-
-				// Constrain the size of the array to actual number of elements
-				// that were returned.
-				if (actualLen < vector.Length)
-				{
-					ruleStatuses = new int[actualLen];
-					Array.Copy(vector, ruleStatuses, actualLen);
-				}
-				else
-				{
-					ruleStatuses = vector;
-				}
-
-				textBoundaries.Add(new TextBoundary(offset, ruleStatuses));
-
-				return true;
-			};
-
-			// Start at the the beginning of the text and iterate until all
-			// of the boundaries are consumed.
-			int cur = NativeMethods.ubrk_first(_breakIterator);
-
-			if (!checkOffsetAndAddRuleStatus(cur))
-				return;
-
-			while (cur != DONE)
-			{
-				int next = NativeMethods.ubrk_next(_breakIterator);
-
-				if (!checkOffsetAndAddRuleStatus(next))
-					break;
-
-				cur = next;
-			}
-
-			_textBoundaries = textBoundaries.ToArray();
-			_currentIndex = 0;
 		}
 
 		/// <summary>
@@ -555,7 +453,9 @@ namespace Icu
 		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateCharacterInstance(Locale locale, string text)
 		{
-			return new BreakIterator(UBreakIteratorType.CHARACTER, locale, text);
+			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.CHARACTER, locale);
+			iterator.SetText(text);
+			return iterator;
 		}
 
 		/// <summary>
@@ -570,7 +470,9 @@ namespace Icu
 		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateWordInstance(Locale locale, string text)
 		{
-			return new BreakIterator(UBreakIteratorType.WORD, locale, text);
+			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.WORD, locale);
+			iterator.SetText(text);
+			return iterator;
 		}
 
 		/// <summary>
@@ -580,7 +482,9 @@ namespace Icu
 		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateLineInstance(Locale locale, string text)
 		{
-			return new BreakIterator(UBreakIteratorType.LINE, locale, text);
+			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.LINE, locale);
+			iterator.SetText(text);
+			return iterator;
 		}
 
 		/// <summary>
@@ -590,7 +494,9 @@ namespace Icu
 		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateSentenceInstance(Locale locale, string text)
 		{
-			return new BreakIterator(UBreakIteratorType.SENTENCE, locale, text);
+			var iterator = new RuleBasedBreakIterator(UBreakIteratorType.SENTENCE, locale);
+			iterator.SetText(text);
+			return iterator;
 		}
 
 		/// <summary>
@@ -666,8 +572,10 @@ namespace Icu
 		{
 			List<Boundary> boundaries = new List<Boundary>();
 
-			using (var breakIterator = new BreakIterator(type, locale, text))
+			using (var breakIterator = new RuleBasedBreakIterator(type, locale))
 			{
+				breakIterator.SetText(text);
+
 				int current = breakIterator.Current;
 
 				while (current != DONE)
@@ -707,47 +615,6 @@ namespace Icu
 			return false;
 		}
 
-		#region IDisposable Support
-
-		/// <summary>
-		/// Implementing IDisposable pattern to properly release unmanaged resources. 
-		/// See https://msdn.microsoft.com/en-us/library/b1yfkh5e(v=vs.110).aspx
-		/// and https://msdn.microsoft.com/en-us/library/b1yfkh5e(v=vs.100).aspx
-		/// for more information.
-		/// </summary>
-		/// <param name="disposing"></param>
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!_disposingValue)
-			{
-				if (disposing)
-				{
-					// Dispose managed state (managed objects), if any.
-				}
-
-				if (_breakIterator != IntPtr.Zero)
-				{
-					NativeMethods.ubrk_close(_breakIterator);
-					_breakIterator = IntPtr.Zero;
-				}
-
-				_disposingValue = true;
-			}
-		}
-
-		~BreakIterator()
-		{
-			Dispose(false);
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Keeps track of each text boundary by containing its offset,
 		/// and the set of rules used to obtain that boundary.
@@ -773,5 +640,11 @@ namespace Icu
 				RuleStatus = ruleStatusVector.Max();
 			}
 		}
+
+		/// <summary>
+		/// Dispose of managed/unmanaged resources.
+		/// Allow any inheriting classes to dispose of manage
+		/// </summary>
+		public virtual void Dispose() { }
 	}
 }
