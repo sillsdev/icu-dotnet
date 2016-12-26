@@ -157,8 +157,7 @@ namespace Icu
 
 				if (errorCode.IsFailure())
 				{
-					throw new InvalidOperationException(
-						string.Format("Could not create a BreakIterator with the given rules. Parse Error: {0}" + Environment.NewLine + "Rules: {1}", parseError.ToString(), _rules));
+					throw new ParseErrorException("Couldn't create RuleBasedBreakIterator with the given rules!", parseError, _rules);
 				}
 			}
 			else
