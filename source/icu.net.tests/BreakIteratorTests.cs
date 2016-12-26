@@ -565,7 +565,6 @@ namespace Icu.Tests
 		public void MoveFollowingTest(int offset, int expectedOffset, int expectedCurrent)
 		{
 			var locale = new Locale("de-DE");
-			var expected = new[] { 0, 22, 52, 70 };
 			var text = "Good-day, kind sir !  Can I have a glass of water?  I am very parched.";
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale))
@@ -586,7 +585,6 @@ namespace Icu.Tests
 		public void MoveFollowingTest_Empty(int offset, int expectedOffset, int expectedCurrent)
 		{
 			var locale = new Locale("de-DE");
-			var expected = new[] { 0, 22, 52, 70 };
 
 			using (var bi = BreakIterator.CreateSentenceInstance(locale))
 			{
@@ -610,7 +608,6 @@ namespace Icu.Tests
 		{
 			var text = "Good-day, kind sir !";
 			var locale = new Locale("de-DE");
-			var expected = new int[] { 0, 4, 5, 8, 9, 10, 14, 15, 18, 19, 20 };
 
 			using (var bi = BreakIterator.CreateWordInstance(locale))
 			{
@@ -630,7 +627,6 @@ namespace Icu.Tests
 		public void MovePrecedingTest_Empty(int offset, int expectedOffset, int expectedCurrent)
 		{
 			var locale = new Locale("de-DE");
-			var expected = new int[] { 0, 4, 5, 8, 9, 10, 14, 15, 18, 19, 20 };
 
 			using (var bi = BreakIterator.CreateWordInstance(locale))
 			{
