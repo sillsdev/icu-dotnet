@@ -2,7 +2,6 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Icu
 {
@@ -101,125 +100,45 @@ namespace Icu
 		public const int DONE = -1;
 
 		/// <summary>
-		/// Default RuleStatus vector returns 0.
-		/// </summary>
-		protected readonly static int[] EmptyRuleStatusVector = new int[] { 0 };
-		protected readonly static Locale DefaultLocale = new Locale();
-
-		protected readonly Locale _locale;
-
-		protected int _currentIndex = 0;
-		protected TextBoundary[] _textBoundaries = new TextBoundary[0];
-		protected string _text;
-
-		/// <summary>
-		/// Creates a BreakIterator
-		/// </summary>
-		/// <param name="locale">The locale to use.</param>
-		protected BreakIterator(Locale locale)
-		{
-			_locale = locale;
-		}
-
-		/// <summary>
 		/// Gets all of the boundaries for the given text.
 		/// </summary>
-		public virtual int[] Boundaries
-		{
-			get { return _textBoundaries.Select(x => x.Offset).ToArray(); }
-		}
+		public abstract int[] Boundaries { get; }
 
 		/// <summary>
 		/// Gets the text being examined by this BreakIterator.
 		/// </summary>
-		public virtual string Text { get { return _text; } }
+		public abstract string Text { get; }
 
 		/// <summary>
 		/// Determine the most recently-returned text boundary.
 		/// Returns <see cref="DONE"/> if there are no boundaries left to return.
 		/// </summary>
-		public virtual int Current
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(Text))
-					return 0;
-
-				return _textBoundaries[_currentIndex].Offset;
-			}
-		}
+		public abstract int Current { get; }
 
 		/// <summary>
 		/// Decrements the iterator and returns the previous boundary.
 		/// Returns DONE if the iterator moves past the first boundary.
 		/// </summary>
-		public virtual int MovePrevious()
-		{
-			// If we are trying to go into negative indices, return DONE.
-			if (_currentIndex == 0)
-			{
-				return DONE;
-			}
-
-			_currentIndex--;
-
-			return _textBoundaries[_currentIndex].Offset;
-		}
+		public abstract int MovePrevious();
 
 		/// <summary>
 		/// Increments the iterator and returns the next boundary.
 		/// Returns DONE if there are no boundaries left to return.
 		/// </summary>
-		public virtual int MoveNext()
-		{
-			int nextIndex = _currentIndex + 1;
-
-			// If the next index is going to move this out of boundaries, do
-			// not incremement the index.
-			if (nextIndex >= Boundaries.Length)
-			{
-				return DONE;
-			}
-			else
-			{
-				_currentIndex = nextIndex;
-			}
-
-			return _textBoundaries[_currentIndex].Offset;
-		}
+		public abstract int MoveNext();
 
 		/// <summary>
 		/// Sets the iterator to the first boundary and returns it.
 		/// Returns DONE if there was no text set.
 		/// </summary>
-		public virtual int MoveFirst()
-		{
-			if (string.IsNullOrEmpty(Text))
-				return 0;
-
-			_currentIndex = 0;
-			return _textBoundaries[_currentIndex].Offset;
-		}
+		public abstract int MoveFirst();
 
 		/// <summary>
 		/// Sets the iterator to the last boundary and returns the offset into
 		/// the text.
 		/// Returns DONE if there was no text set.
 		/// </summary>
-		public virtual int MoveLast()
-		{
-			if (Text == null)
-			{
-				return DONE;
-			}
-			else if (Text.Equals(string.Empty))
-			{
-				return 0;
-			}
-
-			_currentIndex = Boundaries.Length - 1;
-			return _textBoundaries[_currentIndex].Offset;
-		}
+		public abstract int MoveLast();
 
 		/// <summary>
 		/// Sets the iterator to refer to the first boundary position following
@@ -230,44 +149,7 @@ namespace Icu
 		/// <returns>The position of the first break after the current position.
 		/// The value returned is always greater than offset, or <see cref="BreakIterator.DONE"/>
 		/// </returns>
-		public virtual int MoveFollowing(int offset)
-		{
-			// if the offset passed in is already past the end of the text,
-			// just return DONE; if it's before the beginning, return the
-			// text's starting offset
-			if (Text == null || offset >= Text.Length)
-			{
-				MoveLast();
-				return MoveNext();
-			}
-			else if (offset < 0)
-			{
-				return MoveFirst();
-			}
-
-			if (offset == _textBoundaries[0].Offset)
-			{
-				_currentIndex = 0;
-				return MoveNext();
-			}
-			else if (offset == _textBoundaries[_textBoundaries.Length - 1].Offset)
-			{
-				_currentIndex = _textBoundaries.Length - 1;
-				return MoveNext();
-			}
-			else
-			{
-				int index = 1;
-				// We are guaranteed not to leave the array due to range test above
-				while (offset >= _textBoundaries[index].Offset)
-				{
-					index++;
-				}
-
-				_currentIndex = index;
-				return _textBoundaries[_currentIndex].Offset;
-			}
-		}
+		public abstract int MoveFollowing(int offset);
 
 		/// <summary>
 		/// Sets the iterator to refer to the last boundary position before the
@@ -277,112 +159,14 @@ namespace Icu
 		/// <returns>The position of the last boundary before the starting
 		/// position. The value returned is always smaller than the offset
 		/// or the value <see cref="BreakIterator.DONE"/></returns>
-		public virtual int MovePreceding(int offset)
-		{
-			if (Text == null || offset > Text.Length)
-			{
-				return MoveLast();
-			}
-			else if (offset < 0)
-			{
-				return MoveFirst();
-			}
-
-			// If the offset is less than the first boundary, return the first
-			// boundary. Else if, the offset is greater than the last boundary,
-			// return the last boundary.
-			// Otherwise, the offset is somewhere in the middle. So we start
-			// iterating through the boundaries until we get to a point where
-			// the current boundary we are at has a greater offset than the given
-			// one. So we return that.
-			if (_textBoundaries.Length == 0 || offset == _textBoundaries[0].Offset)
-			{
-				_currentIndex = 0;
-				return DONE;
-			}
-			else if (offset < _textBoundaries[0].Offset)
-			{
-				_currentIndex = 0;
-			}
-			else if (offset > _textBoundaries[_textBoundaries.Length - 1].Offset)
-			{
-				_currentIndex = _textBoundaries.Length - 1;
-			}
-			else
-			{
-				int index = 0;
-
-				while (index < _textBoundaries.Length
-					  && offset > _textBoundaries[index].Offset)
-				{
-					index++;
-				}
-
-				index--;
-
-				_currentIndex = index;
-			}
-
-			return _textBoundaries[_currentIndex].Offset;
-		}
+		public abstract int MovePreceding(int offset);
 
 		/// <summary>
 		/// Returns true if the specified position is a boundary position and
 		/// false, otherwise. In addition, it leaves the iterator pointing to
 		/// the first boundary position at or after "offset".
 		/// </summary>
-		public virtual bool IsBoundary(int offset)
-		{
-			// When the text is null or empty, there are no boundaries
-			// The current offset is already at BreakIterator.DONE.
-			if (_textBoundaries.Length == 0)
-			{
-				return false;
-			}
-
-			// the beginning index of the iterator is always a boundary position by definition
-			if (offset == 0)
-			{
-				MoveFirst(); // For side effects on current position, tag values.
-				return true;
-			}
-
-			int lastOffset = _textBoundaries.Last().Offset;
-
-			if (offset == lastOffset)
-			{
-				MoveLast(); 
-				return true;
-			}
-
-			// out-of-range indexes are never boundary positions
-			if (offset < 0)
-			{
-				MoveFirst();
-				return false;
-			}
-
-			if (offset > lastOffset)
-			{
-				MoveLast();
-				return false;
-			}
-
-			var current = MoveFirst();
-
-			while (current != DONE)
-			{
-				if (current == offset)
-					return true;
-
-				if (current > offset)
-					return false;
-
-				current = MoveNext();
-			}
-
-			return false;
-		}
+		public abstract bool IsBoundary(int offset);
 
 		/// <summary>
 		/// Returns the status tag from the break rule that determined the
@@ -393,13 +177,7 @@ namespace Icu
 		/// For more information, see
 		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
 		/// </remarks>
-		public virtual int GetRuleStatus()
-		{
-			if (string.IsNullOrEmpty(Text))
-				return 0;
-
-			return _textBoundaries[_currentIndex].RuleStatus;
-		}
+		public abstract int GetRuleStatus();
 
 		/// <summary>
 		/// Get the statuses from the break rules that determined the most
@@ -416,13 +194,7 @@ namespace Icu
 		/// For more information, see
 		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
 		/// </remarks>
-		public virtual int[] GetRuleStatusVector()
-		{
-			if (string.IsNullOrEmpty(Text))
-				return EmptyRuleStatusVector;
-
-			return _textBoundaries[_currentIndex].RuleStatusVector;
-		}
+		public abstract int[] GetRuleStatusVector();
 
 		/// <summary>
 		/// Sets the current text being examined to the given text.
@@ -431,20 +203,12 @@ namespace Icu
 		/// <param name="text">New text.</param>
 		/// <exception cref="ArgumentNullException">Thrown when given text is
 		/// null. </exception>
-		public virtual void SetText(string text)
-		{
-			if (text == null)
-			{
-				throw new ArgumentNullException("text");
-			}
-
-			_text = text;
-		}
+		public abstract void SetText(string text);
 
 		/// <summary>
 		/// Gets the locale for this BreakIterator.
 		/// </summary>
-		public Locale Locale { get { return _locale; } }
+		public abstract Locale Locale { get; }
 
 		/// <summary>
 		/// Creates a BreakIterator that splits on characters for the given locale.
@@ -603,32 +367,6 @@ namespace Icu
 					return status < (int)UWordBreak.NONE || status >= (int)UWordBreak.NONE_LIMIT;
 			}
 			return false;
-		}
-
-		/// <summary>
-		/// Keeps track of each text boundary by containing its offset,
-		/// and the set of rules used to obtain that boundary.
-		/// </summary>
-		protected struct TextBoundary
-		{
-			public readonly int Offset;
-			public readonly int RuleStatus;
-			public readonly int[] RuleStatusVector;
-
-			public TextBoundary(int index, int[] ruleStatusVector)
-			{
-				Offset = index;
-				RuleStatusVector = ruleStatusVector;
-
-				// According to the documentation, in the event that there are
-				// multiple values in ubrk_getRuleStatusVec(), a call to
-				// ubrk_getRuleStatus() will return the numerically largest
-				// from the vector.  We are saving a PInvoke by finding the max
-				// value.
-				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values 
-				//int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
-				RuleStatus = ruleStatusVector.Max();
-			}
 		}
 
 		/// <summary>
