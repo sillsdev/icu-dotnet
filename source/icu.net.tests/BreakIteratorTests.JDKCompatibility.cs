@@ -10,6 +10,9 @@ namespace Icu.Tests
     /// </summary>
     [TestFixture]
     [Category("Full ICU")]
+	[Ignore("Ignore tests until a JavaBreakIterator using RuleBasedBreakIterator is written. The rules for JavaBreakIterator can be found at:\n" 
+		+ "http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules.java/ \n" 
+		+ "and http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules_th.java#BreakIteratorRules_th")]
     public class BreakIteratorTests_JDKCompatibility
     {
         static readonly String TEXT =
