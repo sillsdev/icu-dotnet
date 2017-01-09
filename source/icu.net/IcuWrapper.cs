@@ -68,7 +68,7 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		public static void Cleanup()
 		{
-			NativeMethods.u_Cleanup();
+			NativeMethods.Cleanup();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ namespace Icu
 		{
 			get
 			{
-				IntPtr resPtr = NativeMethods.u_GetDataDirectory();
+				IntPtr resPtr = NativeMethods.u_getDataDirectory();
 				return Marshal.PtrToStringAnsi(resPtr);
 			}
 			set
@@ -89,7 +89,7 @@ namespace Icu
 				// Remove a trailing backslash if it exists.
 				if (value.Length > 0 && value[value.Length - 1] == '\\')
 					value = value.Substring(0, value.Length - 1);
-				NativeMethods.u_SetDataDirectory(value);
+				NativeMethods.u_setDataDirectory(value);
 			}
 		}
 		#endregion

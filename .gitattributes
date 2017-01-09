@@ -19,3 +19,4 @@
 *.svg -whitespace
 *.xml -whitespace
 changelog -whitespace
+GitVersion.yml -whitespace

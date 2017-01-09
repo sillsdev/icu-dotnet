@@ -1,8 +1,10 @@
 mode: ContinuousDeployment
-next-version: 2.0.0
 branches:
   master:
-    regex: (origin/)?master
     tag: beta
+    regex: (origin/)?master
+  pull-request:
+    mode: ContinuousDeployment
+    tag: PR
 ignore:
   sha: []

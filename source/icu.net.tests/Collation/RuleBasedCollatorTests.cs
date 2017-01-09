@@ -109,6 +109,16 @@ namespace Icu.Tests.Collation
 			Assert.IsNotNull(key.KeyData);
 		}
 
+		[Test]
+		public void SetCollatorStrengthToIdentical()
+		{
+			var collator = Collator.Create("zh");
+
+			collator.Strength = CollationStrength.Identical;
+
+			Assert.AreEqual(CollationStrength.Identical, collator.Strength);
+		}
+
 		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = 0)]
 		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result = -1)]
 		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "U.S.A.", "USA", Result = 0)]
