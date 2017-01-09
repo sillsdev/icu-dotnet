@@ -828,6 +828,10 @@ namespace Icu
 				string locale, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
+				string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void ubrk_closeDelegate(IntPtr bi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -838,6 +842,25 @@ namespace Icu
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
+
+			/// <summary>
+			/// Get the statuses from the break rules that determined the most
+			/// recently returned break position.  The values appear in the rule
+			/// source within brackets, {123}, for example.The default status value
+			/// for rules that do not explicitly provide one is zero.
+			///
+			/// For word break iterators, the possible values are defined in
+			/// <see cref="Icu.BreakIterator.UWordBreak"/>
+			/// </summary>
+			/// <returns>The number of rule status values that determined the most recent boundary returned from the break iterator.</returns>
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
+				[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
+				Int32 capacity,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_closeDelegate(IntPtr set);
@@ -919,10 +942,13 @@ namespace Icu
 			internal unorm_normalizeDelegate _unorm_normalize;
 			internal unorm_isNormalizedDelegate _unorm_isNormalized;
 			internal ubrk_openDelegate ubrk_open;
+			internal ubrk_openRulesDelegate ubrk_openRules;
 			internal ubrk_closeDelegate ubrk_close;
 			internal ubrk_firstDelegate ubrk_first;
 			internal ubrk_nextDelegate ubrk_next;
 			internal ubrk_getRuleStatusDelegate ubrk_getRuleStatus;
+			internal ubrk_getRuleStatusVecDelegate ubrk_getRuleStatusVec;
+			internal ubrk_setTextDelegate ubrk_setText;
 			internal uset_closeDelegate uset_close;
 			internal uset_openDelegate uset_open;
 			internal uset_openPatternDelegate uset_openPattern;
@@ -1477,12 +1503,6 @@ namespace Icu
 			return Methods.ubrk_open(type, locale, text, textLength, out errorCode);
 		}
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
-			string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
-
-		private static ubrk_openRulesDelegate _ubrk_openRules;
-
 		/// <summary>
 		/// Open a new BreakIterator that uses the given rules to break text.
 		/// </summary>
@@ -1497,15 +1517,10 @@ namespace Icu
 			string text, int textLength,
 			out ParseError parseError, out ErrorCode errorCode)
 		{
-			if (_ubrk_openRules == null)
-				_ubrk_openRules = GetMethod<ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
-			return _ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
+			if (Methods.ubrk_openRules == null)
+				Methods.ubrk_openRules = GetMethod<MethodsContainer.ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
+			return Methods.ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
-
-		private static ubrk_setTextDelegate _ubrk_setText;
 
 		/// <summary>
 		/// Sets the iterator to a new text
@@ -1514,16 +1529,10 @@ namespace Icu
 		/// <param name="text">Text to examine</param>
 		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
 		{
-			if (_ubrk_setText == null)
-				_ubrk_setText = GetMethod<ubrk_setTextDelegate>(IcuCommonLibHandle, "ubrk_setText", true);
-
-			_ubrk_setText(bi, text, textLength, out errorCode);
+			if (Methods.ubrk_setText == null)
+				Methods.ubrk_setText = GetMethod<MethodsContainer.ubrk_setTextDelegate>(IcuCommonLibHandle, "ubrk_setText", true);
+			Methods.ubrk_setText(bi, text, textLength, out errorCode);
 		}
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate void ubrk_closeDelegate(IntPtr bi);
-
-		private static ubrk_closeDelegate _ubrk_close;
 
 		/// <summary>
 		/// Close a UBreakIterator.
@@ -1573,24 +1582,6 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Get the statuses from the break rules that determined the most
-		/// recently returned break position.  The values appear in the rule
-		/// source within brackets, {123}, for example.The default status value
-		/// for rules that do not explicitly provide one is zero.
-		///
-		/// For word break iterators, the possible values are defined in
-		/// <see cref="Icu.BreakIterator.UWordBreak"/>
-		/// </summary>
-		/// <returns>The number of rule status values that determined the most recent boundary returned from the break iterator.</returns>
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
-			[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
-			Int32 capacity,
-			out ErrorCode status);
-
-		private static ubrk_getRuleStatusVecDelegate _ubrk_getRuleStatusVec;
-
-		/// <summary>
 		/// Return the status from the break rule that determined the most recently returned break position.
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
@@ -1600,9 +1591,9 @@ namespace Icu
 			Int32 capacity,
 			out ErrorCode status)
 		{
-			if (_ubrk_getRuleStatusVec == null)
-				_ubrk_getRuleStatusVec = GetMethod<ubrk_getRuleStatusVecDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatusVec", true);
-			return _ubrk_getRuleStatusVec(bi, fillInVector, capacity, out status);
+			if (Methods.ubrk_getRuleStatusVec == null)
+				Methods.ubrk_getRuleStatusVec = GetMethod<MethodsContainer.ubrk_getRuleStatusVecDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatusVec", true);
+			return Methods.ubrk_getRuleStatusVec(bi, fillInVector, capacity, out status);
 		}
 
 		#endregion Break iterator
