@@ -373,6 +373,12 @@ namespace Icu
 		/// Dispose of managed/unmanaged resources.
 		/// Allow any inheriting classes to dispose of manage
 		/// </summary>
-		public virtual void Dispose() { }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing) { }
 	}
 }

@@ -526,7 +526,7 @@ namespace Icu
 		/// for more information.
 		/// </summary>
 		/// <param name="disposing"></param>
-		protected virtual void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (!_disposingValue)
 			{
@@ -548,12 +548,6 @@ namespace Icu
 		~RuleBasedBreakIterator()
 		{
 			Dispose(false);
-		}
-
-		public override void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
 		}
 
 		#endregion
