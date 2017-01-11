@@ -254,8 +254,13 @@ namespace Icu
 				dlsym(handle, versionedMethodName);
 			if (methodPointer != IntPtr.Zero)
 			{
+				// NOTE: Starting in .NET 4.5.1, Marshal.GetDelegateForFunctionPointer(IntPtr, Type) is obsolete.
+#if NET40
 				return Marshal.GetDelegateForFunctionPointer(
 					methodPointer, typeof(T)) as T;
+#else
+				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer);
+#endif
 			}
 			if (missingInMinimal)
 			{
