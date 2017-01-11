@@ -15,7 +15,10 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the en locale.
 		public void Create_Locale()
 		{
-			Assert.That(Collator.Create("en"), Is.Not.Null);
+			using (var collator = Collator.Create("en"))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -24,7 +27,10 @@ namespace Icu.Tests.Collation
 		public void Create_LocaleWithCultureInfo()
 		{
 			var cultureInfo = new CultureInfo("en-US");
-			Assert.That(Collator.Create(cultureInfo.Name), Is.Not.Null);
+			using (var collator = Collator.Create(cultureInfo.Name))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -32,7 +38,10 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the en-US locale.
 		public void Create_LocaleWithICUCultureId()
 		{
-			Assert.That(Collator.Create("en_US"), Is.Not.Null);
+			using (var collator = Collator.Create("en_US"))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -40,7 +49,10 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocale()
 		{
-			Assert.That(Collator.Create("root"), Is.Not.Null);
+			using (var collator = Collator.Create("root"))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -48,7 +60,10 @@ namespace Icu.Tests.Collation
 		//This fails when ICU's data DLL is built without rules for the root locale.
 		public void Create_RootLocaleAsEmpty()
 		{
-			Assert.That(Collator.Create(string.Empty), Is.Not.Null);
+			using (var collator = Collator.Create(string.Empty))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -60,7 +75,10 @@ namespace Icu.Tests.Collation
 		[Test]
 		public void Create_nonexistentFallbackAllowed_fallsbackToUca()
 		{
-			Assert.That(Collator.Create("non-existent", Collator.Fallback.FallbackAllowed), Is.Not.Null);
+			using (var collator = Collator.Create("non-existent", Collator.Fallback.FallbackAllowed))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]

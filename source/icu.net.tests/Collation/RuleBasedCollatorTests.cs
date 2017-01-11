@@ -12,49 +12,55 @@ namespace Icu.Tests.Collation
 	public class RuleBasedCollatorTests
 	{
 		private const string SerbianRules = "& C < č <<< Č < ć <<< Ć";
-		// with UCA:            after Tailoring:
-		// --------------       ----------------
-		// CUKIĆ RADOJICA       CUKIĆ RADOJICA
-		// ČUKIĆ SLOBODAN       CUKIĆ SVETOZAR
-		// CUKIĆ SVETOZAR       CURIĆ MILOŠ
-		// ČUKIĆ ZORAN          CVRKALJ ÐURO
-		// CURIĆ MILOŠ          ČUKIĆ SLOBODAN
-		// ĆURIĆ MILOŠ          ČUKIĆ ZORAN
-		// CVRKALJ ÐURO         ĆURIĆ MILOŠ
+		// with UCA:			after Tailoring:
+		// --------------	   ----------------
+		// CUKIĆ RADOJICA	   CUKIĆ RADOJICA
+		// ČUKIĆ SLOBODAN	   CUKIĆ SVETOZAR
+		// CUKIĆ SVETOZAR	   CURIĆ MILOŠ
+		// ČUKIĆ ZORAN		  CVRKALJ ÐURO
+		// CURIĆ MILOŠ		  ČUKIĆ SLOBODAN
+		// ĆURIĆ MILOŠ		  ČUKIĆ ZORAN
+		// CVRKALJ ÐURO		 ĆURIĆ MILOŠ
 
 		private const string DanishRules = "&V <<< w <<< W";
 
 		//UCA 	&V <<< w <<< W
 		//---   ---
-		//va    va
-		//Va    Va
-		//VA    VA
-		//vb    wa
-		//Vb    Wa
-		//VB    WA
-		//vz    vb
-		//Vz    Vb
-		//VZ    VB
-		//wa    wb
-		//Wa    Wb
-		//WA    WB
-		//wb    vz
-		//Wb    Vz
-		//WB    VZ
-		//wz    wz
-		//Wz    Wz
-		//WZ    WZ
+		//va	va
+		//Va	Va
+		//VA	VA
+		//vb	wa
+		//Vb	Wa
+		//VB	WA
+		//vz	vb
+		//Vz	Vb
+		//VZ	VB
+		//wa	wb
+		//Wa	Wb
+		//WA	WB
+		//wb	vz
+		//Wb	Vz
+		//WB	VZ
+		//wz	wz
+		//Wz	Wz
+		//WZ	WZ
 
 		[Test]
 		public void Construct_EmptyRules_UCAcollator()
 		{
-			Assert.That(new RuleBasedCollator(string.Empty), Is.Not.Null);
+			using (var collator = new RuleBasedCollator(string.Empty))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
 		public void Construct_Rules_Okay()
 		{
-			Assert.That(new RuleBasedCollator(SerbianRules), Is.Not.Null);
+			using (var collator = new RuleBasedCollator(SerbianRules))
+			{
+				Assert.That(collator, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -68,9 +74,11 @@ namespace Icu.Tests.Collation
 		[Test]
 		public void Clone()
 		{
-			var danishCollator = new RuleBasedCollator(DanishRules);
-			var danishCollator2 = (RuleBasedCollator) danishCollator.Clone();
+			using (var danishCollator = new RuleBasedCollator(DanishRules))
+			using (var danishCollator2 = (RuleBasedCollator)danishCollator.Clone())
+			{
 			Assert.That(danishCollator2.Compare("wa", "vb"), Is.EqualTo(-1));
+		}
 		}
 
 		[TestCase("", null, "a", Result = -1)]
@@ -87,36 +95,43 @@ namespace Icu.Tests.Collation
 		[Test]
 		public void GetSortKey()
 		{
-			var serbianCollator = new RuleBasedCollator(SerbianRules);
+			using (var serbianCollator = new RuleBasedCollator(SerbianRules))
+			{
 			var sortKeyČUKIĆ = serbianCollator.GetSortKey("ČUKIĆ SLOBODAN");
 			var sortKeyCUKIĆ = serbianCollator.GetSortKey("CUKIĆ SVETOZAR");
 			Assert.That(SortKey.Compare(sortKeyČUKIĆ, sortKeyCUKIĆ), Is.EqualTo(1));
+		}
 		}
 
 		[Test]
 		public void GetSortKey_Null()
 		{
-			var ucaCollator = new RuleBasedCollator(string.Empty);
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
 			Assert.That(() => ucaCollator.GetSortKey(null), Throws.TypeOf<ArgumentNullException>());
+		}
 		}
 
 		[Test]
 		public void GetSortKey_emptyString()
 		{
-			var ucaCollator = new RuleBasedCollator(string.Empty);
-			SortKey key = ucaCollator.GetSortKey(string.Empty);
-			Assert.IsNotNull(key);
-			Assert.IsNotNull(key.KeyData);
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
+				SortKey key = ucaCollator.GetSortKey(string.Empty);
+				Assert.IsNotNull(key);
+				Assert.IsNotNull(key.KeyData);
+			}
 		}
 
 		[Test]
 		public void SetCollatorStrengthToIdentical()
 		{
-			var collator = Collator.Create("zh");
+			using (var collator = Collator.Create("zh"))
+			{
+				collator.Strength = CollationStrength.Identical;
 
-			collator.Strength = CollationStrength.Identical;
-
-			Assert.AreEqual(CollationStrength.Identical, collator.Strength);
+				Assert.AreEqual(CollationStrength.Identical, collator.Strength);
+			}
 		}
 
 		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = 0)]
@@ -131,25 +146,27 @@ namespace Icu.Tests.Collation
 		public int AlternateHandlingSetting(CollationStrength collationStrength,
 			AlternateHandling alternateHandling, string string1, string string2)
 		{
-			/*  The Alternate attribute is used to control the handling of the so-called 
-             * variable characters in the UCA: whitespace, punctuation and symbols. If 
-             * Alternate is set to Non-Ignorable (N), then differences among these 
-             * characters are of the same importance as differences among letters. 
-             * If Alternate is set to Shifted (S), then these characters are of only 
-             * minor importance. The Shifted value is often used in combination with 
-             * Strength set to Quaternary. In such a case, white-space, punctuation, 
-             * and symbols are considered when comparing strings, but only if all other 
-             * aspects of the strings (base letters, accents, and case) are identical. 
-             * If Alternate is not set to Shifted, then there is no difference between 
-             * a Strength of 3 and a Strength of 4.
-              Example:
-                  S=3, A=N di Silva < Di Silva < diSilva < U.S.A. < USA
-                  S=3, A=S di Silva = diSilva < Di Silva  < U.S.A. = USA
-                  S=4, A=S di Silva < diSilva < Di Silva < U.S.A. < USA
-             */
-			var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength);
+			/*  The Alternate attribute is used to control the handling of the so-called
+			 * variable characters in the UCA: whitespace, punctuation and symbols. If
+			 * Alternate is set to Non-Ignorable (N), then differences among these
+			 * characters are of the same importance as differences among letters.
+			 * If Alternate is set to Shifted (S), then these characters are of only
+			 * minor importance. The Shifted value is often used in combination with
+			 * Strength set to Quaternary. In such a case, white-space, punctuation,
+			 * and symbols are considered when comparing strings, but only if all other
+			 * aspects of the strings (base letters, accents, and case) are identical.
+			 * If Alternate is not set to Shifted, then there is no difference between
+			 * a Strength of 3 and a Strength of 4.
+			  Example:
+				  S=3, A=N di Silva < Di Silva < diSilva < U.S.A. < USA
+				  S=3, A=S di Silva = diSilva < Di Silva  < U.S.A. = USA
+				  S=4, A=S di Silva < diSilva < Di Silva < U.S.A. < USA
+			 */
+			using (var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength))
+			{
 			ucaCollator.AlternateHandling = alternateHandling;
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		[TestCase(CaseFirst.LowerFirst, "china", "China", Result = -1)]
@@ -163,24 +180,26 @@ namespace Icu.Tests.Collation
 		[TestCase(CaseFirst.UpperFirst, "Denmark", "denmark", Result = -1)]
 		public int CaseFirstSetting(CaseFirst caseFirst, string string1, string string2)
 		{
-			/* The Case_First attribute is used to control whether uppercase letters 
-             * come before lowercase letters or vice versa, in the absence of other 
-             * differences in the strings. The possible values are Uppercase_First 
-             * (U) and Lowercase_First (L), plus the standard Default and Off. There 
-             * is almost no difference between the Off and Lowercase_First options in 
-             * terms of results, so typically users will not use Lowercase_First: only 
-             * Off or Uppercase_First. (People interested in the detailed differences 
-             * between X and L should consult the Collation Customization ).
-             *   Specifying either L or U won't affect string comparison performance, 
-             * but will affect the sort key length.
-                Example: 
-                    C=X or C=L "china" < "China" < "denmark" < "Denmark"
-                    C=U "China" < "china" < "Denmark" < "denmark"
-             */
-			var ucaCollator = new RuleBasedCollator(string.Empty);
+			/* The Case_First attribute is used to control whether uppercase letters
+			 * come before lowercase letters or vice versa, in the absence of other
+			 * differences in the strings. The possible values are Uppercase_First
+			 * (U) and Lowercase_First (L), plus the standard Default and Off. There
+			 * is almost no difference between the Off and Lowercase_First options in
+			 * terms of results, so typically users will not use Lowercase_First: only
+			 * Off or Uppercase_First. (People interested in the detailed differences
+			 * between X and L should consult the Collation Customization ).
+			 *   Specifying either L or U won't affect string comparison performance,
+			 * but will affect the sort key length.
+				Example:
+					C=X or C=L "china" < "China" < "denmark" < "Denmark"
+					C=U "China" < "china" < "Denmark" < "denmark"
+			 */
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
 			ucaCollator.CaseFirst = caseFirst;
 			Assert.That(ucaCollator.CaseFirst, Is.EqualTo(caseFirst));
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		[TestCase(CaseLevel.Off, "role", "Role", Result = 0)]
@@ -189,18 +208,19 @@ namespace Icu.Tests.Collation
 		[TestCase(CaseLevel.On, "rôle", "Role", Result = -1)]
 		public int CaseLevelSetting(CaseLevel caseLevel, string string1, string string2)
 		{
-			/*The Case_Level attribute is used when ignoring accents but not case. In 
-             * such a situation, set Strength to be Primary, and Case_Level to be On. 
-             * In most locales, this setting is Off by default. There is a small string 
-             * comparison performance and sort key impact if this attribute is set to be On.
-                Example:
-                S=1, E=X role = Role = rôle
-                S=1, E=O role = rôle <  Role*/
-
-			var ucaCollator = new RuleBasedCollator(string.Empty, CollationStrength.Primary);
+			/*The Case_Level attribute is used when ignoring accents but not case. In
+			 * such a situation, set Strength to be Primary, and Case_Level to be On.
+			 * In most locales, this setting is Off by default. There is a small string
+			 * comparison performance and sort key impact if this attribute is set to be On.
+				Example:
+				S=1, E=X role = Role = rôle
+				S=1, E=O role = rôle <  Role*/
+			using (var ucaCollator = new RuleBasedCollator(string.Empty, CollationStrength.Primary))
+			{
 			Assert.That(ucaCollator.CaseLevel, Is.EqualTo(CaseLevel.Off));
 			ucaCollator.CaseLevel = caseLevel;
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		[TestCase(FrenchCollation.Off, "cote", "coté", Result = -1)]
@@ -213,18 +233,20 @@ namespace Icu.Tests.Collation
 			string string2)
 		{
 			/*The French sort strings with different accents from the back of the
-             * string. This attribute is automatically set to On for the French 
-             * locales and a few others. Users normally would not need to explicitly 
-             * set this attribute. There is a string comparison performance cost 
-             * when it is set On, but sort key length is unaffected.
-                Example:
-                F=X cote < coté < côte < côté
-                F=O cote < côte < coté < côté
-             */
-			var ucaCollator = new RuleBasedCollator(string.Empty);
+			 * string. This attribute is automatically set to On for the French
+			 * locales and a few others. Users normally would not need to explicitly
+			 * set this attribute. There is a string comparison performance cost
+			 * when it is set On, but sort key length is unaffected.
+				Example:
+				F=X cote < coté < côte < côté
+				F=O cote < côte < coté < côté
+			 */
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
 			Assert.That(ucaCollator.FrenchCollation, Is.EqualTo(FrenchCollation.Off));
 			ucaCollator.FrenchCollation = frenchCollation;
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		private static Collator CreateJaCollator()
@@ -248,20 +270,22 @@ namespace Icu.Tests.Collation
 		public int HiraganaQuarternarySetting(CollationStrength collationStrength, string string1,
 			string string2)
 		{
-			/* Compatibility with JIS x 4061 requires the introduction of an 
-             * additional level to distinguish Hiragana and Katakana characters. 
-             * If compatibility with that standard is required, then this attribute 
-             * should be set On, and the strength set to Quaternary. This will affect
-             * sort key length and string comparison string comparison performance.
-                Example:
-                H=X, S=4 きゅう = キュウ < きゆう = キユウ
-                H=O, S=4 きゅう < キュウ < きゆう < キユウ        
-             */
-			var jaCollator = CreateJaCollator();
+			/* Compatibility with JIS x 4061 requires the introduction of an
+			 * additional level to distinguish Hiragana and Katakana characters.
+			 * If compatibility with that standard is required, then this attribute
+			 * should be set On, and the strength set to Quaternary. This will affect
+			 * sort key length and string comparison string comparison performance.
+				Example:
+				H=X, S=4 きゅう = キュウ < きゆう = キユウ
+				H=O, S=4 きゅう < キュウ < きゆう < キユウ
+			 */
+			using (var jaCollator = CreateJaCollator())
+			{
 			// In ICU54 the HiraganaQauternary special feature is deprecated in favor of supporting
 			// quaternary sorting as a regular feature.
 			jaCollator.Strength = collationStrength;
 			return jaCollator.Compare(string1, string2);
+		}
 		}
 
 		[TestCase(NormalizationMode.Off, "ä", "a\u0308", Result = 0)]
@@ -273,23 +297,25 @@ namespace Icu.Tests.Collation
 		public int NormalizationModeSetting(NormalizationMode normalizationMode, string string1,
 			string string2)
 		{
-			/*The Normalization setting determines whether text is thoroughly 
-             * normalized or not in comparison. Even if the setting is off (which 
-             * is the default for many locales), text as represented in common usage 
-             * will compare correctly (for details, see UTN #5 ). Only if the accent 
-             * marks are in non-canonical order will there be a problem. If the 
-             * setting is On, then the best results are guaranteed for all possible 
-             * text input.There is a medium string comparison performance cost if 
-             * this attribute is On, depending on the frequency of sequences that 
-             * require normalization. There is no significant effect on sort key 
-             * length.If the input text is known to be in NFD or NFKD normalization 
-             * forms, there is no need to enable this Normalization option.
-                Example:
-                N=X ä = a + ◌̈ < ä + ◌̣ < ạ + ◌̈
-                N=O ä = a + ◌̈ < ä + ◌̣ = ạ + ◌̈
-             */
-			var ucaCollator = new RuleBasedCollator(string.Empty, normalizationMode, CollationStrength.Default);
+			/*The Normalization setting determines whether text is thoroughly
+			 * normalized or not in comparison. Even if the setting is off (which
+			 * is the default for many locales), text as represented in common usage
+			 * will compare correctly (for details, see UTN #5 ). Only if the accent
+			 * marks are in non-canonical order will there be a problem. If the
+			 * setting is On, then the best results are guaranteed for all possible
+			 * text input.There is a medium string comparison performance cost if
+			 * this attribute is On, depending on the frequency of sequences that
+			 * require normalization. There is no significant effect on sort key
+			 * length.If the input text is known to be in NFD or NFKD normalization
+			 * forms, there is no need to enable this Normalization option.
+				Example:
+				N=X ä = a + ◌̈ < ä + ◌̣ < ạ + ◌̈
+				N=O ä = a + ◌̈ < ä + ◌̣ = ạ + ◌̈
+			 */
+			using (var ucaCollator = new RuleBasedCollator(string.Empty, normalizationMode, CollationStrength.Default))
+			{
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		//  1 < 10 < 2 < 20
@@ -303,10 +329,12 @@ namespace Icu.Tests.Collation
 		public int NumericCollationSetting(NumericCollation numericCollation, string string1,
 			string string2)
 		{
-			var ucaCollator = new RuleBasedCollator(string.Empty);
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
 			Assert.AreEqual(NumericCollation.Off, ucaCollator.NumericCollation);
 			ucaCollator.NumericCollation = numericCollation;
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		[TestCase(CollationStrength.Primary, "role", "Role", Result = 0)]
@@ -322,38 +350,40 @@ namespace Icu.Tests.Collation
 			string string2)
 		{
 			/*The Strength attribute determines whether accents or case are taken
-             * into account when collating or matching text. ( (In writing systems 
-             * without case or accents, it controls similarly important features).  
-             * The default strength setting usually does not need to be changed for 
-             * collating (sorting), but often needs to be changed when matching 
-             * (e.g. SELECT). The possible values include Default (D), Primary 
-             * (1), Secondary (2), Tertiary (3), Quaternary (4), and Identical (I).
-             * 
-             * For example, people may choose to ignore accents or ignore accents and 
-             * case when searching for text.
-             * 
-             * Almost all characters are distinguished by the first three levels, and 
-             * in most locales the default value is thus Tertiary. However, if 
-             * Alternate is set to be Shifted, then the Quaternary strength (4) 
-             * can be used to break ties among whitespace, punctuation, and symbols 
-             * that would otherwise be ignored. If very fine distinctions among 
-             * characters are required, then the Identical strength (I) can be 
-             * used (for example, Identical Strength distinguishes between the 
-             * Mathematical Bold Small A and the Mathematical Italic Small A. For 
-             * more examples, look at the cells with white backgrounds in the 
-             * collation charts). However, using levels higher than Tertiary - 
-             * the Identical strength - result in significantly longer sort keys, 
-             * and slower string comparison performance for equal strings.
-                Example:
-                S=1 role = Role = rôle
-                S=2 role = Role < rôle
-                S=3 role < Role < rôle
-                A=S  S=4 ab < a c < a-c < ac*/
-			var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength);
+			 * into account when collating or matching text. ( (In writing systems
+			 * without case or accents, it controls similarly important features).
+			 * The default strength setting usually does not need to be changed for
+			 * collating (sorting), but often needs to be changed when matching
+			 * (e.g. SELECT). The possible values include Default (D), Primary
+			 * (1), Secondary (2), Tertiary (3), Quaternary (4), and Identical (I).
+			 *
+			 * For example, people may choose to ignore accents or ignore accents and
+			 * case when searching for text.
+			 *
+			 * Almost all characters are distinguished by the first three levels, and
+			 * in most locales the default value is thus Tertiary. However, if
+			 * Alternate is set to be Shifted, then the Quaternary strength (4)
+			 * can be used to break ties among whitespace, punctuation, and symbols
+			 * that would otherwise be ignored. If very fine distinctions among
+			 * characters are required, then the Identical strength (I) can be
+			 * used (for example, Identical Strength distinguishes between the
+			 * Mathematical Bold Small A and the Mathematical Italic Small A. For
+			 * more examples, look at the cells with white backgrounds in the
+			 * collation charts). However, using levels higher than Tertiary -
+			 * the Identical strength - result in significantly longer sort keys,
+			 * and slower string comparison performance for equal strings.
+				Example:
+				S=1 role = Role = rôle
+				S=2 role = Role < rôle
+				S=3 role < Role < rôle
+				A=S  S=4 ab < a c < a-c < ac*/
+			using (var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength))
+			{
 			if (collationStrength == CollationStrength.Quaternary)
 				ucaCollator.AlternateHandling = AlternateHandling.Shifted;
 			Assert.That(ucaCollator.Strength, Is.EqualTo(collationStrength));
 			return ucaCollator.Compare(string1, string2);
+		}
 		}
 
 		[Test]
@@ -791,7 +821,7 @@ namespace Icu.Tests.Collation
 		public void ConvertToIcuRules_SurrogateCharacterLowBound_Throws()
 		{
 			Assert.Throws<ApplicationException>(
-				// Invalid unicode character escape sequence: 
+				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "\ud800")
 			);
 		}
@@ -805,7 +835,7 @@ namespace Icu.Tests.Collation
 		public void ConvertToIcuRules_SurrogateCharacterHighBound_Throws()
 		{
 			Assert.Throws<ApplicationException>(
-				// Invalid unicode character escape sequence: 
+				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "\udfff")
 			);
 		}
@@ -819,7 +849,7 @@ namespace Icu.Tests.Collation
 		public void ConvertToIcuRules_SurrogateCharactersOutOfOrder_Throws()
 		{
 			Assert.Throws<ApplicationException>(
-				// Invalid unicode character escape sequence: 
+				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "a << \udc00\ud800")
 			);
 		}

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- implement `IDisposable` in collators
+
 ### Changed
 - Implement `RuleBasedBreakIterator` class (Connie Yau)
 - Make `BreakIterator` closer to `Icu::BreakIterator` (Connie Yau)
