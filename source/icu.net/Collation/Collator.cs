@@ -14,7 +14,10 @@ namespace Icu.Collation
 	/// You use this class to build searching and sorting routines for natural
 	/// language text.
 	/// </summary>
-	public abstract class Collator : IComparer<string>, ICloneable, IDisposable
+	public abstract class Collator : IComparer<string>, IDisposable
+#if FEATURE_ICLONEABLE
+		, ICloneable
+#endif
 	{
 		/// <summary>
 		/// Gets or sets the minimum strength that will be used in comparison
@@ -151,7 +154,7 @@ namespace Icu.Collation
 			{
 				throw new ArgumentNullException();
 			}
-			return Create(cultureInfo.IetfLanguageTag, fallback);
+			return Create(cultureInfo.Name, fallback);
 		}
 
 		/// <summary>
