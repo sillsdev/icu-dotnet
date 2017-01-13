@@ -15,34 +15,30 @@ namespace Icu.Tests.Collation
 		public const int Same = 0;
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SortKey_nullKeyData_Throws()
 		{
-			Collator.CreateSortKey("hello", null);
+			Assert.Throws<ArgumentNullException>(() => Collator.CreateSortKey("hello", null));
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SortKey_KeyDataLengthTooLarge_Throws()
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1,0x20,0x1};
-			Collator.CreateSortKey("hello", keyData, keyData.Length+1);
+			Assert.Throws<ArgumentOutOfRangeException>(() => Collator.CreateSortKey("hello", keyData, keyData.Length + 1));
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SortKey_KeyDataLengthNegative_Throws()
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
-			Collator.CreateSortKey("hello", keyData, -1);
+			Assert.Throws<ArgumentOutOfRangeException>(() => Collator.CreateSortKey("hello", keyData, -1));
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SortKey_nullOriginalString_Throws()
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
-			Collator.CreateSortKey(null, keyData);
+			Assert.Throws<ArgumentNullException>(() => Collator.CreateSortKey(null, keyData));
 		}
 
 		[Test]
@@ -73,28 +69,25 @@ namespace Icu.Tests.Collation
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Compare_bothnull_throws()
 		{
-			SortKey.Compare(null, null);
+			Assert.Throws<ArgumentNullException>(() => SortKey.Compare(null, null));
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Compare_firstnull_throws()
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
 			SortKey sortKey = Collator.CreateSortKey("heo", keyData);
-			SortKey.Compare(null, sortKey);
+			Assert.Throws<ArgumentNullException>(() => SortKey.Compare(null, sortKey));
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Compare_secondnull_throws()
 		{
 			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
 			SortKey sortKey = Collator.CreateSortKey("heo", keyData);
-			SortKey.Compare(sortKey, null);
+			Assert.Throws<ArgumentNullException>(() => SortKey.Compare(sortKey, null));
 		}
 
 		[Test]
