@@ -82,7 +82,7 @@ namespace Icu
 
 		private static bool IsWindows
 		{
-			get { return Environment.OSVersion.Platform != PlatformID.Unix; }
+			get { return Platform.OperatingSystem == OperatingSystemType.Windows; }
 		}
 
 		private static IntPtr IcuCommonLibHandle
@@ -112,11 +112,6 @@ namespace Icu
 				var uri = new Uri(typeof(NativeMethods).Assembly.CodeBase);
 				return Path.GetDirectoryName(uri.LocalPath);
 			}
-		}
-
-		private static bool IsRunning64Bit
-		{
-			get { return Environment.Is64BitProcess; }
 		}
 
 		private static void AddDirectoryToSearchPath(string directory)
@@ -165,9 +160,8 @@ namespace Icu
 			if (IcuVersion <= 0)
 			{
 				// Look for ICU binaries in lib/x86 or lib/x64 subdirectory first
-				var platformSubDir = IsRunning64Bit ? "x64" : "x86";
 				if (!CheckDirectoryForIcuBinaries(
-					Path.Combine(DirectoryOfThisAssembly, "lib", platformSubDir),
+					Path.Combine(DirectoryOfThisAssembly, "lib", Platform.ProcessArchitecture),
 					libraryName))
 				{
 					// next try just x86/x64 subdirectory
