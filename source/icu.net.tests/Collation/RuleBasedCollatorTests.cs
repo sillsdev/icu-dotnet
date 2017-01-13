@@ -68,7 +68,7 @@ namespace Icu.Tests.Collation
 		{
 			// Previously "<<<<" was assumed to be syntax.  Now that is Quaternary so we use a longer string
 			string badRules = "& C < č <<<<<<<< Č < ć <<< Ć";
-			Assert.That(() => new RuleBasedCollator(badRules), Throws.TypeOf<ApplicationException>());
+			Assert.That(() => new RuleBasedCollator(badRules), Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
@@ -820,7 +820,7 @@ namespace Icu.Tests.Collation
 		[Category("KnownMonoIssue")]
 		public void ConvertToIcuRules_SurrogateCharacterLowBound_Throws()
 		{
-			Assert.Throws<ApplicationException>(
+			Assert.Throws<ArgumentException>(
 				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "\ud800")
 			);
@@ -834,7 +834,7 @@ namespace Icu.Tests.Collation
 		[Category("KnownMonoIssue")]
 		public void ConvertToIcuRules_SurrogateCharacterHighBound_Throws()
 		{
-			Assert.Throws<ApplicationException>(
+			Assert.Throws<ArgumentException>(
 				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "\udfff")
 			);
@@ -848,7 +848,7 @@ namespace Icu.Tests.Collation
 		[Category("KnownMonoIssue")]
 		public void ConvertToIcuRules_SurrogateCharactersOutOfOrder_Throws()
 		{
-			Assert.Throws<ApplicationException>(
+			Assert.Throws<ArgumentException>(
 				// Invalid unicode character escape sequence:
 				() => new RuleBasedCollator(IcuStart + "a << \udc00\ud800")
 			);
