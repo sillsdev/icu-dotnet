@@ -135,7 +135,14 @@
     <Compile Include="Collation\NormalizationMode.cs" />
     <Compile Include="Collation\NumericCollation.cs" />
     <Compile Include="ErrorCode.cs" />
+    <Compile Include="Exceptions\MissingResourceException.cs" />
     <Compile Include="Locale.cs" />
+    <Compile Include="Exceptions\BreakException.cs" />
+    <Compile Include="Exceptions\IDNAException.cs" />
+    <Compile Include="Exceptions\RegexException.cs" />
+    <Compile Include="Exceptions\TransliteratorParseException.cs" />
+    <Compile Include="Exceptions\SyntaxErrorException.cs" />
+    <Compile Include="Exceptions\WarningException.cs" />
     <Compile Include="ParseError.cs" />
     <Compile Include="Collation\RuleBasedCollator.cs" />
     <Compile Include="ParseErrorException.cs" />
