@@ -2,9 +2,12 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+
+#if !NETSTANDARD
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
+#endif
 
 namespace Icu.Collation
 {
@@ -25,7 +28,9 @@ namespace Icu.Collation
 			///<returns>
 			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
+#if !NETSTANDARD
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			protected override bool ReleaseHandle()
 			{
 				NativeMethods.ucol_close(handle);
@@ -284,7 +289,7 @@ namespace Icu.Collation
 			}
 			finally
 			{
-				en.Close();
+				en.Dispose();
 			}
 			return locales;
 		}
@@ -301,7 +306,9 @@ namespace Icu.Collation
 			///<returns>
 			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
+#if !NETSTANDARD
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			protected override bool ReleaseHandle()
 			{
 				NativeMethods.uenum_close(handle);

@@ -113,7 +113,7 @@
     <PlatformAlias>net40</PlatformAlias>
     <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver)</DefineConstants>
+    <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver);FEATURE_ICLONEABLE</DefineConstants>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
