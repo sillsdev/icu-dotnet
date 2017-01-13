@@ -81,11 +81,11 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase("", null, "a", Result = -1)]
-		[TestCase("", "a", null, Result = 1)]
-		[TestCase("", null, null, Result = 0)]
-		[TestCase("", "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", Result = -1)]
-		[TestCase(SerbianRules, "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", Result = 1)]
+		[TestCase("", null, "a", ExpectedResult = -1)]
+		[TestCase("", "a", null, ExpectedResult = 1)]
+		[TestCase("", null, null, ExpectedResult = 0)]
+		[TestCase("", "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", ExpectedResult = -1)]
+		[TestCase(SerbianRules, "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", ExpectedResult = 1)]
 		public int Compare(string rules, string string1, string string2)
 		{
 			var ucaCollator = new RuleBasedCollator(rules);
@@ -134,15 +134,15 @@ namespace Icu.Tests.Collation
 			}
 		}
 
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = 0)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "U.S.A.", "USA", Result = 0)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "U.S.A.", "USA", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "di Silva", "Di Silva", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "Di Silva", "diSilva", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "U.S.A.", "USA", Result = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "diSilva", "Di Silva", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "U.S.A.", "USA", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "di Silva", "diSilva", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "diSilva", "Di Silva", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "U.S.A.", "USA", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "di Silva", "Di Silva", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "Di Silva", "diSilva", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "U.S.A.", "USA", ExpectedResult = -1)]
 		public int AlternateHandlingSetting(CollationStrength collationStrength,
 			AlternateHandling alternateHandling, string string1, string string2)
 		{
@@ -169,15 +169,15 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase(CaseFirst.LowerFirst, "china", "China", Result = -1)]
-		[TestCase(CaseFirst.LowerFirst, "China", "denmark", Result = -1)]
-		[TestCase(CaseFirst.LowerFirst, "denmark", "Denmark", Result = -1)]
-		[TestCase(CaseFirst.Off, "china", "China", Result = -1)]
-		[TestCase(CaseFirst.Off, "China", "denmark", Result = -1)]
-		[TestCase(CaseFirst.Off, "denmark", "Denmark", Result = -1)]
-		[TestCase(CaseFirst.UpperFirst, "China", "china", Result = -1)]
-		[TestCase(CaseFirst.UpperFirst, "china", "Denmark", Result = -1)]
-		[TestCase(CaseFirst.UpperFirst, "Denmark", "denmark", Result = -1)]
+		[TestCase(CaseFirst.LowerFirst, "china", "China", ExpectedResult = -1)]
+		[TestCase(CaseFirst.LowerFirst, "China", "denmark", ExpectedResult = -1)]
+		[TestCase(CaseFirst.LowerFirst, "denmark", "Denmark", ExpectedResult = -1)]
+		[TestCase(CaseFirst.Off, "china", "China", ExpectedResult = -1)]
+		[TestCase(CaseFirst.Off, "China", "denmark", ExpectedResult = -1)]
+		[TestCase(CaseFirst.Off, "denmark", "Denmark", ExpectedResult = -1)]
+		[TestCase(CaseFirst.UpperFirst, "China", "china", ExpectedResult = -1)]
+		[TestCase(CaseFirst.UpperFirst, "china", "Denmark", ExpectedResult = -1)]
+		[TestCase(CaseFirst.UpperFirst, "Denmark", "denmark", ExpectedResult = -1)]
 		public int CaseFirstSetting(CaseFirst caseFirst, string string1, string string2)
 		{
 			/* The Case_First attribute is used to control whether uppercase letters
@@ -202,10 +202,10 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase(CaseLevel.Off, "role", "Role", Result = 0)]
-		[TestCase(CaseLevel.Off, "role", "rôle", Result = 0)]
-		[TestCase(CaseLevel.On, "role", "rôle", Result = 0)]
-		[TestCase(CaseLevel.On, "rôle", "Role", Result = -1)]
+		[TestCase(CaseLevel.Off, "role", "Role", ExpectedResult = 0)]
+		[TestCase(CaseLevel.Off, "role", "rôle", ExpectedResult = 0)]
+		[TestCase(CaseLevel.On, "role", "rôle", ExpectedResult = 0)]
+		[TestCase(CaseLevel.On, "rôle", "Role", ExpectedResult = -1)]
 		public int CaseLevelSetting(CaseLevel caseLevel, string string1, string string2)
 		{
 			/*The Case_Level attribute is used when ignoring accents but not case. In
@@ -223,12 +223,12 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase(FrenchCollation.Off, "cote", "coté", Result = -1)]
-		[TestCase(FrenchCollation.Off, "coté", "côte", Result = -1)]
-		[TestCase(FrenchCollation.Off, "côte", "côté", Result = -1)]
-		[TestCase(FrenchCollation.On, "cote", "côte", Result = -1)]
-		[TestCase(FrenchCollation.On, "côte", "coté", Result = -1)]
-		[TestCase(FrenchCollation.On, "coté", "côté", Result = -1)]
+		[TestCase(FrenchCollation.Off, "cote", "coté", ExpectedResult = -1)]
+		[TestCase(FrenchCollation.Off, "coté", "côte", ExpectedResult = -1)]
+		[TestCase(FrenchCollation.Off, "côte", "côté", ExpectedResult = -1)]
+		[TestCase(FrenchCollation.On, "cote", "côte", ExpectedResult = -1)]
+		[TestCase(FrenchCollation.On, "côte", "coté", ExpectedResult = -1)]
+		[TestCase(FrenchCollation.On, "coté", "côté", ExpectedResult = -1)]
 		public int FrenchCollationSetting(FrenchCollation frenchCollation, string string1,
 			string string2)
 		{
@@ -261,12 +261,12 @@ namespace Icu.Tests.Collation
 			}
 		}
 
-		[TestCase(CollationStrength.Tertiary, "きゅう", "キュウ", Result = 0)]
-		[TestCase(CollationStrength.Tertiary, "キュウ", "きゆう", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, "きゆう", "キユウ", Result = 0)]
-		[TestCase(CollationStrength.Quaternary, "きゅう", "キュウ", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, "キュウ", "きゆう", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, "きゆう", "キユウ", Result = -1)]
+		[TestCase(CollationStrength.Tertiary, "きゅう", "キュウ", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Tertiary, "キュウ", "きゆう", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, "きゆう", "キユウ", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Quaternary, "きゅう", "キュウ", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, "キュウ", "きゆう", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, "きゆう", "キユウ", ExpectedResult = -1)]
 		public int HiraganaQuarternarySetting(CollationStrength collationStrength, string string1,
 			string string2)
 		{
@@ -288,12 +288,12 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase(NormalizationMode.Off, "ä", "a\u0308", Result = 0)]
-		[TestCase(NormalizationMode.Off, "a\u0308", "ä\u0323", Result = -1)]
-		[TestCase(NormalizationMode.Off, "ä\u0323", "ạ\u0308", Result = -1)]
-		[TestCase(NormalizationMode.On, "ä", "a\u0308", Result = 0)]
-		[TestCase(NormalizationMode.On, "a\u0308", "ä\u0323", Result = -1)]
-		[TestCase(NormalizationMode.On, "ä\u0323", "ạ\u0308", Result = 0)]
+		[TestCase(NormalizationMode.Off, "ä", "a\u0308", ExpectedResult = 0)]
+		[TestCase(NormalizationMode.Off, "a\u0308", "ä\u0323", ExpectedResult = -1)]
+		[TestCase(NormalizationMode.Off, "ä\u0323", "ạ\u0308", ExpectedResult = -1)]
+		[TestCase(NormalizationMode.On, "ä", "a\u0308", ExpectedResult = 0)]
+		[TestCase(NormalizationMode.On, "a\u0308", "ä\u0323", ExpectedResult = -1)]
+		[TestCase(NormalizationMode.On, "ä\u0323", "ạ\u0308", ExpectedResult = 0)]
 		public int NormalizationModeSetting(NormalizationMode normalizationMode, string string1,
 			string string2)
 		{
@@ -319,13 +319,13 @@ namespace Icu.Tests.Collation
 		}
 
 		//  1 < 10 < 2 < 20
-		[TestCase(NumericCollation.Off, "1", "10", Result = -1)]
-		[TestCase(NumericCollation.Off, "10", "2", Result = -1)]
-		[TestCase(NumericCollation.Off, "2", "20", Result = -1)]
+		[TestCase(NumericCollation.Off, "1", "10", ExpectedResult = -1)]
+		[TestCase(NumericCollation.Off, "10", "2", ExpectedResult = -1)]
+		[TestCase(NumericCollation.Off, "2", "20", ExpectedResult = -1)]
 		//  1 < 2 < 10 < 20
-		[TestCase(NumericCollation.On, "1", "10", Result = -1)]
-		[TestCase(NumericCollation.On, "10", "2", Result = 1)]
-		[TestCase(NumericCollation.On, "2", "20", Result = -1)]
+		[TestCase(NumericCollation.On, "1", "10", ExpectedResult = -1)]
+		[TestCase(NumericCollation.On, "10", "2", ExpectedResult = 1)]
+		[TestCase(NumericCollation.On, "2", "20", ExpectedResult = -1)]
 		public int NumericCollationSetting(NumericCollation numericCollation, string string1,
 			string string2)
 		{
@@ -337,15 +337,15 @@ namespace Icu.Tests.Collation
 		}
 		}
 
-		[TestCase(CollationStrength.Primary, "role", "Role", Result = 0)]
-		[TestCase(CollationStrength.Primary, "Role", "rôle", Result = 0)]
-		[TestCase(CollationStrength.Secondary, "role", "Role", Result = 0)]
-		[TestCase(CollationStrength.Secondary, "Role", "rôle", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, "role", "Role", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, "Role", "rôle", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, "ab", "a c", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, "a c", "a-c", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, "a-c", "ac", Result = -1)]
+		[TestCase(CollationStrength.Primary, "role", "Role", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Primary, "Role", "rôle", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Secondary, "role", "Role", ExpectedResult = 0)]
+		[TestCase(CollationStrength.Secondary, "Role", "rôle", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, "role", "Role", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Tertiary, "Role", "rôle", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, "ab", "a c", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, "a c", "a-c", ExpectedResult = -1)]
+		[TestCase(CollationStrength.Quaternary, "a-c", "ac", ExpectedResult = -1)]
 		public int StrengthSetting(CollationStrength collationStrength, string string1,
 			string string2)
 		{
