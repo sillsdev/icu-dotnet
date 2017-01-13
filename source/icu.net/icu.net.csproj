@@ -137,6 +137,7 @@
     <Compile Include="ErrorCode.cs" />
     <Compile Include="Exceptions\MissingResourceException.cs" />
     <Compile Include="Locale.cs" />
+    <Compile Include="Platform.cs" />
     <Compile Include="Exceptions\BreakException.cs" />
     <Compile Include="Exceptions\IDNAException.cs" />
     <Compile Include="Exceptions\RegexException.cs" />
