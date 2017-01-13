@@ -1810,7 +1810,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Attempts to match the input string against the pattern. 
+		/// Attempts to match the input string against the pattern.
 		/// </summary>
 		public static bool uregex_matches(
 			IntPtr regexp,
