@@ -894,7 +894,8 @@ namespace Icu.Tests.Collation
 			var collationRules = Collator.GetCollationRules(locale, UColRuleOption.UCOL_FULL_RULES);
 
 			Assert.IsEmpty(tailoredRules);
-			Assert.IsNotNullOrEmpty(collationRules);
+			Assert.IsNotNull(collationRules);
+			Assert.IsNotEmpty(collationRules);
 		}
 	}
 }
