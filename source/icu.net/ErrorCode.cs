@@ -1,8 +1,6 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-using System.ComponentModel;
-using System.Data;
 using System.IO;
 
 namespace Icu
@@ -428,15 +426,15 @@ namespace Icu
 				case ErrorCode.ILLEGAL_ARGUMENT_ERROR:
 					throw new ArgumentException(extraInfo);
 				case ErrorCode.MISSING_RESOURCE_ERROR:
-					throw new ApplicationException("The requested resource cannot be found " + extraInfo);
+					throw new MissingResourceException("The requested resource cannot be found " + extraInfo);
 				case ErrorCode.INVALID_FORMAT_ERROR:
-					throw new ApplicationException("Data format is not what is expected " + extraInfo);
+					throw new ArgumentException("Data format is not what is expected " + extraInfo);
 				case ErrorCode.FILE_ACCESS_ERROR:
 					throw new FileNotFoundException("The requested file cannot be found " + extraInfo);
 				case ErrorCode.INTERNAL_PROGRAM_ERROR:
 					throw new InvalidOperationException("Indicates a bug in the library code " + extraInfo);
 				case ErrorCode.MESSAGE_PARSE_ERROR:
-					throw new ApplicationException("Unable to parse a message (message format) " + extraInfo);
+					throw new ArgumentException("Unable to parse a message (message format) " + extraInfo);
 				case ErrorCode.MEMORY_ALLOCATION_ERROR:
 					throw new OutOfMemoryException(extraInfo);
 				case ErrorCode.INDEX_OUTOFBOUNDS_ERROR:
@@ -454,7 +452,7 @@ namespace Icu
 				case ErrorCode.INVALID_TABLE_FILE:
 					throw new FileNotFoundException("Conversion table file not found " + extraInfo);
 				case ErrorCode.BUFFER_OVERFLOW_ERROR:
-					throw new InternalBufferOverflowException("A result would not fit in the supplied buffer " + extraInfo);
+					throw new OverflowException("A result would not fit in the supplied buffer " + extraInfo);
 				case ErrorCode.UNSUPPORTED_ERROR:
 					throw new InvalidOperationException("Requested operation not supported in current context " + extraInfo);
 				case ErrorCode.RESOURCE_TYPE_MISMATCH:
@@ -472,79 +470,79 @@ namespace Icu
 				case ErrorCode.STATE_TOO_OLD_ERROR:
 					throw new NotSupportedException("ICU cannot construct a service from this state, as it is no longer supported " + extraInfo);
 				case ErrorCode.TOO_MANY_ALIASES_ERROR:
-					throw new ApplicationException("There are too many aliases in the path to the requested resource.\nIt is very possible that a circular alias definition has occured " + extraInfo);
+					throw new ArgumentException("There are too many aliases in the path to the requested resource.\nIt is very possible that a circular alias definition has occured " + extraInfo);
 				case ErrorCode.ENUM_OUT_OF_SYNC_ERROR:
 					throw new InvalidOperationException("Enumeration out of sync with underlying collection " + extraInfo);
 				case ErrorCode.INVARIANT_CONVERSION_ERROR:
-					throw new ApplicationException("Unable to convert a UChar* string to char* with the invariant converter " + extraInfo);
+					throw new ArgumentException("Unable to convert a UChar* string to char* with the invariant converter " + extraInfo);
 				case ErrorCode.INVALID_STATE_ERROR:
 					throw new InvalidOperationException("Requested operation can not be completed with ICU in its current state " + extraInfo);
 				case ErrorCode.COLLATOR_VERSION_MISMATCH:
 					throw new InvalidOperationException("Collator version is not compatible with the base version " + extraInfo);
 				case ErrorCode.USELESS_COLLATOR_ERROR:
-					throw new ApplicationException("Collator is options only and no base is specified " + extraInfo);
+					throw new ArgumentException("Collator is options only and no base is specified " + extraInfo);
 				case ErrorCode.NO_WRITE_PERMISSION:
-					throw new ApplicationException("Attempt to modify read-only or constant data. " + extraInfo);
+					throw new InvalidOperationException("Attempt to modify read-only or constant data. " + extraInfo);
 				case ErrorCode.BAD_VARIABLE_DEFINITION:
-					throw new ApplicationException("Transliterator Parse Error: Missing '$' or duplicate variable name " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: Missing '$' or duplicate variable name " + extraInfo);
 				case ErrorCode.MALFORMED_RULE:
-					throw new ApplicationException("Transliterator Parse Error: Elements of a rule are misplaced " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: Elements of a rule are misplaced " + extraInfo);
 				case ErrorCode.MALFORMED_SET:
-					throw new ApplicationException("Transliterator Parse Error: A UnicodeSet pattern is invalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A UnicodeSet pattern is invalid " + extraInfo);
 				case ErrorCode.MALFORMED_UNICODE_ESCAPE:
-					throw new ApplicationException("Transliterator Parse Error: A Unicode escape pattern is invalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A Unicode escape pattern is invalid " + extraInfo);
 				case ErrorCode.MALFORMED_VARIABLE_DEFINITION:
-					throw new ApplicationException("Transliterator Parse Error: A variable definition is invalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A variable definition is invalid " + extraInfo);
 				case ErrorCode.MALFORMED_VARIABLE_REFERENCE:
-					throw new ApplicationException("Transliterator Parse Error: A variable reference is invalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A variable reference is invalid " + extraInfo);
 				case ErrorCode.MISPLACED_ANCHOR_START:
-					throw new ApplicationException("Transliterator Parse Error: A start anchor appears at an illegal position " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A start anchor appears at an illegal position " + extraInfo);
 				case ErrorCode.MISPLACED_CURSOR_OFFSET:
-					throw new ApplicationException("Transliterator Parse Error: A cursor offset occurs at an illegal position " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A cursor offset occurs at an illegal position " + extraInfo);
 				case ErrorCode.MISPLACED_QUANTIFIER:
-					throw new ApplicationException("Transliterator Parse Error: A quantifier appears after a segment close delimiter " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A quantifier appears after a segment close delimiter " + extraInfo);
 				case ErrorCode.MISSING_OPERATOR:
-					throw new ApplicationException("Transliterator Parse Error: A rule contains no operator " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A rule contains no operator " + extraInfo);
 				case ErrorCode.MULTIPLE_ANTE_CONTEXTS:
-					throw new ApplicationException("Transliterator Parse Error: More than one ante context " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: More than one ante context " + extraInfo);
 				case ErrorCode.MULTIPLE_CURSORS:
-					throw new ApplicationException("Transliterator Parse Error: More than one cursor " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: More than one cursor " + extraInfo);
 				case ErrorCode.MULTIPLE_POST_CONTEXTS:
-					throw new ApplicationException("Transliterator Parse Error: More than one post context " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: More than one post context " + extraInfo);
 				case ErrorCode.TRAILING_BACKSLASH:
-					throw new ApplicationException("Transliterator Parse Error: A dangling backslash " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A dangling backslash " + extraInfo);
 				case ErrorCode.UNDEFINED_SEGMENT_REFERENCE:
-					throw new ApplicationException("Transliterator Parse Error: A segment reference does not correspond to a defined segment " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A segment reference does not correspond to a defined segment " + extraInfo);
 				case ErrorCode.UNDEFINED_VARIABLE:
-					throw new ApplicationException("Transliterator Parse Error: A variable reference does not correspond to a defined variable " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A variable reference does not correspond to a defined variable " + extraInfo);
 				case ErrorCode.UNQUOTED_SPECIAL:
-					throw new ApplicationException("Transliterator Parse Error: A special character was not quoted or escaped " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A special character was not quoted or escaped " + extraInfo);
 				case ErrorCode.UNTERMINATED_QUOTE:
-					throw new ApplicationException("Transliterator Parse Error: A closing single quote is missing " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A closing single quote is missing " + extraInfo);
 				case ErrorCode.RULE_MASK_ERROR:
-					throw new ApplicationException("Transliterator Parse Error: A rule is hidden by an earlier more general rule " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A rule is hidden by an earlier more general rule " + extraInfo);
 				case ErrorCode.MISPLACED_COMPOUND_FILTER:
-					throw new ApplicationException("Transliterator Parse Error: A compound filter is in an invalid location " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A compound filter is in an invalid location " + extraInfo);
 				case ErrorCode.MULTIPLE_COMPOUND_FILTERS:
-					throw new ApplicationException("Transliterator Parse Error: More than one compound filter " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: More than one compound filter " + extraInfo);
 				case ErrorCode.INVALID_RBT_SYNTAX:
-					throw new ApplicationException("Transliterator Parse Error: A '::id' rule was passed to the RuleBasedTransliterator parser " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A '::id' rule was passed to the RuleBasedTransliterator parser " + extraInfo);
 				case ErrorCode.MALFORMED_PRAGMA:
-					throw new ApplicationException("Transliterator Parse Error: A 'use' pragma is invlalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A 'use' pragma is invlalid " + extraInfo);
 				case ErrorCode.UNCLOSED_SEGMENT:
-					throw new ApplicationException("Transliterator Parse Error: A closing ')' is missing " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A closing ')' is missing " + extraInfo);
 				case ErrorCode.VARIABLE_RANGE_EXHAUSTED:
-					throw new ApplicationException("Transliterator Parse Error: Too many stand-ins generated for the given variable range " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: Too many stand-ins generated for the given variable range " + extraInfo);
 				case ErrorCode.VARIABLE_RANGE_OVERLAP:
-					throw new ApplicationException("Transliterator Parse Error: The variable range overlaps characters used in rules " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: The variable range overlaps characters used in rules " + extraInfo);
 				case ErrorCode.ILLEGAL_CHARACTER:
-					throw new ApplicationException("Transliterator Parse Error: A special character is outside its allowed context " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A special character is outside its allowed context " + extraInfo);
 				case ErrorCode.INTERNAL_TRANSLITERATOR_ERROR:
-					throw new ApplicationException("Transliterator Parse Error: Internal transliterator system error " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: Internal transliterator system error " + extraInfo);
 				case ErrorCode.INVALID_ID:
-					throw new ApplicationException("Transliterator Parse Error: A '::id' rule specifies an unknown transliterator " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A '::id' rule specifies an unknown transliterator " + extraInfo);
 				case ErrorCode.INVALID_FUNCTION:
-					throw new ApplicationException("Transliterator Parse Error: A '&fn()' rule specifies an unknown transliterator " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A '&fn()' rule specifies an unknown transliterator " + extraInfo);
 				case ErrorCode.UNEXPECTED_TOKEN:
 					throw new SyntaxErrorException("Format Parse Error: Unexpected token in format pattern " + extraInfo);
 				case ErrorCode.MULTIPLE_DECIMAL_SEPARATORS:
@@ -574,97 +572,97 @@ namespace Icu
 				case ErrorCode.DEFAULT_KEYWORD_MISSING:
 					throw new SyntaxErrorException("Format Parse Error: Missing DEFAULT rule in plural rules. " + extraInfo);
 				case ErrorCode.BRK_INTERNAL_ERROR:
-					throw new ApplicationException("Break Error: An internal error (bug) was detected. " + extraInfo);
+					throw new BreakException("Break Error: An internal error (bug) was detected. " + extraInfo);
 				case ErrorCode.BRK_HEX_DIGITS_EXPECTED:
-					throw new ApplicationException("Break Error: Hex digits expected as part of a escaped char in a rule. " + extraInfo);
+					throw new BreakException("Break Error: Hex digits expected as part of a escaped char in a rule. " + extraInfo);
 				case ErrorCode.BRK_SEMICOLON_EXPECTED:
-					throw new ApplicationException("Break Error: Missing ';' at the end of a RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Missing ';' at the end of a RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_RULE_SYNTAX:
-					throw new ApplicationException("Break Error: Syntax error in RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Syntax error in RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_UNCLOSED_SET:
-					throw new ApplicationException("Break Error: UnicodeSet witing an RBBI rule missing a closing ']'. " + extraInfo);
+					throw new BreakException("Break Error: UnicodeSet witing an RBBI rule missing a closing ']'. " + extraInfo);
 				case ErrorCode.BRK_ASSIGN_ERROR:
-					throw new ApplicationException("Break Error: Syntax error in RBBI rule assignment statement. " + extraInfo);
+					throw new BreakException("Break Error: Syntax error in RBBI rule assignment statement. " + extraInfo);
 				case ErrorCode.BRK_VARIABLE_REDFINITION:
-					throw new ApplicationException("Break Error: RBBI rule $Variable redefined. " + extraInfo);
+					throw new BreakException("Break Error: RBBI rule $Variable redefined. " + extraInfo);
 				case ErrorCode.BRK_MISMATCHED_PAREN:
-					throw new ApplicationException("Break Error: Mis-matched parentheses in an RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Mis-matched parentheses in an RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_NEW_LINE_IN_QUOTED_STRING:
-					throw new ApplicationException("Break Error: Missing closing quote in an RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Missing closing quote in an RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_UNDEFINED_VARIABLE:
-					throw new ApplicationException("Break Error: Use of an undefined $Variable in an RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Use of an undefined $Variable in an RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_INIT_ERROR:
-					throw new ApplicationException("Break Error: Initialization failure.  Probable missing ICU Data. " + extraInfo);
+					throw new BreakException("Break Error: Initialization failure.  Probable missing ICU Data. " + extraInfo);
 				case ErrorCode.BRK_RULE_EMPTY_SET:
-					throw new ApplicationException("Break Error: Rule contains an empty Unicode Set. " + extraInfo);
+					throw new BreakException("Break Error: Rule contains an empty Unicode Set. " + extraInfo);
 				case ErrorCode.BRK_UNRECOGNIZED_OPTION:
-					throw new ApplicationException("Break Error: !!option in RBBI rules not recognized. " + extraInfo);
+					throw new BreakException("Break Error: !!option in RBBI rules not recognized. " + extraInfo);
 				case ErrorCode.BRK_MALFORMED_RULE_TAG:
-					throw new ApplicationException("Break Error: The {nnn} tag on a rule is mal formed " + extraInfo);
+					throw new BreakException("Break Error: The {nnn} tag on a rule is mal formed " + extraInfo);
 				case ErrorCode.BRK_ERROR_LIMIT:
-					throw new ApplicationException("Break Error: This must always be the last value to indicate the limit for Break Iterator failures " + extraInfo);
+					throw new BreakException("Break Error: This must always be the last value to indicate the limit for Break Iterator failures " + extraInfo);
 				case ErrorCode.REGEX_INTERNAL_ERROR:
-					throw new ApplicationException("RegEx Error: An internal error (bug) was detected. " + extraInfo);
+					throw new RegexException("RegEx Error: An internal error (bug) was detected. " + extraInfo);
 				case ErrorCode.REGEX_RULE_SYNTAX:
-					throw new ApplicationException("RegEx Error: Syntax error in regexp pattern. " + extraInfo);
+					throw new RegexException("RegEx Error: Syntax error in regexp pattern. " + extraInfo);
 				case ErrorCode.REGEX_INVALID_STATE:
-					throw new ApplicationException("RegEx Error: RegexMatcher in invalid state for requested operation " + extraInfo);
+					throw new RegexException("RegEx Error: RegexMatcher in invalid state for requested operation " + extraInfo);
 				case ErrorCode.REGEX_BAD_ESCAPE_SEQUENCE:
-					throw new ApplicationException("RegEx Error: Unrecognized backslash escape sequence in pattern " + extraInfo);
+					throw new RegexException("RegEx Error: Unrecognized backslash escape sequence in pattern " + extraInfo);
 				case ErrorCode.REGEX_PROPERTY_SYNTAX:
-					throw new ApplicationException("RegEx Error: Incorrect Unicode property " + extraInfo);
+					throw new RegexException("RegEx Error: Incorrect Unicode property " + extraInfo);
 				case ErrorCode.REGEX_UNIMPLEMENTED:
-					throw new ApplicationException("RegEx Error: Use of regexp feature that is not yet implemented. " + extraInfo);
+					throw new RegexException("RegEx Error: Use of regexp feature that is not yet implemented. " + extraInfo);
 				case ErrorCode.REGEX_MISMATCHED_PAREN:
-					throw new ApplicationException("RegEx Error: Incorrectly nested parentheses in regexp pattern. " + extraInfo);
+					throw new RegexException("RegEx Error: Incorrectly nested parentheses in regexp pattern. " + extraInfo);
 				case ErrorCode.REGEX_NUMBER_TOO_BIG:
-					throw new ApplicationException("RegEx Error: Decimal number is too large. " + extraInfo);
+					throw new RegexException("RegEx Error: Decimal number is too large. " + extraInfo);
 				case ErrorCode.REGEX_BAD_INTERVAL:
-					throw new ApplicationException("RegEx Error: Error in {min,max} interval " + extraInfo);
+					throw new RegexException("RegEx Error: Error in {min,max} interval " + extraInfo);
 				case ErrorCode.REGEX_MAX_LT_MIN:
-					throw new ApplicationException("RegEx Error: In {min,max}, max is less than min. " + extraInfo);
+					throw new RegexException("RegEx Error: In {min,max}, max is less than min. " + extraInfo);
 				case ErrorCode.REGEX_INVALID_BACK_REF:
-					throw new ApplicationException("RegEx Error: Back-reference to a non-existent capture group. " + extraInfo);
+					throw new RegexException("RegEx Error: Back-reference to a non-existent capture group. " + extraInfo);
 				case ErrorCode.REGEX_INVALID_FLAG:
-					throw new ApplicationException("RegEx Error: Invalid value for match mode flags. " + extraInfo);
+					throw new RegexException("RegEx Error: Invalid value for match mode flags. " + extraInfo);
 				case ErrorCode.REGEX_LOOK_BEHIND_LIMIT:
-					throw new ApplicationException("RegEx Error: Look-Behind pattern matches must have a bounded maximum length. " + extraInfo);
+					throw new RegexException("RegEx Error: Look-Behind pattern matches must have a bounded maximum length. " + extraInfo);
 				case ErrorCode.REGEX_SET_CONTAINS_STRING:
-					throw new ApplicationException("RegEx Error: Regexps cannot have UnicodeSets containing strings. " + extraInfo);
+					throw new RegexException("RegEx Error: Regexps cannot have UnicodeSets containing strings. " + extraInfo);
 				case ErrorCode.REGEX_OCTAL_TOO_BIG:
-					throw new ApplicationException("Regex Error: Octal character constants must be <= 0377. " + extraInfo);
+					throw new RegexException("Regex Error: Octal character constants must be <= 0377. " + extraInfo);
 				case ErrorCode.REGEX_MISSING_CLOSE_BRACKET:
-					throw new ApplicationException("Regex Error: Missing closing bracket on a bracket expression. " + extraInfo);
+					throw new RegexException("Regex Error: Missing closing bracket on a bracket expression. " + extraInfo);
 				case ErrorCode.REGEX_INVALID_RANGE:
-					throw new ApplicationException("Regex Error: In a character range [x-y], x is greater than y. " + extraInfo);
+					throw new RegexException("Regex Error: In a character range [x-y], x is greater than y. " + extraInfo);
 				case ErrorCode.REGEX_STACK_OVERFLOW:
-					throw new ApplicationException("Regex Error: Regular expression backtrack stack overflow. " + extraInfo);
+					throw new RegexException("Regex Error: Regular expression backtrack stack overflow. " + extraInfo);
 				case ErrorCode.REGEX_TIME_OUT:
-					throw new ApplicationException("Regex Error: Maximum allowed match time exceeded. " + extraInfo);
+					throw new RegexException("Regex Error: Maximum allowed match time exceeded. " + extraInfo);
 				case ErrorCode.REGEX_STOPPED_BY_CALLER:
-					throw new ApplicationException("Regex Error: Matching operation aborted by user callback fn. " + extraInfo);
+					throw new RegexException("Regex Error: Matching operation aborted by user callback fn. " + extraInfo);
 				case ErrorCode.REGEX_ERROR_LIMIT:
-					throw new ApplicationException("RegEx Error:  " + extraInfo);
+					throw new RegexException("RegEx Error:  " + extraInfo);
 				case ErrorCode.IDNA_PROHIBITED_ERROR:
-					throw new ApplicationException("IDNA Error: Prohibited " + extraInfo);
+					throw new IDNAException("IDNA Error: Prohibited " + extraInfo);
 				case ErrorCode.IDNA_UNASSIGNED_ERROR:
-					throw new ApplicationException("IDNA Error: Unassigned " + extraInfo);
+					throw new IDNAException("IDNA Error: Unassigned " + extraInfo);
 				case ErrorCode.IDNA_CHECK_BIDI_ERROR:
-					throw new ApplicationException("IDNA Error: Check Bidi " + extraInfo);
+					throw new IDNAException("IDNA Error: Check Bidi " + extraInfo);
 				case ErrorCode.IDNA_STD3_ASCII_RULES_ERROR:
-					throw new ApplicationException("IDNA Error: Std3 Ascii Rules Error " + extraInfo);
+					throw new IDNAException("IDNA Error: Std3 Ascii Rules Error " + extraInfo);
 				case ErrorCode.IDNA_ACE_PREFIX_ERROR:
-					throw new ApplicationException("IDNA Error: Ace Prefix Error " + extraInfo);
+					throw new IDNAException("IDNA Error: Ace Prefix Error " + extraInfo);
 				case ErrorCode.IDNA_VERIFICATION_ERROR:
-					throw new ApplicationException("IDNA Error: Verification Error " + extraInfo);
+					throw new IDNAException("IDNA Error: Verification Error " + extraInfo);
 				case ErrorCode.IDNA_LABEL_TOO_LONG_ERROR:
-					throw new ApplicationException("IDNA Error: Label too long " + extraInfo);
+					throw new IDNAException("IDNA Error: Label too long " + extraInfo);
 				case ErrorCode.IDNA_ZERO_LENGTH_LABEL_ERROR:
-					throw new ApplicationException("IDNA Error: Zero length label " + extraInfo);
+					throw new IDNAException("IDNA Error: Zero length label " + extraInfo);
 				case ErrorCode.IDNA_DOMAIN_NAME_TOO_LONG_ERROR:
-					throw new ApplicationException("IDNA Error: Domain name too long " + extraInfo);
+					throw new IDNAException("IDNA Error: Domain name too long " + extraInfo);
 				default:
-					throw new InvalidEnumArgumentException("Missing implementation for ErrorCode " + e);
+					throw new NotSupportedException("Missing implementation for ErrorCode " + e);
 			}
 		}
 	}
