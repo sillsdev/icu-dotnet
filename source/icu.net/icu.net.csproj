@@ -110,6 +110,8 @@
   </PropertyGroup>
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
+    <PlatformAlias>net40</PlatformAlias>
+    <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver)</DefineConstants>
     <SignAssembly>true</SignAssembly>
@@ -182,8 +184,12 @@
   </Target>
   -->
   <Target Name="AfterBuild">
+    <PropertyGroup>
+      <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
+      <NuGetAssetsFolder>$(ProjectDir)NuGetAssets</NuGetAssetsFolder>
+    </PropertyGroup>
     <ItemGroup>
-      <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
+      <FilesToDelete Include="$(NuGetBuildFolder)\**\*.*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.dll*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
     </ItemGroup>
@@ -191,10 +197,10 @@
       <Output PropertyName="BuildCounter" TaskParameter="Value" />
     </CreateProperty>
     <Delete Files="@(FilesToDelete)" />
-    <MakeDir Directories="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
+    <MakeDir Directories="$(NuGetBuildFolder)" />
+    <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
+    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(NuGetBuildFolder)/lib/net40" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
   </Target>
   <PropertyGroup>
