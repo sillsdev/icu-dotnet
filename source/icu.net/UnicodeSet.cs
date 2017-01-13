@@ -89,7 +89,7 @@ namespace Icu
 						// Add a character range to the set
 						for (int j = startChar; j <= endChar; j++)
 						{
-							output.Add(((char) j).ToString(CultureInfo.InvariantCulture));
+							output.Add(string.Format(CultureInfo.InvariantCulture, "{0}", (char)j));
 						}
 					}
 					else

@@ -724,8 +724,8 @@ namespace Icu
 				string name;
 				if (CharName(chr[0], UCharNameChoice.UNICODE_CHAR_NAME, out name) > 0)
 				{
-					name = name.ToLower();
-					return CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(name);
+					var lowercase = CultureInfo.CurrentUICulture.TextInfo.ToLower(name);
+					return UnicodeString.ToTitle(lowercase, new Locale());
 				}
 			}
 			return null;
