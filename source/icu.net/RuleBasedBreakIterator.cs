@@ -9,7 +9,7 @@ namespace Icu
 	/// <summary>
 	/// A subclass of BreakIterator whose behavior is specified using a list of rules.
 	/// Instances of this class are most commonly created by the factory methods of
-	/// <see cref="BreakIterator.CreateWordInstance(Locale, string)"/>, 
+	/// <see cref="BreakIterator.CreateWordInstance(Locale, string)"/>,
 	/// <see cref="BreakIterator.CreateLineInstance(Locale, string)"/> etc.,
 	/// and then used via the abstract API in class BreakIterator
 	/// </summary>
@@ -39,7 +39,7 @@ namespace Icu
 		/// <param name="locale">The locale.</param>
 		/// <remarks>
 		/// If iterator type is UBreakIteratorType.WORD, it will include
-		/// spaces and punctuation as boundaries for words.  If this is 
+		/// spaces and punctuation as boundaries for words.  If this is
 		/// not desired <see cref="BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType, Locale, string, bool)"/>.
 		/// </remarks>
 		public RuleBasedBreakIterator(UBreakIteratorType iteratorType, Locale locale)
@@ -401,7 +401,8 @@ namespace Icu
 			// Function that checks if the offset is valid, gets the RuleStatus
 			// and RuleStatusVector for the offset and then adds it to
 			// textBoundaries.  Returns true if the boundary was not DONE.
-			Func<int, bool> checkOffsetAndAddRuleStatus = (int offset) => {
+			Func<int, bool> checkOffsetAndAddRuleStatus = (int offset) =>
+			{
 
 				if (offset == DONE)
 					return false;
@@ -520,7 +521,7 @@ namespace Icu
 		#region IDisposable Support
 
 		/// <summary>
-		/// Implementing IDisposable pattern to properly release unmanaged resources. 
+		/// Implementing IDisposable pattern to properly release unmanaged resources.
 		/// See https://msdn.microsoft.com/en-us/library/b1yfkh5e(v=vs.110).aspx
 		/// and https://msdn.microsoft.com/en-us/library/b1yfkh5e(v=vs.100).aspx
 		/// for more information.
@@ -572,7 +573,7 @@ namespace Icu
 				// ubrk_getRuleStatus() will return the numerically largest
 				// from the vector.  We are saving a PInvoke by finding the max
 				// value.
-				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values 
+				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
 				//int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
 				RuleStatus = ruleStatusVector.Max();
 			}

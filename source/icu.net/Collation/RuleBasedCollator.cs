@@ -471,7 +471,7 @@ namespace Icu.Collation
 		#region IDisposable Support
 
 		/// <summary>
-		/// Implementing IDisposable pattern to properly release unmanaged resources. 
+		/// Implementing IDisposable pattern to properly release unmanaged resources.
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
