@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2016 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("icu.net")]
-[assembly: AssemblyCopyright("Copyright © SIL International 2007-2016")]
+[assembly: AssemblyCopyright("Copyright © SIL International 2007-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
