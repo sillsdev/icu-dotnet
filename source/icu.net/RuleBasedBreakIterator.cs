@@ -398,72 +398,82 @@ namespace Icu
 
 			List<TextBoundary> textBoundaries = new List<TextBoundary>();
 
-			// Function that checks if the offset is valid, gets the RuleStatus
-			// and RuleStatusVector for the offset and then adds it to
-			// textBoundaries.  Returns true if the boundary was not DONE.
-			Func<int, bool> checkOffsetAndAddRuleStatus = (int offset) =>
-			{
-
-				if (offset == DONE)
-					return false;
-
-				const int length = 128;
-
-				int[] vector = new int[length];
-
-				ErrorCode errorCode;
-				int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, length, out errorCode);
-
-				if (errorCode.IsFailure())
-					throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
-
-				if (actualLen > length)
-				{
-					vector = new int[actualLen];
-					NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, vector.Length, out errorCode);
-
-					if (errorCode.IsFailure())
-						throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
-				}
-
-				int[] ruleStatuses;
-
-				// Constrain the size of the array to actual number of elements
-				// that were returned.
-				if (actualLen < vector.Length)
-				{
-					ruleStatuses = new int[actualLen];
-					Array.Copy(vector, ruleStatuses, actualLen);
-				}
-				else
-				{
-					ruleStatuses = vector;
-				}
-
-				textBoundaries.Add(new TextBoundary(offset, ruleStatuses));
-
-				return true;
-			};
-
 			// Start at the the beginning of the text and iterate until all
 			// of the boundaries are consumed.
 			int cur = NativeMethods.ubrk_first(_breakIterator);
 
-			if (!checkOffsetAndAddRuleStatus(cur))
+			TextBoundary textBoundary;
+
+			if (!TryGetTextBoundaryFromOffset(cur, out textBoundary))
 				return;
+
+			textBoundaries.Add(textBoundary);
 
 			while (cur != DONE)
 			{
 				int next = NativeMethods.ubrk_next(_breakIterator);
 
-				if (!checkOffsetAndAddRuleStatus(next))
+				if (!TryGetTextBoundaryFromOffset(next, out textBoundary))
 					break;
 
+				textBoundaries.Add(textBoundary);
 				cur = next;
 			}
 
 			_textBoundaries = textBoundaries.ToArray();
 			_currentIndex = 0;
+		}
+
+		/// <summary>
+		/// Checks if the offset is valid, gets the RuleStatus and
+		/// RuleStatusVector for the offset and returns that TextBoundary.
+		/// </summary>
+		/// <param name="offset">Offset to check in text.</param>
+		/// <param name="textBoundary">TextBoundary for the given offset.</param>
+		/// <returns>true if the offset is valid; false otherwise.</returns>
+		private bool TryGetTextBoundaryFromOffset(int offset, out TextBoundary textBoundary)
+		{
+			textBoundary = default(TextBoundary);
+
+			if (offset == DONE)
+				return false;
+
+			const int length = 128;
+
+			int[] vector = new int[length];
+
+			ErrorCode errorCode;
+			int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, length, out errorCode);
+
+			if (errorCode.IsFailure())
+				throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
+
+			if (actualLen > length)
+			{
+				vector = new int[actualLen];
+				NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, vector.Length, out errorCode);
+
+				if (errorCode.IsFailure())
+					throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
+			}
+
+			int[] ruleStatuses;
+
+			// Constrain the size of the array to actual number of elements
+			// that were returned.
+			if (actualLen < vector.Length)
+			{
+				ruleStatuses = new int[actualLen];
+				Array.Copy(vector, ruleStatuses, actualLen);
+			}
+			else
+			{
+				ruleStatuses = vector;
+			}
+
+			textBoundary = new TextBoundary(offset, ruleStatuses);
+
+			return true;
 		}
 
 		/// <summary>
