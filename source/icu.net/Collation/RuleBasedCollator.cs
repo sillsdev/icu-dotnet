@@ -41,7 +41,8 @@ namespace Icu.Collation
 			}
 		}
 
-		private SafeRuleBasedCollatorHandle _collatorHandle;
+		private bool _disposingValue = false; // To detect redundant calls
+		private SafeRuleBasedCollatorHandle _collatorHandle = default(SafeRuleBasedCollatorHandle);
 
 		private RuleBasedCollator() {}
 
@@ -467,5 +468,34 @@ namespace Icu.Collation
 
 		#endregion
 
+		#region IDisposable Support
+
+		/// <summary>
+		/// Implementing IDisposable pattern to properly release unmanaged resources.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (!_disposingValue)
+			{
+				if (disposing)
+				{
+					// Dispose managed state (managed objects), if any.
+				}
+
+				if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
+				{
+					_collatorHandle.Dispose();
+				}
+
+				_disposingValue = true;
+			}
+		}
+
+		~RuleBasedCollator()
+		{
+			Dispose(false);
+		}
+
+		#endregion
 	}
 }

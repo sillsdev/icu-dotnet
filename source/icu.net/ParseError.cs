@@ -47,14 +47,14 @@ namespace Icu
 				throw new ArgumentNullException();
 			}
 
-			string result = "\nAt " ;
+			string result = Environment.NewLine + "At " ;
 			if (Line > 0)
 			{
 				result += "Line " + Line + ' ';
 			}
 			if (Offset >= 0)
 			{
-				result += "Offset " + Offset + '\n';
+				result += "Offset " + Offset + Environment.NewLine;
 			}
 
 			string ruleError = string.Empty;
@@ -62,8 +62,8 @@ namespace Icu
 			{
 				if (rules.Length > 0 && Offset > 0)
 				{
-					ruleError = GetLine(rules, Line) + '\n';
-					ruleError += new string('-', Offset - 1) + "^\n";
+					ruleError = GetLine(rules, Line) + Environment.NewLine;
+					ruleError += new string('-', Offset - 1) + "^" + Environment.NewLine;
 				}
 			}
 			catch
@@ -72,13 +72,13 @@ namespace Icu
 			}
 			result += ruleError;
 
-			result += "PreContext: " + PreContext + '\n' + "PostContext: " + PostContext;
+			result += "PreContext: " + PreContext + Environment.NewLine + "PostContext: " + PostContext;
 			return result;
 		}
 
 		static private string GetLine(string text, int line)
 		{
-			return text.Split('\n')[line];
+			return text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[line];
 		}
 	}
 }

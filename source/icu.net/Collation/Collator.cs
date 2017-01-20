@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Icu.Collation
 {
-	public abstract class Collator : IComparer<string>, ICloneable
+	public abstract class Collator : IComparer<string>, ICloneable, IDisposable
 	{
 		public abstract CollationStrength Strength{ get; set; }
 
@@ -280,6 +280,22 @@ namespace Icu.Collation
 					throw new Exception("Collator.GetSortKeyBound() failed with code " + err);
 			}
 		}
+
+		#region IDisposable Support
+
+		/// <summary>
+		/// Dispose of managed/unmanaged resources.
+		/// Allow any inheriting classes to dispose of manage
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing) { }
+
+		#endregion
 
 	}
 }
