@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Implement `RuleBasedBreakIterator` class (Connie Yau)
 - Make `BreakIterator` closer to `Icu::BreakIterator` (Connie Yau)
+- Enable and fix XML documentation (MURATA Makoto)
 
 ## [2.0.1] - 2016-12-19
 
