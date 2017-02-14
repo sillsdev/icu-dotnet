@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Assembly marked as CLSCompliant (#33)
 - additionally look in lib/x86 and lib/x64 for ICU binaries
+- Add minimal support of regular expressions (#32, MURATA Makoto)
 
 ## [2.1.0] - 2017-03-17
 

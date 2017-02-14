@@ -138,6 +138,7 @@
     <Compile Include="Collation\RuleBasedCollator.cs" />
     <Compile Include="ParseErrorException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegexMatcher.cs" />
     <Compile Include="RuleBasedBreakIterator.cs" />
     <Compile Include="VersionInfo.cs" />
     <Compile Include="IcuWrapper.cs" />
