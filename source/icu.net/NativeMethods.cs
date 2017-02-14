@@ -890,6 +890,24 @@ namespace Icu
 			internal delegate int uset_getItemCountDelegate(IntPtr set);
 
 
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            internal delegate IntPtr uregex_openDelegate(string pattern, int patternLength,
+                uint flags, out ParseError parseError, out ErrorCode errorCode);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            // Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+            // which are usually zero, especially in debug builds...but one day we will be sorry.
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal delegate bool uregex_matchesDelegate(IntPtr regexp, int startIndex, out ErrorCode errorCode);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            internal delegate void uregex_setTextDelegate(IntPtr regexp,
+                string text, int textLength, out ErrorCode errorCode);
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            internal delegate void uregex_closeDelegate(IntPtr regexp);
+
+
 			internal u_initDelegate u_init;
 			internal u_cleanupDelegate u_cleanup;
 			internal u_getDataDirectoryDelegate u_getDataDirectory;
@@ -959,6 +977,13 @@ namespace Icu
 			internal uset_addStringDelegate uset_addString;
 			internal uset_getItemDelegate uset_getItem;
 			internal uset_getItemCountDelegate uset_getItemCount;
+
+
+            internal uregex_openDelegate uregex_open;
+            internal uregex_matchesDelegate uregex_matches;
+            internal uregex_setTextDelegate uregex_setText;
+            internal uregex_closeDelegate uregex_close;
+
 		}
 
 		/// <summary>get the name of an ICU code point</summary>
@@ -1599,6 +1624,53 @@ namespace Icu
 		}
 
 		#endregion Break iterator
+
+        #region Regex Matcher
+
+        /// <summary>
+        /// Open a new Regexp Matcher.
+        /// </summary>
+        /// <param name="regexp">Regular expression.</param>
+        /// <returns></returns>
+		public static IntPtr uregex_open(
+            string pattern, int patternLength,
+            uint flags,
+            out ParseError parseError, out ErrorCode errorCode)
+        {
+            if (Methods.uregex_open == null)
+                Methods.uregex_open = GetMethod<MethodsContainer.uregex_openDelegate>(IcuI18NLibHandle, "uregex_open", true);
+            return Methods.uregex_open(pattern, patternLength, flags, out parseError, out errorCode);
+        }
+
+        public static bool uregex_matches(
+            IntPtr regexp,
+            int startIndex,
+            out ErrorCode errorCode)
+        {
+            if (Methods.uregex_matches == null)
+                Methods.uregex_matches = GetMethod<MethodsContainer.uregex_matchesDelegate>(IcuI18NLibHandle, "uregex_matches", true);
+            return Methods.uregex_matches(regexp, startIndex, out errorCode);
+        }
+        public static void uregex_setText(
+            IntPtr regexp,
+            string text, int textLength,
+            out ErrorCode errorCode)
+        {
+            if (Methods.uregex_setText == null)
+                Methods.uregex_setText = GetMethod<MethodsContainer.uregex_setTextDelegate>(IcuI18NLibHandle, "uregex_setText", true);
+            Methods.uregex_setText(regexp, text, textLength, out errorCode);
+        }
+
+        public static void uregex_close(
+            IntPtr regexp)
+        {
+            if (Methods.uregex_close == null)
+                Methods.uregex_close = GetMethod<MethodsContainer.uregex_closeDelegate>(IcuI18NLibHandle, "uregex_close", true);
+            Methods.uregex_close(regexp);
+        }
+
+
+        #endregion Regex Matcher
 
 		#region Unicode set
 
