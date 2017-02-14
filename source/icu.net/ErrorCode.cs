@@ -163,7 +163,7 @@ namespace Icu
 		REGEX_INVALID_FLAG,                 /** Invalid value for match mode flags.                */
 		REGEX_LOOK_BEHIND_LIMIT,            /** Look-Behind pattern matches must have a bounded maximum length.    */
 		REGEX_SET_CONTAINS_STRING,          /** Regexps cannot have UnicodeSets containing strings.*/
-		REGEX_OCTAL_TOO_BIG,                /** Octal character constants must be <= 0377. */
+		REGEX_OCTAL_TOO_BIG,                /** Octal character constants must be &lt;= 0377. */
 		REGEX_MISSING_CLOSE_BRACKET,        /** Missing closing bracket on a bracket expression. */
 		REGEX_INVALID_RANGE,                /** In a character range [x-y], x is greater than y. */
 		REGEX_STACK_OVERFLOW,               /** Regular expression backtrack stack overflow. */
