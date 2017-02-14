@@ -17,11 +17,11 @@ namespace Icu
 		/// </summary>
 		public readonly int End;
 
-		/// <summary>
-		/// Creates a boundary with the specified start and end. The word would lie
-		/// between indices x, Start <= x < End
-		/// </summary>
-		public Boundary(int start, int end)
+        /// <summary>
+        /// Creates a boundary with the specified start and end. The word would lie
+        /// between indices x, Start &lt;= x &lt; End
+        /// </summary>
+        public Boundary(int start, int end)
 		{
 			if (start > end)
 			{
