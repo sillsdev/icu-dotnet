@@ -8,6 +8,9 @@ namespace Icu.Collation
 	/// </summary>
 	public enum CaseFirst
 	{
+		/// <summary>
+		/// Default value that does nothing.
+		/// </summary>
 		Default = -1,
 		/// <summary>
 		/// orders upper and lower case letters in accordance to their tertiary weights
