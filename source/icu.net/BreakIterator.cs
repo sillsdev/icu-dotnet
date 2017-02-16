@@ -32,6 +32,14 @@ namespace Icu
 			//TITLE
 		}
 
+		/// <summary>
+		/// Enum constants for the word break tags returned by <see cref="GetRuleStatus"/>
+		/// and <see cref="GetRuleStatusVector"/>.
+		/// A range of values is defined for each category of word, to allow for
+		/// further subdivisions of a category in future releases.
+		/// Applications should check for tag values falling within the range,
+		/// rather than for single individual values.
+		/// </summary>
 		public enum UWordBreak
 		{
 			/// <summary>
@@ -78,19 +86,64 @@ namespace Icu
 			IDEO_LIMIT     = 500,
 		}
 
+		/// <summary>
+		/// Enum constants for the line break tags returned by <see cref="GetRuleStatus"/>
+		/// and <see cref="GetRuleStatusVector"/>.
+		/// A range of values is defined for each category of word, to allow for
+		/// further subdivisions of a category in future releases.
+		/// Applications should check for tag values falling within the range,
+		/// rather than for single individual values.
+		/// </summary>
 		public enum ULineBreakTag
 		{
+			/// <summary>
+			/// Tag value for soft line breaks, positions at which a line break
+			/// is acceptable but not required
+			/// </summary>
 			SOFT            = 0,
+			/// <summary>
+			/// Upper bound for soft line breaks.
+			/// </summary>
 			SOFT_LIMIT      = 100,
+			/// <summary>
+			/// Tag value for a hard, or mandatory line break
+			/// </summary>
 			HARD            = 100,
+			/// <summary>
+			/// Upper bound for hard line breaks.
+			/// </summary>
 			HARD_LIMIT      = 200,
 		}
 
+		/// <summary>
+		/// Enum constants for the sentence break tags returned by <see cref="GetRuleStatus"/>
+		/// and <see cref="GetRuleStatusVector"/>.
+		/// A range of values is defined for each category of sentence, to allow
+		/// for further subdivisions of a category in future releases.
+		/// Applications should check for tag values falling within the range,
+		/// rather than for single individual values.
+		/// </summary>
 		public enum USentenceBreakTag
 		{
+			/// <summary>
+			/// Tag value for for sentences  ending with a sentence terminator
+			/// ('.', '?', '!', etc.) character, possibly followed by a
+			/// hard separator (CR, LF, PS, etc.)
+			/// </summary>
 			TERM       = 0,
+			/// <summary>
+			/// Upper bound for tags for sentences ended by sentence terminators.
+			/// </summary>
 			TERM_LIMIT = 100,
+			/// <summary>
+			/// ag value for for sentences that do not contain an ending
+			/// sentence terminator ('.', '?', '!', etc.) character, but
+			/// are ended only by a hard separator (CR, LF, PS, etc.) or end of input.
+			/// </summary>
 			SEP        = 100,
+			/// <summary>
+			/// Upper bound for tags for sentences ended by a separator.
+			/// </summary>
 			SEP_LIMIT  = 200,
 		}
 
@@ -237,7 +290,6 @@ namespace Icu
 		/// Creates a BreakIterator that splits on lines for the given locale.
 		/// </summary>
 		/// <param name="locale">The locale.</param>
-		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateLineInstance(Locale locale)
 		{
 			return new RuleBasedBreakIterator(UBreakIteratorType.LINE, locale);
@@ -247,7 +299,6 @@ namespace Icu
 		/// Creates a BreakIterator that splits on sentences for the given locale.
 		/// </summary>
 		/// <param name="locale">The locale.</param>
-		/// <param name="text">The initial text.</param>
 		public static BreakIterator CreateSentenceInstance(Locale locale)
 		{
 			return new RuleBasedBreakIterator(UBreakIteratorType.SENTENCE, locale);
@@ -288,6 +339,8 @@ namespace Icu
 		/// <summary>
 		/// Gets word boundaries for given text.
 		/// </summary>
+		/// <param name="locale">The locale to use</param>
+		/// <param name="text">The input text</param>
 		/// <param name="includeSpacesAndPunctuation">
 		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
 		/// punctuation as boundaries for words. Set parameter to true if all
@@ -302,6 +355,8 @@ namespace Icu
 		/// <summary>
 		/// Gets word boundaries for given text.
 		/// </summary>
+		/// <param name="locale">The locale to use</param>
+		/// <param name="text">The input text</param>
 		/// <param name="includeSpacesAndPunctuation">
 		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
 		/// punctuation as boundaries for words. Set parameter to true if all
@@ -378,6 +433,11 @@ namespace Icu
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// Releases the resources used by BreakIterator.
+		/// </summary>
+		/// <param name="disposing">true to release managed and unmanaged
+		/// resources; false to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing) { }
 	}
 }
