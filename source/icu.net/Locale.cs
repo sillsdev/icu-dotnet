@@ -8,6 +8,9 @@ using System.Text;
 
 namespace Icu
 {
+	/// <summary>
+	/// A Locale object represents a specific geographical, political, or cultural region.
+	/// </summary>
 	public class Locale: ICloneable
 	{
 		/// <summary>
@@ -38,11 +41,24 @@ namespace Icu
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Locale"/> class.
+		/// </summary>
+		/// <param name="language">Lowercase two-letter or three-letter ISO-639 code.</param>
+		/// <param name="country">Uppercase two-letter ISO-3166 code.</param>
+		/// <param name="variant">Uppercase vendor and browser specific code.</param>
 		public Locale(string language, string country, string variant):
 			this (language, country, variant, null)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Locale"/> class.
+		/// </summary>
+		/// <param name="language">Lowercase two-letter or three-letter ISO-639 code.</param>
+		/// <param name="country">Uppercase two-letter ISO-3166 code.</param>
+		/// <param name="variant">Uppercase vendor and browser specific code.</param>
+		/// <param name="keywordsAndValues">A string consisting of keyword/values pairs, such as "collation=phonebook;currency=euro"</param>
 		public Locale(string language, string country, string variant, string keywordsAndValues)
 		{
 			var bldr = new StringBuilder();
@@ -58,6 +74,9 @@ namespace Icu
 			Id = Canonicalize(bldr.ToString());
 		}
 
+		/// <summary>
+		/// Clone this object. (Not Implemented.)
+		/// </summary>
 		public object Clone()
 		{
 			throw new NotImplementedException();
@@ -92,16 +111,26 @@ namespace Icu
 			get { return GetString(NativeMethods.uloc_getCountry, Id); }
 		}
 
+		/// <summary>
+		/// Gets the variant code for the Locale.
+		/// </summary>
 		public string Variant
 		{
 			get { return GetString(NativeMethods.uloc_getVariant, Id); }
 		}
 
+		/// <summary>
+		/// Gets the full name for the specified locale.
+		/// </summary>
 		public string Name
 		{
 			get { return GetString(NativeMethods.uloc_getName, Id); }
 		}
 
+		/// <summary>
+		/// Gets the full name for the specified locale, like <see cref="Name"/>,
+		/// but without keywords.
+		/// </summary>
 		public string BaseName
 		{
 			get { return GetString(NativeMethods.uloc_getBaseName, Id); }
@@ -123,46 +152,77 @@ namespace Icu
 			get { return Marshal.PtrToStringAnsi(NativeMethods.uloc_getISO3Country(Id)); }
 		}
 
+		/// <summary>
+		/// Gets the Win32 LCID value for the specified locale.
+		/// </summary>
 		public int Lcid
 		{
 			get { return NativeMethods.uloc_getLCID(Id); }
 		}
 
+		/// <summary>
+		/// Gets the language for the UI's locale.
+		/// </summary>
 		public string DisplayLanguage
 		{
 			get { return GetDisplayLanguage(new Locale().Id); }
 		}
 
+		/// <summary>
+		/// Gets the language name suitable for display for the specified locale
+		/// </summary>
+		/// <param name="displayLocale">The display locale</param>
 		public string GetDisplayLanguage(Locale displayLocale)
 		{
 			return GetString(NativeMethods.uloc_getDisplayLanguage, Id, displayLocale.Id);
 		}
 
+		/// <summary>
+		/// Gets the country for the UI's locale.
+		/// </summary>
 		public string DisplayCountry
 		{
 			get { return GetDisplayCountry(new Locale().Id); }
 		}
 
+		/// <summary>
+		/// Gets the country name suitable for display for the specified locale.
+		/// </summary>
+		/// <param name="displayLocale">The display locale</param>
 		public string GetDisplayCountry(Locale displayLocale)
 		{
 			return GetString(NativeMethods.uloc_getDisplayCountry, Id, displayLocale.Id);
 		}
 
+		/// <summary>
+		/// Gets the full name for the UI's locale.
+		/// </summary>
 		public string DisplayName
 		{
 			get { return GetDisplayName(new Locale().Id); }
 		}
 
+		/// <summary>
+		/// Gets the full name suitable for display for the specified locale.
+		/// </summary>
+		/// <param name="displayLocale">The display locale</param>
 		public string GetDisplayName(Locale displayLocale)
 		{
 			return GetString(NativeMethods.uloc_getDisplayName, Id, displayLocale.Id);
 		}
 
+		/// <summary>
+		/// Gets the Locale's <see cref="Id"/> as a string.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return Id;
 		}
 
+		/// <summary>
+		/// Gets a list of all available locales.
+		/// </summary>
 		public static List<Locale> AvailableLocales
 		{
 			get
@@ -174,6 +234,10 @@ namespace Icu
 			}
 		}
 
+		/// <summary>
+		/// Creates a Locale with the given Locale id.
+		/// </summary>
+		/// <param name="localeId">Locale id</param>
 		public static implicit operator Locale(string localeId)
 		{
 			return new Locale(localeId);
