@@ -10,8 +10,18 @@ namespace Icu.Collation
 	/// </summary>
 	public enum HiraganaQuaternary
 	{
+		/// <summary>
+		/// Default value, does nothing.
+		/// </summary>
 		Default = -1,
+		/// <summary>
+		/// Turns off ability to position positions Hiragana before all
+		/// non-ignorables on quaternary level.
+		/// </summary>
 		Off = 16,
+		/// <summary>
+		/// positions Hiragana before all non-ignorables on quaternary level.
+		/// </summary>
 		On = 17
 	}
 }
