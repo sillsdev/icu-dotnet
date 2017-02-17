@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// Unicode normalization functionality for standard Unicode normalization or for using custom mapping tables.
+	/// </summary>
 	public class Normalizer
 	{
 		/// <summary>
