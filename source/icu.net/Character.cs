@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Globalization;
@@ -73,7 +73,7 @@ namespace Icu
 			/// <summary>Characters commonly used for hexadecimal numbers.</summary>
 			HEX_DIGIT = 13,
 			/// <summary>
-			/// Dashes used to mark connections between pieces of words,plus the
+			/// Dashes used to mark connections between pieces of words, plus the
 			/// Katakana middle dot.
 			/// </summary>
 			HYPHEN = 14,

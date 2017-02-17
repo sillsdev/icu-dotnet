@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
@@ -28,8 +28,8 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Convert the characters in this to lower case following the
-		/// conventions of a specific locale.
+		/// Convert the characters in <paramref name="src"/> to lower case
+		/// following the conventions of a specific locale.
 		/// </summary>
 		/// <param name="src">String to convert.</param>
 		/// <param name="locale">The locale to consider, or "" for the root
@@ -82,11 +82,11 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Convert the characters in this to UPPER CASE following the
-		/// conventions of a specific locale.
+		/// Convert the characters in <paramref name="src"/> to UPPER CASE
+		/// following the conventions of a specific locale.
 		/// </summary>
 		/// <param name="src">String to convert.</param>
-		/// <param name="locale">The locale to consider, or "" for the root 
+		/// <param name="locale">The locale to consider, or "" for the root
 		/// locale or NULL for the default locale.</param>
 		public static string ToUpper(string src, string locale)
 		{
@@ -139,7 +139,7 @@ namespace Icu
 		/// <summary>
 		/// Titlecase a string. Casing is locale-dependent and context-sensitive.
 		/// Titlecasing uses a break iterator to find the first characters of
-		/// words that are to be titlecased.It titlecases those characters and
+		/// words that are to be titlecased. It titlecases those characters and
 		/// lowercases all others.
 		/// </summary>
 		/// <param name="src">The original string</param>

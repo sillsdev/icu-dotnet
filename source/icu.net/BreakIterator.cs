@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace Icu
 		public enum USentenceBreakTag
 		{
 			/// <summary>
-			/// Tag value for for sentences  ending with a sentence terminator
+			/// Tag value for sentences ending with a sentence terminator
 			/// ('.', '?', '!', etc.) character, possibly followed by a
 			/// hard separator (CR, LF, PS, etc.)
 			/// </summary>
@@ -136,7 +136,7 @@ namespace Icu
 			/// </summary>
 			TERM_LIMIT = 100,
 			/// <summary>
-			/// ag value for for sentences that do not contain an ending
+			/// Tag value for sentences that do not contain an ending
 			/// sentence terminator ('.', '?', '!', etc.) character, but
 			/// are ended only by a hard separator (CR, LF, PS, etc.) or end of input.
 			/// </summary>
