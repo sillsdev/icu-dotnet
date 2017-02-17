@@ -5,6 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// Helps fetch information about ICU library such as ICU version, data
+	/// folder, etc.
+	/// </summary>
 	public static class Wrapper
 	{
 		#region Public Properties
