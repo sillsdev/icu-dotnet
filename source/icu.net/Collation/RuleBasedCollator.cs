@@ -8,6 +8,10 @@ using System.Globalization;
 
 namespace Icu.Collation
 {
+	/// <summary>
+	/// The RuleBasedCollator class provides the implementation of
+	/// <see cref="Collator"/>, using data-driven tables.
+	/// </summary>
 	public sealed class RuleBasedCollator : Collator
 	{
 		internal sealed class SafeRuleBasedCollatorHandle : SafeHandle
@@ -154,6 +158,7 @@ namespace Icu.Collation
 		/// non-ignorables on quaternary level This is a sneaky way to produce JIS
 		/// sort order
 		/// </summary>
+		[Obsolete("ICU 50 Implementation detail, cannot be set via API, was removed from implementation.")]
 		public override HiraganaQuaternary HiraganaQuaternary
 		{
 			get { return (HiraganaQuaternary) GetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode); }
@@ -252,6 +257,11 @@ namespace Icu.Collation
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
+		/// <summary>
+		/// Create a string enumerator of all locales for which a valid collator
+		/// may be opened.
+		/// </summary>
+		/// <returns></returns>
 		public static IList<string> GetAvailableCollationLocales()
 		{
 			List<string> locales = new List<string>();
@@ -347,11 +357,21 @@ namespace Icu.Collation
 			return copy;
 		}
 
+		/// <summary>
+		/// Opens a Collator for comparing strings using the given locale id.
+		/// Does not allow for locale fallback.
+		/// </summary>
+		/// <param name="localeId">Locale to use</param>
 		public static new Collator Create(string localeId)
 		{
 			return Create(localeId, Fallback.NoFallback);
 		}
 
+		/// <summary>
+		/// Opens a Collator for comparing strings using the given locale id.
+		/// </summary>
+		/// <param name="localeId">Locale to use</param>
+		/// <param name="fallback">Whether to allow locale fallback or not.</param>
 		public static new Collator Create(string localeId, Fallback fallback)
 		{
 			// Culture identifiers in .NET are created using '-', while ICU
@@ -491,6 +511,9 @@ namespace Icu.Collation
 			}
 		}
 
+		/// <summary>
+		/// Disposes of all unmanaged resources used by RulesBasedCollator.
+		/// </summary>
 		~RuleBasedCollator()
 		{
 			Dispose(false);
