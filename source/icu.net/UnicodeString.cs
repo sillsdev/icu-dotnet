@@ -1,10 +1,15 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// UnicodeString is a string class that stores Unicode characters directly
+	/// and provides similar functionality as the Java String and
+	/// StringBuffer/StringBuilder classes.
+	/// </summary>
 	public class UnicodeString
 	{
 
@@ -22,6 +27,13 @@ namespace Icu
 			return ToLower(src, locale.Id);
 		}
 
+		/// <summary>
+		/// Convert the characters in <paramref name="src"/> to lower case
+		/// following the conventions of a specific locale.
+		/// </summary>
+		/// <param name="src">String to convert.</param>
+		/// <param name="locale">The locale to consider, or "" for the root
+		/// locale or NULL for the default locale.</param>
 		public static string ToLower(string src, string locale)
 		{
 			if (src == null)
@@ -62,14 +74,20 @@ namespace Icu
 		/// Convert the string to upper case, using the convention of the specified locale.
 		/// This may be null for the universal locale, or "" for a 'root' locale (whatever that means).
 		/// </summary>
-		/// <param name="src"></param>
-		/// <param name="locale"></param>
-		/// <returns></returns>
+		/// <param name="src">String to convert.</param>
+		/// <param name="locale">The locale containing the conventions to use.</param>
 		public static string ToUpper(string src, Locale locale)
 		{
 			return ToUpper(src, locale.Id);
 		}
 
+		/// <summary>
+		/// Convert the characters in <paramref name="src"/> to UPPER CASE
+		/// following the conventions of a specific locale.
+		/// </summary>
+		/// <param name="src">String to convert.</param>
+		/// <param name="locale">The locale to consider, or "" for the root
+		/// locale or NULL for the default locale.</param>
 		public static string ToUpper(string src, string locale)
 		{
 			if (src == null)
@@ -118,6 +136,16 @@ namespace Icu
 			return ToTitle(src, locale.Id);
 		}
 
+		/// <summary>
+		/// Titlecase a string. Casing is locale-dependent and context-sensitive.
+		/// Titlecasing uses a break iterator to find the first characters of
+		/// words that are to be titlecased. It titlecases those characters and
+		/// lowercases all others.
+		/// </summary>
+		/// <param name="src">The original string</param>
+		/// <param name="locale">The locale to consider, or "" for the root
+		/// locale or NULL for the default locale.</param>
+		/// <returns></returns>
 		public static string ToTitle(string src, string locale)
 		{
 			if (src == null)
@@ -157,6 +185,15 @@ namespace Icu
 			}
 		}
 
+		/// <summary>
+		/// Titlecase a string and then normalizes the string using the given
+		/// normalization mode.
+		/// </summary>
+		/// <param name="src">The original string.</param>
+		/// <param name="locale">The locale to consider, or "" for the root
+		/// locale or NULL for the default locale.</param>
+		/// <param name="normMode">Normalization mode to apply to titlecased string.</param>
+		/// <returns></returns>
 		public static string ToTitle(string src, string locale, Normalizer.UNormalizationMode normMode)
 		{
 			src = Normalizer.Normalize(src, Normalizer.UNormalizationMode.UNORM_NFC);
