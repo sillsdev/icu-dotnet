@@ -1,6 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace Icu
 		#region Native methods for Windows
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern IntPtr LoadLibrary(string dllToLoad);
+		private static extern IntPtr LoadLibraryEx(string dllToLoad, IntPtr hReservedNull, LoadLibraryFlags dwFlags);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern bool FreeLibrary(IntPtr hModule);
@@ -71,8 +72,23 @@ namespace Icu
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool SetDllDirectory(string dllDirectory);
+		[Flags]
+		internal enum LoadLibraryFlags : uint
+		{
+			NONE = 0x00000000,
+			DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
+			LOAD_IGNORE_CODE_AUTHZ_LEVEL = 0x00000010,
+			LOAD_LIBRARY_AS_DATAFILE = 0x00000002,
+			LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE = 0x00000040,
+			LOAD_LIBRARY_AS_IMAGE_RESOURCE = 0x00000020,
+			LOAD_LIBRARY_SEARCH_APPLICATION_DIR = 0x00000200,
+			LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000,
+			LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100,
+			LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800,
+			LOAD_LIBRARY_SEARCH_USER_DIRS = 0x00000400,
+			LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008
+		}
+
 		#endregion
 
 		private static int IcuVersion;
@@ -124,9 +140,10 @@ namespace Icu
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
-			if (IsWindows)
-				SetDllDirectory(directory);
-			else
+			// Only perform this for Linux because we are using LoadLibraryEx
+			// to ensure that a library's dependencies is loaded starting from
+			// where that library is located.
+			if (!IsWindows)
 			{
 				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
 				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH",
@@ -156,6 +173,7 @@ namespace Icu
 						icuVersion, directory);
 					IcuVersion = icuVersion;
 					_IcuPath = directory;
+
 					AddDirectoryToSearchPath(directory);
 					return true;
 				}
@@ -195,8 +213,22 @@ namespace Icu
 			if (IsWindows)
 			{
 				var libName = string.Format("{0}{1}.dll", basename, icuVersion);
-				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
-				handle = LoadLibrary(libPath);
+				var isIcuPathSpecified = !string.IsNullOrEmpty(_IcuPath);
+				libPath = isIcuPathSpecified ? Path.Combine(_IcuPath, libName) : libName;
+
+				var loadLibraryFlags = LoadLibraryFlags.NONE;
+
+				if (isIcuPathSpecified)
+					loadLibraryFlags |= LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
+
+				handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
+				var lastError = Marshal.GetLastWin32Error();
+
+				if (handle == IntPtr.Zero && lastError != 0)
+				{
+					string errorMessage = new Win32Exception(lastError).Message;
+					Trace.WriteLine(string.Format("Unable to load [{0}]. Error: {1}", libPath, errorMessage));
+				}
 			}
 			else
 			{
