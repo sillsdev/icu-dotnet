@@ -51,14 +51,15 @@ The full version of ICU is also available as
 - Rules-based Collator
 - Unicode set to pattern conversions
 
-## Troubleshooting installations
+## Troubleshooting
 
  - make sure you added the nuget packages `icu.net` and `Icu4c.Win.Min`.
  - the binaries of the nuget packages need to be copied to your output directory.
    For `icu.net` this happens by the reference to the assembly that the package
    adds to your project. The binaries of `Icu4c.Win.Min` are only relevant on
    Windows. They will get copied by the `Icu4c.Win.Min.targets` file included
-   in the nuget package. The package installer should have added an import to
-   the `*.csproj` file:
+   in the nuget package. 
+   
+The package installer should have added an import to the `*.csproj` file:
 
-       <Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
+    <Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
