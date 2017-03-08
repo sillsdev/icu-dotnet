@@ -8,9 +8,13 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
-	[TestFixture]
+#if NETCOREAPP1_1
+	[Ignore("System.Diagnostics.Process is not supported in .NETStandard 1.6.")]
+#else
 	[Platform(Exclude = "Linux",
 		Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+#endif
+	[TestFixture]
 	public class NativeMethodsTests
 	{
 		private string _tmpDir;
@@ -36,8 +40,14 @@ namespace Icu.Tests
 		{
 			get
 			{
-				return Path.GetDirectoryName(
-					new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
+#if NET40
+				Assembly assembly = Assembly.GetExecutingAssembly();
+#else
+				Assembly assembly = typeof(NativeMethodsTests).GetTypeInfo().Assembly;
+#endif
+				var location = assembly.CodeBase ?? assembly.Location;
+
+				return Path.GetDirectoryName(new Uri(location).LocalPath);
 			}
 		}
 
