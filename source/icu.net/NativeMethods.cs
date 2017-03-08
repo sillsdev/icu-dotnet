@@ -42,6 +42,14 @@ namespace Icu
 		static NativeMethods()
 		{
 			Methods = new MethodsContainer();
+#if !NET40
+			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
+			if (icuInfo.Success)
+			{
+				_IcuPath = icuInfo.IcuPath.FullName;
+				IcuVersion = icuInfo.IcuVersion;
+			}
+#endif
 		}
 
 		#region Dynamic method loading
