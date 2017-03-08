@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IcuSourceDirectory>..\icu.net.tests</IcuSourceDirectory>
+
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="56.1.9" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="NUnit" Version="3.6.1" />
+    <PackageReference Include="NUnit.Console" Version="3.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\icu.net.netstandard\icu.net.netstandard.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Include="$(IcuSourceDirectory)\**\*.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+</Project>
