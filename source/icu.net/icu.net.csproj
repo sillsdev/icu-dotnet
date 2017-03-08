@@ -117,7 +117,7 @@
     <PlatformAlias>net40</PlatformAlias>
     <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40</DefineConstants>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
