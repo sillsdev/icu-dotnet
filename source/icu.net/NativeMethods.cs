@@ -99,11 +99,19 @@ namespace Icu
 			}
 		}
 
-		private static string DirectoryOfThisAssembly
+		internal static string DirectoryOfThisAssembly
 		{
 			get
 			{
-				var uri = new Uri(typeof(NativeMethods).Assembly.CodeBase);
+				//NOTE: .GetTypeInfo() is not supported until .NET 4.5 onwards.
+#if NET40
+				Assembly currentAssembly = typeof(NativeMethods).Assembly;
+#else
+				Assembly currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
+#endif
+				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
+				var uri = new Uri(managedPath);
+
 				return Path.GetDirectoryName(uri.LocalPath);
 			}
 		}
