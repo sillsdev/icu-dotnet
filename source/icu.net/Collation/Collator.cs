@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -192,14 +192,21 @@ namespace Icu.Collation
 				throw new ArgumentOutOfRangeException("keyDataLength");
 			}
 
-			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty);
-			SetInternalOriginalStringField(sortKey, originalString);
-			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
+            CompareOptions options = CompareOptions.None;
 
-			return sortKey;
+#if NETSTANDARD1_6
+            SortKey sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
+#else
+            SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
+            SetInternalOriginalStringField(sortKey, originalString);
+			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
+#endif
+
+            return sortKey;
 		}
 
-		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
+#if !NETSTANDARD1_6
+        private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
 		{
 			byte[] keyDataCopy = new byte[keyDataLength];
 			Array.Copy(keyData, keyDataCopy, keyDataLength);
@@ -236,19 +243,9 @@ namespace Icu.Collation
 		{
 			Type type = instance.GetType();
 
-			FieldInfo fieldInfo;
-			if (IsRunningOnMono())
-			{
-				fieldInfo = type.GetField(monoInternalFieldName,
-										  BindingFlags.Instance
-					| BindingFlags.NonPublic);
-			}
-			else //Is Running On .Net
-			{
-				fieldInfo = type.GetField(netInternalFieldName,
-										  BindingFlags.Instance
-					| BindingFlags.NonPublic);
-			}
+			string fieldName = IsRunningOnMono() ? monoInternalFieldName : netInternalFieldName;
+
+			FieldInfo fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 
 			Debug.Assert(fieldInfo != null,
 						 "Unsupported runtime",
@@ -261,16 +258,17 @@ namespace Icu.Collation
 
 			fieldInfo.SetValue(instance, value);
 		}
-
+        
 		private static bool IsRunningOnMono()
 		{
 			return Type.GetType("Mono.Runtime") != null;
 		}
+#endif
 
-		/// <summary>
-		/// Simple class to allow passing collation error info back to the caller of CheckRules.
-		/// </summary>
-		public class CollationRuleErrorInfo
+        /// <summary>
+        /// Simple class to allow passing collation error info back to the caller of CheckRules.
+        /// </summary>
+        public class CollationRuleErrorInfo
 		{
 			/// <summary>Line number (1-based) containing the error</summary>
 			public int Line;
