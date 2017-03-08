@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NetStandard>netstandard1.6</NetStandard>
+    <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
+
+    <IcuSourceDirectory>..\icu.net</IcuSourceDirectory>
+
+    <AssemblyName>icu.net</AssemblyName>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <!-- Full .NET Framework properties -->
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
+    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Properties common to all builds, regardless of target framework -->
+  <PropertyGroup>
+    <OutputPath>..\..\output\$(MSBuildProjectName)</OutputPath>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(IcuSourceDirectory)\icu.net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == '$(NetStandard)'">
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.1" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(IcuSourceDirectory)\**\*.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != '$(NetStandard)'">
+    <Compile Remove="SortKey.cs" />
+  </ItemGroup>
+</Project>
