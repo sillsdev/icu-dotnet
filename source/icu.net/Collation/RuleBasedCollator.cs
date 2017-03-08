@@ -1,10 +1,12 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-#if !NETSTANDARD
+#if NETSTANDARD1_6
+using Icu;
+#else
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 #endif
@@ -28,7 +30,7 @@ namespace Icu.Collation
 			///<returns>
 			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if !NETSTANDARD
+#if !NETSTANDARD1_6
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			protected override bool ReleaseHandle()
@@ -306,7 +308,7 @@ namespace Icu.Collation
 			///<returns>
 			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if !NETSTANDARD
+#if !NETSTANDARD1_6
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			protected override bool ReleaseHandle()
