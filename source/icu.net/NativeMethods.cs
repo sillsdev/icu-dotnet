@@ -59,13 +59,13 @@ namespace Icu
 		private const int RTLD_NOW = 2;
 
 		[DllImport("libdl.so", SetLastError = true)]
-		private static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPTStr)] string file, int mode);
+		private static extern IntPtr dlopen(string file, int mode);
 
 		[DllImport("libdl.so", SetLastError = true)]
 		private static extern int dlclose(IntPtr handle);
 
 		[DllImport("libdl.so", SetLastError = true)]
-		private static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPTStr)] string name);
+		private static extern IntPtr dlsym(IntPtr handle, string name);
 
 		#endregion
 
