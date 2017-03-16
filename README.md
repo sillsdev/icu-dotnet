@@ -1,5 +1,5 @@
-Overview
-========
+# Overview
+
 icu-dotnet is the C# wrapper for a subset of [ICU4C](http://site.icu-project.org/home#TOC-What-is-ICU-) "ICU for C".
 >ICU is a mature, widely used set of C/C++ and Java libraries providing Unicode and Globalization support for software applications. ICU is widely portable and gives applications the same results on all platforms and between C/C++ and Java software.
 
@@ -32,7 +32,10 @@ Build and run the unit tests by running:
 ## ICU versions
 
 ### Linux
-icu-dotnet links with any installed version of ICU shared objects. It is recommended to install the version provided by the distribution.  As of 2016, Ubuntu Trusty uses version ICU 52 and Ubuntu Xenial 55.
+
+icu-dotnet links with any installed version of ICU shared objects. It is
+recommended to install the version provided by the distribution.  As of 2016,
+Ubuntu Trusty uses version ICU 52 and Ubuntu Xenial 55.
 
 ### Windows
 
@@ -44,6 +47,7 @@ The full version of ICU is also available as
 [Icu4c.Win.Full.Bin](https://www.nuget.org/packages/Icu4c.Win.Full.Bin/).
 
 #### What's in the minimum build
+
 - Characters
 - ErrorCodes
 - Locale
@@ -53,13 +57,15 @@ The full version of ICU is also available as
 
 ## Troubleshooting
 
- - make sure you added the nuget packages `icu.net` and `Icu4c.Win.Min`.
- - the binaries of the nuget packages need to be copied to your output directory.
-   For `icu.net` this happens by the reference to the assembly that the package
-   adds to your project. The binaries of `Icu4c.Win.Min` are only relevant on
-   Windows. They will get copied by the `Icu4c.Win.Min.targets` file included
-   in the nuget package. 
-   
-The package installer should have added an import to the `*.csproj` file:
+- make sure you added the nuget packages `icu.net` and `Icu4c.Win.Min`
+  (or `Icu4c.Win.Full`).
+- the binaries of the nuget packages need to be copied to your output directory.
+  For `icu.net` this happens by the assembly reference that the package
+  adds to your project. The binaries of `Icu4c.Win.Min` are only relevant on
+  Windows. They will get copied by the `Icu4c.Win.Min.targets` file included
+  in the nuget package.
 
-    <Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets" Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
+The package installer should have added an import to the `*.csproj` file similar to the following:
+
+	<Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets"
+		Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
