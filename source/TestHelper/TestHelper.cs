@@ -9,6 +9,9 @@ namespace Icu.Tests
 	{
 		static void Main(string[] args)
 		{
+			// The only purpose of this TestHelper app is to output the ICU version
+			// so that we can run unit tests that test loading of the unmanaged
+			// ICU binaries
 			try
 			{
 				Console.WriteLine(Wrapper.IcuVersion);

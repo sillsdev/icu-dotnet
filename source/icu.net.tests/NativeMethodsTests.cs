@@ -22,12 +22,31 @@ namespace Icu.Tests
 			File.Copy(srcPath, Path.Combine(dstDir, fileName));
 		}
 
-		private static string OutputDirectory
+		private static bool IsRunning64Bit
 		{
-			get { return Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath); }
+			get { return IntPtr.Size == 8; }
 		}
 
-		private string RunTestHelper(string dir, string exeDir = null)
+		private static string ArchSubdir
+		{
+			get { return IsRunning64Bit ? "x64" : "x86"; }
+		}
+
+		private static string OutputDirectory
+		{
+			get
+			{
+				return Path.GetDirectoryName(
+					new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
+			}
+		}
+
+		private static string IcuDirectory
+		{
+			get { return Path.Combine(OutputDirectory, ArchSubdir); }
+		}
+
+		private string RunTestHelper(string workDir, string exeDir = null)
 		{
 			if (string.IsNullOrEmpty(exeDir))
 				exeDir = _tmpDir;
@@ -38,7 +57,7 @@ namespace Icu.Tests
 				process.StartInfo.RedirectStandardOutput = true;
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.WorkingDirectory = dir;
+				process.StartInfo.WorkingDirectory = workDir;
 				process.StartInfo.FileName = Path.Combine(exeDir, "TestHelper.exe");
 
 				process.Start();
@@ -58,7 +77,7 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), _tmpDir);
 
 			_pathEnvironmentVariable = Environment.GetEnvironmentVariable("PATH");
-			var path = string.Format("{0}{1}{2}", OutputDirectory, Path.PathSeparator,
+			var path = string.Format("{0}{1}{2}", IcuDirectory, Path.PathSeparator,
 				_pathEnvironmentVariable);
 			Environment.SetEnvironmentVariable("PATH", path);
 		}
@@ -86,19 +105,30 @@ namespace Icu.Tests
 		[Test]
 		public void LoadIcuLibrary_LoadLocalVersion()
 		{
-			CopyFile(Path.Combine(OutputDirectory, "icudt54.dll"), _tmpDir);
-			CopyFile(Path.Combine(OutputDirectory, "icuin54.dll"), _tmpDir);
-			CopyFile(Path.Combine(OutputDirectory, "icuuc54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), _tmpDir);
 			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo("54.1"));
 		}
 
 		[Test]
-		public void LoadIcuLibrary_LoadLocalVersionDifferentPath()
+		public void LoadIcuLibrary_LoadLocalVersionDifferentWorkDir()
 		{
-			CopyFile(Path.Combine(OutputDirectory, "icudt54.dll"), _tmpDir);
-			CopyFile(Path.Combine(OutputDirectory, "icuin54.dll"), _tmpDir);
-			CopyFile(Path.Combine(OutputDirectory, "icuuc54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), _tmpDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), _tmpDir);
 			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo("54.1"));
+		}
+
+		[Test]
+		public void LoadIcuLibrary_LoadLocalVersionFromArchSubDir()
+		{
+			var targetDir = Path.Combine(_tmpDir, ArchSubdir);
+			Directory.CreateDirectory(targetDir);
+			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), targetDir);
+			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo("54.1"));
 		}
 
 		[Test]
@@ -108,9 +138,9 @@ namespace Icu.Tests
 			Directory.CreateDirectory(subdir);
 			CopyFile(Path.Combine(_tmpDir, "TestHelper.exe"), subdir);
 			CopyFile(Path.Combine(_tmpDir, "icu.net.dll"), subdir);
-			CopyFile(Path.Combine(OutputDirectory, "icudt54.dll"), subdir);
-			CopyFile(Path.Combine(OutputDirectory, "icuin54.dll"), subdir);
-			CopyFile(Path.Combine(OutputDirectory, "icuuc54.dll"), subdir);
+			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), subdir);
+			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), subdir);
+			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), subdir);
 			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo("54.1"));
 		}
 
