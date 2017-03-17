@@ -202,6 +202,7 @@
     <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
+    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
   </Target>
   <PropertyGroup>
     <PreBuildEvent />
