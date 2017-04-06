@@ -9,46 +9,119 @@ using System.Runtime.InteropServices;
 
 namespace Icu.Collation
 {
+	/// <summary>
+	/// The Collator class performs locale-sensitive string comparison.
+	/// You use this class to build searching and sorting routines for natural
+	/// language text.
+	/// </summary>
 	public abstract class Collator : IComparer<string>, ICloneable, IDisposable
 	{
+		/// <summary>
+		/// Gets or sets the minimum strength that will be used in comparison
+		/// or transformation.
+		/// </summary>
 		public abstract CollationStrength Strength{ get; set; }
 
+		/// <summary>
+		/// Gets or sets the NormalizationMode
+		/// </summary>
 		public abstract NormalizationMode NormalizationMode{ get; set; }
 
+		/// <summary>
+		/// Gets or sets the FrenchCollation. Attribute for direction of
+		/// secondary weights - used in Canadian French.
+		/// </summary>
 		public abstract FrenchCollation FrenchCollation{ get; set; }
 
+		/// <summary>
+		/// Gets or sets the CaseLevel mode. Controls whether an extra case
+		/// level (positioned before the third level) is generated or not.
+		/// </summary>
+		/// <remarks></remarks>
 		public abstract CaseLevel CaseLevel{ get; set; }
 
+		/// <summary>
+		/// Gets or sets HiraganaQuaternary mode. When turned on, this attribute
+		/// positions Hiragana before all non-ignorables on quaternary level
+		/// This is a sneaky way to produce JIS sort order.
+		/// </summary>
+		[Obsolete("ICU 50 Implementation detail, cannot be set via API, was removed from implementation.")]
 		public abstract HiraganaQuaternary HiraganaQuaternary{ get; set; }
 
+		/// <summary>
+		/// Gets or sets NumericCollation mode. When turned on, this attribute
+		/// makes substrings of digits sort according to their numeric values.
+		/// </summary>
 		public abstract NumericCollation NumericCollation{ get; set; }
 
+		/// <summary>
+		/// Controls the ordering of upper and lower case letters.
+		/// </summary>
 		public abstract CaseFirst CaseFirst{ get; set; }
 
+		/// <summary>
+		/// Gets or sets attribute for handling variable elements.
+		/// </summary>
 		public abstract AlternateHandling AlternateHandling{ get; set; }
 
+		/// <summary>
+		/// Get a sort key for a string from the collator.
+		/// </summary>
+		/// <param name="source">The text</param>
 		public abstract SortKey GetSortKey(string source);
 
+		/// <summary>
+		/// Compare two strings.
+		/// </summary>
+		/// <param name="source">The source string</param>
+		/// <param name="target">The target string</param>
+		/// <returns>The result of comparing the strings; 0 if source == target;
+		/// 1 if source &gt; target; -1 source &lt; target</returns>
 		public abstract int Compare(string source, string target);
 
+		/// <summary>
+		/// Thread safe cloning operation.
+		/// </summary>
+		/// <returns>The result is a clone of a given collator.</returns>
 		public abstract object Clone();
 
+		/// <summary>
+		/// Specifies whether locale fallback is allowed.
+		/// For more information, see: http://userguide.icu-project.org/locale#TOC-Fallback
+		/// </summary>
 		public enum Fallback
 		{
+			/// <summary>Do not use Locale fallback</summary>
 			NoFallback,
+			/// <summary>Use locale fallback algorithm</summary>
 			FallbackAllowed
 		}
 
+		/// <summary>
+		/// Creates a collator with the current culture.  Does not allow
+		/// locale fallback.
+		/// </summary>
 		public static Collator Create()
 		{
 			return Create(CultureInfo.CurrentCulture);
 		}
 
+		/// <summary>
+		/// Creates a collator with the specified locale. Does not allow
+		/// locale fallback.
+		/// </summary>
+		/// <param name="localeId">Locale to use</param>
 		public static Collator Create(string localeId)
 		{
 			return Create(localeId, Fallback.NoFallback);
 		}
 
+		/// <summary>
+		/// Creates a collator with the given locale and whether to use locale
+		/// fallback when creating collator.
+		/// </summary>
+		/// <param name="localeId">The locale</param>
+		/// <param name="fallback">Whether to use locale fallback or not.</param>
 		public static Collator Create(string localeId, Fallback fallback)
 		{
 			if (localeId == null)
@@ -58,11 +131,20 @@ namespace Icu.Collation
 			return RuleBasedCollator.Create(localeId, fallback);
 		}
 
+		/// <summary>
+		/// Creates a collator with the given CultureInfo
+		/// </summary>
+		/// <param name="cultureInfo">Culture to use.</param>
 		public static Collator Create(CultureInfo cultureInfo)
 		{
 			return Create(cultureInfo, Fallback.NoFallback);
 		}
 
+		/// <summary>
+		/// Creates a collator with the given CultureInfo and fallback
+		/// </summary>
+		/// <param name="cultureInfo">Culture to use</param>
+		/// <param name="fallback">Whether to use locale fallback or not.</param>
 		public static Collator Create(CultureInfo cultureInfo, Fallback fallback)
 		{
 			if (cultureInfo == null)
@@ -72,6 +154,11 @@ namespace Icu.Collation
 			return Create(cultureInfo.IetfLanguageTag, fallback);
 		}
 
+		/// <summary>
+		/// Creates a SortKey with the given string and keyData
+		/// </summary>
+		/// <param name="originalString">String to use</param>
+		/// <param name="keyData">Data of the SortKey</param>
 		static public SortKey CreateSortKey(string originalString, byte[] keyData)
 		{
 			if (keyData == null)
@@ -81,6 +168,12 @@ namespace Icu.Collation
 			return CreateSortKey(originalString, keyData, keyData.Length);
 		}
 
+		/// <summary>
+		/// Creates a SortKey with the given string and keyData
+		/// </summary>
+		/// <param name="originalString">String to use</param>
+		/// <param name="keyData">Data of the SortKey</param>
+		/// <param name="keyDataLength">Length to use from keyData</param>
 		static public SortKey CreateSortKey(string originalString, byte[] keyData, int keyDataLength)
 		{
 			if (originalString == null)
@@ -293,9 +386,13 @@ namespace Icu.Collation
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// Releases the resources used by Collator.
+		/// </summary>
+		/// <param name="disposing">true to release managed and unmanaged
+		/// resources; false to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing) { }
 
 		#endregion
-
 	}
 }

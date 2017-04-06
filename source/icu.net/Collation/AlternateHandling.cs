@@ -8,6 +8,9 @@ namespace Icu.Collation
 	/// </summary>
 	public enum AlternateHandling
 	{
+		/// <summary>
+		/// Default value that does nothing.
+		/// </summary>
 		Default = -1,
 		/// <summary>
 		/// causes codepoints with primary weights that are equal or below the variable top value

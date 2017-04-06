@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// Used to return detailed information about parsing errors.
+	/// </summary>
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct ParseError
 	{
@@ -35,11 +38,20 @@ namespace Icu
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
 		public string PostContext;
 
+		/// <summary>
+		/// Gets a string representation of all the parsing errors.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return ToString(string.Empty);
 		}
 
+		/// <summary>
+		/// Gets a string representation of the given rules with lines and offsets.
+		/// </summary>
+		/// <param name="rules">Rules</param>
+		/// <returns></returns>
 		public string ToString(string rules)
 		{
 			if (rules == null)

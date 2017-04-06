@@ -8,6 +8,9 @@ namespace Icu.Collation
 	/// </summary>
 	public enum NormalizationMode
 	{
+		/// <summary>
+		/// Default value, does nothing.
+		/// </summary>
 		Default = -1,
 		/// <summary>
 		/// no normalization check is performed. The correctness of the result is guaranteed only if the

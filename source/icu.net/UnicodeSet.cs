@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// A mutable set of Unicode characters and multicharacter strings.
+	/// </summary>
 	public static class UnicodeSet
 	{
 		/// <summary>
