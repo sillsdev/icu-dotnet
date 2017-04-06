@@ -8,6 +8,9 @@ namespace Icu.Collation
 	/// </summary>
 	public enum FrenchCollation
 	{
+		/// <summary>
+		/// Default value, does nothing.
+		/// </summary>
 		Default = -1,
 		/// <summary>
 		/// treats secondary weights in the order they appear

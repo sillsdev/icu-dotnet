@@ -8,29 +8,31 @@ namespace Icu
 {
 	/// <summary>
 	/// A subclass of BreakIterator whose behavior is specified using a list of rules.
-	/// Instances of this class are most commonly created by the factory methods of
-	/// <see cref="BreakIterator.CreateWordInstance(Locale, string)"/>,
-	/// <see cref="BreakIterator.CreateLineInstance(Locale, string)"/> etc.,
+	/// Instances of this class are most commonly created by the factory methods
+	/// <see cref="BreakIterator.CreateWordInstance(Locale)"/>,
+	/// <see cref="BreakIterator.CreateLineInstance(Locale)"/>, etc.
 	/// and then used via the abstract API in class BreakIterator
 	/// </summary>
 	public class RuleBasedBreakIterator : BreakIterator
 	{
 		private readonly UBreakIteratorType _iteratorType;
 		private readonly string _rules = null;
+		private readonly Locale _locale = DefaultLocale;
 
 		private bool _disposingValue = false; // To detect redundant calls
 		private IntPtr _breakIterator = IntPtr.Zero;
+		private string _text;
+		private int _currentIndex = 0;
+		private TextBoundary[] _textBoundaries = new TextBoundary[0];
 
 		/// <summary>
 		/// Default RuleStatus vector returns 0.
 		/// </summary>
 		protected readonly static int[] EmptyRuleStatusVector = new int[] { 0 };
+		/// <summary>
+		/// The default locale.
+		/// </summary>
 		protected readonly static Locale DefaultLocale = new Locale();
-
-		protected int _currentIndex = 0;
-		protected TextBoundary[] _textBoundaries = new TextBoundary[0];
-		protected string _text;
-		protected readonly Locale _locale = DefaultLocale;
 
 		/// <summary>
 		/// Creates a BreakIterator with the given BreakIteratorType and Locale.
@@ -78,7 +80,7 @@ namespace Icu
 
 		/// <summary>
 		/// Determine the most recently-returned text boundary.
-		/// Returns <see cref="DONE"/> if there are no boundaries left to return.
+		/// Returns <see cref="BreakIterator.DONE"/> if there are no boundaries left to return.
 		/// </summary>
 		public override int Current
 		{
@@ -366,6 +368,10 @@ namespace Icu
 			return _textBoundaries[_currentIndex].RuleStatusVector;
 		}
 
+		/// <summary>
+		/// Sets an existing iterator to point to a new piece of text. 
+		/// </summary>
+		/// <param name="text">New text</param>
 		public override void SetText(string text)
 		{
 			if (text == null)
@@ -556,6 +562,9 @@ namespace Icu
 			}
 		}
 
+		/// <summary>
+		/// Disposes of all unmanaged resources used by RulesBasedBreakIterator
+		/// </summary>
 		~RuleBasedBreakIterator()
 		{
 			Dispose(false);
@@ -569,10 +578,33 @@ namespace Icu
 		/// </summary>
 		protected struct TextBoundary
 		{
+			/// <summary>
+			/// Gets the offset within the text of the boundary.
+			/// </summary>
 			public readonly int Offset;
+			/// <summary>
+			/// Gets the rule that was used to determine the boundary. Possible
+			/// values are from: <see cref="BreakIterator.ULineBreakTag"/>,
+			/// <see cref="BreakIterator.UWordBreak"/>, or <see cref="BreakIterator.USentenceBreakTag"/>
+			/// </summary>
+			/// <remarks>
+			/// If there are more than one rule that determined the boundary,
+			/// returns the numerically largest value from <see cref="RuleStatusVector"/>.
+			/// More information: http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+			/// </remarks>
 			public readonly int RuleStatus;
+			/// <summary>
+			/// Gets the set of rules used to determine the boundary. Possible
+			/// values are from: <see cref="BreakIterator.ULineBreakTag"/>,
+			/// <see cref="BreakIterator.UWordBreak"/>, or <see cref="BreakIterator.USentenceBreakTag"/>
+			/// </summary>
 			public readonly int[] RuleStatusVector;
 
+			/// <summary>
+			/// Creates a text boundary with the given offset and rule status vector.
+			/// </summary>
+			/// <param name="index">Offset in text of the boundary.</param>
+			/// <param name="ruleStatusVector">Rule status vector of boundary.</param>
 			public TextBoundary(int index, int[] ruleStatusVector)
 			{
 				Offset = index;

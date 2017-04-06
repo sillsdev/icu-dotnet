@@ -1,6 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -48,28 +49,30 @@ namespace Icu
 
 		private const int RTLD_NOW = 2;
 
-		[DllImport("libdl.so")]
+		[DllImport("libdl.so", SetLastError = true)]
 		private static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPTStr)] string file, int mode);
 
-		[DllImport("libdl.so")]
+		[DllImport("libdl.so", SetLastError = true)]
 		private static extern int dlclose(IntPtr handle);
 
-		[DllImport("libdl.so")]
+		[DllImport("libdl.so", SetLastError = true)]
 		private static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPTStr)] string name);
 
 		#endregion
 
 		#region Native methods for Windows
 
-		[DllImport("kernel32.dll")]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr LoadLibrary(string dllToLoad);
 
-		[DllImport("kernel32.dll")]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern bool FreeLibrary(IntPtr hModule);
 
-		[DllImport("kernel32.dll")]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool SetDllDirectory(string dllDirectory);
 		#endregion
 
 		private static int IcuVersion;
@@ -106,36 +109,77 @@ namespace Icu
 		{
 			get
 			{
-				var uri = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+				var uri = new Uri(typeof(NativeMethods).Assembly.CodeBase);
 				return Path.GetDirectoryName(uri.LocalPath);
 			}
+		}
+
+		private static bool IsRunning64Bit
+		{
+			get { return IntPtr.Size == 8; }
+		}
+
+		private static void AddDirectoryToSearchPath(string directory)
+		{
+			if (IsWindows)
+				SetDllDirectory(directory);
+			else
+			{
+				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH",
+					string.Format("{0}:{1}", directory, ldLibPath));
+			}
+		}
+
+		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
+		{
+			if (!Directory.Exists(directory))
+				return false;
+
+			var filePattern = IsWindows ? libraryName + "*.dll" : "lib" + libraryName + ".so.*";
+			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
+			if (files.Count > 0)
+			{
+				// Do a reverse sort so that we use the highest version
+				files.Sort((x, y) => string.CompareOrdinal(y, x));
+				var filePath = files[0];
+				var version = IsWindows
+					? Path.GetFileNameWithoutExtension(filePath).Substring(5) // strip icuuc
+					: Path.GetFileName(filePath).Substring(12); // strip libicuuc.so.
+				int icuVersion;
+				if (int.TryParse(version, out icuVersion))
+				{
+					Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
+						icuVersion, directory);
+					IcuVersion = icuVersion;
+					_IcuPath = directory;
+					AddDirectoryToSearchPath(directory);
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{
 			if (IcuVersion <= 0)
 			{
-				var files = Directory.EnumerateFiles(DirectoryOfThisAssembly,
-					IsWindows ? libraryName + "*.dll" : "lib" + libraryName + ".so.*").ToList();
-				if (files.Count > 0)
+				// Look for ICU binaries in x86/x64 subdirectory first
+				if (!CheckDirectoryForIcuBinaries(
+					Path.Combine(DirectoryOfThisAssembly, IsRunning64Bit ? "x64" : "x86"),
+					libraryName))
 				{
-					// Do a reverse sort so that we use the highest version
-					files.Sort((x, y) => string.CompareOrdinal(y, x));
-					var filePath = files[0];
-					var version = IsWindows
-						? Path.GetFileNameWithoutExtension(filePath).Substring(5)
-						: Path.GetFileName(filePath).Substring(12);
-					int icuVersion;
-					if (int.TryParse(version, out icuVersion))
-					{
-						IcuVersion = icuVersion;
-						_IcuPath = DirectoryOfThisAssembly;
-					}
+					// otherwise check the current directory
+					CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
+					// If we don't find it here we rely on it being in the PATH somewhere...
 				}
 			}
 			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
 			if (handle == IntPtr.Zero)
-				throw new FileLoadException("Can't load ICU library", libraryName);
+			{
+				throw new FileLoadException(string.Format("Can't load ICU library (version {0})", IcuVersion),
+					libraryName);
+			}
 			return handle;
 		}
 
@@ -144,20 +188,26 @@ namespace Icu
 			if (icuVersion < minIcuVersion)
 				return IntPtr.Zero;
 			IntPtr handle;
+			string libPath;
 			if (IsWindows)
 			{
 				var libName = string.Format("{0}{1}.dll", basename, icuVersion);
-				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 				handle = LoadLibrary(libPath);
 			}
 			else
 			{
 				var libName = string.Format("lib{0}.so.{1}", basename, icuVersion);
-				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 				handle = dlopen(libPath, RTLD_NOW);
 			}
 			if (handle == IntPtr.Zero)
+			{
+				Trace.TraceWarning("{0} of {1} failed with error {2}",
+					IsWindows ? "LoadLibrary" : "dlopen",
+					libPath, Marshal.GetLastWin32Error());
 				return GetIcuLibHandle(basename, icuVersion - 1);
+			}
 
 			IcuVersion = icuVersion;
 			return handle;

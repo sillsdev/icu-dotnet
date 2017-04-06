@@ -13,6 +13,9 @@ namespace Icu.Collation
 	/// </summary>
 	public enum CaseLevel
 	{
+		/// <summary>
+		/// Default value that does nothing.
+		/// </summary>
 		Default = -1,
 		/// <summary>
 		/// case level is not generated
