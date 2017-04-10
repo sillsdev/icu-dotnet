@@ -1562,6 +1562,7 @@ namespace Icu
 		/// <param name="rulesLength">The length of the rules.</param>
 		/// <param name="text">The text.</param>
 		/// <param name="textLength">Length of the text.</param>
+		/// <param name="parseError">Receives position and context information for any syntax errors detected while parsing the rules. </param>
 		/// <param name="errorCode">The error code.</param>
 		/// <returns></returns>
 		public static IntPtr ubrk_openRules(
@@ -1579,6 +1580,8 @@ namespace Icu
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <param name="text">Text to examine</param>
+		/// <param name="textLength">The length of the text</param>
+		/// <param name="errorCode">The error code</param>
 		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
 		{
 			if (Methods.ubrk_setText == null)
@@ -1637,10 +1640,13 @@ namespace Icu
 		/// Return the status from the break rule that determined the most recently returned break position.
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
-		/// <returns></returns>
+		/// <param name="fillInVector">An array to be filled in with the status values.</param>
+		/// <param name="capacity">The length of the supplied vector. A length of zero causes the function to return the number of status values, in the normal way, without attemtping to store any values.</param>
+		/// <param name="status">Receives error codes.</param>
+		/// <returns>The number of rule status values from rules that determined the most recent boundary returned by the break iterator.</returns>
 		public static int ubrk_getRuleStatusVec(IntPtr bi,
-			[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
-			Int32 capacity,
+			[Out, MarshalAs(UnmanagedType.LPArray)] int[] fillInVector,
+			int capacity,
 			out ErrorCode status)
 		{
 			if (Methods.ubrk_getRuleStatusVec == null)
