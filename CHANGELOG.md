@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Assembly marked as CLSCompliant (#33)
+
 ## [2.1.0] - 2017-03-17
 
 ### Fixed
