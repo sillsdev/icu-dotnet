@@ -1,7 +1,8 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Icu.Tests
 {
@@ -126,10 +127,11 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		[SetUICulture("en-US")]
 		[Category("Full ICU")]
 		public void GetPrettyICUCharName()
 		{
+			SetUICulture("en-US");
+
 			Assert.That(Character.GetPrettyICUCharName("a"), Is.EqualTo("Latin Small Letter A"));
 			Assert.That(Character.GetPrettyICUCharName("ab"), Is.Null);
 			Assert.That(Character.GetPrettyICUCharName(string.Empty), Is.Null);
@@ -142,6 +144,16 @@ namespace Icu.Tests
 		{
 			Assert.That(Character.GetCharName(65), Is.EqualTo("LATIN CAPITAL LETTER A"));
 			Assert.That(Character.GetCharName(-1), Is.Null);
+		}
+
+		private void SetUICulture(string culture)
+		{
+			var cultureInfo = new CultureInfo(culture);
+#if NET40
+			System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
+#else
+			CultureInfo.CurrentUICulture = cultureInfo;
+#endif
 		}
 	}
 }
