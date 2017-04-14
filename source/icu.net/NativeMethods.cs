@@ -12,6 +12,8 @@ namespace Icu
 {
 	internal static class NativeMethods
 	{
+		private static readonly object _lock = new object();
+
 		private const int MinIcuVersionDefault = 44;
 		private const int MaxIcuVersionDefault = 60;
 		private static int minIcuVersion = MinIcuVersionDefault;
@@ -30,8 +32,12 @@ namespace Icu
 				throw new ArgumentOutOfRangeException("maxVersion",
 					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
-			minIcuVersion = Math.Min(minVersion, maxVersion);
-			maxIcuVersion = Math.Max(minVersion, maxVersion);
+
+			lock (_lock)
+			{
+				minIcuVersion = Math.Min(minVersion, maxVersion);
+				maxIcuVersion = Math.Max(minVersion, maxVersion);
+			}
 		}
 
 		private static MethodsContainer Methods;
@@ -39,14 +45,7 @@ namespace Icu
 		static NativeMethods()
 		{
 			Methods = new MethodsContainer();
-#if !NET40
-			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
-			if (icuInfo.Success)
-			{
-				_IcuPath = icuInfo.IcuPath.FullName;
-				IcuVersion = icuInfo.IcuVersion;
-			}
-#endif
+			ResetIcuVersionInfo();
 		}
 
 		#region Dynamic method loading
@@ -224,16 +223,19 @@ namespace Icu
 		{
 			Trace.WriteLineIf(!IsInitialized, "WARNING: ICU is not initialized.");
 
-			if (IcuVersion <= 0)
-				LocateIcuLibrary(libraryName);
-
-			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
-			if (handle == IntPtr.Zero)
+			lock(_lock)
 			{
-				throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
-					libraryName);
+				if (IcuVersion <= 0)
+					LocateIcuLibrary(libraryName);
+
+				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
+				if (handle == IntPtr.Zero)
+				{
+					throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
+						libraryName);
+				}
+				return handle;
 			}
-			return handle;
 		}
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
@@ -282,26 +284,45 @@ namespace Icu
 
 		public static void Cleanup()
 		{
-			u_cleanup();
-			if (IsWindows)
+			lock (_lock)
 			{
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					FreeLibrary(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					FreeLibrary(_IcuI18NLibHandle);
+				u_cleanup();
+				if (IsWindows)
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						FreeLibrary(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						FreeLibrary(_IcuI18NLibHandle);
+				}
+				else
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						dlclose(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						dlclose(_IcuI18NLibHandle);
+				}
+				_IcuCommonLibHandle = IntPtr.Zero;
+				_IcuI18NLibHandle = IntPtr.Zero;
+
+				Methods = new MethodsContainer();
+				ResetIcuVersionInfo();
 			}
-			else
-			{
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					dlclose(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					dlclose(_IcuI18NLibHandle);
-			}
-			_IcuCommonLibHandle = IntPtr.Zero;
-			_IcuI18NLibHandle = IntPtr.Zero;
+		}
+
+		private static void ResetIcuVersionInfo()
+		{
 			IcuVersion = 0;
 			_IcuPath = null;
-			Methods = new MethodsContainer();
+
+#if !NET40
+			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
+
+			if (icuInfo.Success)
+			{
+				_IcuPath = icuInfo.IcuPath.FullName;
+				IcuVersion = icuInfo.IcuVersion;
+			}
+#endif
 		}
 
 		// This method is thread-safe and idempotent
