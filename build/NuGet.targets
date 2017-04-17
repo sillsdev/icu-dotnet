@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)/../</SolutionDir>
 		<SolutionPath Condition="$(SolutionPath) == '' Or $(SolutionPath) == '*Undefined*'">$(SolutionDir)/$(Solution)</SolutionPath>
-		<NuGetUrl>https://nuget.org/NuGet.exe</NuGetUrl>
+		<NuGetUrl>https://dist.nuget.org/win-x86-commandline/v4.1.0/nuget.exe</NuGetUrl>
 
 		<!-- Enable the restore command to run before builds -->
 		<RestorePackages Condition="  '$(RestorePackages)' == '' ">true</RestorePackages>
@@ -61,6 +61,9 @@
 			Condition="Exists('$(SolutionPath)')"/>
 		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" -SolutionDirectory "$(SolutionDir)" "%(PackageConfigs.FullPath)"'
 			Condition="!Exists('$(SolutionPath)')"/>
+
+		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" "$(SolutionNetCorePath)"'
+			Condition="'$(BuildNetCore)' == 'true' And Exists('$(SolutionNetCorePath)')"/>
 	</Target>
 
 	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
