@@ -7,6 +7,7 @@
 		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(OS)'!='Windows_NT'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
 		<SolutionDir>$(RootDir)/source</SolutionDir>
+		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
 		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
@@ -67,7 +68,7 @@
 
 	<ItemGroup>
 		<ExistingObjectFiles
-			Include="$(RootDir)/output/$(Configuration)/**/*"
+			Include="$(OutputDir)/$(Configuration)/**/*"
 			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
 		/>
 	</ItemGroup>
@@ -85,11 +86,11 @@
 		<CallTarget Targets="TestOnly"/>
 	</Target>
 
-	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit"/>
+	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit;RunNUnitNetCore"/>
 
 	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnitTeamCity
@@ -100,16 +101,24 @@
 
 	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnit Assemblies="@(TestAssemblies)"
 			ToolPath="$(SolutionDir)/packages/NUnit.Runners.Net4.2.6.4/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			WorkingDirectory="$(OutputDir)/$(Configuration)"
 			Force32Bit="$(useNUnit-x86)"
 			Verbose="true"
-			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"/>
+			OutputXmlFile="$(OutputDir)/$(Configuration)/TestResults.xml"/>
+	</Target>
+
+	<Target Name="RunNUnitNetCore" Condition="'$(BuildNetCore)' == 'true'">
+		<PropertyGroup>
+			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
+		</PropertyGroup>
+		<Exec Command="dotnet run --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
+			WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 </Project>
