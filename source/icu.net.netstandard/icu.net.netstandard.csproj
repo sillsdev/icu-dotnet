@@ -47,7 +47,8 @@
 
   <!-- Setting MSBuild properties before executing Pack target.
       https://docs.microsoft.com/en-us/nuget/schema/msbuild-targets#pack-target. -->
-  <Target Name="SetPackageVersion" DependsOnTargets="GetVersion" BeforeTargets="GenerateNuspec;Pack">
+  <Target Name="SetPackageVersion" DependsOnTargets="GetVersion" BeforeTargets="GenerateNuspec;Pack"
+    Condition="'$(MSBuildRuntimeType)' != 'Core'">
     <PropertyGroup>
       <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
     </PropertyGroup>
@@ -63,8 +64,9 @@
 
   <!-- HACK:  GitVersion is not yet migrated to .NET Core.  Manually importing this package for now.
        https://github.com/GitTools/GitVersion/issues/1175 -->
-  <Import Project="..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+  <Import Project="..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets') And '$(MSBuildRuntimeType)' != 'Core'" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild"
+    Condition="'$(MSBuildRuntimeType)' != 'Core'">
     <PropertyGroup>
       <ErrorText>This project references {0} that is missing on this computer. Use NuGet Package Restore on .\source\icu.net.sln.</ErrorText>
     </PropertyGroup>
