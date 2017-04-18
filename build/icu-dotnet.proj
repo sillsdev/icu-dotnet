@@ -11,6 +11,10 @@
 		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
+
+		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
+		<SolutionNetCore>icu.net.netstandard.sln</SolutionNetCore>
+		<SolutionNetCorePath Condition="'$(BuildNetCore)' == 'true'">$(SolutionDir)/$(SolutionNetCore)</SolutionNetCorePath>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
@@ -54,6 +58,11 @@
 		<MSBuild Projects="$(SolutionDir)/$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
+
+		<MSBuild Projects="$(SolutionNetCorePath)"
+			Targets="Build;Pack"
+			Properties="Configuration=$(Configuration)"
+			Condition="'$(BuildNetCore)' == 'true'"/>
 	</Target>
 
 	<ItemGroup>
