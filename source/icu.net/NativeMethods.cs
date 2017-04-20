@@ -116,7 +116,7 @@ namespace Icu
 
 		private static bool IsRunning64Bit
 		{
-			get { return IntPtr.Size == 8; }
+			get { return Environment.Is64BitProcess; }
 		}
 
 		private static void AddDirectoryToSearchPath(string directory)
