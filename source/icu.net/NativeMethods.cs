@@ -164,14 +164,21 @@ namespace Icu
 		{
 			if (IcuVersion <= 0)
 			{
-				// Look for ICU binaries in x86/x64 subdirectory first
+				// Look for ICU binaries in lib/x86 or lib/x64 subdirectory first
+				var platformSubDir = IsRunning64Bit ? "x64" : "x86";
 				if (!CheckDirectoryForIcuBinaries(
-					Path.Combine(DirectoryOfThisAssembly, IsRunning64Bit ? "x64" : "x86"),
+					Path.Combine(DirectoryOfThisAssembly, "lib", platformSubDir),
 					libraryName))
 				{
-					// otherwise check the current directory
-					CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
-					// If we don't find it here we rely on it being in the PATH somewhere...
+					// next try just x86/x64 subdirectory
+					if (!CheckDirectoryForIcuBinaries(
+						Path.Combine(DirectoryOfThisAssembly, platformSubDir),
+						libraryName))
+					{
+						// otherwise check the current directory
+						CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
+						// If we don't find it here we rely on it being in the PATH somewhere...
+					}
 				}
 			}
 			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
