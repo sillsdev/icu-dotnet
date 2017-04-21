@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Assembly marked as CLSCompliant (#33)
+- additionally look in lib/x86 and lib/x64 for ICU binaries
 
 ## [2.1.0] - 2017-03-17
 
