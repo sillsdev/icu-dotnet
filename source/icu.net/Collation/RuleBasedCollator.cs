@@ -20,10 +20,11 @@ namespace Icu.Collation
 					base(IntPtr.Zero, true) {}
 
 			///<summary>
-			///When overridden in a derived class, executes the code required to free the handle.
+			/// When overridden in a derived class, executes the code required to free the handle.
 			///</summary>
 			///<returns>
-			///true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
+			/// true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.
+			/// In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 			protected override bool ReleaseHandle()
@@ -88,7 +89,6 @@ namespace Icu.Collation
 														  out status);
 			ExceptionFromErrorCode.ThrowIfError(status, parseError.ToString(rules));
 		}
-
 
 		/// <summary>The collation strength.
 		/// The usual strength for most locales (except Japanese) is tertiary.
@@ -500,12 +500,17 @@ namespace Icu.Collation
 				if (disposing)
 				{
 					// Dispose managed state (managed objects), if any.
-				}
 
-				if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
-				{
-					_collatorHandle.Dispose();
+					// although SafeRuleBasedCollatorHandle deals with an unmanaged resource
+					// it itself is a managed object, so we shouldn't try to dispose it
+					// if !disposing because that could lead to a corrupt stack (as observed
+					// in https://jenkins.lsdev.sil.org:45192/view/Icu/view/All/job/GitHub-IcuDotNet-Win-any-master-release/59)
+					if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
+					{
+						_collatorHandle.Dispose();
+					}
 				}
+				_collatorHandle = default(SafeRuleBasedCollatorHandle);
 
 				_disposingValue = true;
 			}

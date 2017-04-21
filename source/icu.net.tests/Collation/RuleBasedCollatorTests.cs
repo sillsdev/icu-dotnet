@@ -75,10 +75,10 @@ namespace Icu.Tests.Collation
 		public void Clone()
 		{
 			using (var danishCollator = new RuleBasedCollator(DanishRules))
-			using (var danishCollator2 = (RuleBasedCollator)danishCollator.Clone())
+			using (var danishCollator2 = (RuleBasedCollator) danishCollator.Clone())
 			{
-			Assert.That(danishCollator2.Compare("wa", "vb"), Is.EqualTo(-1));
-		}
+				Assert.That(danishCollator2.Compare("wa", "vb"), Is.EqualTo(-1));
+			}
 		}
 
 		[TestCase("", null, "a", Result = -1)]
@@ -88,8 +88,10 @@ namespace Icu.Tests.Collation
 		[TestCase(SerbianRules, "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", Result = 1)]
 		public int Compare(string rules, string string1, string string2)
 		{
-			var ucaCollator = new RuleBasedCollator(rules);
-			return ucaCollator.Compare(string1, string2);
+			using (var ucaCollator = new RuleBasedCollator(rules))
+			{
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[Test]
@@ -97,10 +99,10 @@ namespace Icu.Tests.Collation
 		{
 			using (var serbianCollator = new RuleBasedCollator(SerbianRules))
 			{
-			var sortKeyČUKIĆ = serbianCollator.GetSortKey("ČUKIĆ SLOBODAN");
-			var sortKeyCUKIĆ = serbianCollator.GetSortKey("CUKIĆ SVETOZAR");
-			Assert.That(SortKey.Compare(sortKeyČUKIĆ, sortKeyCUKIĆ), Is.EqualTo(1));
-		}
+				var sortKeyČUKIĆ = serbianCollator.GetSortKey("ČUKIĆ SLOBODAN");
+				var sortKeyCUKIĆ = serbianCollator.GetSortKey("CUKIĆ SVETOZAR");
+				Assert.That(SortKey.Compare(sortKeyČUKIĆ, sortKeyCUKIĆ), Is.EqualTo(1));
+			}
 		}
 
 		[Test]
@@ -108,8 +110,8 @@ namespace Icu.Tests.Collation
 		{
 			using (var ucaCollator = new RuleBasedCollator(string.Empty))
 			{
-			Assert.That(() => ucaCollator.GetSortKey(null), Throws.TypeOf<ArgumentNullException>());
-		}
+				Assert.That(() => ucaCollator.GetSortKey(null), Throws.TypeOf<ArgumentNullException>());
+			}
 		}
 
 		[Test]
@@ -134,15 +136,23 @@ namespace Icu.Tests.Collation
 			}
 		}
 
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = 0)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "di Silva", "diSilva", Result =
+			0)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result =
+			-1)]
 		[TestCase(CollationStrength.Tertiary, AlternateHandling.Shifted, "U.S.A.", "USA", Result = 0)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "di Silva", "diSilva", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "diSilva", "Di Silva", Result = -1)]
-		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "U.S.A.", "USA", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "di Silva", "Di Silva", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "Di Silva", "diSilva", Result = -1)]
-		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "U.S.A.", "USA", Result = -1)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "di Silva", "diSilva",
+			Result = -1)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "diSilva", "Di Silva",
+			Result = -1)]
+		[TestCase(CollationStrength.Quaternary, AlternateHandling.Shifted, "U.S.A.", "USA", Result =
+			-1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "di Silva", "Di Silva",
+			Result = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "Di Silva", "diSilva",
+			Result = -1)]
+		[TestCase(CollationStrength.Tertiary, AlternateHandling.NonIgnorable, "U.S.A.", "USA", Result =
+			-1)]
 		public int AlternateHandlingSetting(CollationStrength collationStrength,
 			AlternateHandling alternateHandling, string string1, string string2)
 		{
@@ -164,9 +174,9 @@ namespace Icu.Tests.Collation
 			 */
 			using (var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength))
 			{
-			ucaCollator.AlternateHandling = alternateHandling;
-			return ucaCollator.Compare(string1, string2);
-		}
+				ucaCollator.AlternateHandling = alternateHandling;
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[TestCase(CaseFirst.LowerFirst, "china", "China", Result = -1)]
@@ -196,10 +206,10 @@ namespace Icu.Tests.Collation
 			 */
 			using (var ucaCollator = new RuleBasedCollator(string.Empty))
 			{
-			ucaCollator.CaseFirst = caseFirst;
-			Assert.That(ucaCollator.CaseFirst, Is.EqualTo(caseFirst));
-			return ucaCollator.Compare(string1, string2);
-		}
+				ucaCollator.CaseFirst = caseFirst;
+				Assert.That(ucaCollator.CaseFirst, Is.EqualTo(caseFirst));
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[TestCase(CaseLevel.Off, "role", "Role", Result = 0)]
@@ -217,10 +227,10 @@ namespace Icu.Tests.Collation
 				S=1, E=O role = rôle <  Role*/
 			using (var ucaCollator = new RuleBasedCollator(string.Empty, CollationStrength.Primary))
 			{
-			Assert.That(ucaCollator.CaseLevel, Is.EqualTo(CaseLevel.Off));
-			ucaCollator.CaseLevel = caseLevel;
-			return ucaCollator.Compare(string1, string2);
-		}
+				Assert.That(ucaCollator.CaseLevel, Is.EqualTo(CaseLevel.Off));
+				ucaCollator.CaseLevel = caseLevel;
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[TestCase(FrenchCollation.Off, "cote", "coté", Result = -1)]
@@ -243,10 +253,10 @@ namespace Icu.Tests.Collation
 			 */
 			using (var ucaCollator = new RuleBasedCollator(string.Empty))
 			{
-			Assert.That(ucaCollator.FrenchCollation, Is.EqualTo(FrenchCollation.Off));
-			ucaCollator.FrenchCollation = frenchCollation;
-			return ucaCollator.Compare(string1, string2);
-		}
+				Assert.That(ucaCollator.FrenchCollation, Is.EqualTo(FrenchCollation.Off));
+				ucaCollator.FrenchCollation = frenchCollation;
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		private static Collator CreateJaCollator()
@@ -281,11 +291,11 @@ namespace Icu.Tests.Collation
 			 */
 			using (var jaCollator = CreateJaCollator())
 			{
-			// In ICU54 the HiraganaQauternary special feature is deprecated in favor of supporting
-			// quaternary sorting as a regular feature.
-			jaCollator.Strength = collationStrength;
-			return jaCollator.Compare(string1, string2);
-		}
+				// In ICU54 the HiraganaQauternary special feature is deprecated in favor of supporting
+				// quaternary sorting as a regular feature.
+				jaCollator.Strength = collationStrength;
+				return jaCollator.Compare(string1, string2);
+			}
 		}
 
 		[TestCase(NormalizationMode.Off, "ä", "a\u0308", Result = 0)]
@@ -312,10 +322,11 @@ namespace Icu.Tests.Collation
 				N=X ä = a + ◌̈ < ä + ◌̣ < ạ + ◌̈
 				N=O ä = a + ◌̈ < ä + ◌̣ = ạ + ◌̈
 			 */
-			using (var ucaCollator = new RuleBasedCollator(string.Empty, normalizationMode, CollationStrength.Default))
+			using (var ucaCollator =
+				new RuleBasedCollator(string.Empty, normalizationMode, CollationStrength.Default))
 			{
-			return ucaCollator.Compare(string1, string2);
-		}
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		//  1 < 10 < 2 < 20
@@ -331,10 +342,10 @@ namespace Icu.Tests.Collation
 		{
 			using (var ucaCollator = new RuleBasedCollator(string.Empty))
 			{
-			Assert.AreEqual(NumericCollation.Off, ucaCollator.NumericCollation);
-			ucaCollator.NumericCollation = numericCollation;
-			return ucaCollator.Compare(string1, string2);
-		}
+				Assert.AreEqual(NumericCollation.Off, ucaCollator.NumericCollation);
+				ucaCollator.NumericCollation = numericCollation;
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[TestCase(CollationStrength.Primary, "role", "Role", Result = 0)]
@@ -379,11 +390,11 @@ namespace Icu.Tests.Collation
 				A=S  S=4 ab < a c < a-c < ac*/
 			using (var ucaCollator = new RuleBasedCollator(string.Empty, collationStrength))
 			{
-			if (collationStrength == CollationStrength.Quaternary)
-				ucaCollator.AlternateHandling = AlternateHandling.Shifted;
-			Assert.That(ucaCollator.Strength, Is.EqualTo(collationStrength));
-			return ucaCollator.Compare(string1, string2);
-		}
+				if (collationStrength == CollationStrength.Quaternary)
+					ucaCollator.AlternateHandling = AlternateHandling.Shifted;
+				Assert.That(ucaCollator.Strength, Is.EqualTo(collationStrength));
+				return ucaCollator.Compare(string1, string2);
+			}
 		}
 
 		[Test]
