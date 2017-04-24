@@ -62,7 +62,7 @@
 		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" -SolutionDirectory "$(SolutionDir)" "%(PackageConfigs.FullPath)"'
 			Condition="!Exists('$(SolutionPath)')"/>
 
-		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" "$(SolutionNetCorePath)"'
+		<Exec Command='dotnet restore "$(SolutionNetCorePath)" --source "$(PackageSources)"'
 			Condition="'$(BuildNetCore)' == 'true' And Exists('$(SolutionNetCorePath)')"/>
 	</Target>
 
