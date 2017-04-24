@@ -27,7 +27,7 @@
 		<PackagesConfig>$(ProjectDir)packages.config</PackagesConfig>
 
 		<!-- NuGet command -->
-		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
+		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/nuget.exe</NuGetExePath>
 
 		<PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
 
@@ -62,7 +62,7 @@
 		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" -SolutionDirectory "$(SolutionDir)" "%(PackageConfigs.FullPath)"'
 			Condition="!Exists('$(SolutionPath)')"/>
 
-		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" "$(SolutionNetCorePath)"'
+		<Exec Command='dotnet restore "$(SolutionNetCorePath)" --source "$(PackageSources)"'
 			Condition="'$(BuildNetCore)' == 'true' And Exists('$(SolutionNetCorePath)')"/>
 	</Target>
 
