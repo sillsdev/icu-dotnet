@@ -11,6 +11,7 @@
 		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
 
+		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
 		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
 		<SolutionNetCore>icu.net.netstandard.sln</SolutionNetCore>
 		<SolutionNetCorePath Condition="'$(BuildNetCore)' == 'true'">$(SolutionDir)/$(SolutionNetCore)</SolutionNetCorePath>
@@ -54,13 +55,14 @@
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
+		<PropertyGroup>
+			<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
+		</PropertyGroup>
 		<MSBuild Projects="$(SolutionDir)/$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
 
-		<MSBuild Projects="$(SolutionNetCorePath)"
-			Targets="Build;Pack"
-			Properties="Configuration=$(Configuration)"
+		<Exec Command='$(DotNetCLI) msbuild /t:Build;Pack /p:Configuration=$(ConfigurationNetCore) "$(SolutionNetCorePath)"'
 			Condition="'$(BuildNetCore)' == 'true'"/>
 	</Target>
 
@@ -116,7 +118,7 @@
 		<PropertyGroup>
 			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
 		</PropertyGroup>
-		<Exec Command="dotnet run --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
+		<Exec Command="$(DotNetCLI) run --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
 			WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 </Project>
