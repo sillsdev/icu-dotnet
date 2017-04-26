@@ -16,20 +16,24 @@ namespace Icu
 		/// Constants for Regular Expression Match Modes.
 		/// </summary>
 		[Flags]
-		public enum URegexpFlag : uint
+		public enum URegexpFlag
 		{
+			/// <summary>
+			/// Default.
+			/// </summary>
+			NONE = 0,
 			/// <summary>
 			/// Enable case insensitive matching.
 			/// </summary>
-			UREGEX_CASE_INSENSITIVE = 2,
+			CASE_INSENSITIVE = 2,
 			/// <summary>
 			/// Allow white space and comments within patterns
 			/// </summary>
-			UREGEX_COMMENTS = 4,
+			COMMENTS = 4,
 			/// <summary>
 			/// If set, '.' matches line terminators,  otherwise '.' matching stops at line end.
 			/// </summary>
-			UREGEX_DOTALL = 32,
+			DOTALL = 32,
 			/// <summary>
 			///  If set, treat the entire pattern as a literal string.  		
 			///  Metacharacters or escape sequences in the input sequence will be given 
@@ -39,21 +43,21 @@ namespace Icu
 			///  on matching when used in conjunction with this flag.
 			///  The other flags become superfluous.
 			/// </summary>
-			UREGEX_LITERAL = 16,
+			LITERAL = 16,
 
 			/// <summary>
 			///  Control behavior of "$" and "^"
 			/// If set, recognize line terminators within string,
 			///  otherwise, match only at start and end of input string.
 			/// </summary>
-			UREGEX_MULTILINE = 8,
+			MULTILINE = 8,
 
 			/// <summary>
 			/// Unix-only line endings.
 			/// When this mode is enabled, only \\u000a is recognized as a line ending
 			/// in the behavior of ., ^, and $.
 			/// </summary>
-			UREGEX_UNIX_LINES = 1,
+			UNIX_LINES = 1,
 
 			/// <summary>
 			/// Unicode word boundaries.
@@ -62,7 +66,7 @@ namespace Icu
 			/// traditional regular expression word boundaries.  See
 			/// http://unicode.org/reports/tr29/#Word_Boundaries
 			/// </summary>
-			UREGEX_UWORD = 256,
+			UWORD = 256,
 
 			/// <summary>
 			/// Error on Unrecognized backslash escapes.
@@ -71,7 +75,7 @@ namespace Icu
 			/// meaning.  If this flag is not set, these
 			/// escaped letters represent themselves.
 			/// </summary>
-			UREGEX_ERROR_ON_UNKNOWN_ESCAPES = 512
+			ERROR_ON_UNKNOWN_ESCAPES = 512
 		}
 		private string _regexp;
 		private IntPtr _regexMatcher = IntPtr.Zero;
@@ -80,14 +84,14 @@ namespace Icu
 		/// constructor
 		/// </summary>
 		/// <param name="regexp">a unicode regular expression</param>
-		/// <param name="flags">an array of flags</param>
-		public RegexMatcher(string regexp, uint flags)
+		/// <param name="flags">a bitOred URegexpFlag</param>
+		public RegexMatcher(string regexp, URegexpFlag flags = URegexpFlag.NONE)
 		{
 			_regexp = regexp;
 			ErrorCode e;
 			ParseError parseError;
 
-			_regexMatcher = NativeMethods.uregex_open(_regexp, _regexp.Length, flags, out parseError, out e);
+			_regexMatcher = NativeMethods.uregex_open(_regexp, _regexp.Length, (uint)flags, out parseError, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
