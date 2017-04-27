@@ -305,31 +305,5 @@ namespace Icu
 			}
 			return Path.Combine(basePath, ".nuget", "packages");
 		}
-
-		/// <summary>
-		/// Returns the result of trying to resolve the icu binary paths.
-		/// </summary>
-		internal class IcuVersionInfo
-		{
-			public IcuVersionInfo()
-			{
-				Success = false;
-			}
-
-			public IcuVersionInfo(DirectoryInfo icuPath, int icuVersion)
-			{
-				if (icuVersion <= 0)
-					throw new ArgumentOutOfRangeException(nameof(icuVersion), "IcuVersion should be greater than 0");
-
-				IcuPath = icuPath;
-				IcuVersion = icuVersion;
-				Success = true;
-			}
-
-			public bool Success { get; }
-
-			public readonly DirectoryInfo IcuPath;
-			public readonly int IcuVersion;
-		}
 	}
 }
