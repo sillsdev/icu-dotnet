@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2013 SIL International
+// This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -49,7 +51,7 @@ namespace Icu.Tests
 			IEnumerable<string> unicodeSet = UnicodeSet.ToCharacters(pattern);
 			IEnumerable<string> expected = "A".Split(' ');
 			Assert.That(unicodeSet, Is.EqualTo(expected));
-			
+
 		}
 
 		[Test]
