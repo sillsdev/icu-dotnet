@@ -77,7 +77,7 @@ namespace Icu
 		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
 		[Flags]
-		internal enum LoadLibraryFlags : uint
+		private enum LoadLibraryFlags : uint
 		{
 			NONE = 0x00000000,
 			DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
