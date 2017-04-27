@@ -31,7 +31,7 @@ namespace Icu.Collation
 		public abstract NormalizationMode NormalizationMode{ get; set; }
 
 		/// <summary>
-		/// Gets or sets the FrenchCollation. Attribute for direction of
+		/// Gets or sets the FrenchCollation. Attribute for directionCollof
 		/// secondary weights - used in Canadian French.
 		/// </summary>
 		public abstract FrenchCollation FrenchCollation{ get; set; }
@@ -192,21 +192,21 @@ namespace Icu.Collation
 				throw new ArgumentOutOfRangeException("keyDataLength");
 			}
 
-            CompareOptions options = CompareOptions.None;
+			CompareOptions options = CompareOptions.None;
 
 #if NETSTANDARD1_6
-            SortKey sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
+			SortKey sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
 #else
-            SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
-            SetInternalOriginalStringField(sortKey, originalString);
+			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
+			SetInternalOriginalStringField(sortKey, originalString);
 			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
 #endif
 
-            return sortKey;
+			return sortKey;
 		}
 
 #if !NETSTANDARD1_6
-        private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
+		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
 		{
 			byte[] keyDataCopy = new byte[keyDataLength];
 			Array.Copy(keyData, keyDataCopy, keyDataLength);
@@ -258,17 +258,17 @@ namespace Icu.Collation
 
 			fieldInfo.SetValue(instance, value);
 		}
-        
+
 		private static bool IsRunningOnMono()
 		{
 			return Type.GetType("Mono.Runtime") != null;
 		}
 #endif
 
-        /// <summary>
-        /// Simple class to allow passing collation error info back to the caller of CheckRules.
-        /// </summary>
-        public class CollationRuleErrorInfo
+		/// <summary>
+		/// Simple class to allow passing collation error info back to the caller of CheckRules.
+		/// </summary>
+		public class CollationRuleErrorInfo
 		{
 			/// <summary>Line number (1-based) containing the error</summary>
 			public int Line;
