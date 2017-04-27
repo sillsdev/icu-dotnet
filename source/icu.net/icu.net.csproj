@@ -119,9 +119,12 @@
     <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40</DefineConstants>
-    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
-  <PropertyGroup>
+
+  <!-- Using Mono msbuild with .NET Core build targets does not support
+  assembly signing, yet. -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
