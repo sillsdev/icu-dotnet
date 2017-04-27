@@ -225,8 +225,11 @@ namespace Icu
 		{
 			if (icuVersion < minIcuVersion)
 				return IntPtr.Zero;
+
 			IntPtr handle;
 			string libPath;
+			int lastError = 0;
+
 			if (IsWindows)
 			{
 				var libName = string.Format("{0}{1}.dll", basename, icuVersion);
@@ -239,7 +242,7 @@ namespace Icu
 					loadLibraryFlags |= LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
 
 				handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
-				var lastError = Marshal.GetLastWin32Error();
+				lastError = Marshal.GetLastWin32Error();
 
 				if (handle == IntPtr.Zero && lastError != 0)
 				{
@@ -251,13 +254,15 @@ namespace Icu
 			{
 				var libName = string.Format("lib{0}.so.{1}", basename, icuVersion);
 				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+
 				handle = dlopen(libPath, RTLD_NOW);
+				lastError = Marshal.GetLastWin32Error();
 			}
 			if (handle == IntPtr.Zero)
 			{
 				Trace.TraceWarning("{0} of {1} failed with error {2}",
-					IsWindows ? "LoadLibrary" : "dlopen",
-					libPath, Marshal.GetLastWin32Error());
+					IsWindows ? "LoadLibraryEx" : "dlopen",
+					libPath, lastError);
 				return GetIcuLibHandle(basename, icuVersion - 1);
 			}
 
