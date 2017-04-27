@@ -20,7 +20,9 @@
   </PropertyGroup>
 
   <!-- Properties common to all builds, regardless of target framework -->
-  <PropertyGroup>
+  <!-- Using Mono msbuild with .NET Core build targets does not support
+  assembly signing, yet. -->
+  <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
     <OutputPath>..\..\output\$(Configuration)\$(MSBuildProjectName)</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(IcuSourceDirectory)\icu.net.snk</AssemblyOriginatorKeyFile>
