@@ -47,6 +47,16 @@
 
   <!-- Setting MSBuild properties before executing Pack target.
       https://docs.microsoft.com/en-us/nuget/schema/msbuild-targets#pack-target. -->
+  <PropertyGroup>
+    <Authors>SIL International</Authors>
+    <Copyright>Copyright © SIL International 2007-2017</Copyright>
+    <PackageLicenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
+    <PackageTags>icu.net icu4c</PackageTags>
+    <Description>icu.net is a C# Wrapper around ICU4C. To use this, you need to install the unmanaged binaries to use this library. (e.g. Icu4c.Win.*.nupkg on Windows or official ICU package that comes with the system on Linux).
+
+    This version of icu.net works with (more or less) any version of ICU4C.</Description>
+  </PropertyGroup>
   <Target Name="SetPackageVersion" DependsOnTargets="GetVersion" BeforeTargets="GenerateNuspec;Pack"
     Condition="'$(MSBuildRuntimeType)' != 'Core'">
     <PropertyGroup>
