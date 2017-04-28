@@ -16,8 +16,7 @@
 
 		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
 		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
-		<SolutionNetCore>icu.net.netstandard.sln</SolutionNetCore>
-		<SolutionNetCorePath Condition="'$(BuildNetCore)' == 'true'">$(SolutionDir)/$(SolutionNetCore)</SolutionNetCorePath>
+		<SolutionNetCorePath Condition="'$(BuildNetCore)' == 'true'">$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
@@ -57,22 +56,43 @@
 		<Message Text="Build Complete"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
-		<PropertyGroup>
-			<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
-		</PropertyGroup>
+	<Target Name="Compile" DependsOnTargets="CompileNet40Solution;CompileNetCore">
+	</Target>
+
+	<!-- Compile compiles source/icu.net.sln which outputs
+		assemblies targeting .NET 4.0.
+
+		Creates NuGet package that works only for .NET 4.0. -->
+	<Target Name="CompileNet40Solution"
+		DependsOnTargets="DownloadDependencies;RestorePackages">
 		<MSBuild Projects="$(SolutionDir)/$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
 	</Target>
 
+	<!-- CompileNetCore compiles source/icu.net.netstandard.sln which outputs
+		assemblies targeting .NET 4.0, .NET 4.5.1 and .NET Standard 1.6.
+
+		Creates NuGet package that works against all three frameworks. -->
 	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
 		Condition="'$(BuildNetCore)' == 'true'">
 		<PropertyGroup>
-			<CoreBuildArguments>/t:Build;Pack /p:Configuration=$(ConfigurationNetCore) "$(SolutionNetCorePath)"</CoreBuildArguments>
+			<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
+			<MsBuildConfiguration>Configuration=$(ConfigurationNetCore)</MsBuildConfiguration>
+			<MsBuildTargets>Build;Pack</MsBuildTargets>
 		</PropertyGroup>
 
-		<Exec Command='$(DotNetCLI) msbuild $(CoreBuildArguments)'/>
+		<!-- Due to issue https://github.com/dotnet/sdk/issues/335, we use
+		msbuild.sh in order to compile the icu.net.netstandard.sln for the
+		desktop frameworks (.NET 4.0 and .NET 4.5.1) and .NET Core in Linux. -->
+		<Exec Command="./build/msbuild.sh /t:$(MsBuildTargets) /p:$(MsBuildConfiguration) '$(SolutionNetCorePath)'"
+			WorkingDirectory="$(RootDir)"
+			Condition="'$(IsOnWindows)' != 'true'" />
+
+		<MSBuild Projects="$(SolutionNetCorePath)"
+			Targets="$(MsBuildTargets)"
+			Properties="$(MsBuildConfiguration)"
+			Condition="'$(IsOnWindows)' == 'true'" />
 	</Target>
 
 	<ItemGroup>
