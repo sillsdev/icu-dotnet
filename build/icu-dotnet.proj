@@ -11,8 +11,10 @@
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
 		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
+
 		<Configuration Condition="'$(IsOnWindows)'!='true' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(IsOnWindows)'=='true' And '$(Configuration)'==''">Release</Configuration>
+		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
 
 		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
 		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
@@ -77,7 +79,6 @@
 	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
 		Condition="'$(BuildNetCore)' == 'true'">
 		<PropertyGroup>
-			<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
 			<MsBuildConfiguration>Configuration=$(ConfigurationNetCore)</MsBuildConfiguration>
 			<MsBuildTargets>Build;Pack</MsBuildTargets>
 		</PropertyGroup>
@@ -97,18 +98,16 @@
 
 	<ItemGroup>
 		<ExistingObjectFiles
-			Include="$(OutputDir)/$(Configuration)/**/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
+			Include="$(OutputDir)/$(Configuration)/**/*;$(RootDir)/**/obj/**/*;$(RootDir)/**/bin/**/*;$(RootDir)/**/test-results/**/*"
+			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*" />
 	</ItemGroup>
 
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
-		<Delete Condition="'$(IsOnWindows)'=='true'"
-			 Files="$(RootDir)/**/obj/**/*" />
+		<!--<Delete Files="$(RootDir)/**/obj/**/*" />
 		<Exec Condition="'$(IsOnWindows)'!='true'"
 			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
-			WorkingDirectory="$(RootDir)" />
+			WorkingDirectory="$(RootDir)" />-->
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
@@ -147,7 +146,7 @@
 		<PropertyGroup>
 			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
 		</PropertyGroup>
-		<Exec Command="$(DotNetCLI) run --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
+		<Exec Command="$(DotNetCLI) run --configuration $(ConfigurationNetCore) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
 			WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 </Project>
