@@ -83,22 +83,9 @@
 		Creates NuGet package that works against all three frameworks. -->
 	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
 		Condition="'$(BuildNetCore)' == 'true'">
-		<PropertyGroup>
-			<MsBuildConfiguration>Configuration=$(ConfigurationNetCore)</MsBuildConfiguration>
-			<MsBuildTargets>Build;Pack</MsBuildTargets>
-		</PropertyGroup>
-
-		<!-- Due to issue https://github.com/dotnet/sdk/issues/335, we use
-		msbuild.sh in order to compile the icu.net.netstandard.sln for the
-		desktop frameworks (.NET 4.0 and .NET 4.5.1) and .NET Core in Linux. -->
-		<Exec Command="./build/msbuild.sh /t:$(MsBuildTargets) /p:$(MsBuildConfiguration) '$(SolutionNetCorePath)'"
-			WorkingDirectory="$(RootDir)"
-			Condition="'$(IsOnWindows)' != 'true'" />
-
 		<MSBuild Projects="$(SolutionNetCorePath)"
-			Targets="$(MsBuildTargets)"
-			Properties="$(MsBuildConfiguration)"
-			Condition="'$(IsOnWindows)' == 'true'" />
+			Targets="Build;Pack"
+			Properties="Configuration=$(ConfigurationNetCore)" />
 	</Target>
 
 	<Target Name="Clean">
