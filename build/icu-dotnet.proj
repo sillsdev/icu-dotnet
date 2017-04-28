@@ -96,18 +96,14 @@
 			Condition="'$(IsOnWindows)' == 'true'" />
 	</Target>
 
-	<ItemGroup>
-		<ExistingObjectFiles
-			Include="$(OutputDir)/$(Configuration)/**/*;$(RootDir)/**/obj/**/*;$(RootDir)/**/bin/**/*;$(RootDir)/**/test-results/**/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*" />
-	</ItemGroup>
-
 	<Target Name="Clean">
+		<ItemGroup>
+			<ExistingObjectFiles
+				Include="$(OutputDir)/$(Configuration)/**/*;$(RootDir)/**/obj/**/*;$(RootDir)/**/bin/**/*;$(RootDir)/**/test-results/**/*"
+				Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*" />
+		</ItemGroup>
+
 		<Delete Files="@(ExistingObjectFiles)" />
-		<!--<Delete Files="$(RootDir)/**/obj/**/*" />
-		<Exec Condition="'$(IsOnWindows)'!='true'"
-			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
-			WorkingDirectory="$(RootDir)" />-->
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
