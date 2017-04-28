@@ -14,11 +14,16 @@
 
 		<Configuration Condition="'$(IsOnWindows)'!='true' And '$(Configuration)'==''">ReleaseMono</Configuration>
 		<Configuration Condition="'$(IsOnWindows)'=='true' And '$(Configuration)'==''">Release</Configuration>
-		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
 
-		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
 		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
-		<SolutionNetCorePath Condition="'$(BuildNetCore)' == 'true'">$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
+	</PropertyGroup>
+
+	<!-- .NET Core build properties -->
+	<PropertyGroup Condition="'$(BuildNetCore)' == 'true'">
+		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
+		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
+		<DotNetSdk Condition="'$(DotNetSdk)' == ''">$(HOME)/.dotnet/sdk/1.0.3</DotNetSdk>
+		<SolutionNetCorePath>$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
