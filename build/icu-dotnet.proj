@@ -1,15 +1,18 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<RootDir Condition="'$(teamcity_version)' == '' Or '$(OS)'!='Windows_NT'">$(MSBuildProjectDirectory)\..</RootDir>
-		<RootDir Condition="'$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'">$(teamcity_build_checkoutDir)</RootDir>
-		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(OS)'!='Windows_NT'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
+		<IsOnWindows Condition="'$(OS)'=='Windows_NT'">true</IsOnWindows>
+		<IsOnTeamCity Condition="'$(teamcity_version)' != ''">true</IsOnTeamCity>
+
+		<RootDir Condition="'$(IsOnTeamCity)'!='true' Or '$(IsOnWindows)'!='true'">$(MSBuildProjectDirectory)\..</RootDir>
+		<RootDir Condition="'$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'">$(teamcity_build_checkoutDir)</RootDir>
+		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(IsOnWindows)'!='true'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
 		<SolutionDir>$(RootDir)/source</SolutionDir>
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
-		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
-		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
-		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
+		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
+		<Configuration Condition="'$(IsOnWindows)'!='true' And '$(Configuration)'==''">ReleaseMono</Configuration>
+		<Configuration Condition="'$(IsOnWindows)'=='true' And '$(Configuration)'==''">Release</Configuration>
 
 		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
 		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
@@ -23,10 +26,10 @@
 	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
+		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'"/>
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
+		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'!='true'"/>
 
 	<Import Project="NuGet.targets"/>
 
@@ -61,9 +64,15 @@
 		<MSBuild Projects="$(SolutionDir)/$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
+	</Target>
 
-		<Exec Command='$(DotNetCLI) msbuild /t:Build;Pack /p:Configuration=$(ConfigurationNetCore) "$(SolutionNetCorePath)"'
-			Condition="'$(BuildNetCore)' == 'true'"/>
+	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
+		Condition="'$(BuildNetCore)' == 'true'">
+		<PropertyGroup>
+			<CoreBuildArguments>/t:Build;Pack /p:Configuration=$(ConfigurationNetCore) "$(SolutionNetCorePath)"</CoreBuildArguments>
+		</PropertyGroup>
+
+		<Exec Command='$(DotNetCLI) msbuild $(CoreBuildArguments)'/>
 	</Target>
 
 	<ItemGroup>
@@ -75,9 +84,9 @@
 
 	<Target Name="Clean">
 		<Delete Files="@(ExistingObjectFiles)" />
-		<Delete Condition="'$(OS)'=='Windows_NT'"
+		<Delete Condition="'$(IsOnWindows)'=='true'"
 			 Files="$(RootDir)/**/obj/**/*" />
-		<Exec Condition="'$(OS)'!='Windows_NT'"
+		<Exec Condition="'$(IsOnWindows)'!='true'"
 			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
 			WorkingDirectory="$(RootDir)" />
 	</Target>
@@ -88,7 +97,7 @@
 
 	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit;RunNUnitNetCore"/>
 
-	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
+	<Target Name="RunNUnitTC" Condition="'$(IsOnTeamCity)'=='true'">
 		<ItemGroup>
 			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
@@ -99,7 +108,7 @@
 			NUnitVersion="NUnit-2.6.4" />
 	</Target>
 
-	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
+	<Target Name="RunNUnit" Condition="'$(IsOnTeamCity)'!='true'">
 		<ItemGroup>
 			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
