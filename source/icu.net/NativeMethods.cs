@@ -1684,13 +1684,11 @@ namespace Icu
 
 		#endregion Break iterator
 
-			#region Regex Matcher
+		#region Regex Matcher
 
-			/// <summary>
-			/// Open a new Regexp Matcher.
-			/// </summary>
-			/// <param name="regexp">Regular expression.</param>
-			/// <returns></returns>
+		/// <summary>
+		/// Open (compile) an ICU regular expression.
+		/// </summary>
 		public static IntPtr uregex_open(
 			string pattern, int patternLength,
 			uint flags,
@@ -1701,6 +1699,9 @@ namespace Icu
 			return Methods.uregex_open(pattern, patternLength, flags, out parseError, out errorCode);
 		}
 
+		/// <summary>
+		/// Attempts to match the input string against the pattern. 
+		/// </summary>
 		public static bool uregex_matches(
 			IntPtr regexp,
 			int startIndex,
