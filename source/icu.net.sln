@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
 EndProject
@@ -44,6 +44,7 @@ Global
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|x86.ActiveCfg = DebugMono|x86
 		{28A0072F-AE0B-449A-8494-B53F09756273}.DebugMono|x86.Build.0 = DebugMono|x86
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{28A0072F-AE0B-449A-8494-B53F09756273}.Release|x86.ActiveCfg = Release|x86
@@ -67,6 +68,7 @@ Global
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|x86.ActiveCfg = DebugMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.DebugMono|x86.Build.0 = DebugMono|x86
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}.Release|x86.ActiveCfg = Release|x86
@@ -90,6 +92,7 @@ Global
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.DebugMono|x86.ActiveCfg = Debug|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.DebugMono|x86.Build.0 = Debug|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|x86.ActiveCfg = Release|Any CPU
