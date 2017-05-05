@@ -157,6 +157,12 @@ namespace Icu
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
+		/// <summary>
+		/// Releases the resources used by BreakIterator.
+		/// </summary>
+		/// <param name="disposing">true to release managed and unmanaged
+		/// resources; false to release only unmanaged resources.</param>
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -171,6 +177,9 @@ namespace Icu
 			}
 		}
 
+		/// <summary>
+		/// Disposes of all unmanaged resources used by RegexMatcher
+		/// </summary>
 		~RegexMatcher()
 		{
 			Dispose(false);
