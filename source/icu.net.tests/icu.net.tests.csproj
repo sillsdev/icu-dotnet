@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -190,9 +190,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Icu4c.Win.Full.Lib.56.1.21\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Full.Lib.56.1.21\build\Icu4c.Win.Full.Lib.targets'))" />
-    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets'))" />
   </Target>
-  <Import Project="..\packages\Icu4c.Win.Full.Lib.56.1.21\build\Icu4c.Win.Full.Lib.targets" Condition="Exists('..\packages\Icu4c.Win.Full.Lib.56.1.21\build\Icu4c.Win.Full.Lib.targets')" />
-  <Import Project="..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.54.1.35\build\Icu4c.Win.Min.targets')" />
+  <Import Project="..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets" Condition="Exists('..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets')" />
+  <Import Project="..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets')" />
 </Project>

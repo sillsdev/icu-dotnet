@@ -43,7 +43,7 @@ namespace Icu.Tests
 
 		private static string IcuDirectory
 		{
-			get { return Path.Combine(OutputDirectory, ArchSubdir); }
+			get { return Path.Combine(OutputDirectory, "lib", ArchSubdir); }
 		}
 
 		private string RunTestHelper(string workDir, string exeDir = null)
