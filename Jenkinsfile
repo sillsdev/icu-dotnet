@@ -52,6 +52,7 @@ ansiColor('xterm') {
 
 						stage('Upload nuget') {
 							if (!isPr) {
+								echo "Upload nuget package"
 								withCredentials([string(credentialsId: 'nuget-api-key', variable: 'NuGetApiKey')]) {
 									bat """
 										build\\NuGet.exe push -ApiKey ${NuGetApiKey} source\\NuGetBuild\\*.nupkg
