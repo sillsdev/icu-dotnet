@@ -50,8 +50,8 @@ ansiColor('xterm') {
 								"""
 						}
 
-						if (!isPr) {
-							stage('Upload nuget') {
+						stage('Upload nuget') {
+							if (!isPr) {
 								withCredentials([string(credentialsId: 'nuget-api-key', variable: 'NuGetApiKey')]) {
 									bat """
 										build\\NuGet.exe push -ApiKey ${NuGetApiKey} source\\NuGetBuild\\*.nupkg
