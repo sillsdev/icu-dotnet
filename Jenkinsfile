@@ -16,9 +16,10 @@ ansiColor('xterm') {
 
 			// Set default. This is only needed for the first build.
 			def buildKindVar = params.buildKind ?: 'Continuous'
+			def isPr = false
 
 			try {
-				isPR = BRANCH_NAME.startsWith("PR-") ? true : false
+				isPR = env.BRANCH_NAME.startsWith("PR-") ? true : false
 			}
 			catch(err) {
 				isPR = false
