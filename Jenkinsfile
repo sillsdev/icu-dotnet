@@ -29,11 +29,11 @@ ansiColor('xterm') {
 					node('windows && supported') {
 						def msbuild = tool 'msbuild12'
 
-						stage('Checkout') {
+						stage('Checkout Win') {
 							checkout scm
 						}
 
-						stage('Build') {
+						stage('Build Win') {
 							echo "Building icu.net"
 							bat """
 								"${msbuild}" /t:Build /property:Configuration=Release build/icu-dotnet.proj
@@ -43,7 +43,7 @@ ansiColor('xterm') {
 							currentBuild.displayName = "${version}-${env.BUILD_NUMBER}"
 						}
 
-						stage('Tests') {
+						stage('Tests Win') {
 							echo "Running unit tests"
 							bat """
 								"${msbuild}" /t:TestOnly /property:Configuration=Release build/icu-dotnet.proj
@@ -58,11 +58,11 @@ ansiColor('xterm') {
 					}
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu') {
-						stage('Checkout') {
+						stage('Checkout Linux') {
 							checkout scm
 						}
 
-						stage('Build and Test') {
+						stage('Build and Test Linux') {
 							echo "Building icu.net"
 							sh '''#!/bin/bash
 ICUVER=$(icu-config --version|tr -d .|cut -c -2)
