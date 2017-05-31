@@ -50,11 +50,18 @@ ansiColor('xterm') {
 								"""
 						}
 
-						nunit testResultsPattern: '**/TestResults.xml'
-
-						if (!isPR) {
-							archiveArtifacts 'source/NuGetBuild/*.nupkg'
+						if (!isPr) {
+							stage('Upload nuget') {
+								withCredentials([string(credentialsId: 'nuget-api-key', variable: 'NuGetApiKey')]) {
+									bat """
+										build\\NuGet.exe push -ApiKey ${NuGetApiKey} source\\NuGetBuild\\*.nupkg
+										"""
+								}
+								archiveArtifacts 'source/NuGetBuild/*.nupkg'
+							}
 						}
+
+						nunit testResultsPattern: '**/TestResults.xml'
 					}
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu') {
