@@ -15,6 +15,9 @@ namespace Icu.Tests
 	{
 		private string _tmpDir;
 		private string _pathEnvironmentVariable;
+		private const string FullIcuLibraryVersion = "59.1";
+		private const string MinIcuLibraryVersion = "58.2";
+		private const string MinIcuLibraryVersionMajor = "58";
 
 		private static void CopyFile(string srcPath, string dstDir)
 		{
@@ -67,6 +70,13 @@ namespace Icu.Tests
 			}
 		}
 
+		private void CopyMinimalIcuFiles(string targetDir)
+		{
+			CopyFile(Path.Combine(IcuDirectory, string.Format("icudt{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, string.Format("icuin{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, string.Format("icuuc{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
+		}
+
 		[SetUp]
 		public void Setup()
 		{
@@ -93,31 +103,27 @@ namespace Icu.Tests
 		[Test]
 		public void LoadIcuLibrary_GetFromPath()
 		{
-			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo("56.1"));
+			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo(FullIcuLibraryVersion));
 		}
 
 		[Test]
 		public void LoadIcuLibrary_GetFromPathDifferentDir()
 		{
-			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo("56.1"));
+			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo(FullIcuLibraryVersion));
 		}
 
 		[Test]
 		public void LoadIcuLibrary_LoadLocalVersion()
 		{
-			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), _tmpDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), _tmpDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), _tmpDir);
-			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo("54.1"));
+			CopyMinimalIcuFiles(_tmpDir);
+			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
 		[Test]
 		public void LoadIcuLibrary_LoadLocalVersionDifferentWorkDir()
 		{
-			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), _tmpDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), _tmpDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), _tmpDir);
-			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo("54.1"));
+			CopyMinimalIcuFiles(_tmpDir);
+			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
 		[Test]
@@ -125,10 +131,8 @@ namespace Icu.Tests
 		{
 			var targetDir = Path.Combine(_tmpDir, ArchSubdir);
 			Directory.CreateDirectory(targetDir);
-			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), targetDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), targetDir);
-			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), targetDir);
-			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo("54.1"));
+			CopyMinimalIcuFiles(targetDir);
+			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
 		[Test]
@@ -138,10 +142,8 @@ namespace Icu.Tests
 			Directory.CreateDirectory(subdir);
 			CopyFile(Path.Combine(_tmpDir, "TestHelper.exe"), subdir);
 			CopyFile(Path.Combine(_tmpDir, "icu.net.dll"), subdir);
-			CopyFile(Path.Combine(IcuDirectory, "icudt54.dll"), subdir);
-			CopyFile(Path.Combine(IcuDirectory, "icuin54.dll"), subdir);
-			CopyFile(Path.Combine(IcuDirectory, "icuuc54.dll"), subdir);
-			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo("54.1"));
+			CopyMinimalIcuFiles(subdir);
+			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
 	}
