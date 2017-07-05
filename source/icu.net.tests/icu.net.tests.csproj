@@ -190,9 +190,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets'))" />
-    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.58.2.18-beta\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.58.2.18-beta\build\Icu4c.Win.Min.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Full.Lib.59.1.7-beta\build\Icu4c.Win.Full.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Full.Lib.59.1.7-beta\build\Icu4c.Win.Full.Lib.targets'))" />
   </Target>
-  <Import Project="..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets" Condition="Exists('..\packages\Icu4c.Win.Full.Lib.56.1.50-beta\build\Icu4c.Win.Full.Lib.targets')" />
-  <Import Project="..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.54.1.56-beta\build\Icu4c.Win.Min.targets')" />
+  <Import Project="..\packages\Icu4c.Win.Min.58.2.18-beta\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.58.2.18-beta\build\Icu4c.Win.Min.targets')" />
+  <Import Project="..\packages\Icu4c.Win.Full.Lib.59.1.7-beta\build\Icu4c.Win.Full.Lib.targets" Condition="Exists('..\packages\Icu4c.Win.Full.Lib.59.1.7-beta\build\Icu4c.Win.Full.Lib.targets')" />
 </Project>
