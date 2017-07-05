@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)/../</SolutionDir>
 		<SolutionPath Condition="$(SolutionPath) == '' Or $(SolutionPath) == '*Undefined*'">$(SolutionDir)/$(Solution)</SolutionPath>
-		<NuGetUrl>https://nuget.org/NuGet.exe</NuGetUrl>
+		<NuGetUrl>https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetUrl>
 
 		<!-- Enable the restore command to run before builds -->
 		<RestorePackages Condition="  '$(RestorePackages)' == '' ">true</RestorePackages>
@@ -11,7 +11,7 @@
 		<!-- Determines if package restore consent is required to restore packages -->
 		<RequireRestoreConsent Condition=" '$(RequireRestoreConsent)' != 'false' ">false</RequireRestoreConsent>
 
-		<!-- Download NuGet.exe if it does not already exist -->
+		<!-- Download nuget.exe if it does not already exist -->
 		<DownloadNuGetExe Condition=" '$(DownloadNuGetExe)' == '' ">true</DownloadNuGetExe>
 	</PropertyGroup>
 
@@ -19,7 +19,7 @@
 		<!-- Package sources used to restore packages. -->
 		<!-- The official NuGet package source (https://nuget.org/api/v2/) will be excluded if package sources are specified and it does not appear in the list -->
 		<PackageSource Include="https://nuget.org/api/v2/" />
-		<PackageSource Include="http://build.palaso.org/guestAuth/app/nuget/v1/FeedService.svc/" />
+		<PackageSource Include="https://build.palaso.org/guestAuth/app/nuget/v1/FeedService.svc/" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -27,7 +27,7 @@
 		<PackagesConfig>$(ProjectDir)packages.config</PackagesConfig>
 
 		<!-- NuGet command -->
-		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/NuGet.exe</NuGetExePath>
+		<NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)/nuget.exe</NuGetExePath>
 
 		<PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
 
@@ -81,7 +81,7 @@
 				try {
 					OutputFilename = Path.GetFullPath(OutputFilename);
 
-					Log.LogMessage("Downloading latest version of NuGet.exe...");
+					Log.LogMessage("Downloading latest version of nuget.exe...");
 					WebClient webClient = new WebClient();
 					webClient.DownloadFile("$(NuGetUrl)", OutputFilename);
 
