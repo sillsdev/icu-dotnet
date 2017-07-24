@@ -22,7 +22,6 @@
 	<PropertyGroup Condition="'$(BuildNetCore)' == 'true'">
 		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
 		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
-		<DotNetSdk Condition="'$(DotNetSdk)' == ''">$(HOME)/.dotnet/sdk/1.0.3</DotNetSdk>
 		<SolutionNetCorePath>$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
 	</PropertyGroup>
 

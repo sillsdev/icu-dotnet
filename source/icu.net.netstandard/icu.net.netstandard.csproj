@@ -62,6 +62,13 @@
 
     This version of icu.net works with (more or less) any version of ICU4C.</Description>
   </PropertyGroup>
+
+  <!-- GitVersionTask is not compiled against .NET Core, importing the targets
+    will result in a failure because it will try to resolve Microsoft.Build.Utilities v4.0 -->
+  <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Core'">
+    <ExcludeRestorePackageImports>true</ExcludeRestorePackageImports>
+  </PropertyGroup>
+
   <Target Name="SetPackageVersion" DependsOnTargets="GetVersion" BeforeTargets="GenerateNuspec;Pack"
     Condition="'$(MSBuildRuntimeType)' != 'Core'">
     <PropertyGroup>
