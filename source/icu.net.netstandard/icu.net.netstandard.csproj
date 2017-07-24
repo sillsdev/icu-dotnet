@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <NetStandard>netstandard1.6</NetStandard>
     <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
     <IcuSourceDirectory>..\icu.net</IcuSourceDirectory>
@@ -28,7 +27,7 @@
     <AssemblyOriginatorKeyFile>$(IcuSourceDirectory)\icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(NetStandard)'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
   </ItemGroup>
 
@@ -38,12 +37,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="$(IcuSourceDirectory)\**\*.cs" Exclude="$(IcuSourceDirectory)\obj\*.cs;$(IcuSourceDirectory)\obj\**\*.cs;">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != '$(NetStandard)'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
 
@@ -72,16 +75,5 @@
     <CreateProperty Value="$(NuGetBuildFolder)">
       <Output PropertyName="PackageOutputPath" TaskParameter="Value" />
     </CreateProperty>
-  </Target>
-
-  <!-- HACK:  GitVersion is not yet migrated to .NET Core.  Manually importing this package for now.
-       https://github.com/GitTools/GitVersion/issues/1175 -->
-  <Import Project="..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets') And '$(MSBuildRuntimeType)' != 'Core'" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild"
-    Condition="'$(MSBuildRuntimeType)' != 'Core'">
-    <PropertyGroup>
-      <ErrorText>This project references {0} that is missing on this computer. Use NuGet Package Restore on .\source\icu.net.sln.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0009\build\GitVersionTask.targets'))" />
   </Target>
 </Project>
