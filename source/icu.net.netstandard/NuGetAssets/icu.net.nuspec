@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<authors>SIL International</authors>
+		<licenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/sillsdev/icu-dotnet</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>icu.net is a C# Wrapper around ICU4C
+
+This version of icu.net works with (more or less) any version of ICU4C.
+
+NOTE: this package contains the managed wrapper part of icu.net. You'll also have to have the unmanaged binaries of ICU installed. On Linux it is recommended to install the official ICU package that comes with the system. On Windows you can install one of the binary nuget packages, e.g. Icu4c.Win.</description>
+		<language>en-US</language>
+		<dependencies>
+			<group targetFramework="net40" />
+			<group targetFramework="net451">
+				<dependency id="Microsoft.Extensions.DependencyModel" version="1.1.1" exclude="Build,Analyzers" />
+				<dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
+			</group>
+			<group targetFramework="netstandard1.6">
+				<dependency id="NETStandard.Library" version="1.6.1" exclude="Build,Analyzers" />
+				<dependency id="System.Diagnostics.TraceSource" version="4.3.0" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.DependencyModel" version="1.1.1" exclude="Build,Analyzers" />
+				<dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
+			</group>
+		</dependencies>
+	</metadata>
+</package>

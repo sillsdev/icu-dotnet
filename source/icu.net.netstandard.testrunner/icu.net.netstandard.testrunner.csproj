@@ -13,4 +13,6 @@
     <ProjectReference Include="..\icu.net.netstandard.tests\icu.net.netstandard.tests.csproj" />
   </ItemGroup>
 
+  <Target Name="CreateNuGetPackage">
+  </Target>
 </Project>

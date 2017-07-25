@@ -24,4 +24,6 @@
     </Compile>
   </ItemGroup>
 
+  <Target Name="CreateNuGetPackage">
+  </Target>
 </Project>

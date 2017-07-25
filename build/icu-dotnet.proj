@@ -83,7 +83,7 @@
 	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
 		Condition="'$(BuildNetCore)' == 'true'">
 		<MSBuild Projects="$(SolutionNetCorePath)"
-			Targets="Build;Pack"
+			Targets="Build;CreateNuGetPackage"
 			Properties="Configuration=$(ConfigurationNetCore)" />
 	</Target>
 
