@@ -6,6 +6,7 @@
     <IcuSourceDirectory>..\icu.net</IcuSourceDirectory>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\..\output\$(Configuration)\$(MSBuildProjectName)</OutputPath>
     <RootNamespace>Icu</RootNamespace>
     <AssemblyName>icu.net</AssemblyName>
     <ErrorReport>prompt</ErrorReport>
@@ -18,11 +19,9 @@
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
   </PropertyGroup>
 
-  <!-- Properties common to all builds, regardless of target framework -->
   <!-- Using Mono msbuild with .NET Core build targets does not support
   assembly signing, yet. -->
   <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-    <OutputPath>..\..\output\$(Configuration)\$(MSBuildProjectName)</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(IcuSourceDirectory)\icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -37,7 +36,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" />
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="PepitaPackage" Version="1.21.6">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -50,37 +54,46 @@
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
 
-  <!-- Setting MSBuild properties before executing Pack target.
-      https://docs.microsoft.com/en-us/nuget/schema/msbuild-targets#pack-target. -->
-  <PropertyGroup>
-    <Authors>SIL International</Authors>
-    <Copyright>Copyright © SIL International 2007-2017</Copyright>
-    <PackageLicenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
-    <PackageTags>icu.net icu4c</PackageTags>
-    <Description>icu.net is a C# Wrapper around ICU4C. To use this, you need to install the unmanaged binaries to use this library. (e.g. Icu4c.Win.*.nupkg on Windows or official ICU package that comes with the system on Linux).
-
-    This version of icu.net works with (more or less) any version of ICU4C.</Description>
+  <!-- The current PepitaPackage.targets assume we are using packages.config
+    instead of the NuGet 3 cache. It is trying to set the PepitaPath to
+    `$(MSBuildThisFileDirectory)..\`, which will not exist. -->
+  <PropertyGroup Condition="Exists('$(NuGetPackageRoot)pepitapackage\1.21.6')">
+    <PepitaPath>$(NuGetPackageRoot)pepitapackage\1.21.6</PepitaPath>
   </PropertyGroup>
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(PepitaPath)\PepitaPackage.dll"
+    Condition="'$(PepitaPath)' != '' AND Exists('$(PepitaPath)')"/>
 
-  <!-- GitVersionTask is not compiled against .NET Core, importing the targets
-    will result in a failure because it will try to resolve Microsoft.Build.Utilities v4.0 -->
+  <!-- GitVersionTask and PepitaPackage are not compiled against .NET Core,
+    importing the targets will result in a failure because it will try to
+    resolve Microsoft.Build.Utilities v4.0 -->
   <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Core'">
     <ExcludeRestorePackageImports>true</ExcludeRestorePackageImports>
   </PropertyGroup>
 
-  <Target Name="SetPackageVersion" DependsOnTargets="GetVersion" BeforeTargets="GenerateNuspec;Pack"
-    Condition="'$(MSBuildRuntimeType)' != 'Core'">
+  <Target Name="CreateNuGetPackage">
     <PropertyGroup>
       <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
+      <NuGetAssetsFolder>$(ProjectDir)NuGetAssets</NuGetAssetsFolder>
+      <MetadataAssembly>$(NuGetBuildFolder)/lib/net40/icu.net.dll</MetadataAssembly>
+      <OutputPathResolved>$([System.IO.Path]::GetFullPath('$(OutputPath)'))</OutputPathResolved>
     </PropertyGroup>
+    <ItemGroup>
+      <FilesToDelete Include="$(NuGetBuildFolder)\**\*.*" />
+      <IcuDotNetFiles Include="$(OutputPath)/**/icu.net.*" />
+      <IcuDotNetFiles Remove="$(OutputPath)/**/icu.net.pdb" Condition="'$(OS)'!='Windows_NT'" />
+    </ItemGroup>
 
-    <Message Importance="High" Text="Setting NuGet version: $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
-    <CreateProperty Value="$(GitVersion_NuGetVersion)">
-      <Output PropertyName="PackageVersion" TaskParameter="Value" />
-    </CreateProperty>
-    <CreateProperty Value="$(NuGetBuildFolder)">
-      <Output PropertyName="PackageOutputPath" TaskParameter="Value" />
-    </CreateProperty>
+    <Delete Files="@(FilesToDelete)" />
+    <MakeDir Directories="$(NuGetBuildFolder)" />
+
+    <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
+
+    <Copy SourceFiles="@(IcuDotNetFiles)"
+        DestinationFiles="@(IcuDotNetFiles->'$(NuGetBuildFolder)/lib/%(RecursiveDir)\%(Filename)%(Extension)')" />
+
+    <Message Importance="High" Text="OutputPathResolved: $(OutputPathResolved).  ICUFiles: %(IcuDotNetFiles.Identity)" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(MetadataAssembly)" Version="$(GitVersion_NuGetVersion)" />
+    <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
+    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
   </Target>
 </Project>
