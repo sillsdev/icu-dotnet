@@ -11,7 +11,13 @@
     <AssemblyName>icu.net</AssemblyName>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
   </PropertyGroup>
 
   <!-- Full .NET Framework properties -->
@@ -75,7 +81,6 @@
       <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
       <NuGetAssetsFolder>$(ProjectDir)NuGetAssets</NuGetAssetsFolder>
       <MetadataAssembly>$(NuGetBuildFolder)/lib/net40/icu.net.dll</MetadataAssembly>
-      <OutputPathResolved>$([System.IO.Path]::GetFullPath('$(OutputPath)'))</OutputPathResolved>
     </PropertyGroup>
     <ItemGroup>
       <FilesToDelete Include="$(NuGetBuildFolder)\**\*.*" />
@@ -87,13 +92,11 @@
     <MakeDir Directories="$(NuGetBuildFolder)" />
 
     <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
-
     <Copy SourceFiles="@(IcuDotNetFiles)"
         DestinationFiles="@(IcuDotNetFiles->'$(NuGetBuildFolder)/lib/%(RecursiveDir)\%(Filename)%(Extension)')" />
 
-    <Message Importance="High" Text="OutputPathResolved: $(OutputPathResolved).  ICUFiles: %(IcuDotNetFiles.Identity)" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(MetadataAssembly)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
-    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
+    <WriteLinesToFile File="$(NuGetBuildFolder)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
   </Target>
 </Project>
