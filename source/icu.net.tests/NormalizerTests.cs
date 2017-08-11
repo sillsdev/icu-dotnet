@@ -28,5 +28,15 @@ namespace Icu.Tests
 		{
 			return Normalizer.IsNormalized(src, expectNormalizationMode);
 		}
+
+		// https://github.com/sillsdev/icu-dotnet/issues/47
+		[TestCase("⒆⑵Ⓖ⒭⓫⒄⒱ⓞ")]
+		[TestCase("㎞㌻㌵㍑㍑")]
+		[TestCase("㌎㍊㌵㌇㌿")]
+		public void Normalize_NoOverflowError(string input)
+		{
+			Assert.That(() => Normalizer.Normalize(input, Normalizer.UNormalizationMode.UNORM_NFKC),
+				Throws.Nothing);
+		}
 	}
 }

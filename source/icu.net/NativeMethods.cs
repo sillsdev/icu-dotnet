@@ -881,6 +881,19 @@ namespace Icu
 				Normalizer.UNormalizationMode mode, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr unorm2_getInstanceDelegate(IntPtr packageName,
+				[MarshalAs(UnmanagedType.LPStr)] string name,
+				Normalizer.UNormalization2Mode mode, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int unorm2_normalizeDelegate(IntPtr norm2, string source,
+				int sourceLength, IntPtr dest, int capacity, ref ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate byte unorm2_isNormalizedDelegate(IntPtr norm2, string source,
+				int sourceLength, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
 				string locale, string text, int textLength, out ErrorCode errorCode);
 
@@ -1017,6 +1030,9 @@ namespace Icu
 			internal u_strToUpperDelegate u_strToUpper;
 			internal unorm_normalizeDelegate _unorm_normalize;
 			internal unorm_isNormalizedDelegate _unorm_isNormalized;
+			internal unorm2_getInstanceDelegate _unorm2_getInstance;
+			internal unorm2_normalizeDelegate _unorm2_normalize;
+			internal unorm2_isNormalizedDelegate _unorm2_isNormalized;
 			internal ubrk_openDelegate ubrk_open;
 			internal ubrk_openRulesDelegate ubrk_openRules;
 			internal ubrk_closeDelegate ubrk_close;
@@ -1560,6 +1576,62 @@ namespace Icu
 			if (Methods._unorm_isNormalized == null)
 				Methods._unorm_isNormalized = GetMethod<MethodsContainer.unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
 			return Methods._unorm_isNormalized(source, sourceLength, mode, out errorCode);
+		}
+
+		#endregion normalize
+
+		#region normalize2
+
+		/// <summary>
+		/// Returns a UNormalizer2 instance which uses the specified data file (packageName/name
+		/// similar to ucnv_openPackage() and ures_open()/ResourceBundle) and which composes or
+		/// decomposes text according to the specified mode.
+		/// </summary>
+		public static IntPtr unorm2_getInstance(IntPtr packageName, string name,
+			Normalizer.UNormalization2Mode mode, out ErrorCode errorCode)
+		{
+			if (Methods._unorm2_getInstance == null)
+			{
+				Methods._unorm2_getInstance = GetMethod<MethodsContainer.unorm2_getInstanceDelegate>(
+					IcuCommonLibHandle, "unorm2_getInstance");
+			}
+			return Methods._unorm2_getInstance(packageName, name, mode, out errorCode);
+		}
+
+		/// <summary>
+		/// Normalize a string according to the given mode and options.
+		/// </summary>
+		public static int unorm2_normalize(IntPtr norm2, string source, int sourceLength,
+			IntPtr result, int resultLength, out ErrorCode errorCode)
+		{
+			if (Methods._unorm2_normalize == null)
+			{
+				Methods._unorm2_normalize = GetMethod<MethodsContainer.unorm2_normalizeDelegate>(
+					IcuCommonLibHandle, "unorm2_normalize");
+			}
+			// Theoretically it should be unnecessary to initialize errorCode here. Instead we
+			// should be able to use `out` instead. However, there seems to be a bug somewhere:
+			// if this method gets called twice and errorCode != NoErrors, the error code won't
+			// get reset, even though the method seems to work without errors.
+			errorCode = ErrorCode.NoErrors;
+			return Methods._unorm2_normalize(norm2, source, sourceLength, result,
+				resultLength, ref errorCode);
+		}
+
+		// Note that ICU's UBool type is typedef to an 8-bit integer.
+
+		/// <summary>
+		/// Check whether a string is normalized according to the given mode and options.
+		/// </summary>
+		public static byte unorm2_isNormalized(IntPtr norm2, string source, int sourceLength,
+			out ErrorCode errorCode)
+		{
+			if (Methods._unorm2_isNormalized == null)
+			{
+				Methods._unorm2_isNormalized = GetMethod<MethodsContainer.unorm2_isNormalizedDelegate>(
+					IcuCommonLibHandle, "unorm2_isNormalized");
+			}
+			return Methods._unorm2_isNormalized(norm2, source, sourceLength, out errorCode);
 		}
 
 		#endregion normalize
