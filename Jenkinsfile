@@ -16,7 +16,7 @@ ansiColor('xterm') {
 
 			// Set default. This is only needed for the first build.
 			def buildKindVar = params.buildKind ?: 'Continuous'
-			def isPr = false
+			def isPR = false
 
 			try {
 				isPR = env.BRANCH_NAME.startsWith("PR-") ? true : false
@@ -52,7 +52,7 @@ ansiColor('xterm') {
 						}
 
 						stage('Upload nuget') {
-							if (!isPr) {
+							if (!isPR) {
 								echo "Upload nuget package"
 								withCredentials([string(credentialsId: 'nuget-api-key', variable: 'NuGetApiKey')]) {
 									bat """
