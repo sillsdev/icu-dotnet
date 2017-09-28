@@ -25,24 +25,15 @@ namespace Icu.Tests
 			File.Copy(srcPath, Path.Combine(dstDir, fileName));
 		}
 
-		private static bool IsRunning64Bit
-		{
-			get { return IntPtr.Size == 8; }
-		}
+		private static bool IsRunning64Bit => IntPtr.Size == 8;
 
 		private static string ArchSubdir
 		{
 			get { return IsRunning64Bit ? "x64" : "x86"; }
 		}
 
-		private static string OutputDirectory
-		{
-			get
-			{
-				return Path.GetDirectoryName(
-					new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
-			}
-		}
+		private static string OutputDirectory => Path.GetDirectoryName(
+			new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
 
 		private static string IcuDirectory
 		{
@@ -70,11 +61,11 @@ namespace Icu.Tests
 			}
 		}
 
-		private void CopyMinimalIcuFiles(string targetDir)
+		private static void CopyMinimalIcuFiles(string targetDir)
 		{
-			CopyFile(Path.Combine(IcuDirectory, string.Format("icudt{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
-			CopyFile(Path.Combine(IcuDirectory, string.Format("icuin{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
-			CopyFile(Path.Combine(IcuDirectory, string.Format("icuuc{0}.dll", MinIcuLibraryVersionMajor)), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, $"icudt{MinIcuLibraryVersionMajor}.dll"), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, $"icuin{MinIcuLibraryVersionMajor}.dll"), targetDir);
+			CopyFile(Path.Combine(IcuDirectory, $"icuuc{MinIcuLibraryVersionMajor}.dll"), targetDir);
 		}
 
 		[SetUp]
@@ -87,8 +78,7 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), _tmpDir);
 
 			_pathEnvironmentVariable = Environment.GetEnvironmentVariable("PATH");
-			var path = string.Format("{0}{1}{2}", IcuDirectory, Path.PathSeparator,
-				_pathEnvironmentVariable);
+			var path = $"{IcuDirectory}{Path.PathSeparator}{_pathEnvironmentVariable}";
 			Environment.SetEnvironmentVariable("PATH", path);
 		}
 
