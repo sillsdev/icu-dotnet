@@ -28,7 +28,7 @@ ansiColor('xterm') {
 			try {
 				parallel('Windows build': {
 					node('windows && supported') {
-						def msbuild = tool 'msbuild12'
+						def msbuild = tool 'msbuild15'
 
 						stage('Checkout Win') {
 							checkout scm
