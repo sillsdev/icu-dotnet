@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
@@ -23,14 +23,12 @@ namespace Icu
 			if (minVersion < MinIcuVersionDefault || minVersion > MaxIcuVersionDefault)
 			{
 				throw new ArgumentOutOfRangeException("minVersion",
-					string.Format("supported ICU versions are between {0} and {1}",
-					MinIcuVersionDefault, MaxIcuVersionDefault));
+					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
 			if (maxVersion < MinIcuVersionDefault || maxVersion > MaxIcuVersionDefault)
 			{
 				throw new ArgumentOutOfRangeException("maxVersion",
-					string.Format("supported ICU versions are between {0} and {1}",
-					MinIcuVersionDefault, MaxIcuVersionDefault));
+					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
 			minIcuVersion = Math.Min(minVersion, maxVersion);
 			maxIcuVersion = Math.Max(minVersion, maxVersion);
@@ -80,10 +78,7 @@ namespace Icu
 		private static IntPtr _IcuCommonLibHandle;
 		private static IntPtr _IcuI18NLibHandle;
 
-		private static bool IsWindows
-		{
-			get { return Environment.OSVersion.Platform != PlatformID.Unix; }
-		}
+		private static bool IsWindows => Environment.OSVersion.Platform != PlatformID.Unix;
 
 		private static IntPtr IcuCommonLibHandle
 		{
@@ -114,10 +109,7 @@ namespace Icu
 			}
 		}
 
-		private static bool IsRunning64Bit
-		{
-			get { return Environment.Is64BitProcess; }
-		}
+		private static bool IsRunning64Bit => Environment.Is64BitProcess;
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
@@ -127,7 +119,7 @@ namespace Icu
 			{
 				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
 				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH",
-					string.Format("{0}:{1}", directory, ldLibPath));
+					$"{directory}:{ldLibPath}");
 			}
 		}
 
@@ -184,7 +176,7 @@ namespace Icu
 			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
 			if (handle == IntPtr.Zero)
 			{
-				throw new FileLoadException(string.Format("Can't load ICU library (version {0})", IcuVersion),
+				throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
 					libraryName);
 			}
 			return handle;
@@ -198,13 +190,13 @@ namespace Icu
 			string libPath;
 			if (IsWindows)
 			{
-				var libName = string.Format("{0}{1}.dll", basename, icuVersion);
+				var libName = $"{basename}{icuVersion}.dll";
 				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 				handle = LoadLibrary(libPath);
 			}
 			else
 			{
-				var libName = string.Format("lib{0}.so.{1}", basename, icuVersion);
+				var libName = $"lib{basename}.so.{icuVersion}";
 				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 				handle = dlopen(libPath, RTLD_NOW);
 			}
@@ -246,7 +238,7 @@ namespace Icu
 
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T: class
 		{
-			var versionedMethodName = string.Format("{0}_{1}", methodName, IcuVersion);
+			var versionedMethodName = $"{methodName}_{IcuVersion}";
 			var methodPointer = IsWindows ?
 				GetProcAddress(handle, versionedMethodName) :
 				dlsym(handle, versionedMethodName);
@@ -258,8 +250,8 @@ namespace Icu
 			if (missingInMinimal)
 			{
 				throw new MissingMemberException(
-					string.Format("Do you have the full version of ICU installed? " +
-					"The method '{0}' is not included in the minimal version of ICU.", methodName));
+					"Do you have the full version of ICU installed? " +
+					$"The method '{methodName}' is not included in the minimal version of ICU.");
 			}
 			return default(T);
 		}
