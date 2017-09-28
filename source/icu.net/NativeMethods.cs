@@ -152,27 +152,44 @@ namespace Icu
 			return false;
 		}
 
+		private static bool LocateIcuLibrary(string libraryName)
+		{
+			var arch = IsRunning64Bit ? "x64" : "x86";
+			// Look for ICU binaries in lib/{win,linux}-{x86,x64} subdirectory first
+			var platform = IsWindows ? "win" : "linux";
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, "lib", $"{platform}-{arch}"),
+				libraryName))
+				return true;
+
+			// Next look in lib/x86 or lib/x64 subdirectory
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, "lib", arch),
+				libraryName))
+				return true;
+
+			// next try just {win,linux}-x86/x64 subdirectory
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, $"{platform}-{arch}"),
+				libraryName))
+				return true;
+
+			// next try just x86/x64 subdirectory
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, arch),
+				libraryName))
+				return true;
+
+			// otherwise check the current directory
+			// If we don't find it here we rely on it being in the PATH somewhere...
+			return CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
+		}
+
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{
 			if (IcuVersion <= 0)
-			{
-				// Look for ICU binaries in lib/x86 or lib/x64 subdirectory first
-				var platformSubDir = IsRunning64Bit ? "x64" : "x86";
-				if (!CheckDirectoryForIcuBinaries(
-					Path.Combine(DirectoryOfThisAssembly, "lib", platformSubDir),
-					libraryName))
-				{
-					// next try just x86/x64 subdirectory
-					if (!CheckDirectoryForIcuBinaries(
-						Path.Combine(DirectoryOfThisAssembly, platformSubDir),
-						libraryName))
-					{
-						// otherwise check the current directory
-						CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
-						// If we don't find it here we rely on it being in the PATH somewhere...
-					}
-				}
-			}
+				LocateIcuLibrary(libraryName);
+
 			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
 			if (handle == IntPtr.Zero)
 			{

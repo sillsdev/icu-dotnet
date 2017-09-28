@@ -9,10 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- fix buffer overflow in Normalize() (#47)
+
 ### Changed
 
 - Assembly marked as CLSCompliant (#33)
-- additionally look in lib/x86 and lib/x64 for ICU binaries
+- additionally look in lib/x86 and lib/x64 as well as lib/win-*
+  and lib/linux-* for ICU binaries (#51)
 - Add minimal support of regular expressions (#32, MURATA Makoto)
 
 ## [2.1.0] - 2017-03-17

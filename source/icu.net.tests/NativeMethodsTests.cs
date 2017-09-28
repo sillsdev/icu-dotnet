@@ -27,18 +27,16 @@ namespace Icu.Tests
 
 		private static bool IsRunning64Bit => IntPtr.Size == 8;
 
-		private static string ArchSubdir
+		private static string GetArchSubdir(string prefix = "")
 		{
-			get { return IsRunning64Bit ? "x64" : "x86"; }
+			var archSubdir = IsRunning64Bit ? "x64" : "x86";
+			return $"{prefix}{archSubdir}";
 		}
 
 		private static string OutputDirectory => Path.GetDirectoryName(
 			new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
 
-		private static string IcuDirectory
-		{
-			get { return Path.Combine(OutputDirectory, "lib", ArchSubdir); }
-		}
+		private static string IcuDirectory => Path.Combine(OutputDirectory, "lib", GetArchSubdir("win-"));
 
 		private string RunTestHelper(string workDir, string exeDir = null)
 		{
@@ -116,10 +114,11 @@ namespace Icu.Tests
 			Assert.That(RunTestHelper(Path.GetTempPath()), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
-		[Test]
-		public void LoadIcuLibrary_LoadLocalVersionFromArchSubDir()
+		[TestCase("")]
+		[TestCase("win-")]
+		public void LoadIcuLibrary_LoadLocalVersionFromArchSubDir(string prefix)
 		{
-			var targetDir = Path.Combine(_tmpDir, ArchSubdir);
+			var targetDir = Path.Combine(_tmpDir, GetArchSubdir(prefix));
 			Directory.CreateDirectory(targetDir);
 			CopyMinimalIcuFiles(targetDir);
 			Assert.That(RunTestHelper(_tmpDir), Is.EqualTo(MinIcuLibraryVersion));
