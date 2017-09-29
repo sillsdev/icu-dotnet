@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [2.2.0] - 2017-09-29
+
+### Fixed
+
+- fix buffer overflow in Normalize() (#47)
+
+### Changed
+
 - Assembly marked as CLSCompliant (#33)
 - additionally look in lib/x86 and lib/x64 as well as lib/win-*
   and lib/linux-* for ICU binaries (#51)
