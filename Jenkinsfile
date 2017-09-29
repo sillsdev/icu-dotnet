@@ -29,7 +29,7 @@ ansiColor('xterm') {
 				parallel('Windows build': {
 					node('windows && supported') {
 						def msbuild = tool 'msbuild15'
-						def git = tool 'Default'
+						def git = tool(name: 'Default', type: 'git')
 
 						stage('Checkout Win') {
 							checkout scm
