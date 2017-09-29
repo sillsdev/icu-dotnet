@@ -29,6 +29,7 @@ ansiColor('xterm') {
 				parallel('Windows build': {
 					node('windows && supported') {
 						def msbuild = tool 'msbuild15'
+						def git = tool 'Default'
 
 						stage('Checkout Win') {
 							checkout([
@@ -38,6 +39,10 @@ ansiColor('xterm') {
 								extensions: [[$class: 'CloneOption', noTags: false]],
 								userRemoteConfigs: scm.userRemoteConfigs,
 							])
+
+							bat """
+								"${git}" fetch origin --tags
+								"""
 						}
 
 						stage('Build Win') {
