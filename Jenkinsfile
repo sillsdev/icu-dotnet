@@ -32,13 +32,7 @@ ansiColor('xterm') {
 						def git = tool 'Default'
 
 						stage('Checkout Win') {
-							checkout([
-								$class: 'GitSCM',
-								branches: scm.branches,
-								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								extensions: [[$class: 'CloneOption', noTags: false]],
-								userRemoteConfigs: scm.userRemoteConfigs,
-							])
+							checkout scm
 
 							bat """
 								"${git}" fetch origin --tags
@@ -79,13 +73,7 @@ ansiColor('xterm') {
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu') {
 						stage('Checkout Linux') {
-							checkout([
-								$class: 'GitSCM',
-								branches: scm.branches,
-								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								extensions: [[$class: 'CloneOption', noTags: false]],
-								userRemoteConfigs: scm.userRemoteConfigs,
-							])
+							checkout scm
 						}
 
 						stage('Build and Test Linux') {
