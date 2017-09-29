@@ -31,7 +31,13 @@ ansiColor('xterm') {
 						def msbuild = tool 'msbuild15'
 
 						stage('Checkout Win') {
-							checkout scm
+							checkout([
+								$class: 'GitSCM',
+								branches: scm.branches,
+								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+								extensions: [[$class: 'CloneOption', noTags: false]],
+								userRemoteConfigs: scm.userRemoteConfigs,
+							])
 						}
 
 						stage('Build Win') {
@@ -68,7 +74,13 @@ ansiColor('xterm') {
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu') {
 						stage('Checkout Linux') {
-							checkout scm
+							checkout([
+								$class: 'GitSCM',
+								branches: scm.branches,
+								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+								extensions: [[$class: 'CloneOption', noTags: false]],
+								userRemoteConfigs: scm.userRemoteConfigs,
+							])
 						}
 
 						stage('Build and Test Linux') {
