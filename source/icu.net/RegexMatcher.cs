@@ -10,7 +10,7 @@ namespace Icu
 	/// <summary>
 	/// Regular Expression Matcher
 	/// </summary>
-	public class RegexMatcher
+	public class RegexMatcher: IDisposable
 	{
 		/// <summary>
 		/// Constants for Regular Expression Match Modes.

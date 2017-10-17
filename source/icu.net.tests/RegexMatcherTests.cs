@@ -10,7 +10,6 @@ namespace Icu.Tests
 	[Category("Regular Expression")]
 	class RegexMatcherTests
 	{
-		[Test]
 		[TestCase("c", ExpectedResult = true)]
 		[TestCase("abc", ExpectedResult = true)]
 		[TestCase("baabbac", ExpectedResult = true)]
@@ -19,20 +18,25 @@ namespace Icu.Tests
 		[TestCase("baabcc", ExpectedResult = false)]
 		public bool MatchSimpleTest(string text)
 		{
-			RegexMatcher rm = new RegexMatcher("(a|b)*c");
-			return rm.Matches(text);
+			using (var rm = new RegexMatcher("(a|b)*c"))
+			{
+				return rm.Matches(text);
+			}
 		}
-		[Test]
+
 		[TestCase("c", ExpectedResult = true)]
 		[TestCase("abc", ExpectedResult = true)]
 		[TestCase("baabbac", ExpectedResult = true)]
 		[TestCase(" c", ExpectedResult = false)]
 		public bool MatchWithCommentsAndSpace(string text)
 		{
-			RegexMatcher rm = new RegexMatcher("(?# space is ignored )(a | b)* c", RegexMatcher.URegexpFlag.COMMENTS);
-			return rm.Matches(text);
+			using (var rm = new RegexMatcher("(?# space is ignored )(a | b)* c",
+				RegexMatcher.URegexpFlag.COMMENTS))
+			{
+				return rm.Matches(text);
+			}
 		}
-		[Test]
+
 		[TestCase("a", "\\p{L}", ExpectedResult = true)]
 		[TestCase("a", "\\p{Lowercase_Letter}", ExpectedResult = true)]
 		[TestCase("\u3042", "\\p{Hiragana}", ExpectedResult = true)]
@@ -46,8 +50,10 @@ namespace Icu.Tests
 		[TestCase("D", "[ABC--DE]", ExpectedResult = false)]
 		public bool MatchAdvancedTest(string text, string regexp)
 		{
-			RegexMatcher rm = new RegexMatcher(regexp);
-			return rm.Matches(text);
+			using (var rm = new RegexMatcher(regexp))
+			{
+				return rm.Matches(text);
+			}
 		}
 }
 }
