@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Icu.Collation;
 
@@ -683,7 +682,7 @@ namespace Icu
 			internal delegate void u_getVersionDelegate(out VersionInfo versionArray);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int u_charTypeDelegate(int characterCode);
+			internal delegate sbyte u_charTypeDelegate(int characterCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate double u_getNumericValueDelegate(
@@ -1170,7 +1169,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="characterCode"></param>
 		/// <returns></returns>
-		public static int u_charType(int characterCode)
+		public static sbyte u_charType(int characterCode)
 		{
 			if (Methods.u_charType == null)
 				Methods.u_charType = GetMethod<MethodsContainer.u_charTypeDelegate>(IcuCommonLibHandle, "u_charType");

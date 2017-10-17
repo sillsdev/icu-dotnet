@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Globalization;
@@ -601,10 +601,10 @@ namespace Icu
 		public static bool IsSymbol(int characterCode)
 		{
 			var nAns = NativeMethods.u_charType(characterCode);
-			return nAns == (int)UCharCategory.MATH_SYMBOL ||
-				nAns == (int)UCharCategory.CURRENCY_SYMBOL ||
-					nAns == (int)UCharCategory.MODIFIER_SYMBOL ||
-					nAns == (int)UCharCategory.OTHER_SYMBOL;
+			return nAns == (sbyte)UCharCategory.MATH_SYMBOL ||
+				nAns == (sbyte)UCharCategory.CURRENCY_SYMBOL ||
+				nAns == (sbyte)UCharCategory.MODIFIER_SYMBOL ||
+				nAns == (sbyte)UCharCategory.OTHER_SYMBOL;
 		}
 
 		///<summary>
