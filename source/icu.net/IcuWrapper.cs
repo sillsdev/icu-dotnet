@@ -64,11 +64,26 @@ namespace Icu
 
 		#region Public wrappers around the ICU methods
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initialize ICU. In multi-threaded applications this should be the first ICU method
+		/// that gets called, preferrably before starting multiple threads.
+		/// </summary>
+		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
+		/// ------------------------------------------------------------------------------------
+		public static ErrorCode Init()
+		{
+			ErrorCode errorCode;
+			NativeMethods.u_init(out errorCode);
+			return errorCode;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Cleans up the ICU files that could be locked
+		/// Cleans up the ICU files that could be locked. This should be the last ICU method
+		/// that gets called.
 		/// </summary>
+		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
 		/// ------------------------------------------------------------------------------------
 		public static void Cleanup()
 		{

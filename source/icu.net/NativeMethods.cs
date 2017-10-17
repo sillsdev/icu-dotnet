@@ -110,6 +110,8 @@ namespace Icu
 
 		private static bool IsRunning64Bit => Environment.Is64BitProcess;
 
+		private static bool IsInitialized { get; set; }
+
 		private static void AddDirectoryToSearchPath(string directory)
 		{
 			if (IsWindows)
@@ -186,6 +188,8 @@ namespace Icu
 
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{
+			Trace.WriteLineIf(!IsInitialized, "WARNING: ICU is not initialized.");
+
 			if (IcuVersion <= 0)
 				LocateIcuLibrary(libraryName);
 
@@ -1066,6 +1070,7 @@ namespace Icu
 		/// <summary>get the name of an ICU code point</summary>
 		public static void u_init(out ErrorCode errorCode)
 		{
+			IsInitialized = true;
 			if (Methods.u_init == null)
 				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(IcuCommonLibHandle, "u_init");
 			Methods.u_init(out errorCode);
@@ -1077,6 +1082,7 @@ namespace Icu
 			if (Methods.u_cleanup == null)
 				Methods.u_cleanup = GetMethod<MethodsContainer.u_cleanupDelegate>(IcuCommonLibHandle, "u_cleanup");
 			Methods.u_cleanup();
+			IsInitialized = false;
 		}
 
 		/// <summary>Return the ICU data directory</summary>

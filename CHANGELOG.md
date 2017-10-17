@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Add Wrapper.Init() method to allow initialization of ICU for
+  multi-threaded applications (#54)
+
 ### Fixed
 
 - Fix signature of u_charType (#54)

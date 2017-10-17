@@ -29,7 +29,8 @@ namespace Icu.Collation
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 			protected override bool ReleaseHandle()
 			{
-				NativeMethods.ucol_close(handle);
+				if (handle != IntPtr.Zero)
+					NativeMethods.ucol_close(handle);
 				handle = IntPtr.Zero;
 				return true;
 			}
@@ -42,7 +43,13 @@ namespace Icu.Collation
 			///</returns>
 			public override bool IsInvalid
 			{
-				get { return (handle == IntPtr.Zero); }
+				get { return handle == IntPtr.Zero; }
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+				ReleaseHandle();
 			}
 		}
 
@@ -82,12 +89,22 @@ namespace Icu.Collation
 			ErrorCode status;
 			var parseError = new ParseError();
 			_collatorHandle = NativeMethods.ucol_openRules(rules,
-														  rules.Length,
-														  normalizationMode,
-														  collationStrength,
-														  ref parseError,
-														  out status);
-			ExceptionFromErrorCode.ThrowIfError(status, parseError.ToString(rules));
+				rules.Length,
+				normalizationMode,
+				collationStrength,
+				ref parseError,
+				out status);
+			try
+			{
+				ExceptionFromErrorCode.ThrowIfError(status, parseError.ToString(rules));
+			}
+			catch
+			{
+				if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
+					_collatorHandle.Dispose();
+				_collatorHandle = default(SafeRuleBasedCollatorHandle);
+				throw;
+			}
 		}
 
 		/// <summary>The collation strength.
@@ -349,12 +366,23 @@ namespace Icu.Collation
 			RuleBasedCollator copy = new RuleBasedCollator();
 			ErrorCode status;
 			int buffersize = 512;
-			copy._collatorHandle = NativeMethods.ucol_safeClone(_collatorHandle,
-															   IntPtr.Zero,
-															   ref buffersize,
-															   out status);
-			ExceptionFromErrorCode.ThrowIfError(status);
-			return copy;
+			copy._collatorHandle = NativeMethods.ucol_safeClone(
+				_collatorHandle,
+				IntPtr.Zero,
+				ref buffersize,
+				out status);
+			try
+			{
+				ExceptionFromErrorCode.ThrowIfError(status);
+				return copy;
+			}
+			catch
+			{
+				if (copy._collatorHandle != default(SafeRuleBasedCollatorHandle))
+					copy._collatorHandle.Dispose();
+				copy._collatorHandle = default(SafeRuleBasedCollatorHandle);
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -372,51 +400,60 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="localeId">Locale to use</param>
 		/// <param name="fallback">Whether to allow locale fallback or not.</param>
-		public static new Collator Create(string localeId, Fallback fallback)
+		public new static Collator Create(string localeId, Fallback fallback)
 		{
 			// Culture identifiers in .NET are created using '-', while ICU
 			// expects '_'.  We want to make sure that the localeId is the
 			// format that ICU expects.
 			var locale = new Locale(localeId);
 
-			RuleBasedCollator instance = new RuleBasedCollator();
+			var instance = new RuleBasedCollator();
 			ErrorCode status;
 			instance._collatorHandle = NativeMethods.ucol_open(locale.Id, out status);
-			if(status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
+			try
 			{
-				throw new ArgumentException("Could only create Collator '" +
-											localeId +
-											"' by falling back to '" +
-											instance.ActualId +
-											"'. You can use the fallback option to create this.");
-			}
-			if(status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback && !instance.ValidId.Equals(locale.Id) &&
-				 locale.Id.Length > 0 && !locale.Id.Equals("root"))
-			{
-				throw new ArgumentException("Could only create Collator '" +
-											localeId +
-											"' by falling back to the default '" +
-											instance.ActualId +
-											"'. You can use the fallback option to create this.");
-			}
-			if (status == ErrorCode.INTERNAL_PROGRAM_ERROR && fallback == Fallback.FallbackAllowed)
-			{
-				instance = new RuleBasedCollator(string.Empty); // fallback to UCA
-			}
-			else
-			{
-				try
-				{
-					ExceptionFromErrorCode.ThrowIfError(status);
-				}
-				catch (Exception e)
+				if (status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
 				{
 					throw new ArgumentException(
-							"Unable to create a collator using the given localeId '"+localeId+"'.\nThis is likely because the ICU data file was created without collation rules for this locale. You can provide the rules yourself or replace the data dll.",
-							e);
+						$"Could only create Collator '{localeId}' by falling back to " +
+						$"'{instance.ActualId}'. You can use the fallback option to create this.");
 				}
+				if (status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback &&
+					!instance.ValidId.Equals(locale.Id) &&
+					locale.Id.Length > 0 && !locale.Id.Equals("root"))
+				{
+					throw new ArgumentException(
+						$"Could only create Collator '{localeId}' by falling back to the default " +
+						$"'{instance.ActualId}'. You can use the fallback option to create this.");
+				}
+				if (status == ErrorCode.INTERNAL_PROGRAM_ERROR && fallback == Fallback.FallbackAllowed)
+				{
+					instance = new RuleBasedCollator(string.Empty); // fallback to UCA
+				}
+				else
+				{
+					try
+					{
+						ExceptionFromErrorCode.ThrowIfError(status);
+					}
+					catch (Exception e)
+					{
+						throw new ArgumentException(
+							$"Unable to create a collator using the given localeId '{localeId}'.\n" +
+							"This is likely because the ICU data file was created without collation " +
+							"rules for this locale. You can provide the rules yourself or replace " +
+							"the data dll.", e);
+					}
+				}
+				return instance;
 			}
-			return instance;
+			catch
+			{
+				if (instance._collatorHandle != default(SafeRuleBasedCollatorHandle))
+					instance._collatorHandle.Dispose();
+				instance._collatorHandle = default(SafeRuleBasedCollatorHandle);
+				throw;
+			}
 		}
 
 		private string ActualId
