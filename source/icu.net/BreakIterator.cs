@@ -277,8 +277,8 @@ namespace Icu
 		/// It iterates over boundaries as described in the "Word Boundary"
 		/// section http://userguide.icu-project.org/boundaryanalysis.
 		/// If you want to ignore spaces and punctuation, consider using:
-		/// <see cref="BreakIterator.Split(UBreakIteratorType, Locale, string)"/>
-		/// or <see cref="BreakIterator.GetWordBoundaries(Locale, string, bool)"/>,
+		/// <see cref="BreakIterator.Split(UBreakIteratorType, Icu.Locale, string)"/>
+		/// or <see cref="BreakIterator.GetWordBoundaries(Icu.Locale, string, bool)"/>,
 		/// </summary>
 		/// <param name="locale">The locale.</param>
 		public static BreakIterator CreateWordInstance(Locale locale)

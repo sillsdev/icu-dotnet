@@ -9,8 +9,8 @@ namespace Icu
 	/// <summary>
 	/// A subclass of BreakIterator whose behavior is specified using a list of rules.
 	/// Instances of this class are most commonly created by the factory methods
-	/// <see cref="BreakIterator.CreateWordInstance(Locale)"/>,
-	/// <see cref="BreakIterator.CreateLineInstance(Locale)"/>, etc.
+	/// <see cref="BreakIterator.CreateWordInstance(Icu.Locale)"/>,
+	/// <see cref="BreakIterator.CreateLineInstance(Icu.Locale)"/>, etc.
 	/// and then used via the abstract API in class BreakIterator
 	/// </summary>
 	public class RuleBasedBreakIterator : BreakIterator
@@ -42,7 +42,7 @@ namespace Icu
 		/// <remarks>
 		/// If iterator type is UBreakIteratorType.WORD, it will include
 		/// spaces and punctuation as boundaries for words.  If this is
-		/// not desired <see cref="BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType, Locale, string, bool)"/>.
+		/// not desired <see cref="BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType, Icu.Locale, string, bool)"/>.
 		/// </remarks>
 		public RuleBasedBreakIterator(UBreakIteratorType iteratorType, Locale locale)
 			: base()
