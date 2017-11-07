@@ -16,10 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Changed
+### Added
 
 - Add Wrapper.Init() method to allow initialization of ICU for
   multi-threaded applications (#54)
+- Implement `BreakIterator.Clone()` method (#56) to allow break iterator to be
+  used in multi-threaded applications
+
 
 ### Fixed
 

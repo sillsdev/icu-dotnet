@@ -128,6 +128,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakIterators\BreakIterator.cs" />
+    <Compile Include="BreakIterators\RuleBasedBreakIterator.cs" />
     <Compile Include="Collation\AlternateHandling.cs" />
     <Compile Include="Collation\CaseFirst.cs" />
     <Compile Include="Collation\CaseLevel.cs" />
@@ -144,7 +146,6 @@
     <Compile Include="ParseErrorException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexMatcher.cs" />
-    <Compile Include="RuleBasedBreakIterator.cs" />
     <Compile Include="VersionInfo.cs" />
     <Compile Include="IcuWrapper.cs" />
     <Compile Include="NativeMethods.cs" />
@@ -155,7 +156,6 @@
     <Compile Include="UnicodeString.cs" />
     <Compile Include="UnicodeSet.cs" />
     <Compile Include="Normalizer.cs" />
-    <Compile Include="BreakIterator.cs" />
     <Compile Include="Boundary.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -202,19 +202,16 @@
     <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
-    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
+    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true" />
   </Target>
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>
-  <ItemGroup />
   <Import Project="..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error 
-    Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" 
-    Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
   </Target>
 </Project>
