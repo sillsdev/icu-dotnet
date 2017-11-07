@@ -256,6 +256,7 @@ namespace Icu
 			Methods = new MethodsContainer();
 		}
 
+		// This method is thread-safe and idempotent
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T: class
 		{
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
@@ -943,7 +944,12 @@ namespace Icu
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength, out ErrorCode errorCode);
+			internal delegate IntPtr ubrk_safeCloneDelegate(IntPtr bi, IntPtr stackBuffer,
+				IntPtr bufferSize, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength,
+				out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_closeDelegate(IntPtr set);
@@ -952,7 +958,8 @@ namespace Icu
 			internal delegate IntPtr uset_openDelegate(char start, char end);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr uset_openPatternDelegate(string pattern, int patternLength, ref ErrorCode status);
+			internal delegate IntPtr uset_openPatternDelegate(string pattern, int patternLength,
+				ref ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_addDelegate(IntPtr set, char c);
@@ -1052,6 +1059,7 @@ namespace Icu
 			internal ubrk_nextDelegate ubrk_next;
 			internal ubrk_getRuleStatusDelegate ubrk_getRuleStatus;
 			internal ubrk_getRuleStatusVecDelegate ubrk_getRuleStatusVec;
+			internal ubrk_safeCloneDelegate ubrk_safeClone;
 			internal ubrk_setTextDelegate ubrk_setText;
 			internal uset_closeDelegate uset_close;
 			internal uset_openDelegate uset_open;
@@ -1687,6 +1695,22 @@ namespace Icu
 			if (Methods.ubrk_openRules == null)
 				Methods.ubrk_openRules = GetMethod<MethodsContainer.ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
 			return Methods.ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
+		}
+
+		/// <summary>
+		/// Thread safe cloning operation.
+		/// </summary>
+		/// <param name="bi">iterator to be cloned</param>
+		/// <param name="stackBuffer">Deprecated. Should be IntPtr.Zero.</param>
+		/// <param name="bufferSize">Deprecated. Should be IntPtr.Zero.</param>
+		/// <param name="errorCode">The error code</param>
+		/// <returns>The new clone</returns>
+		public static IntPtr ubrk_safeClone(IntPtr bi, IntPtr stackBuffer, IntPtr bufferSize,
+			out ErrorCode errorCode)
+		{
+			if (Methods.ubrk_safeClone == null)
+				Methods.ubrk_safeClone = GetMethod<MethodsContainer.ubrk_safeCloneDelegate>(IcuCommonLibHandle, "ubrk_safeClone", true);
+			return Methods.ubrk_safeClone(bi, stackBuffer, bufferSize, out errorCode);
 		}
 
 		/// <summary>

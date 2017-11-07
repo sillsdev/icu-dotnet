@@ -16,23 +16,23 @@ namespace Icu
 	public class RuleBasedBreakIterator : BreakIterator
 	{
 		private readonly UBreakIteratorType _iteratorType;
-		private readonly string _rules = null;
+		protected string Rules;
 		private readonly Locale _locale = DefaultLocale;
 
-		private bool _disposingValue = false; // To detect redundant calls
+		private bool _disposingValue; // To detect redundant calls
 		private IntPtr _breakIterator = IntPtr.Zero;
 		private string _text;
-		private int _currentIndex = 0;
+		private int _currentIndex;
 		private TextBoundary[] _textBoundaries = new TextBoundary[0];
 
 		/// <summary>
 		/// Default RuleStatus vector returns 0.
 		/// </summary>
-		protected readonly static int[] EmptyRuleStatusVector = new int[] { 0 };
+		protected static readonly int[] EmptyRuleStatusVector = new int[] { 0 };
 		/// <summary>
 		/// The default locale.
 		/// </summary>
-		protected readonly static Locale DefaultLocale = new Locale();
+		protected static readonly Locale DefaultLocale = new Locale();
 
 		/// <summary>
 		/// Creates a BreakIterator with the given BreakIteratorType and Locale.
@@ -45,7 +45,6 @@ namespace Icu
 		/// not desired <see cref="BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType, Icu.Locale, string, bool)"/>.
 		/// </remarks>
 		public RuleBasedBreakIterator(UBreakIteratorType iteratorType, Locale locale)
-			: base()
 		{
 			_locale = locale;
 			_iteratorType = iteratorType;
@@ -55,9 +54,39 @@ namespace Icu
 		/// Creates a RuleBasedBreakIterator with the given rules.
 		/// </summary>
 		public RuleBasedBreakIterator(string rules)
-			: base()
 		{
-			_rules = rules;
+			Rules = rules;
+		}
+
+		/// <summary>
+		/// Creates a copy of the given RuleBasedBreakIterator
+		/// </summary>
+		/// <param name="bi">break itrerator</param>
+		/// <exception cref="Exception">Throws an exception if we get an error cloning the native
+		/// break iterator</exception>
+		private RuleBasedBreakIterator(RuleBasedBreakIterator bi)
+		{
+			_iteratorType = bi._iteratorType;
+			Rules = bi.Rules;
+			_locale = bi._locale;
+			_text = bi._text;
+			_currentIndex = bi._currentIndex;
+			_textBoundaries = new TextBoundary[bi._textBoundaries.Length];
+			bi._textBoundaries.CopyTo(_textBoundaries, 0);
+
+			if (bi._breakIterator == IntPtr.Zero)
+				return;
+
+			ErrorCode errorCode;
+			_breakIterator = NativeMethods.ubrk_safeClone(bi._breakIterator, IntPtr.Zero, IntPtr.Zero, out errorCode);
+
+			if (errorCode.IsFailure())
+				throw new Exception($"BreakIterator.ubrk_safeClone() failed with code {errorCode}");
+		}
+
+		public override BreakIterator Clone()
+		{
+			return new RuleBasedBreakIterator(this);
 		}
 
 		/// <summary>
@@ -493,16 +522,16 @@ namespace Icu
 				return;
 			}
 
-			if (_rules != null)
+			if (Rules != null)
 			{
 				ErrorCode errorCode;
 				ParseError parseError;
 
-				_breakIterator = NativeMethods.ubrk_openRules(_rules, _rules.Length, Text, Text.Length, out parseError, out errorCode);
+				_breakIterator = NativeMethods.ubrk_openRules(Rules, Rules.Length, Text, Text.Length, out parseError, out errorCode);
 
 				if (errorCode.IsFailure())
 				{
-					throw new ParseErrorException("Couldn't create RuleBasedBreakIterator with the given rules!", parseError, _rules);
+					throw new ParseErrorException("Couldn't create RuleBasedBreakIterator with the given rules!", parseError, Rules);
 				}
 			}
 			else
@@ -524,13 +553,13 @@ namespace Icu
 		/// </summary>
 		public override string ToString()
 		{
-			if (_rules == null)
+			if (Rules == null)
 			{
 				return string.Format("Locale: {0}, BreakIteratorType: {1}", _locale, _iteratorType);
 			}
 			else
 			{
-				return _rules;
+				return Rules;
 			}
 		}
 

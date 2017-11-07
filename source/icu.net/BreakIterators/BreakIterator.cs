@@ -250,6 +250,22 @@ namespace Icu
 		public abstract int[] GetRuleStatusVector();
 
 		/// <summary>
+		/// Thread safe cloning operation
+		/// </summary>
+		/// <typeparam name="T">The specific subclass</typeparam>
+		/// <returns>A new clone</returns>
+		public T Clone<T>() where T : BreakIterator, new()
+		{
+			return Clone() as T;
+		}
+
+		/// <summary>
+		/// Thread safe cloning operation
+		/// </summary>
+		/// <returns>A new clone</returns>
+		public abstract BreakIterator Clone();
+
+		/// <summary>
 		/// Sets the current text being examined to the given text.
 		/// Sets the current index back to the first element.
 		/// </summary>

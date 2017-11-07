@@ -639,10 +639,35 @@ namespace Icu.Tests
 			}
 		}
 
+		[Test]
+		public void Clone()
+		{
+			var locale = new Locale("de-DE");
+
+			using (var bi = BreakIterator.CreateWordInstance(locale))
+			{
+				const string text = "Hello World!";
+				bi.SetText(text);
+
+				bi.MoveFollowing(5);
+
+				using (var clone = bi.Clone())
+				{
+					Assert.That(clone.Text, Is.EqualTo(bi.Text));
+					Assert.That(clone.Current, Is.EqualTo(bi.Current));
+					Assert.That(clone.Boundaries, Is.EquivalentTo(bi.Boundaries));
+					Assert.That(clone.Locale, Is.EqualTo(bi.Locale));
+					bi.SetText("Good afternoon");
+					Assert.That(clone.Text, Is.EqualTo(text));
+					Assert.That(clone.Boundaries, Is.Not.EquivalentTo(bi.Boundaries));
+				}
+			}
+		}
+
 		/// <summary>
-		/// Test data for GetBoundaries_Word and GetWordBoundaries  tests
+		/// Test data for GetBoundaries_Word and GetWordBoundaries tests
 		/// </summary>
-		internal static class WordBoundaryTestData
+		private static class WordBoundaryTestData
 		{
 			public const string Text = "Aa bb. Ccdef 3.5 x? Y?x! Z";
 
