@@ -71,7 +71,7 @@ ansiColor('xterm') {
 						nunit testResultsPattern: '**/TestResults.xml'
 					}
 				}, 'Linux': {
-					node('linux64 && !packager && ubuntu') {
+					node('linux64 && !packager && ubuntu && mono5') {
 						stage('Checkout Linux') {
 							checkout scm
 						}
@@ -83,7 +83,7 @@ ICUVER=$(icu-config --version|tr -d .|cut -c -2)
 
 echo "Building for ICU $icu_ver"
 
-MONO_PREFIX=/opt/mono4-sil
+MONO_PREFIX=/opt/mono5-sil
 PATH="$MONO_PREFIX/bin:$PATH"
 LD_LIBRARY_PATH="$MONO_PREFIX/lib:$LD_LIBRARY_PATH"
 PKG_CONFIG_PATH="$MONO_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
