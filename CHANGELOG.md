@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-[comment]: <> (Available types of changes:
+<!-- Available types of changes:
 ### Added
 ### Changed
 ### Fixed
 ### Deprecated
 ### Removed
 ### Security
-)
+-->
 
 ## [Unreleased]
 
@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   multi-threaded applications (#54)
 - Implement `BreakIterator.Clone()` method (#56) to allow break iterator to be
   used in multi-threaded applications
-
 
 ### Fixed
 
