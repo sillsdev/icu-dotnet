@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
 
@@ -66,8 +66,7 @@
   <PropertyGroup Condition="Exists('$(NuGetPackageRoot)pepitapackage\1.21.6')">
     <PepitaPath>$(NuGetPackageRoot)pepitapackage\1.21.6</PepitaPath>
   </PropertyGroup>
-  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(PepitaPath)\PepitaPackage.dll"
-    Condition="'$(PepitaPath)' != '' AND Exists('$(PepitaPath)')"/>
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(PepitaPath)\PepitaPackage.dll" Condition="'$(PepitaPath)' != '' AND Exists('$(PepitaPath)')" />
 
   <!-- GitVersionTask and PepitaPackage are not compiled against .NET Core,
     importing the targets will result in a failure because it will try to
@@ -92,11 +91,10 @@
     <MakeDir Directories="$(NuGetBuildFolder)" />
 
     <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
-    <Copy SourceFiles="@(IcuDotNetFiles)"
-        DestinationFiles="@(IcuDotNetFiles->'$(NuGetBuildFolder)/lib/%(RecursiveDir)\%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFiles="@(IcuDotNetFiles->'$(NuGetBuildFolder)/lib/%(RecursiveDir)\%(Filename)%(Extension)')" />
 
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(MetadataAssembly)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
-    <WriteLinesToFile File="$(NuGetBuildFolder)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true"/>
+    <WriteLinesToFile File="$(NuGetBuildFolder)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true" />
   </Target>
 </Project>
