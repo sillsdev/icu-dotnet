@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Icu4c.Win.Full.Lib" Version="56.1.9" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="NUnit" Version="3.6.1" />
-    <PackageReference Include="NUnit.Console" Version="3.6.1" />
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="56.1.21" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
+    <PackageReference Include="NUnit.Console" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
