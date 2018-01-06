@@ -8,13 +8,13 @@ namespace Icu.Tests
 	[SetUpFixture]
 	public class SetUpFixture
 	{
-		[SetUp]
+		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
 			Wrapper.Init();
 		}
 
-		[TearDown]
+		[OneTimeTearDown]
 		public void RunAfterAnyTests()
 		{
 			Wrapper.Cleanup();
