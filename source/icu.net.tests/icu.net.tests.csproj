@@ -109,7 +109,7 @@
   </PropertyGroup>
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NET40</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET40;NUNIT2</DefineConstants>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
   </PropertyGroup>
   <ItemGroup>
