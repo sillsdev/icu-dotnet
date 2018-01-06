@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,9 @@ namespace Icu
 	public class RuleBasedBreakIterator : BreakIterator
 	{
 		private readonly UBreakIteratorType _iteratorType;
+		/// <summary>
+		/// Sets the rules this break iterator uses
+		/// </summary>
 		protected string Rules;
 		private readonly Locale _locale = DefaultLocale;
 
@@ -84,6 +87,9 @@ namespace Icu
 				throw new Exception($"BreakIterator.ubrk_safeClone() failed with code {errorCode}");
 		}
 
+		/// <summary>
+		/// Clones this RuleBasedBreakIterator
+		/// </summary>
 		public override BreakIterator Clone()
 		{
 			return new RuleBasedBreakIterator(this);
