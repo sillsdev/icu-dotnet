@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Icu.Collation;
 
@@ -100,7 +101,7 @@ namespace Icu
 		private static IntPtr _IcuCommonLibHandle;
 		private static IntPtr _IcuI18NLibHandle;
 
-		private static bool IsWindows => Environment.OSVersion.Platform != PlatformID.Unix;
+		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
 
 		private static IntPtr IcuCommonLibHandle
 		{
@@ -139,7 +140,7 @@ namespace Icu
 			}
 		}
 
-		private static bool IsRunning64Bit => Environment.Is64BitProcess;
+		private static bool IsRunning64Bit => Platform.ProcessArchitecture == Platform.x64;
 
 		private static bool IsInitialized { get; set; }
 
