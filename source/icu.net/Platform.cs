@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
@@ -24,11 +24,12 @@ namespace Icu
 	/// </summary>
 	internal static class Platform
 	{
+		public const string x64 = nameof(x64);
+		public const string x86 = nameof(x86);
+
 		public static string ProcessArchitecture
 		{
 			get {
-				const string x86 = "x86";
-				const string x64 = "x64";
 
 #if NETSTANDARD1_6
 				// Workaround described here since the API does not exist:
