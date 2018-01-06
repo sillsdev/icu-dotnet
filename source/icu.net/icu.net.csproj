@@ -118,9 +118,8 @@
     <PlatformAlias>net40</PlatformAlias>
     <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40;NUNIT2</DefineConstants>
   </PropertyGroup>
-
   <!-- Using Mono msbuild with .NET Core build targets does not support
   assembly signing, yet. -->
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
@@ -194,7 +193,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -230,5 +228,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets'))" />
   </Target>
+  <Import Project="..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" />
 </Project>
