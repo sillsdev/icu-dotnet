@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
@@ -120,12 +120,18 @@ namespace Icu
 				return true;
 			}
 
-			// 2. Check in {assemblyDirectory}/lib/{architecture}/
-			var libPath = new DirectoryInfo(Path.Combine(assemblyDirectory.FullName, "lib", Platform.ProcessArchitecture));
-			if (TryGetIcuVersionNumber(libPath, out version))
+			// 2. Check in {assemblyDirectory}/lib/*{architecture}*/
+			var libDirectory = Path.Combine(assemblyDirectory.FullName, "lib");
+			var candidateDirectories = Directory.EnumerateDirectories(libDirectory, $"*{Platform.ProcessArchitecture}*")
+				.Select(x => new DirectoryInfo(x));
+
+			foreach (var directory in candidateDirectories)
 			{
-				IcuVersion = new IcuVersionInfo(libPath, version);
-				return true;
+				if (TryGetIcuVersionNumber(directory, out version))
+				{
+					IcuVersion = new IcuVersionInfo(directory, version);
+					return true;
+				}
 			}
 
 			string[] nativeAssetPaths = null;
