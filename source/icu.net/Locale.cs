@@ -11,7 +11,10 @@ namespace Icu
 	/// <summary>
 	/// A Locale object represents a specific geographical, political, or cultural region.
 	/// </summary>
-	public class Locale: ICloneable
+	public class Locale
+#if FEATURE_ICLONEABLE
+		: ICloneable
+#endif
 	{
 		/// <summary>
 		/// Construct a default locale object, a Locale for the default locale ID

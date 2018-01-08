@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,10 @@ namespace Icu.Collation
 	/// You use this class to build searching and sorting routines for natural
 	/// language text.
 	/// </summary>
-	public abstract class Collator : IComparer<string>, ICloneable, IDisposable
+	public abstract class Collator : IComparer<string>, IDisposable
+#if FEATURE_ICLONEABLE
+		, ICloneable
+#endif
 	{
 		/// <summary>
 		/// Gets or sets the minimum strength that will be used in comparison
@@ -28,7 +31,7 @@ namespace Icu.Collation
 		public abstract NormalizationMode NormalizationMode{ get; set; }
 
 		/// <summary>
-		/// Gets or sets the FrenchCollation. Attribute for direction of
+		/// Gets or sets the FrenchCollation. Attribute for directionCollof
 		/// secondary weights - used in Canadian French.
 		/// </summary>
 		public abstract FrenchCollation FrenchCollation{ get; set; }
@@ -151,7 +154,7 @@ namespace Icu.Collation
 			{
 				throw new ArgumentNullException();
 			}
-			return Create(cultureInfo.IetfLanguageTag, fallback);
+			return Create(cultureInfo.Name, fallback);
 		}
 
 		/// <summary>
@@ -189,13 +192,20 @@ namespace Icu.Collation
 				throw new ArgumentOutOfRangeException("keyDataLength");
 			}
 
-			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty);
+			CompareOptions options = CompareOptions.None;
+
+#if NETSTANDARD1_6
+			SortKey sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
+#else
+			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
 			SetInternalOriginalStringField(sortKey, originalString);
 			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
+#endif
 
 			return sortKey;
 		}
 
+#if !NETSTANDARD1_6
 		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
 		{
 			byte[] keyDataCopy = new byte[keyDataLength];
@@ -233,19 +243,9 @@ namespace Icu.Collation
 		{
 			Type type = instance.GetType();
 
-			FieldInfo fieldInfo;
-			if (IsRunningOnMono())
-			{
-				fieldInfo = type.GetField(monoInternalFieldName,
-										  BindingFlags.Instance
-					| BindingFlags.NonPublic);
-			}
-			else //Is Running On .Net
-			{
-				fieldInfo = type.GetField(netInternalFieldName,
-										  BindingFlags.Instance
-					| BindingFlags.NonPublic);
-			}
+			string fieldName = IsRunningOnMono() ? monoInternalFieldName : netInternalFieldName;
+
+			FieldInfo fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 
 			Debug.Assert(fieldInfo != null,
 						 "Unsupported runtime",
@@ -263,6 +263,7 @@ namespace Icu.Collation
 		{
 			return Type.GetType("Mono.Runtime") != null;
 		}
+#endif
 
 		/// <summary>
 		/// Simple class to allow passing collation error info back to the caller of CheckRules.

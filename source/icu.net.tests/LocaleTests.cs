@@ -1,20 +1,36 @@
-// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using NUnit.Framework;
 using Icu;
+using System.Globalization;
 
 namespace Icu.Tests
 {
 	[TestFixture]
-	[SetCulture("es-ES")]
-	[SetUICulture("en-US")]
 	public class LocaleTests
 	{
+		private readonly CultureInfo DefaultCulture = CultureInfo.CurrentCulture;
+		private readonly CultureInfo DefaultUICulture = CultureInfo.CurrentUICulture;
+
+		[SetUp]
+		public void Setup()
+		{
+			SetCulture("es-ES");
+			SetUICulture("en-US");
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			SetCulture(DefaultCulture.Name);
+			SetUICulture(DefaultUICulture.Name);
+		}
+
 		[Test]
-		[SetUICulture("de-DE")]
 		public void ConstructDefault()
 		{
+			SetUICulture("de-DE");
 			Locale locale = new Locale();
 			Assert.That(locale.Id, Is.EqualTo("de_DE"));
 		}
@@ -203,10 +219,11 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		[SetUICulture("de-DE")]
 		[Category("Full ICU")]
 		public void DisplayLanguage_DifferentDefaultLocale()
 		{
+			SetUICulture("de-DE");
+
 			Locale locale = new Locale("en-US");
 			Assert.That(locale.DisplayLanguage, Is.EqualTo("Englisch"));
 		}
@@ -255,6 +272,26 @@ namespace Icu.Tests
 		{
 			Locale locale = "en-US";
 			Assert.That(locale.Id, Is.EqualTo("en_US"));
+		}
+
+		private void SetUICulture(string culture)
+		{
+			var cultureInfo = new CultureInfo(culture);
+#if NET40
+			System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
+#else
+			CultureInfo.CurrentUICulture = cultureInfo;
+#endif
+		}
+
+		private void SetCulture(string culture)
+		{
+			var cultureInfo = new CultureInfo(culture);
+#if NET40
+			System.Threading.Thread.CurrentThread.CurrentCulture = cultureInfo;
+#else
+			CultureInfo.CurrentCulture = cultureInfo;
+#endif
 		}
 	}
 }

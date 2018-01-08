@@ -1,14 +1,28 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<RootDir Condition="'$(teamcity_version)' == '' Or '$(OS)'!='Windows_NT'">$(MSBuildProjectDirectory)\..</RootDir>
-		<RootDir Condition="'$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'">$(teamcity_build_checkoutDir)</RootDir>
-		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(OS)'!='Windows_NT'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
+		<IsOnWindows Condition="'$(OS)'=='Windows_NT'">true</IsOnWindows>
+		<IsOnTeamCity Condition="'$(teamcity_version)' != ''">true</IsOnTeamCity>
+
+		<RootDir Condition="'$(IsOnTeamCity)'!='true' Or '$(IsOnWindows)'!='true'">$(MSBuildProjectDirectory)\..</RootDir>
+		<RootDir Condition="'$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'">$(teamcity_build_checkoutDir)</RootDir>
+		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(IsOnWindows)'!='true'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
 		<SolutionDir>$(RootDir)/source</SolutionDir>
+		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
-		<excludedCategories Condition="'$(OS)'!='Windows_NT'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
-		<Configuration Condition="'$(OS)'!='Windows_NT' And '$(Configuration)'==''">ReleaseMono</Configuration>
-		<Configuration Condition="'$(OS)'=='Windows_NT' And '$(Configuration)'==''">Release</Configuration>
+		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
+
+		<Configuration Condition="'$(IsOnWindows)'!='true' And '$(Configuration)'==''">ReleaseMono</Configuration>
+		<Configuration Condition="'$(IsOnWindows)'=='true' And '$(Configuration)'==''">Release</Configuration>
+
+		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
+	</PropertyGroup>
+
+	<!-- .NET Core build properties -->
+	<PropertyGroup Condition="'$(BuildNetCore)' == 'true'">
+		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
+		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
+		<SolutionNetCorePath>$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
@@ -17,10 +31,10 @@
 	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
+		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'"/>
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
-		Condition=" '$(teamcity_version)' != '' And '$(OS)'!='Windows_NT'"/>
+		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'!='true'"/>
 
 	<Import Project="NuGet.targets"/>
 
@@ -48,37 +62,50 @@
 		<Message Text="Build Complete"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
+	<Target Name="Compile" DependsOnTargets="CompileNet40Solution;CompileNetCore">
+	</Target>
+
+	<!-- Compile compiles source/icu.net.sln which outputs
+		assemblies targeting .NET 4.0.
+
+		Creates NuGet package that works only for .NET 4.0. -->
+	<Target Name="CompileNet40Solution"
+		DependsOnTargets="DownloadDependencies;RestorePackages">
 		<MSBuild Projects="$(SolutionDir)/$(Solution)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
 	</Target>
 
-	<ItemGroup>
-		<ExistingObjectFiles
-			Include="$(RootDir)/output/$(Configuration)/**/*"
-			Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*"
-		/>
-	</ItemGroup>
+	<!-- CompileNetCore compiles source/icu.net.netstandard.sln which outputs
+		assemblies targeting .NET 4.0, .NET 4.5.1 and .NET Standard 1.6.
+
+		Creates NuGet package that works against all three frameworks. -->
+	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
+		Condition="'$(BuildNetCore)' == 'true'">
+		<MSBuild Projects="$(SolutionNetCorePath)"
+			Targets="Build;CreateNuGetPackage"
+			Properties="Configuration=$(ConfigurationNetCore)" />
+	</Target>
 
 	<Target Name="Clean">
+		<ItemGroup>
+			<ExistingObjectFiles
+				Include="$(OutputDir)/$(Configuration)/**/*;$(RootDir)/**/obj/**/*;$(RootDir)/**/bin/**/*;$(RootDir)/**/test-results/**/*"
+				Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*" />
+		</ItemGroup>
+
 		<Delete Files="@(ExistingObjectFiles)" />
-		<Delete Condition="'$(OS)'=='Windows_NT'"
-			 Files="$(RootDir)/**/obj/**/*" />
-		<Exec Condition="'$(OS)'!='Windows_NT'"
-			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
-			WorkingDirectory="$(RootDir)" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
 		<CallTarget Targets="TestOnly"/>
 	</Target>
 
-	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit"/>
+	<Target Name="TestOnly" DependsOnTargets="RunNUnitTC;RunNUnit;RunNUnitNetCore"/>
 
-	<Target Name="RunNUnitTC" Condition="'$(teamcity_version)' != ''">
+	<Target Name="RunNUnitTC" Condition="'$(IsOnTeamCity)'=='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnitTeamCity
@@ -87,18 +114,26 @@
 			NUnitVersion="NUnit-2.6.4" />
 	</Target>
 
-	<Target Name="RunNUnit" Condition="'$(teamcity_version)' == ''">
+	<Target Name="RunNUnit" Condition="'$(IsOnTeamCity)'!='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(RootDir)/output/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnit Assemblies="@(TestAssemblies)"
 			ToolPath="$(SolutionDir)/packages/NUnit.Runners.Net4.2.6.4/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			WorkingDirectory="$(OutputDir)/$(Configuration)"
 			Force32Bit="false"
 			Verbose="true"
-			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"/>
+			OutputXmlFile="$(OutputDir)/$(Configuration)/TestResults.xml"/>
+	</Target>
+
+	<Target Name="RunNUnitNetCore" Condition="'$(BuildNetCore)' == 'true'">
+		<PropertyGroup>
+			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
+		</PropertyGroup>
+		<Exec Command="$(DotNetCLI) run --configuration $(ConfigurationNetCore) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
+			WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 </Project>

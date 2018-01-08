@@ -1,9 +1,11 @@
 // Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Icu.Collation;
 
@@ -11,6 +13,8 @@ namespace Icu
 {
 	internal static class NativeMethods
 	{
+		private static readonly object _lock = new object();
+
 		private const int MinIcuVersionDefault = 44;
 		private const int MaxIcuVersionDefault = 60;
 		private static int minIcuVersion = MinIcuVersionDefault;
@@ -29,8 +33,12 @@ namespace Icu
 				throw new ArgumentOutOfRangeException("maxVersion",
 					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
-			minIcuVersion = Math.Min(minVersion, maxVersion);
-			maxIcuVersion = Math.Max(minVersion, maxVersion);
+
+			lock (_lock)
+			{
+				minIcuVersion = Math.Min(minVersion, maxVersion);
+				maxIcuVersion = Math.Max(minVersion, maxVersion);
+			}
 		}
 
 		private static MethodsContainer Methods;
@@ -38,6 +46,7 @@ namespace Icu
 		static NativeMethods()
 		{
 			Methods = new MethodsContainer();
+			ResetIcuVersionInfo();
 		}
 
 		#region Dynamic method loading
@@ -47,20 +56,20 @@ namespace Icu
 		private const int RTLD_NOW = 2;
 
 		[DllImport("libdl.so", SetLastError = true)]
-		private static extern IntPtr dlopen([MarshalAs(UnmanagedType.LPTStr)] string file, int mode);
+		private static extern IntPtr dlopen(string file, int mode);
 
 		[DllImport("libdl.so", SetLastError = true)]
 		private static extern int dlclose(IntPtr handle);
 
 		[DllImport("libdl.so", SetLastError = true)]
-		private static extern IntPtr dlsym(IntPtr handle, [MarshalAs(UnmanagedType.LPTStr)] string name);
+		private static extern IntPtr dlsym(IntPtr handle, string name);
 
 		#endregion
 
 		#region Native methods for Windows
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern IntPtr LoadLibrary(string dllToLoad);
+		private static extern IntPtr LoadLibraryEx(string dllToLoad, IntPtr hReservedNull, LoadLibraryFlags dwFlags);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern bool FreeLibrary(IntPtr hModule);
@@ -68,8 +77,23 @@ namespace Icu
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern bool SetDllDirectory(string dllDirectory);
+		[Flags]
+		private enum LoadLibraryFlags : uint
+		{
+			NONE = 0x00000000,
+			DONT_RESOLVE_DLL_REFERENCES = 0x00000001,
+			LOAD_IGNORE_CODE_AUTHZ_LEVEL = 0x00000010,
+			LOAD_LIBRARY_AS_DATAFILE = 0x00000002,
+			LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE = 0x00000040,
+			LOAD_LIBRARY_AS_IMAGE_RESOURCE = 0x00000020,
+			LOAD_LIBRARY_SEARCH_APPLICATION_DIR = 0x00000200,
+			LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000,
+			LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100,
+			LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800,
+			LOAD_LIBRARY_SEARCH_USER_DIRS = 0x00000400,
+			LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008
+		}
+
 		#endregion
 
 		private static int IcuVersion;
@@ -77,7 +101,7 @@ namespace Icu
 		private static IntPtr _IcuCommonLibHandle;
 		private static IntPtr _IcuI18NLibHandle;
 
-		private static bool IsWindows => Environment.OSVersion.Platform != PlatformID.Unix;
+		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
 
 		private static IntPtr IcuCommonLibHandle
 		{
@@ -99,24 +123,33 @@ namespace Icu
 			}
 		}
 
-		private static string DirectoryOfThisAssembly
+		internal static string DirectoryOfThisAssembly
 		{
 			get
 			{
-				var uri = new Uri(typeof(NativeMethods).Assembly.CodeBase);
+				//NOTE: .GetTypeInfo() is not supported until .NET 4.5 onwards.
+#if NET40
+				Assembly currentAssembly = typeof(NativeMethods).Assembly;
+#else
+				Assembly currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
+#endif
+				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
+				var uri = new Uri(managedPath);
+
 				return Path.GetDirectoryName(uri.LocalPath);
 			}
 		}
 
-		private static bool IsRunning64Bit => Environment.Is64BitProcess;
+		private static bool IsRunning64Bit => Platform.ProcessArchitecture == Platform.x64;
 
 		private static bool IsInitialized { get; set; }
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
-			if (IsWindows)
-				SetDllDirectory(directory);
-			else
+			// Only perform this for Linux because we are using LoadLibraryEx
+			// to ensure that a library's dependencies is loaded starting from
+			// where that library is located.
+			if (!IsWindows)
 			{
 				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
 				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH",
@@ -146,6 +179,7 @@ namespace Icu
 						icuVersion, directory);
 					IcuVersion = icuVersion;
 					_IcuPath = directory;
+
 					AddDirectoryToSearchPath(directory);
 					return true;
 				}
@@ -190,41 +224,63 @@ namespace Icu
 		{
 			Trace.WriteLineIf(!IsInitialized, "WARNING: ICU is not initialized.");
 
-			if (IcuVersion <= 0)
-				LocateIcuLibrary(libraryName);
-
-			var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
-			if (handle == IntPtr.Zero)
+			lock(_lock)
 			{
-				throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
-					libraryName);
+				if (IcuVersion <= 0)
+					LocateIcuLibrary(libraryName);
+
+				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
+				if (handle == IntPtr.Zero)
+				{
+					throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
+						libraryName);
+				}
+				return handle;
 			}
-			return handle;
 		}
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
 		{
 			if (icuVersion < minIcuVersion)
 				return IntPtr.Zero;
+
 			IntPtr handle;
 			string libPath;
+			int lastError = 0;
+
 			if (IsWindows)
 			{
 				var libName = $"{basename}{icuVersion}.dll";
-				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
-				handle = LoadLibrary(libPath);
+				var isIcuPathSpecified = !string.IsNullOrEmpty(_IcuPath);
+				libPath = isIcuPathSpecified ? Path.Combine(_IcuPath, libName) : libName;
+
+				var loadLibraryFlags = LoadLibraryFlags.NONE;
+
+				if (isIcuPathSpecified)
+					loadLibraryFlags |= LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
+
+				handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
+				lastError = Marshal.GetLastWin32Error();
+
+				if (handle == IntPtr.Zero && lastError != 0)
+				{
+					string errorMessage = new Win32Exception(lastError).Message;
+					Trace.WriteLine(string.Format("Unable to load [{0}]. Error: {1}", libPath, errorMessage));
+				}
 			}
 			else
 			{
 				var libName = $"lib{basename}.so.{icuVersion}";
 				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+
 				handle = dlopen(libPath, RTLD_NOW);
+				lastError = Marshal.GetLastWin32Error();
 			}
 			if (handle == IntPtr.Zero)
 			{
 				Trace.TraceWarning("{0} of {1} failed with error {2}",
-					IsWindows ? "LoadLibrary" : "dlopen",
-					libPath, Marshal.GetLastWin32Error());
+					IsWindows ? "LoadLibraryEx" : "dlopen",
+					libPath, lastError);
 				return GetIcuLibHandle(basename, icuVersion - 1);
 			}
 
@@ -234,26 +290,45 @@ namespace Icu
 
 		public static void Cleanup()
 		{
-			u_cleanup();
-			if (IsWindows)
+			lock (_lock)
 			{
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					FreeLibrary(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					FreeLibrary(_IcuI18NLibHandle);
+				u_cleanup();
+				if (IsWindows)
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						FreeLibrary(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						FreeLibrary(_IcuI18NLibHandle);
+				}
+				else
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						dlclose(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						dlclose(_IcuI18NLibHandle);
+				}
+				_IcuCommonLibHandle = IntPtr.Zero;
+				_IcuI18NLibHandle = IntPtr.Zero;
+
+				Methods = new MethodsContainer();
+				ResetIcuVersionInfo();
 			}
-			else
-			{
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					dlclose(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					dlclose(_IcuI18NLibHandle);
-			}
-			_IcuCommonLibHandle = IntPtr.Zero;
-			_IcuI18NLibHandle = IntPtr.Zero;
+		}
+
+		private static void ResetIcuVersionInfo()
+		{
 			IcuVersion = 0;
 			_IcuPath = null;
-			Methods = new MethodsContainer();
+
+#if !NET40
+			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
+
+			if (icuInfo.Success)
+			{
+				_IcuPath = icuInfo.IcuPath.FullName;
+				IcuVersion = icuInfo.IcuVersion;
+			}
+#endif
 		}
 
 		// This method is thread-safe and idempotent
@@ -265,8 +340,13 @@ namespace Icu
 				dlsym(handle, versionedMethodName);
 			if (methodPointer != IntPtr.Zero)
 			{
+				// NOTE: Starting in .NET 4.5.1, Marshal.GetDelegateForFunctionPointer(IntPtr, Type) is obsolete.
+#if NET40
 				return Marshal.GetDelegateForFunctionPointer(
 					methodPointer, typeof(T)) as T;
+#else
+				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer);
+#endif
 			}
 			if (missingInMinimal)
 			{
@@ -1810,7 +1890,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Attempts to match the input string against the pattern. 
+		/// Attempts to match the input string against the pattern.
 		/// </summary>
 		public static bool uregex_matches(
 			IntPtr regexp,

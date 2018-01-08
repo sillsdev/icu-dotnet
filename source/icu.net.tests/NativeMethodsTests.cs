@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
@@ -8,9 +8,13 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
-	[TestFixture]
+#if NETCOREAPP1_1
+	[Ignore("System.Diagnostics.Process is not supported in .NETStandard 1.6.")]
+#else
 	[Platform(Exclude = "Linux",
 		Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+#endif
+	[TestFixture]
 	public class NativeMethodsTests
 	{
 		private string _tmpDir;
@@ -34,7 +38,14 @@ namespace Icu.Tests
 		}
 
 		private static string OutputDirectory => Path.GetDirectoryName(
-			new Uri(typeof(NativeMethodsTests).Assembly.CodeBase).LocalPath);
+			new Uri(
+#if NET40
+				typeof(NativeMethodsTests).Assembly.CodeBase
+#else
+				typeof(NativeMethodsTests).GetTypeInfo().Assembly.CodeBase
+#endif
+				)
+			.LocalPath);
 
 		private static string IcuDirectory => Path.Combine(OutputDirectory, "lib", GetArchSubdir("win-"));
 

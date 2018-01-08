@@ -115,11 +115,15 @@
   </PropertyGroup>
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
+    <PlatformAlias>net40</PlatformAlias>
+    <IcuLib>..\..\lib\icu</IcuLib>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver)</DefineConstants>
-    <SignAssembly>true</SignAssembly>
+    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40;NUNIT2</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup>
+  <!-- Using Mono msbuild with .NET Core build targets does not support
+  assembly signing, yet. -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
@@ -140,7 +144,15 @@
     <Compile Include="Collation\NormalizationMode.cs" />
     <Compile Include="Collation\NumericCollation.cs" />
     <Compile Include="ErrorCode.cs" />
+    <Compile Include="Exceptions\MissingResourceException.cs" />
     <Compile Include="Locale.cs" />
+    <Compile Include="Platform.cs" />
+    <Compile Include="Exceptions\BreakException.cs" />
+    <Compile Include="Exceptions\IDNAException.cs" />
+    <Compile Include="Exceptions\RegexException.cs" />
+    <Compile Include="Exceptions\TransliteratorParseException.cs" />
+    <Compile Include="Exceptions\SyntaxErrorException.cs" />
+    <Compile Include="Exceptions\WarningException.cs" />
     <Compile Include="ParseError.cs" />
     <Compile Include="Collation\RuleBasedCollator.cs" />
     <Compile Include="ParseErrorException.cs" />
@@ -181,15 +193,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.4\build\PepitaPackage.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 	   Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   -->
   <Target Name="AfterBuild">
+    <PropertyGroup>
+      <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
+      <NuGetAssetsFolder>$(ProjectDir)NuGetAssets</NuGetAssetsFolder>
+    </PropertyGroup>
     <ItemGroup>
-      <FilesToDelete Include="$(SolutionDir)NuGetBuild\**\*.*" />
+      <FilesToDelete Include="$(NuGetBuildFolder)\**\*.*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.dll*" />
       <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
     </ItemGroup>
@@ -197,10 +212,10 @@
       <Output PropertyName="BuildCounter" TaskParameter="Value" />
     </CreateProperty>
     <Delete Files="@(FilesToDelete)" />
-    <MakeDir Directories="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets/icu.net.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(SolutionDir)NuGetBuild/lib/net40" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
+    <MakeDir Directories="$(NuGetBuildFolder)" />
+    <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
+    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(NuGetBuildFolder)/lib/net40" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
     <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
     <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true" />
   </Target>
@@ -213,5 +228,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets'))" />
   </Target>
+  <Import Project="..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" />
 </Project>

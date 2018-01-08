@@ -61,6 +61,9 @@
 			Condition="Exists('$(SolutionPath)')"/>
 		<Exec Command='$(NuGetCommand) restore -source "$(PackageSources)" -SolutionDirectory "$(SolutionDir)" "%(PackageConfigs.FullPath)"'
 			Condition="!Exists('$(SolutionPath)')"/>
+
+		<Exec Command='$(DotNetCLI) restore "$(SolutionNetCorePath)"'
+			Condition="'$(BuildNetCore)' == 'true' And '$(DotNetCLI)' != '' And Exists('$(SolutionNetCorePath)')"/>
 	</Target>
 
 	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
