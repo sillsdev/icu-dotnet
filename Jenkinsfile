@@ -46,7 +46,7 @@ ansiColor('xterm') {
 								"""
 
 							version = readFile "output/Release/version.txt"
-							currentBuild.displayName = "${version}-${env.BUILD_NUMBER}"
+							currentBuild.displayName = "${version.trim()}-${env.BUILD_NUMBER}"
 						}
 
 						stage('Tests Win') {
