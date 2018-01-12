@@ -27,7 +27,7 @@ ansiColor('xterm') {
 
 			try {
 				parallel('Windows build': {
-					node('windows && supported') {
+					node('windows && supported && netcore') {
 						def msbuild = tool 'msbuild15'
 						def git = tool(name: 'Default', type: 'git')
 
@@ -71,7 +71,7 @@ ansiColor('xterm') {
 						nunit testResultsPattern: '**/TestResults.xml'
 					}
 				}, 'Linux': {
-					node('linux64 && !packager && ubuntu && mono5') {
+					node('linux64 && !packager && ubuntu && mono5 && netcore') {
 						def msbuild = tool 'mono-msbuild15'
 						def git = tool(name: 'Default', type: 'git')
 
