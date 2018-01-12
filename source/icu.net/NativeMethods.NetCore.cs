@@ -122,15 +122,19 @@ namespace Icu
 
 			// 2. Check in {assemblyDirectory}/lib/*{architecture}*/
 			var libDirectory = Path.Combine(assemblyDirectory.FullName, "lib");
-			var candidateDirectories = Directory.EnumerateDirectories(libDirectory, $"*{Platform.ProcessArchitecture}*")
-				.Select(x => new DirectoryInfo(x));
-
-			foreach (var directory in candidateDirectories)
+			if (Directory.Exists(libDirectory))
 			{
-				if (TryGetIcuVersionNumber(directory, out version))
+				var candidateDirectories = Directory
+					.EnumerateDirectories(libDirectory, $"*{Platform.ProcessArchitecture}*")
+					.Select(x => new DirectoryInfo(x));
+
+				foreach (var directory in candidateDirectories)
 				{
-					IcuVersion = new IcuVersionInfo(directory, version);
-					return true;
+					if (TryGetIcuVersionNumber(directory, out version))
+					{
+						IcuVersion = new IcuVersionInfo(directory, version);
+						return true;
+					}
 				}
 			}
 
