@@ -29,14 +29,15 @@ ansiColor('xterm') {
 				parallel('Windows build': {
 					node('windows && supported') {
 						def msbuild = tool 'msbuild15'
-						def git = tool(name: 'Default', type: 'git')
 
 						stage('Checkout Win') {
-							checkout scm
-
-							bat """
-								"${git}" fetch origin --tags
-								"""
+							checkout([
+								$class: 'GitSCM',
+								branches: scm.branches,
+								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+								extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+								userRemoteConfigs: scm.userRemoteConfigs
+							])
 						}
 
 						stage('Build Win') {
@@ -75,13 +76,19 @@ ansiColor('xterm') {
 						def msbuild = tool 'mono-msbuild15'
 
 						stage('Checkout Linux') {
-							checkout scm
+							checkout([
+								$class: 'GitSCM',
+								branches: scm.branches,
+								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+								extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+								userRemoteConfigs: scm.userRemoteConfigs
+							])
 						}
 
 						stage('Build Linux') {
 							echo "Building icu.net"
 							sh """#!/bin/bash
-								"${msbuild}" /t:Compile /property:Configuration=Release build/icu-dotnet.proj
+								"${msbuild}" /t:Build /property:Configuration=Release build/icu-dotnet.proj
 								"""
 						}
 
