@@ -29,15 +29,14 @@ ansiColor('xterm') {
 				parallel('Windows build': {
 					node('windows && supported') {
 						def msbuild = tool 'msbuild15'
+						def git = tool(name: 'Default', type: 'git')
 
 						stage('Checkout Win') {
-							checkout([
-								$class: 'GitSCM',
-								branches: scm.branches,
-								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
-								userRemoteConfigs: scm.userRemoteConfigs
-							])
+							checkout scm
+
+							bat """
+								"${git}" fetch origin --tags
+								"""
 						}
 
 						stage('Build Win') {
@@ -74,15 +73,12 @@ ansiColor('xterm') {
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu && mono5') {
 						def msbuild = tool 'mono-msbuild15'
+						def git = tool(name: 'Default', type: 'git')
 
 						stage('Checkout Linux') {
-							checkout([
-								$class: 'GitSCM',
-								branches: scm.branches,
-								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
-								userRemoteConfigs: scm.userRemoteConfigs
-							])
+							checkout scm
+
+							sh "${git} fetch origin --tags"
 						}
 
 						stage('Build Linux') {
