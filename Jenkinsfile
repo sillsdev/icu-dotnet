@@ -91,8 +91,8 @@ MONO_GAC_PREFIX="$MONO_PREFIX:/usr"
 
 export LD_LIBRARY_PATH PKG_CONFIG_PATH MONO_GAC_PREFIX
 
-xbuild /t:Compile /property:Configuration=Release build/icu-dotnet.proj
-xbuild /t:TestOnly /property:Configuration=Release build/icu-dotnet.proj
+msbuild /t:Compile /property:Configuration=Release build/icu-dotnet.proj
+msbuild /t:TestOnly /property:Configuration=Release build/icu-dotnet.proj
 '''
 						}
 
