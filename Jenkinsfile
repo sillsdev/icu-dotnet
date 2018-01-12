@@ -72,28 +72,24 @@ ansiColor('xterm') {
 					}
 				}, 'Linux': {
 					node('linux64 && !packager && ubuntu && mono5') {
+						def msbuild = tool 'mono-msbuild15'
+
 						stage('Checkout Linux') {
 							checkout scm
 						}
 
-						stage('Build and Test Linux') {
+						stage('Build Linux') {
 							echo "Building icu.net"
-							sh '''#!/bin/bash
-ICUVER=$(icu-config --version|tr -d .|cut -c -2)
+							sh """#!/bin/bash
+								"${msbuild}" /t:Compile /property:Configuration=Release build/icu-dotnet.proj
+								"""
+						}
 
-echo "Building for ICU $icu_ver"
-
-MONO_PREFIX=/opt/mono5-sil
-PATH="$MONO_PREFIX/bin:$PATH"
-LD_LIBRARY_PATH="$MONO_PREFIX/lib:$LD_LIBRARY_PATH"
-PKG_CONFIG_PATH="$MONO_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
-MONO_GAC_PREFIX="$MONO_PREFIX:/usr"
-
-export LD_LIBRARY_PATH PKG_CONFIG_PATH MONO_GAC_PREFIX
-
-msbuild /t:Compile /property:Configuration=Release build/icu-dotnet.proj
-msbuild /t:TestOnly /property:Configuration=Release build/icu-dotnet.proj
-'''
+						stage('Tests Linux') {
+							echo "Running unit tests"
+							sh """#!/bin/bash
+								"${msbuild}" /t:TestOnly /property:Configuration=Release build/icu-dotnet.proj
+								"""
 						}
 
 						nunit testResultsPattern: '**/TestResults.xml'

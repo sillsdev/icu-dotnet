@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <icu_ver Condition=" '$(icu_ver)' == '' ">54</icu_ver>
     <ProjectGuid>{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -110,7 +109,6 @@
   </PropertyGroup>
   <!-- Defining common properties in one location. -->
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);ICU_VER_$(icu_ver)</DefineConstants>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
   </PropertyGroup>
   <ItemGroup>
