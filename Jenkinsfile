@@ -61,10 +61,10 @@ ansiColor('xterm') {
 								echo "Upload nuget package"
 								withCredentials([string(credentialsId: 'nuget-api-key', variable: 'NuGetApiKey')]) {
 									bat """
-										build\\nuget.exe push -Source https://www.nuget.org/api/v2/package source\\NuGetBuild\\*.nupkg ${NuGetApiKey}
+										build\\nuget.exe push -Source https://www.nuget.org/api/v2/package source\\NuGetBuild\\netstandard\\*.nupkg ${NuGetApiKey}
 										"""
 								}
-								archiveArtifacts 'source/NuGetBuild/*.nupkg'
+								archiveArtifacts 'source/NuGetBuild/netstandard/*.nupkg'
 							}
 						}
 

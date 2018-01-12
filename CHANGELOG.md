@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Implement `BreakIterator.Clone()` method (#56) to allow break iterator to be
   used in multi-threaded applications
 
+### Changed
+
+- Create netstandard package (#37/#59, conniey). This allows to use the package with .NET Core
+  as well as any other .NET version compatible with .NET Standaard 1.6. Additionally we still
+  include the binaries for .NET 4.0 and .NET 4.5.1.
+
 ### Fixed
 
 - Fix signature of u_charType (#54)
