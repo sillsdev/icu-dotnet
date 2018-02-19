@@ -25,12 +25,12 @@ namespace Icu
 		{
 			if (minVersion < MinIcuVersionDefault || minVersion > MaxIcuVersionDefault)
 			{
-				throw new ArgumentOutOfRangeException("minVersion",
+				throw new ArgumentOutOfRangeException(nameof(minVersion),
 					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
 			if (maxVersion < MinIcuVersionDefault || maxVersion > MaxIcuVersionDefault)
 			{
-				throw new ArgumentOutOfRangeException("maxVersion",
+				throw new ArgumentOutOfRangeException(nameof(maxVersion),
 					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
 			}
 
@@ -55,13 +55,15 @@ namespace Icu
 
 		private const int RTLD_NOW = 2;
 
-		[DllImport("libdl.so", SetLastError = true)]
+		private const string LIBDL_NAME = "libdl.so.2";
+
+		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern IntPtr dlopen(string file, int mode);
 
-		[DllImport("libdl.so", SetLastError = true)]
+		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern int dlclose(IntPtr handle);
 
-		[DllImport("libdl.so", SetLastError = true)]
+		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern IntPtr dlsym(IntPtr handle, string name);
 
 		#endregion

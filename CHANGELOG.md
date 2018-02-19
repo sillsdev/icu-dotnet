@@ -26,12 +26,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Create netstandard package (#37/#59, conniey). This allows to use the package with .NET Core
-  as well as any other .NET version compatible with .NET Standaard 1.6. Additionally we still
+  as well as any other .NET version compatible with .NET Standard 1.6. Additionally we still
   include the binaries for .NET 4.0 and .NET 4.5.1.
 
 ### Fixed
 
 - Fix signature of u_charType (#54)
+- Don't depend on libc6-dev package (#62)
 
 ## [2.2.0] - 2017-09-29
 
