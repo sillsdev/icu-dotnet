@@ -27,7 +27,7 @@ ansiColor('xterm') {
 
 			try {
 				parallel('Windows build': {
-					node('windows && supported && netcore') {
+					node('windows && supported && netcore && vs2017') {
 						def msbuild = tool 'msbuild15'
 						def git = tool(name: 'Default', type: 'git')
 
