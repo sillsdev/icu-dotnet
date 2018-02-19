@@ -7,6 +7,7 @@
 		<licenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</licenseUrl>
 		<projectUrl>https://github.com/sillsdev/icu-dotnet</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<summary>Managed wrapper around ICU4C</summary>
 		<description>icu.net is a C# Wrapper around ICU4C
 
 This version of icu.net works with (more or less) any version of ICU4C.
