@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("icu.net")]
-[assembly: AssemblyCopyright("Copyright © SIL International 2007-2017")]
+[assembly: AssemblyCopyright("Copyright © SIL International 2007-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
