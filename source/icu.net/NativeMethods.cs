@@ -224,7 +224,8 @@ namespace Icu
 
 		private static IntPtr LoadIcuLibrary(string libraryName)
 		{
-			Trace.WriteLineIf(!IsInitialized, "WARNING: ICU is not initialized.");
+			Trace.WriteLineIf(!IsInitialized,
+				"WARNING: ICU is not initialized. Please call Icu.Wrapper.Init() at the start of your application.");
 
 			lock(_lock)
 			{
