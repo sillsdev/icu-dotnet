@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.3.0] - 2018-02-28
+
 ### Added
 
 - Add Wrapper.Init() method to allow initialization of ICU for
@@ -28,6 +30,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Create netstandard package (#37/#59, conniey). This allows to use the package with .NET Core
   as well as any other .NET version compatible with .NET Standard 1.6. Additionally we still
   include the binaries for .NET 4.0 and .NET 4.5.1.
+- Improved warning message if ICU is not initialized.
+- Enhanced readme.
 
 ### Fixed
 

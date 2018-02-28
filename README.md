@@ -10,6 +10,33 @@ icu-dotnet is the C# wrapper for a subset of [ICU4C](http://site.icu-project.org
 | Linux   | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/) |
 | Windows | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/) |
 
+## Usage
+
+This library provides .NET classes and methods for (a subset of) the ICU C API. Please refer to the
+[ICU API documentation](http://icu-project.org/apiref/icu4c/). In icu.net you'll find classes that
+correspond to the C++ classes of ICU4C.
+
+Although not strictly required it is recommended to call `Icu.Wrapper.Init()` at the start of
+the application. This will allow to use icu.net from multiple threads
+(c.f. [ICU Initialization and Termination](http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination)).
+Similarly, it might be beneficial to call `Icu.Wrapper.Cleanup()` before exiting.
+
+Sample code:
+
+``` csharp
+	static class Program
+	{
+		public static void Main(string[] args)
+		{
+			Icu.Wrapper.Init();
+			// Will output "NFC form of XA\u0308bc is XÄbc"
+			Console.WriteLine($"NFC form of XA\\u0308bc is {Icu.Normalizer.Normalize("XA\u0308bc",
+				Icu.Normalizer.UNormalizationMode.UNORM_NFC)}");
+			Icu.Wrapper.Cleanup();
+		}
+	}
+```
+
 ## Building
 
 icu-dotnet can be built with Visual Studio or MonoDevelop, but at least initially it might be
@@ -69,3 +96,10 @@ The package installer should have added an import to the `*.csproj` file similar
 
 	<Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets"
 		Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
+
+## Contributing
+
+We love contributions! The library mainly contains the functionality we need for our products. If you
+miss something that is part of ICU4C but not yet wrapped in icu.net, add it and create a pull request.
+
+If you find a bug - create an issue on GitHub, then preferably fix it and create a pull request!
