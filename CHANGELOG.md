@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Remove dependency on `System.Runtime.InteropServices.RuntimeInformation` for 4.6.1
+  assembly. When running under Mono 4, `RuntimeInformation` assumes that it is running
+  on a Windows machine. This makes it useless for detecting the platform.
+
 ## [2.3.0] - 2018-02-28
 
 ### Added
