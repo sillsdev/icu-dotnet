@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.3.1] - 2018-03-14
+
+### Changed
+
+- Remove dependency on `System.Runtime.InteropServices.RuntimeInformation` for 4.6.1
+  assembly. It has problems when running under Mono 4.
+
 ## [2.3.0] - 2018-02-28
 
 ### Added

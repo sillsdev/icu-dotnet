@@ -1,7 +1,9 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+#if NETSTANDARD1_6
 using System.Runtime.InteropServices;
+#endif
 
 namespace Icu
 {
@@ -45,7 +47,7 @@ namespace Icu
 		{
 			get
 			{
-#if NET40
+#if !NETSTANDARD1_6
 				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
 				switch ((int)Environment.OSVersion.Platform)
 				{
