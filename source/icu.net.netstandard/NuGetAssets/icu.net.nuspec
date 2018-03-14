@@ -18,7 +18,6 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
 			<group targetFramework="net40" />
 			<group targetFramework="net451">
 				<dependency id="Microsoft.Extensions.DependencyModel" version="2.0.4" exclude="Build,Analyzers" />
-				<dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.3.0" exclude="Build,Analyzers" />
 			</group>
 			<group targetFramework="netstandard1.6">
 				<dependency id="Microsoft.Extensions.DependencyModel" version="2.0.4" exclude="Build,Analyzers" />

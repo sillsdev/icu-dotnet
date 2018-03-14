@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.3.2] - 2018-03-14
+
+### Changed
+
+- Update dependency information in nuget package.
+
 ## [2.3.1] - 2018-03-14
 
 ### Changed
