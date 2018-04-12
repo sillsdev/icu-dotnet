@@ -4,8 +4,12 @@
 
 @Library('lsdev-pipeline-library') _
 
-xplatformBuildAndRunTests(
-	winNodeSpec: 'windows && supported && netcore && vs2017', winTool: 'msbuild15',
-	linuxNodeSpec: 'linux64 && !packager && ubuntu && mono5 && netcore', linuxTool: 'mono-msbuild15',
-	configuration: 'Release',
-	uploadNuGet: true, nupkgPath: 'source/NuGetBuild/netstandard/*.nupkg')
+xplatformBuildAndRunTests {
+	winNodeSpec = 'windows && supported && netcore && vs2017'
+	winTool = 'msbuild15'
+	linuxNodeSpec = 'linux64 && !packager && ubuntu && mono5 && netcore'
+	linuxTool = 'mono-msbuild15'
+	configuration = 'Release'
+	uploadNuGet = true
+	nupkgPath = 'source/NuGetBuild/netstandard/*.nupkg'
+}
