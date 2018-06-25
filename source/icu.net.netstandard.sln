@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "icu.net.netstandard.tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "icu.net.netstandard.testrunner", "icu.net.netstandard.testrunner\icu.net.netstandard.testrunner.csproj", "{B8D007FE-5102-461C-A10B-11CD9DF57FB4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{82573375-8791-4852-9F6B-8467229ED22C}"
+ProjectSection(SolutionItems) = preProject
+	..\CHANGELOG.md = ..\CHANGELOG.md
+	..\README.md = ..\README.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

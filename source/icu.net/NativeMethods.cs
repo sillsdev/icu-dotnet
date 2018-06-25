@@ -16,7 +16,7 @@ namespace Icu
 		private static readonly object _lock = new object();
 
 		private const int MinIcuVersionDefault = 44;
-		private const int MaxIcuVersionDefault = 60;
+		private const int MaxIcuVersionDefault = 70;
 		private static int minIcuVersion = MinIcuVersionDefault;
 		private static int maxIcuVersion = MaxIcuVersionDefault;
 

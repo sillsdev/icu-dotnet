@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Allow ICU up to version 70
+
 ## [2.3.2] - 2018-03-14
 
 ### Changed
