@@ -1,233 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{28A0072F-AE0B-449A-8494-B53F09756273}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
+    <PlatformAlias>netstandard</PlatformAlias>
+    <OutputPath>..\..\output\$(Configuration)</OutputPath>
     <RootNamespace>Icu</RootNamespace>
     <AssemblyName>icu.net</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <DocumentationFile>..\..\output\Debug\icu.net.XML</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Company>SIL International</Company>
+    <Authors>SIL International</Authors>
+    <PackageLicenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
+    <Copyright>Copyright © 2007-2018 SIL International</Copyright>
+    <Description>icu.net is a C# Wrapper around ICU4C
+
+This version of icu.net works with (more or less) any version of ICU4C.
+
+NOTE: this package contains the managed wrapper part of icu.net. You'll also have to have the unmanaged binaries of ICU installed. On Linux it is recommended to install the official ICU package that comes with the system. On Windows you can install one of the binary nuget packages, e.g. Icu4c.Win.</Description>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <NoBuild>true</NoBuild>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugMono|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseMono|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;MONO</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
+  <!-- Full .NET Framework properties -->
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
+    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMono|x86'">
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
-    <DefineConstants>MONO</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMono|x86'">
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
-    <DefineConstants>MONO</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <!-- Defining common properties in one location. -->
-  <PropertyGroup>
-    <PlatformAlias>net40</PlatformAlias>
-    <IcuLib>..\..\lib\icu</IcuLib>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE;NET40;NUNIT2</DefineConstants>
   </PropertyGroup>
   <!-- Using Mono msbuild with .NET Core build targets does not support
   assembly signing, yet. -->
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+  <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BreakIterators\BreakIterator.cs" />
-    <Compile Include="BreakIterators\RuleBasedBreakIterator.cs" />
-    <Compile Include="Collation\AlternateHandling.cs" />
-    <Compile Include="Collation\CaseFirst.cs" />
-    <Compile Include="Collation\CaseLevel.cs" />
-    <Compile Include="Collation\CollationStrength.cs" />
-    <Compile Include="Collation\Collator.cs" />
-    <Compile Include="Collation\FrenchCollation.cs" />
-    <Compile Include="Collation\HiraganaQuaternary.cs" />
-    <Compile Include="Collation\NormalizationMode.cs" />
-    <Compile Include="Collation\NumericCollation.cs" />
-    <Compile Include="ErrorCode.cs" />
-    <Compile Include="Exceptions\MissingResourceException.cs" />
-    <Compile Include="Locale.cs" />
-    <Compile Include="Platform.cs" />
-    <Compile Include="Exceptions\BreakException.cs" />
-    <Compile Include="Exceptions\IDNAException.cs" />
-    <Compile Include="Exceptions\RegexException.cs" />
-    <Compile Include="Exceptions\TransliteratorParseException.cs" />
-    <Compile Include="Exceptions\SyntaxErrorException.cs" />
-    <Compile Include="Exceptions\WarningException.cs" />
-    <Compile Include="ParseError.cs" />
-    <Compile Include="Collation\RuleBasedCollator.cs" />
-    <Compile Include="ParseErrorException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegexMatcher.cs" />
-    <Compile Include="VersionInfo.cs" />
-    <Compile Include="IcuWrapper.cs" />
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="Character.cs" />
-    <Compile Include="Collation\UColRuleOption.cs" />
-    <Compile Include="Collation\UColAttributeValue.cs" />
-    <Compile Include="Collation\UColBoundMode.cs" />
-    <Compile Include="UnicodeString.cs" />
-    <Compile Include="UnicodeSet.cs" />
-    <Compile Include="Normalizer.cs" />
-    <Compile Include="Boundary.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-    <None Include="NuGetAssets\icu.net.nuspec" />
+  <ItemGroup Condition="!$(TargetFramework.Contains('netstandard'))">
+    <!-- still missing GitVersionTask for netstandard! -->
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
+    <Compile Remove="SortKey.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  -->
-  <Target Name="AfterBuild">
-    <PropertyGroup>
-      <NuGetBuildFolder>$(SolutionDir)NuGetBuild/$(PlatformAlias)</NuGetBuildFolder>
-      <NuGetAssetsFolder>$(ProjectDir)NuGetAssets</NuGetAssetsFolder>
-    </PropertyGroup>
-    <ItemGroup>
-      <FilesToDelete Include="$(NuGetBuildFolder)\**\*.*" />
-      <IcuDotNetFiles Include="$(TargetDir)/icu.net.dll*" />
-      <IcuDotNetFiles Include="$(TargetDir)/icu.net.pdb" Condition="'$(OS)'!='Unix'" />
-    </ItemGroup>
-    <CreateProperty Value="0" Condition=" '$(BuildCounter)' == ''">
-      <Output PropertyName="BuildCounter" TaskParameter="Value" />
-    </CreateProperty>
-    <Delete Files="@(FilesToDelete)" />
-    <MakeDir Directories="$(NuGetBuildFolder)" />
-    <Copy SourceFiles="$(NuGetAssetsFolder)/icu.net.nuspec" DestinationFolder="$(NuGetBuildFolder)" />
-    <Copy SourceFiles="@(IcuDotNetFiles)" DestinationFolder="$(NuGetBuildFolder)/lib/net40" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(NuGetBuildFolder)" MetadataAssembly="$(TargetPath)" Version="$(GitVersion_NuGetVersion)" />
-    <Message Importance="High" Text="Created nuget package version $(GitVersion_NuGetVersion) ($(GitVersion_FullSemVer))" />
-    <WriteLinesToFile File="$(TargetDir)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="true" />
-  </Target>
-  <PropertyGroup>
-    <PreBuildEvent />
-  </PropertyGroup>
-  <Import Project="..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.4.0.0-beta0012\build\GitVersionTask.targets'))" />
-    <Error Condition="!Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets'))" />
-  </Target>
-  <Import Project="..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets" Condition="Exists('..\packages\PepitaPackage.1.21.6\build\PepitaPackage.targets')" />
 </Project>

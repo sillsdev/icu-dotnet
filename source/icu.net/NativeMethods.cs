@@ -268,7 +268,7 @@ namespace Icu
 				if (handle == IntPtr.Zero && lastError != 0)
 				{
 					string errorMessage = new Win32Exception(lastError).Message;
-					Trace.WriteLine(string.Format("Unable to load [{0}]. Error: {1}", libPath, errorMessage));
+					Trace.WriteLine($"Unable to load [{libPath}]. Error: {errorMessage}");
 				}
 			}
 			else

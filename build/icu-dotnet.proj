@@ -8,27 +8,21 @@
 		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(IsOnWindows)'!='true'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
 		<SolutionDir>$(RootDir)/source</SolutionDir>
+		<SolutionPath>$(SolutionDir)/$(Solution)</SolutionPath>
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
 		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
-
-		<Configuration Condition="'$(IsOnWindows)'!='true' And '$(Configuration)'==''">ReleaseMono</Configuration>
-		<Configuration Condition="'$(IsOnWindows)'=='true' And '$(Configuration)'==''">Release</Configuration>
-
-		<BuildNetCore Condition="'$(BuildNetCore)' == ''">true</BuildNetCore>
-	</PropertyGroup>
-
-	<!-- .NET Core build properties -->
-	<PropertyGroup Condition="'$(BuildNetCore)' == 'true'">
-		<ConfigurationNetCore>$(Configuration.Replace('Mono',''))</ConfigurationNetCore>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
 		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
-		<SolutionNetCorePath>$(SolutionDir)/icu.net.netstandard.sln</SolutionNetCorePath>
+
+		<NuGetPackageDir Condition="'$(OS)'=='Windows_NT'">$(UserProfile)/.nuget/packages</NuGetPackageDir>
+		<NuGetPackageDir Condition="'$(OS)'!='Windows_NT'">$(Home)/.nuget/packages</NuGetPackageDir>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
 	<!-- To increment the version number create and push a new tag in git -->
 
-	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
 		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'"/>
@@ -62,29 +56,10 @@
 		<Message Text="Build Complete"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="CompileNet40Solution;CompileNetCore">
-	</Target>
-
-	<!-- Compile compiles source/icu.net.sln which outputs
-		assemblies targeting .NET 4.0.
-
-		Creates NuGet package that works only for .NET 4.0. -->
-	<Target Name="CompileNet40Solution"
-		DependsOnTargets="DownloadDependencies;RestorePackages">
-		<MSBuild Projects="$(SolutionDir)/$(Solution)"
+	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
+		<MSBuild Projects="$(SolutionPath)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
-	</Target>
-
-	<!-- CompileNetCore compiles source/icu.net.netstandard.sln which outputs
-		assemblies targeting .NET 4.0, .NET 4.5.1 and .NET Standard 1.6.
-
-		Creates NuGet package that works against all three frameworks. -->
-	<Target Name="CompileNetCore" DependsOnTargets="DownloadDependencies;RestorePackages"
-		Condition="'$(BuildNetCore)' == 'true'">
-		<MSBuild Projects="$(SolutionNetCorePath)"
-			Targets="Build;CreateNuGetPackage"
-			Properties="Configuration=$(ConfigurationNetCore)" />
 	</Target>
 
 	<Target Name="Clean">
@@ -105,35 +80,52 @@
 
 	<Target Name="RunNUnitTC" Condition="'$(IsOnTeamCity)'=='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net461/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="$(excludedCategories)SkipOnTeamCity;$(ExtraExcludeCategories)"
-			NUnitVersion="NUnit-2.6.4" />
+			 NUnitVersion="NUnit-3" />
 	</Target>
 
 	<Target Name="RunNUnit" Condition="'$(IsOnTeamCity)'!='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(OutputDir)/$(Configuration)/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net461/*tests.dll"/>
 		</ItemGroup>
 
-		<NUnit Assemblies="@(TestAssemblies)"
-			ToolPath="$(SolutionDir)/packages/NUnit.Runners.Net4.2.6.4/tools"
+		<NUnit3 Assemblies="@(TestAssemblies)"
+			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.8.0/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
-			WorkingDirectory="$(OutputDir)/$(Configuration)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)/"
 			Force32Bit="false"
 			Verbose="true"
+			UseNUnit3Xml="true"
+			FailTaskIfAnyTestsFail="$(FailTaskIfAnyTestsFail)"
 			OutputXmlFile="$(OutputDir)/$(Configuration)/TestResults.xml"/>
 	</Target>
 
-	<Target Name="RunNUnitNetCore" Condition="'$(BuildNetCore)' == 'true'">
+	<Target Name="RunNUnitNetCore">
 		<PropertyGroup>
 			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
 		</PropertyGroup>
-		<Exec Command="$(DotNetCLI) run --configuration $(ConfigurationNetCore) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
+		<Exec Command="$(DotNetCLI) run --configuration $(Configuration) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
 			WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
+
+	<Target Name="Restore">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="Restore"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
+	<Target Name="Pack">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="Pack"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
 </Project>

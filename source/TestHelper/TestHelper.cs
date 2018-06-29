@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Icu.Tests
 {
-	class TestHelper
+	static class TestHelper
 	{
 		static void Main(string[] args)
 		{

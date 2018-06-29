@@ -8,8 +8,8 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
-#if NETCOREAPP1_1
-	[Ignore("System.Diagnostics.Process is not supported in .NETStandard 1.6.")]
+#if NETCOREAPP2_1
+	[Ignore("Platform is not supported in NUnit for .NET Core 2")]
 #else
 	[Platform(Exclude = "Linux",
 		Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
@@ -19,9 +19,9 @@ namespace Icu.Tests
 	{
 		private string _tmpDir;
 		private string _pathEnvironmentVariable;
-		private const string FullIcuLibraryVersion = "59.1";
-		private const string MinIcuLibraryVersion = "58.2";
-		private const string MinIcuLibraryVersionMajor = "58";
+		private const string FullIcuLibraryVersion = "62.1";
+		private const string MinIcuLibraryVersion = "59.1";
+		private const string MinIcuLibraryVersionMajor = "59";
 
 		private static void CopyFile(string srcPath, string dstDir)
 		{
@@ -56,16 +56,28 @@ namespace Icu.Tests
 
 			using (var process = new Process())
 			{
-				process.StartInfo.RedirectStandardError = false;
+				process.StartInfo.RedirectStandardError = true;
 				process.StartInfo.RedirectStandardOutput = true;
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.CreateNoWindow = true;
 				process.StartInfo.WorkingDirectory = workDir;
-				process.StartInfo.FileName = Path.Combine(exeDir, "TestHelper.exe");
+				var filename = Path.Combine(exeDir, "TestHelper.exe");
+				if (!File.Exists(filename))
+				{
+					// netcore
+					process.StartInfo.Arguments = Path.Combine(exeDir, "TestHelper.dll");
+					filename = "dotnet";
+				}
+
+				process.StartInfo.FileName = filename;
 
 				process.Start();
 				var output = process.StandardOutput.ReadToEnd();
 				process.WaitForExit();
+				if (process.ExitCode != 0)
+				{
+					Console.WriteLine(process.StandardError.ReadToEnd());
+				}
 				return output.TrimEnd('\r', '\n');
 			}
 		}
@@ -77,14 +89,24 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(IcuDirectory, $"icuuc{MinIcuLibraryVersionMajor}.dll"), targetDir);
 		}
 
+		private static void CopyTestFiles(string sourceDir, string targetDir)
+		{
+			var testHelper = Path.Combine(sourceDir, "TestHelper.exe");
+			if (!File.Exists(testHelper))
+				testHelper = Path.Combine(sourceDir, "TestHelper.dll");
+			CopyFile(testHelper, targetDir);
+			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), targetDir);
+			var dependencyModel = Path.Combine(sourceDir, "Microsoft.Extensions.DependencyModel.dll");
+			if (File.Exists(dependencyModel))
+				CopyFile(dependencyModel, targetDir);
+		}
+
 		[SetUp]
 		public void Setup()
 		{
 			_tmpDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(_tmpDir);
-			var sourceDir = OutputDirectory;
-			CopyFile(Path.Combine(sourceDir, "TestHelper.exe"), _tmpDir);
-			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), _tmpDir);
+			CopyTestFiles(OutputDirectory, _tmpDir);
 
 			_pathEnvironmentVariable = Environment.GetEnvironmentVariable("PATH");
 			var path = $"{IcuDirectory}{Path.PathSeparator}{_pathEnvironmentVariable}";
@@ -140,8 +162,7 @@ namespace Icu.Tests
 		{
 			var subdir = Path.Combine(_tmpDir, "Dir With Spaces");
 			Directory.CreateDirectory(subdir);
-			CopyFile(Path.Combine(_tmpDir, "TestHelper.exe"), subdir);
-			CopyFile(Path.Combine(_tmpDir, "icu.net.dll"), subdir);
+			CopyTestFiles(_tmpDir, subdir);
 			CopyMinimalIcuFiles(subdir);
 			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo(MinIcuLibraryVersion));
 		}
