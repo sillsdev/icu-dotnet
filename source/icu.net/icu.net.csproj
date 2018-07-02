@@ -24,6 +24,7 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <NoBuild>true</NoBuild>
+    <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
   </PropertyGroup>
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
@@ -51,5 +52,10 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <Compile Remove="SortKey.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.0.2">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>
