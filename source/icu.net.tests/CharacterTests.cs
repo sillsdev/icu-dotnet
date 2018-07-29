@@ -10,6 +10,37 @@ namespace Icu.Tests
 	public class CharacterTests
 	{
 		[Test]
+		public void GetIntPropertyValue()
+		{
+			// binary
+			Assert.That(Character.GetIntPropertyValue('A', Character.UProperty.DIACRITIC), Is.EqualTo(0));
+			Assert.That(Character.GetIntPropertyValue('\u02ca',Character.UProperty.DIACRITIC),
+				Is.EqualTo(1)); // MODIFIER LETTER ACUTE ACCENT
+
+			// integer
+			Assert.That((Character.UEastAsianWidth) Character.GetIntPropertyValue('A',
+				Character.UProperty.EAST_ASIAN_WIDTH),
+				Is.EqualTo(Character.UEastAsianWidth.NARROW));
+			Assert.That((Character.UEastAsianWidth) Character.GetIntPropertyValue('\u4eba',
+					Character.UProperty.EAST_ASIAN_WIDTH),
+				Is.EqualTo(Character.UEastAsianWidth.WIDE)); // CJK UNIFIED IDEOGRAPH-4EBA : rén
+
+			// mask
+			var mask =
+				Character.GetIntPropertyValue('A', Character.UProperty.GENERAL_CATEGORY_MASK);
+			Assert.That(mask & (1 << (int) Character.UCharCategory.LOWERCASE_LETTER), Is.EqualTo(0));
+			Assert.That(mask & (1 << (int) Character.UCharCategory.UPPERCASE_LETTER), Is.Not.EqualTo(0));
+
+			// invalid
+			Assert.That(
+				() => { Character.GetIntPropertyValue('A', Character.UProperty.INVALID_CODE); },
+				Throws.TypeOf<ArgumentOutOfRangeException>());
+			Assert.That(
+				() => { Character.GetIntPropertyValue('A', Character.UProperty.OTHER_PROPERTY_START); },
+				Throws.TypeOf<ArgumentOutOfRangeException>());
+		}
+
+		[Test]
 		public void Digit()
 		{
 			// valid digit tests

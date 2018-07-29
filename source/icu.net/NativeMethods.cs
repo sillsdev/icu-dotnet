@@ -764,6 +764,10 @@ namespace Icu
 				Character.UProperty choice);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate bool u_hasBinaryPropertyDelegate(int characterCode,
+				Character.UProperty which);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void u_getUnicodeVersionDelegate(out VersionInfo versionArray);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -1086,6 +1090,7 @@ namespace Icu
 			internal u_charNameDelegate u_charName;
 			internal u_digitDelegate u_digit;
 			internal u_getIntPropertyValueDelegate u_getIntPropertyValue;
+			internal u_hasBinaryPropertyDelegate u_hasBinaryProperty;
 			internal u_getUnicodeVersionDelegate u_getUnicodeVersion;
 			internal u_getVersionDelegate u_getVersion;
 			internal u_charTypeDelegate u_charType;
@@ -1239,6 +1244,28 @@ namespace Icu
 			if (Methods.u_getIntPropertyValue == null)
 				Methods.u_getIntPropertyValue = GetMethod<MethodsContainer.u_getIntPropertyValueDelegate>(IcuCommonLibHandle, "u_getIntPropertyValue");
 			return Methods.u_getIntPropertyValue(characterCode, choice);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Check a binary Unicode property for a code point.
+		/// Unicode, especially in version 3.2, defines many more properties than the original set in UnicodeData.txt.
+		/// The properties APIs are intended to reflect Unicode properties as defined in the Unicode Character Database (UCD) and Unicode Technical Reports (UTR). For details about the properties see http://www.unicode.org/ucd/ . For names of Unicode properties see the UCD file PropertyAliases.txt.
+		/// Important: If ICU is built with UCD files from Unicode versions below 3.2, then properties marked with "new in Unicode 3.2" are not or not fully available.
+		/// </summary>
+		/// <param name="characterCode">Code point to test. </param>
+		/// <param name="choice">UProperty selector constant, identifies which binary property to check. Must be UCHAR_BINARY_START&lt;=which&lt;UCHAR_BINARY_LIMIT. </param>
+		/// <returns>TRUE or FALSE according to the binary Unicode property value for c. Also FALSE if 'which' is out of bounds or if the Unicode version does not have data for the property at all, or not for this code point.</returns>
+		/// ------------------------------------------------------------------------------------
+		public static bool u_hasBinaryProperty(
+			int characterCode,
+			Character.UProperty choice)
+		{
+			if (Methods.u_hasBinaryProperty == null)
+				Methods.u_hasBinaryProperty =
+					GetMethod<MethodsContainer.u_hasBinaryPropertyDelegate>(
+						IcuCommonLibHandle, "u_hasBinaryProperty");
+			return Methods.u_hasBinaryProperty(characterCode, choice);
 		}
 
 		public static void u_getUnicodeVersion(out VersionInfo versionArray)

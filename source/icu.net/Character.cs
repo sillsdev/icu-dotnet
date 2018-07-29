@@ -530,6 +530,42 @@ namespace Icu
 		}
 
 		/// <summary>
+		/// East Asian Width constants.
+		/// </summary>
+		public enum UEastAsianWidth
+		{
+			/// <summary>
+			/// [N]
+			/// </summary>
+			NEUTRAL,
+			/// <summary>
+			/// [A]
+			/// </summary>
+			AMBIGUOUS,
+			/// <summary>
+			/// [H]
+			/// </summary>
+			HALFWIDTH,
+			/// <summary>
+			/// [F]
+			/// </summary>
+			FULLWIDTH,
+			/// <summary>
+			/// [Na]
+			/// </summary>
+			NARROW,
+			/// <summary>
+			/// [W]
+			/// </summary>
+			WIDE,
+			/// <summary>
+			/// One more than the highest normal <see cref="UEastAsianWidth"/> value.
+			/// </summary>
+			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
+			COUNT
+		}
+
+		/// <summary>
 		/// Numeric Type constants
 		/// </summary>
 		/// <remarks>Note: UNumericType constants are parsed by preparseucd.py.
@@ -553,6 +589,45 @@ namespace Icu
 		/// when no numeric value is defined for a code point.
 		/// </summary>
 		public const double NO_NUMERIC_VALUE = (double)-123456789;
+
+		/// <summary>
+		/// Get the property value for an enumerated or integer Unicode property for a code point.
+		/// Also returns binary and mask property values.
+		/// Unicode, especially in version 3.2, defines many more properties than the original set in UnicodeData.txt.
+		/// The properties APIs are intended to reflect Unicode properties as defined in the Unicode Character Database (UCD) and Unicode Technical Reports (UTR). For details about the properties see http://www.unicode.org/ . For names of Unicode properties see the UCD file PropertyAliases.txt.
+		/// </summary>
+		/// <remarks>
+		/// If <paramref name="which"/> is <see cref="UProperty.GENERAL_CATEGORY"/>, the return value will not match
+		/// the enumeration in FwKernel: LgGeneralCharCategory.
+		/// </remarks>
+		/// <param name="characterCode">Code point to test. </param>
+		/// <param name="which">UProperty selector constant, identifies which property to check. Must be UCHAR_BINARY_START&lt;=which&lt;UCHAR_BINARY_LIMIT or UCHAR_INT_START&lt;=which&lt;UCHAR_INT_LIMIT or UCHAR_MASK_START&lt;=which&lt;UCHAR_MASK_LIMIT.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="which"/> does not meet the requirement UCHAR_BINARY_START&lt;=which&lt;UCHAR_BINARY_LIMIT or UCHAR_INT_START&lt;=which&lt;UCHAR_INT_LIMIT or UCHAR_MASK_START&lt;=which&lt;UCHAR_MASK_LIMIT.</exception>
+		public static int GetIntPropertyValue(int characterCode, UProperty which)
+		{
+			if ((which < UProperty.BINARY_START || which >= UProperty.BINARY_LIMIT) &&
+			    (which < UProperty.INT_START || which >= UProperty.INT_LIMIT) &&
+			    (which < UProperty.MASK_START || which >= UProperty.MASK_LIMIT))
+				throw new ArgumentOutOfRangeException(nameof(characterCode));
+			return NativeMethods.u_getIntPropertyValue(characterCode, which);
+		}
+
+		/// <summary>
+		/// Check a binary Unicode property for a code point.
+		/// Unicode, especially in version 3.2, defines many more properties than the original set in UnicodeData.txt.
+		/// The properties APIs are intended to reflect Unicode properties as defined in the Unicode Character Database (UCD) and Unicode Technical Reports (UTR). For details about the properties see http://www.unicode.org/ucd/ . For names of Unicode properties see the UCD file PropertyAliases.txt.
+		/// Important: If ICU is built with UCD files from Unicode versions below 3.2, then properties marked with "new in Unicode 3.2" are not or not fully available.
+		/// </summary>
+		/// <param name="characterCode">Code point to test. </param>
+		/// <param name="which">UProperty selector constant, identifies which binary property to check. Must be UCHAR_BINARY_START&lt;=which&lt;UCHAR_BINARY_LIMIT. </param>
+		/// <returns>TRUE or FALSE according to the binary Unicode property value for c. Also FALSE if 'which' is out of bounds or if the Unicode version does not have data for the property at all, or not for this code point.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="which"/> does not meet the requirement UCHAR_BINARY_START&lt;=which&lt;UCHAR_BINARY_LIMIT.</exception>
+		public static bool HasBinaryProperty(int characterCode, UProperty which)
+		{
+			if (which < UProperty.BINARY_START || which >= UProperty.BINARY_LIMIT)
+				throw new ArgumentOutOfRangeException(nameof(characterCode));
+			return NativeMethods.u_hasBinaryProperty(characterCode, which);
+		}
 
 		/// <summary>
 		/// Returns the decimal digit value of the code point in the specified radix.
