@@ -1222,23 +1222,26 @@ namespace Icu
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// gets any of a variety of integer property values for the Unicode digit
+		/// Gets the property value for an enumerated or integer Unicode property for a code point.
 		/// </summary>
-		/// <param name="characterCode">The codepoint to look up</param>
-		/// <param name="choice">The property value to look up</param>
-		/// <remarks>DO NOT expose this method directly. Instead, make a specific implementation
-		/// for each property needed. This not only makes it easier to use, but more importantly
-		/// it prevents accidental use of the UCHAR_GENERAL_CATEGORY, which returns an
-		/// enumeration that doesn't match the enumeration in FwKernel: LgGeneralCharCategory
-		/// </remarks>
+		/// <param name="codePoint">The codepoint to look up</param>
+		/// <param name="which">The property value to look up</param>
+		/// <returns>Numeric value that is directly the property value or, for enumerated
+		/// properties, corresponds to the numeric value of the enumerated constant of the
+		/// respective property value enumeration type (cast to enum type if necessary). Returns
+		/// 0 or 1 (for <c>false/true</c>) for binary Unicode properties. Returns a bit-mask for
+		/// mask properties. Returns 0 if <paramref name="which"/> is out of bounds or if the
+		/// Unicode version does not have data for the property at all, or not for this code point.
+		/// </returns>
+		/// <remarks>Consider adding a specific implementation for each property!</remarks>
 		/// ------------------------------------------------------------------------------------
 		public static int u_getIntPropertyValue(
-			int characterCode,
-			Character.UProperty choice)
+			int codePoint,
+			Character.UProperty which)
 		{
 			if (Methods.u_getIntPropertyValue == null)
 				Methods.u_getIntPropertyValue = GetMethod<MethodsContainer.u_getIntPropertyValueDelegate>(IcuCommonLibHandle, "u_getIntPropertyValue");
-			return Methods.u_getIntPropertyValue(characterCode, choice);
+			return Methods.u_getIntPropertyValue(codePoint, which);
 		}
 
 		public static void u_getUnicodeVersion(out VersionInfo versionArray)
