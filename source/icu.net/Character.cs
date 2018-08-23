@@ -239,9 +239,25 @@ namespace Icu
 			CHANGES_WHEN_CASEMAPPED = 55,
 			/// <summary>Binary property Changes_When_NFKC_Casefolded.</summary>
 			CHANGES_WHEN_NFKC_CASEFOLDED = 56,
+			/// <summary>Binary property EMOJI.</summary>
+			EMOJI = 57,
+			/// <summary>Binary property EMOJI_PRESENTATION.</summary>
+			EMOJI_PRESENTATION = 58,
+			/// <summary>Binary property EMOJI_MODIFIER.</summary>
+			EMOJI_MODIFIER = 59,
+			/// <summary>Binary property EMOJI_MODIFIER_BASE.</summary>
+			EMOJI_MODIFIER_BASE = 60,
+			/// <summary>Binary property EMOJI_COMPONENT.</summary>
+			EMOJI_COMPONENT = 61,
+			/// <summary>Binary property REGIONAL_INDICATOR.</summary>
+			REGIONAL_INDICATOR = 62,
+			/// <summary>Binary property PREPENDED_CONCATENATION_MARK.</summary>
+			PREPENDED_CONCATENATION_MARK = 63,
+			/// <summary>Binary property EXTENDED_PICTOGRAPHIC.</summary>
+			EXTENDED_PICTOGRAPHIC = 64,
 			/// <summary>One more than the last constant for binary Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
-			BINARY_LIMIT = 57,
+			BINARY_LIMIT,
 
 			/// <summary>Same as u_charDirection, returns UCharDirection values.</summary>
 			BIDI_CLASS = 0x1000,
@@ -308,9 +324,14 @@ namespace Icu
 			/// Returns UWordBreakValues values.
 			/// </summary>
 			WORD_BREAK = 0x1014,
+			/// <summary>
+			/// Used in UAX #9: Unicode Bidirectional Algorithm (http://www.unicode.org/reports/tr9/)
+			/// Returns UBidiPairedBracketType values.
+			/// </summary>
+			BIDI_PAIRED_BRACKET_TYPE =0x1015,
 			/// <summary>One more than the last constant for enumerated/integer Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
-			INT_LIMIT = 0x1015,
+			INT_LIMIT = 0x1016,
 
 			/// <summary>
 			/// This is the General_Category property returned as a bit mask.
@@ -371,9 +392,12 @@ namespace Icu
 			UNICODE_1_NAME = 0x400B,
 			/// <summary>Corresponds to u_strToUpper in ustring.h (http://icu-project.org/apiref/icu4c/ustring_8h.html).</summary>
 			UPPERCASE_MAPPING = 0x400C,
+			/// <summary>Corresponds to u_getBidiPairedBracket.</summary>
+			BIDI_PAIRED_BRACKET = 0x400D,
 			/// <summary>One more than the last constant for string Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
-			STRING_LIMIT = 0x400D,
+			STRING_LIMIT = 0x400E,
+
 			/// <summary>
 			/// Some characters are commonly used in multiple scripts. For more
 			/// information, see UAX #24: http://www.unicode.org/reports/tr24/.

@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Update UProperty to match ICU 62
+
 ## [2.3.3] - 2018-07-03
 
 ### Changed
