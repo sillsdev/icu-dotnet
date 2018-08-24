@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Update UProperty to match ICU 62
 
+### Fixed
+
+- Change PlatformTarget to AnyCPU (issue #70). The wrong x86 target sneaked in
+  with the changes for version 2.3.3.
+
 ## [2.3.3] - 2018-07-03
 
 ### Changed

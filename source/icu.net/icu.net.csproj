@@ -29,7 +29,6 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <!-- Using Mono msbuild with .NET Core build targets does not support
   assembly signing, yet. -->
