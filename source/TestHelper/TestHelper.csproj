@@ -6,7 +6,6 @@
     <RootNamespace>Icu.Tests</RootNamespace>
     <AssemblyName>TestHelper</AssemblyName>
     <IsPackable>false</IsPackable>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\icu.net\icu.net.csproj" />

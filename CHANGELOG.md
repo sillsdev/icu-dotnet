@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.3.4] - 2018-08-27
+
+### Known bug
+
+- icu.net.dll for netstandard1.6 has the wrong version number (always 1.0.0) (#72)
+
+### Fixed
+
+- Change PlatformTarget to AnyCPU (issue #70). The wrong x86 target sneaked in
+  with the changes for version 2.3.3.
+
 ## [2.3.3] - 2018-07-03
 
 ### Changed

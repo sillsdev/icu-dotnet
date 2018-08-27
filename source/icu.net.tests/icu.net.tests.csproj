@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
     <RootNamespace>Icu.Tests</RootNamespace>
@@ -10,7 +10,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <IsPackable>false</IsPackable>
-    <PlatformTarget Condition="'$(TargetFramework)'=='net461'">x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.1.4-beta" />

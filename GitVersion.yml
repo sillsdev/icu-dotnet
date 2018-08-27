@@ -3,6 +3,14 @@ branches:
   master:
     tag: beta
     regex: (origin/)?master
+  hotfix:
+    tag: beta
+    regex: (origin/)?hotfix[/-]
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
   pull-request:
     mode: ContinuousDeployment
     tag: PR
