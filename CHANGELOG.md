@@ -16,9 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Known bug
+
+- icu.net.dll for netstandard1.6 has the wrong version number (always 1.0.0) (#72)
+
 ### Changed
 
 - Update UProperty to match ICU 62
+
+## [2.3.4] - 2018-08-27
 
 ### Fixed
 
