@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Change PlatformTarget to AnyCPU (issue #70). The wrong x86 target sneaked in
   with the changes for version 2.3.3.
+- Fix version number of netstandard1.6 icu.net assembly (issue #72) so that it
+  matches the version number of the nuget package.
 
 ## [2.3.3] - 2018-07-03
 
