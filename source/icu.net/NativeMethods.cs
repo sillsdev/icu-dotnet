@@ -227,7 +227,7 @@ namespace Icu
 			Trace.WriteLineIf(!IsInitialized,
 				"WARNING: ICU is not initialized. Please call Icu.Wrapper.Init() at the start of your application.");
 
-			lock(_lock)
+			lock (_lock)
 			{
 				if (IcuVersion <= 0)
 					LocateIcuLibrary(libraryName);
@@ -335,12 +335,20 @@ namespace Icu
 		}
 
 		// This method is thread-safe and idempotent
-		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T: class
+		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : class
 		{
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
 			var methodPointer = IsWindows ?
 				GetProcAddress(handle, versionedMethodName) :
 				dlsym(handle, versionedMethodName);
+
+			// Some systems (eg. Tizen) doesn't use methods with IcuVersion suffix
+			if (methodPointer == IntPtr.Zero)
+			{
+				methodPointer = IsWindows ?
+				GetProcAddress(handle, methodName) :
+				dlsym(handle, methodName);
+			}
 			if (methodPointer != IntPtr.Zero)
 			{
 				// NOTE: Starting in .NET 4.5.1, Marshal.GetDelegateForFunctionPointer(IntPtr, Type) is obsolete.
@@ -677,7 +685,7 @@ namespace Icu
 
 		#endregion // Unicode collator
 
-		public enum  LocaleType
+		public enum LocaleType
 		{
 			/// <summary>
 			/// This is locale the data actually comes from
@@ -1519,7 +1527,7 @@ namespace Icu
 		/// than countryCapacity, the returned country code will be truncated</returns>
 		/// ------------------------------------------------------------------------------------
 		public static int uloc_getCountry(string localeID, IntPtr country,
-			int countryCapacity,out ErrorCode err)
+			int countryCapacity, out ErrorCode err)
 		{
 			if (Methods.uloc_getCountry == null)
 				Methods.uloc_getCountry = GetMethod<MethodsContainer.uloc_getCountryDelegate>(IcuCommonLibHandle, "uloc_getCountry");
