@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Update UProperty to match ICU 62
 
+### Added
+
+- Support for Tizen (Tomasz Zalewski; issue #82)
+
 ## [2.3.4] - 2018-08-27
 
 ### Fixed

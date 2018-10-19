@@ -342,7 +342,7 @@ namespace Icu
 				GetProcAddress(handle, versionedMethodName) :
 				dlsym(handle, versionedMethodName);
 
-			// Some systems (eg. Tizen) doesn't use methods with IcuVersion suffix
+			// Some systems (eg. Tizen) don't use methods with IcuVersion suffix
 			if (methodPointer == IntPtr.Zero)
 			{
 				methodPointer = IsWindows ?
