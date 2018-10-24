@@ -16,9 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.4.0] - 2018-10-24
+
 ### Known bug
 
 - icu.net.dll for netstandard1.6 has the wrong version number (always 1.0.0) (#72)
+
+### Fixed
+
+- Fix crash if filename contains minor version number, e.g. `libicuuc.so.60.1`
 
 ### Changed
 

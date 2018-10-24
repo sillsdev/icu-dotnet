@@ -1,7 +1,8 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,14 +20,22 @@ namespace Icu
 	internal static class NativeMethodsHelper
 	{
 		private const string Icu4c = nameof(Icu4c);
-		private const string IcuRegexLinux = @"libicu\w+.so\.(?<version>[0-9\.]{2,})";
-		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9\.]{2,})\.dll";
+		private const string IcuRegexLinux = @"libicu\w+.so\.(?<version>[0-9]{2,})(\.[0-9])*";
+		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9])*\.dll";
 
 		private static readonly Regex IcuBinaryRegex = new Regex($"{IcuRegexWindows}|{IcuRegexLinux}$", RegexOptions.Compiled);
 		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : "libicu*.so.*";
 		private static readonly string NugetPackageDirectory = GetDefaultPackageDirectory(Platform.OperatingSystem);
 
 		private static IcuVersionInfo IcuVersion;
+
+		/// <summary>
+		/// Reset the member variables
+		/// </summary>
+		public static void Reset()
+		{
+			IcuVersion = null;
+		}
 
 		/// <summary>
 		/// Tries to get path and version to Icu when running on .NET Core or Windows.
@@ -167,12 +176,13 @@ namespace Icu
 				return false;
 
 			var version = directory.GetFiles(IcuSearchPattern)
-				?.Select(x =>
+				.Select(x =>
 				{
 					var match = IcuBinaryRegex.Match(x.Name);
-					return match.Success
-						? int.Parse(match.Groups["version"].Value)
-						: new int?();
+					if (match.Success && int.TryParse(match.Groups["version"].Value, out var retVal))
+						return retVal;
+
+					return new int?();
 				})
 				.OrderByDescending(x => x)
 				.FirstOrDefault();

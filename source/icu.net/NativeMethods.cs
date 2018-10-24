@@ -295,7 +295,15 @@ namespace Icu
 		{
 			lock (_lock)
 			{
-				u_cleanup();
+				try
+				{
+					u_cleanup();
+				}
+				catch
+				{
+					// ignore failures - can happen when running unit tests
+				}
+
 				if (IsWindows)
 				{
 					if (_IcuCommonLibHandle != IntPtr.Zero)
@@ -324,6 +332,7 @@ namespace Icu
 			_IcuPath = null;
 
 #if !NET40
+			NativeMethodsHelper.Reset();
 			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
 
 			if (icuInfo.Success)

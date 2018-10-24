@@ -37,7 +37,7 @@ namespace Icu.Tests
 			return $"{prefix}{archSubdir}";
 		}
 
-		private static string OutputDirectory => Path.GetDirectoryName(
+		internal static string OutputDirectory => Path.GetDirectoryName(
 			new Uri(
 #if NET40
 				typeof(NativeMethodsTests).Assembly.CodeBase
