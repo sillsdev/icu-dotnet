@@ -66,6 +66,16 @@ namespace Icu
 		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern IntPtr dlsym(IntPtr handle, string name);
 
+		[DllImport(LIBDL_NAME, EntryPoint = "dlerror")]
+		private static extern IntPtr _dlerror();
+
+		private static string dlerror()
+		{
+			// Don't free the string returned from _dlerror()!
+			var ptr = _dlerror();
+			return Marshal.PtrToStringAnsi(ptr);
+		}
+
 		#endregion
 
 		#region Native methods for Windows
@@ -265,11 +275,8 @@ namespace Icu
 				handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
 				lastError = Marshal.GetLastWin32Error();
 
-				if (handle == IntPtr.Zero && lastError != 0)
-				{
-					string errorMessage = new Win32Exception(lastError).Message;
-					Trace.WriteLine($"Unable to load [{libPath}]. Error: {errorMessage}");
-				}
+				Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0,
+					$"Unable to load [{libPath}]. Error: {new Win32Exception(lastError).Message}");
 			}
 			else
 			{
@@ -278,6 +285,9 @@ namespace Icu
 
 				handle = dlopen(libPath, RTLD_NOW);
 				lastError = Marshal.GetLastWin32Error();
+
+				Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0,
+					$"Unable to load [{libPath}]. Error: {lastError} ({dlerror()})");
 			}
 			if (handle == IntPtr.Zero)
 			{

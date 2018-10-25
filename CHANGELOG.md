@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- output error on Linux if unmanaged libraries can't be loaded
+
 ## [2.4.0] - 2018-10-24
 
 ### Known bug
