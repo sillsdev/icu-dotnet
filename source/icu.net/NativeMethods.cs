@@ -781,6 +781,9 @@ namespace Icu
 				out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_charDirectionDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int u_digitDelegate(
 				int characterCode,
 				byte radix);
@@ -1111,6 +1114,7 @@ namespace Icu
 			internal u_getDataDirectoryDelegate u_getDataDirectory;
 			internal u_setDataDirectoryDelegate u_setDataDirectory;
 			internal u_charNameDelegate u_charName;
+			internal u_charDirectionDelegate u_charDirection;
 			internal u_digitDelegate u_digit;
 			internal u_getIntPropertyValueDelegate u_getIntPropertyValue;
 			internal u_getUnicodeVersionDelegate u_getUnicodeVersion;
@@ -1231,6 +1235,14 @@ namespace Icu
 			if (Methods.u_charName == null)
 				Methods.u_charName = GetMethod<MethodsContainer.u_charNameDelegate>(IcuCommonLibHandle, "u_charName");
 			return Methods.u_charName(code, nameChoice, buffer, bufferLength, out errorCode);
+		}
+
+		/// <summary>Returns the bidirectional category value for the code point, which is used in the Unicode bidirectional algorithm</summary>
+		public static int u_charDirection(int characterCode)
+		{
+			if (Methods.u_charDirection == null)
+				Methods.u_charDirection = GetMethod<MethodsContainer.u_charDirectionDelegate>(IcuCommonLibHandle, "u_charDirection");
+			return Methods.u_charDirection(characterCode);
 		}
 
 		/// ------------------------------------------------------------------------------------

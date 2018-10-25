@@ -88,9 +88,9 @@ namespace Icu
 			return result;
 		}
 
-		static private string GetLine(string text, int line)
+		private static string GetLine(string text, int line)
 		{
-			return text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[line];
+			return text.Split(new[] { Environment.NewLine }, StringSplitOptions.None)[line];
 		}
 	}
 }

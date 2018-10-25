@@ -246,6 +246,14 @@ namespace Icu.Tests
 
 		[Test]
 		[Category("Full ICU")]
+		public void Country()
+		{
+			var locale = new Locale("en_US_X_ETIC");
+			Assert.That(locale.Country, Is.EqualTo("US"));
+		}
+
+		[Test]
+		[Category("Full ICU")]
 		public void GetDisplayName()
 		{
 			Locale locale = new Locale("en_US_POSIX");

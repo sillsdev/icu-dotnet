@@ -494,13 +494,18 @@ namespace Icu
 		/// </summary>
 		public enum UCharNameChoice
 		{
-			/// <summary></summary>
+			/// <summary>Unicode character name (Name property). </summary>
 			UNICODE_CHAR_NAME,
-			/// <summary></summary>
+			/// <summary>The Unicode_1_Name property value which is of little practical value.
+			/// Beginning with ICU 49, ICU APIs return an empty string for this name choice. </summary>
+			[Obsolete("ICU 49")]
 			UNICODE_10_CHAR_NAME,
-			/// <summary></summary>
+			/// <summary>Standard or synthetic character name. </summary>
 			EXTENDED_CHAR_NAME,
-			/// <summary></summary>
+			/// <summary>Corrected name from NameAliases.txt. </summary>
+			NAME_ALIAS,
+			/// <summary>One more than the highest normal UCharNameChoice value. </summary>
+			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			CHAR_NAME_CHOICE_COUNT
 		}
 
@@ -570,6 +575,86 @@ namespace Icu
 			NUMERIC,
 			/// <summary></summary>
 			COUNT
+		}
+
+		/// <summary>
+		/// BIDI direction constants
+		/// </summary>
+		public enum UCharDirection
+		{
+			/// <summary>L.</summary>
+			LEFT_TO_RIGHT = 0,
+
+			/// <summary>R.</summary>
+			RIGHT_TO_LEFT = 1,
+
+			/// <summary>EN.</summary>
+			EUROPEAN_NUMBER = 2,
+
+			/// <summary>ES.</summary>
+			EUROPEAN_NUMBER_SEPARATOR = 3,
+
+			/// <summary>ET.</summary>
+			EUROPEAN_NUMBER_TERMINATOR = 4,
+
+			/// <summary>AN.</summary>
+			ARABIC_NUMBER = 5,
+
+			/// <summary>CS.</summary>
+			COMMON_NUMBER_SEPARATOR = 6,
+
+			/// <summary>B.</summary>
+			BLOCK_SEPARATOR = 7,
+
+			/// <summary>S.</summary>
+			SEGMENT_SEPARATOR = 8,
+
+			/// <summary>WS.</summary>
+			WHITE_SPACE_NEUTRAL = 9,
+
+			/// <summary>ON.</summary>
+			OTHER_NEUTRAL = 10,
+
+			/// <summary>LRE.</summary>
+			LEFT_TO_RIGHT_EMBEDDING = 11,
+
+			/// <summary>LRO.</summary>
+			LEFT_TO_RIGHT_OVERRIDE = 12,
+
+			/// <summary>AL.</summary>
+			RIGHT_TO_LEFT_ARABIC = 13,
+
+			/// <summary>RLE.</summary>
+			RIGHT_TO_LEFT_EMBEDDING = 14,
+
+			/// <summary>RLO.</summary>
+			RIGHT_TO_LEFT_OVERRIDE = 15,
+
+			/// <summary>PDF.</summary>
+			POP_DIRECTIONAL_FORMAT = 16,
+
+			/// <summary>NSM.</summary>
+			DIR_NON_SPACING_MARK = 17,
+
+			/// <summary>BN.</summary>
+			BOUNDARY_NEUTRAL = 18,
+
+			/// <summary>FSI.</summary>
+			FIRST_STRONG_ISOLATE = 19,
+
+			/// <summary>LRI.</summary>
+			LEFT_TO_RIGHT_ISOLATE = 20,
+
+			/// <summary>RLI.</summary>
+			RIGHT_TO_LEFT_ISOLATE = 21,
+
+			/// <summary>PDI.</summary>
+			POP_DIRECTIONAL_ISOLATE = 22,
+
+			/// <summary>One more than the highest UCharDirection value.
+			/// The highest value is available via u_getIntPropertyMaxValue(BIDI_CLASS).</summary>
+			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
+			CHAR_DIRECTION_COUNT
 		}
 
 		/// <summary>
@@ -709,6 +794,20 @@ namespace Icu
 		}
 
 		/// <summary>
+		/// Returns the bidirectional category value for the code point, which is used in the
+		/// Unicode bidirectional algorithm (UAX #9 http://www.unicode.org/reports/tr9/).
+		/// </summary>
+		/// <param name="code">the code point to be tested </param>
+		/// <returns>the bidirectional category (UCharDirection) value</returns>
+		/// <remarks><para>Note that some unassigned code points have bidi values of R or AL because
+		/// they are in blocks that are reserved for Right-To-Left scripts.</para>
+		/// <para>Same as java.lang.Character.getDirectionality()</para></remarks>
+		public static UCharDirection CharDirection(int code)
+		{
+			return (UCharDirection) NativeMethods.u_charDirection(code);
+		}
+
+		/// <summary>
 		/// Get the description for a given ICU code point.
 		/// </summary>
 		/// <param name="code">the code point to get description/name of</param>
@@ -766,6 +865,37 @@ namespace Icu
 				return name;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Get the property value for an enumerated or integer Unicode property for a code point.
+		/// Also returns binary and mask property values.
+		/// </summary>
+		/// <param name="codePoint">Code point to test. </param>
+		/// <param name="which">UProperty selector constant, identifies which property to check.
+		/// Must be UProperty.BINARY_START &lt;= which &lt; UProperty.BINARY_LIMIT or
+		/// UProperty.INT_START &lt;= which &lt; UProperty.INT_LIMIT or
+		/// UProperty.MASK_START &lt;= which &lt; UProperty.MASK_LIMIT.</param>
+		/// <returns>
+		/// Numeric value that is directly the property value or, for enumerated properties,
+		/// corresponds to the numeric value of the enumerated constant of the respective property
+		/// value enumeration type (cast to enum type if necessary).
+		/// Returns 0 or 1 (for <c>false</c>/<c>true</c>) for binary Unicode properties.
+		/// Returns a bit-mask for mask properties.
+		/// Returns 0 if 'which' is out of bounds or if the Unicode version does not have data for
+		/// the property at all, or not for this code point.
+		/// </returns>
+		/// <remarks>
+		/// Unicode, especially in version 3.2, defines many more properties than the original set
+		/// in UnicodeData.txt.
+		/// The properties APIs are intended to reflect Unicode properties as defined in the
+		/// Unicode Character Database (UCD) and Unicode Technical Reports (UTR). For details
+		/// about the properties <see href="http: //www.unicode.org/"/> . For names of Unicode
+		/// properties see the UCD file <see cref="PropertyAliases.txt"/>.
+		/// </remarks>
+		public static int GetIntPropertyValue(int codePoint, UProperty which)
+		{
+			return NativeMethods.u_getIntPropertyValue(codePoint, which);
 		}
 	}
 }
