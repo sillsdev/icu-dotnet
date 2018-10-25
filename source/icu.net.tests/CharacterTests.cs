@@ -9,141 +9,148 @@ namespace Icu.Tests
 	[TestFixture]
 	public class CharacterTests
 	{
-		[Test]
-		public void Digit()
+		// valid digit tests
+		[TestCase('9', 10, ExpectedResult = 9)]
+		[TestCase('A', 16, ExpectedResult = 10)]
+		[TestCase('\u0c69', 10, ExpectedResult = 3, Description = "Telugu digit 3")]
+		[TestCase('\u0033', 10, ExpectedResult = 3, Description = "Western digit 3")]
+		[TestCase('\u0664', 10, ExpectedResult = 4, Description = "Arabic-indic digit 4")]
+		[TestCase('\u096B', 10, ExpectedResult = 5, Description = "Devanagari '5'")]
+		// invalid digit tests
+		[TestCase('\u0Bf1', 10, ExpectedResult = -1, Description = "Tamil number one hundred (non-digit)")]
+		[TestCase('\u0041', 10, ExpectedResult = -1, Description = "'A'")]
+		[TestCase('a', 10, ExpectedResult = -1)]
+		public int Digit(int c, byte radix)
 		{
-			// valid digit tests
-			Assert.That(Character.Digit('9', 10), Is.EqualTo(9));
-			Assert.That(Character.Digit('A', 16), Is.EqualTo(10));
-			Assert.That(Character.Digit(0xc69, 10), Is.EqualTo(3));		// Telugu digit 3
-			Assert.That(Character.Digit(0x033, 10), Is.EqualTo(3));		// Western digit 3
-			Assert.That(Character.Digit(0x664, 10), Is.EqualTo(4));		// Arabic-indic digit 4
-			Assert.That(Character.Digit('\u096B', 10), Is.EqualTo(5));	// Devanagari '5'
-
-			// invalid digit tests
-			Assert.That(Character.Digit(0xBf1, 10), Is.EqualTo(-1));	// Tamil number one hundred (non-digit)
-			Assert.That(Character.Digit(0x041, 10), Is.EqualTo(-1));	// 'A'
-			Assert.That(Character.Digit('A', 10), Is.EqualTo(-1));
+			return Character.Digit(c, radix);
 		}
 
-		[Test]
-		public void IsAlphabetic()
+		[TestCase('a', ExpectedResult = true)]
+		[TestCase('1', ExpectedResult = false)]
+		public bool IsAlphabetic(char c)
 		{
-			Assert.That(Character.IsAlphabetic('a'), Is.True);
-			Assert.That(Character.IsAlphabetic('1'), Is.False);
+			return Character.IsAlphabetic(c);
 		}
 
-		[Test]
-		public void IsIdeographic()
+		[TestCase('\u4E10', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsIdeographic(char c)
 		{
-			Assert.That(Character.IsIdeographic('\u4E10'), Is.True);
-			Assert.That(Character.IsIdeographic('a'), Is.False);
+			return Character.IsIdeographic(c);
 		}
 
-		[Test]
-		public void IsDiacritic()
+		[TestCase('\u0300', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsDiacritic(char c)
 		{
-			Assert.That(Character.IsDiacritic('\u0300'), Is.True);
-			Assert.That(Character.IsDiacritic('a'), Is.False);
+			return Character.IsDiacritic(c);
 		}
 
-		[Test]
-		public void IsSymbol()
+		[TestCase('#', ExpectedResult = false)]
+		[TestCase('a', ExpectedResult = false)]
+		[TestCase('$', ExpectedResult = true)]
+		[TestCase('+', ExpectedResult = true)]
+		[TestCase('`', ExpectedResult = true)]
+		[TestCase('\u0385', ExpectedResult = true)]
+		[TestCase('\u0B70', ExpectedResult = true)]
+		public bool IsSymbol(int c)
 		{
-			Assert.That(Character.IsSymbol('#'), Is.False);
-			Assert.That(Character.IsSymbol('a'), Is.False);
-			Assert.That(Character.IsSymbol('$'), Is.True);
-			Assert.That(Character.IsSymbol('+'), Is.True);
-			Assert.That(Character.IsSymbol('`'), Is.True);
-			Assert.That(Character.IsSymbol(0x0385), Is.True);
-			Assert.That(Character.IsSymbol(0x0B70), Is.True);
+			return Character.IsSymbol(c);
 		}
 
-		[Test]
-		public void GetCharType()
+		[TestCase('a', ExpectedResult = Character.UCharCategory.LOWERCASE_LETTER)]
+		public Character.UCharCategory GetCharType(char c)
 		{
-			Assert.That(Character.GetCharType('a'), Is.EqualTo(Character.UCharCategory.LOWERCASE_LETTER));
+			return Character.GetCharType(c);
 		}
 
-		[Test]
-		public void IsNumeric()
+		[TestCase('4', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsNumeric(char c)
 		{
-			Assert.That(Character.IsNumeric('4'), Is.True);
-			Assert.That(Character.IsNumeric('a'), Is.False);
+			return Character.IsNumeric(c);
 		}
 
-		[Test]
-		public void GetNumericValue()
+		[TestCase('1', ExpectedResult = 1)]
+		[TestCase('a', ExpectedResult = Character.NO_NUMERIC_VALUE)]
+		public double GetNumericValue(char c)
 		{
-			Assert.That(Character.GetNumericValue('1'), Is.EqualTo(1));
-			Assert.That(Character.GetNumericValue('a'), Is.EqualTo(Character.NO_NUMERIC_VALUE));
+			return Character.GetNumericValue(c);
 		}
 
-		[Test]
-		public void IsPunct()
+		[TestCase('.', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsPunct(char c)
 		{
-			Assert.That(Character.IsPunct('.'), Is.True);
-			Assert.That(Character.IsPunct('a'), Is.False);
+			return Character.IsPunct(c);
 		}
 
-		[Test]
-		public void IsMirrored()
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsMirrored(char c)
 		{
-			Assert.That(Character.IsMirrored('a'), Is.False);
+			return Character.IsMirrored(c);
 		}
 
-		[Test]
-		public void IsControl()
+		[TestCase('\u0001', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsControl(char c)
 		{
-			Assert.That(Character.IsControl('\u0001'), Is.True);
-			Assert.That(Character.IsControl('a'), Is.False);
+			return Character.IsControl(c);
 		}
 
-		[Test]
-		public void IsControl_String()
+		[TestCase("\u0001", ExpectedResult = true)]
+		[TestCase("a", ExpectedResult = false)]
+		[TestCase("\u0001\u0002", ExpectedResult = false)]
+		[TestCase("", ExpectedResult = false)]
+		[TestCase(null, ExpectedResult = false)]
+		public bool IsControl_String(string s)
 		{
-			Assert.That(Character.IsControl("\u0001"), Is.True);
-			Assert.That(Character.IsControl("a"), Is.False);
-			Assert.That(Character.IsControl("\u0001\u0002"), Is.False);
-			Assert.That(Character.IsControl(string.Empty), Is.False);
-			Assert.That(Character.IsControl(null), Is.False);
+			return Character.IsControl(s);
 		}
 
-		[Test]
-		public void IsSpace()
+		[TestCase(' ', ExpectedResult = true)]
+		[TestCase('a', ExpectedResult = false)]
+		public bool IsSpace(char c)
 		{
-			Assert.That(Character.IsSpace(' '), Is.True);
-			Assert.That(Character.IsSpace('a'), Is.False);
+			return Character.IsSpace(c);
 		}
 
-		[Test]
-		public void IsSpace_String()
+		[TestCase(" ", ExpectedResult = true)]
+		[TestCase("a", ExpectedResult = false)]
+		[TestCase("  ", ExpectedResult = false)]
+		[TestCase("", ExpectedResult = false)]
+		[TestCase(null, ExpectedResult = false)]
+		public bool IsSpace_String(string s)
 		{
-			Assert.That(Character.IsSpace(" "), Is.True);
-			Assert.That(Character.IsSpace("a"), Is.False);
-			Assert.That(Character.IsSpace("  "), Is.False);
-			Assert.That(Character.IsSpace(string.Empty), Is.False);
-			Assert.That(Character.IsSpace(null), Is.False);
+			return Character.IsSpace(s);
 		}
 
-		[Test]
 		[Category("Full ICU")]
-		public void GetPrettyICUCharName()
+		[TestCase("a", ExpectedResult = "Latin Small Letter A")]
+		[TestCase("ab", ExpectedResult = null)]
+		[TestCase("", ExpectedResult = null)]
+		[TestCase(null, ExpectedResult = null)]
+		public string GetPrettyICUCharName(string s)
 		{
 			SetUICulture("en-US");
-
-			Assert.That(Character.GetPrettyICUCharName("a"), Is.EqualTo("Latin Small Letter A"));
-			Assert.That(Character.GetPrettyICUCharName("ab"), Is.Null);
-			Assert.That(Character.GetPrettyICUCharName(string.Empty), Is.Null);
-			Assert.That(Character.GetPrettyICUCharName(null), Is.Null);
+			return Character.GetPrettyICUCharName(s);
 		}
 
-		[Test]
 		[Category("Full ICU")]
-		public void GetCharName()
+		[TestCase(65, ExpectedResult = "LATIN CAPITAL LETTER A", Description = "A")]
+		[TestCase(-1, ExpectedResult = null)]
+		public string GetCharName(int c)
 		{
-			Assert.That(Character.GetCharName(65), Is.EqualTo("LATIN CAPITAL LETTER A"));
-			Assert.That(Character.GetCharName(-1), Is.Null);
+			return Character.GetCharName(c);
+		}
+
+		[Category("Full ICU")]
+		[TestCase(null, ExpectedResult = Character.UCharDirection.BOUNDARY_NEUTRAL)]
+		[TestCase('a', ExpectedResult = Character.UCharDirection.LEFT_TO_RIGHT)]
+		[TestCase('1', ExpectedResult = Character.UCharDirection.EUROPEAN_NUMBER)]
+		public Character.UCharDirection CharDirection(char c)
+		{
+			return Character.CharDirection(c);
 		}
 
 		private void SetUICulture(string culture)
