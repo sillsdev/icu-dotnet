@@ -8,40 +8,62 @@ namespace Icu.Tests
 	[TestFixture]
 	public class UnicodeStringTests
 	{
-		[Test]
-		public void ToLower()
+		[TestCase("ABCI", "en", ExpectedResult = "abci")]
+		[TestCase("ABCI", "tr", ExpectedResult = "abc\u0131")] // dotless i
+		[TestCase("ABC\u0130", "en", ExpectedResult = "abci\u0307")] // 0130: I with dot above, 0307: Combining dot above
+		[TestCase("ABC\u0130", "tr", ExpectedResult = "abci")] // I with dot above
+		[TestCase("abci", "en", ExpectedResult = "abci")]
+		[TestCase("Abci", "en", ExpectedResult = "abci")]
+		[TestCase(";,.?", "en", ExpectedResult = ";,.?")]
+		[TestCase("ABc", "en-US", ExpectedResult = "abc")]
+		public string ToLower(string src, string locale)
 		{
-			Assert.That(UnicodeString.ToLower("ABc", "en-US"), Is.EqualTo("abc"));
-			Assert.That(UnicodeString.ToLower("ABc", new Locale("en-US")), Is.EqualTo("abc"));
-			Assert.That(UnicodeString.ToLower("ABC", "en"), Is.EqualTo("abc"));
-			Assert.That(UnicodeString.ToLower("abc", "en"), Is.EqualTo("abc"));
-			Assert.That(UnicodeString.ToLower("Abc", "en"), Is.EqualTo("abc"));
-			Assert.That(UnicodeString.ToLower(";,.", "en"), Is.EqualTo(";,."));
+			return UnicodeString.ToLower(src, locale);
 		}
 
 		[Test]
-		public void ToUpper()
+		public void ToLower_Locale()
 		{
-			Assert.That(UnicodeString.ToUpper("ABc", "en-US"), Is.EqualTo("ABC"));
+			Assert.That(UnicodeString.ToLower("ABc", new Locale("en-US")), Is.EqualTo("abc"));
+		}
+
+		[TestCase("a", "en", ExpectedResult = "A")]
+		[TestCase("ABC", "en", ExpectedResult = "ABC")]
+		[TestCase("abci", "en", ExpectedResult = "ABCI")]
+		[TestCase("abci", "tr", ExpectedResult = "ABC\u0130")] // I with dot above
+		[TestCase("abc\u0131", "en", ExpectedResult = "ABCI")] // dotless i
+		[TestCase("abc\u0131", "tr", ExpectedResult = "ABCI")] // dotless i
+		[TestCase("aBc", "en", ExpectedResult = "ABC")]
+		[TestCase(";,.", "en", ExpectedResult = ";,.")]
+		[TestCase("ABc", "en-US", ExpectedResult = "ABC")]
+		public string ToUpper(string src, string locale)
+		{
+			return UnicodeString.ToUpper(src, locale);
+		}
+
+		[Test]
+		public void ToUpper_Locale()
+		{
 			Assert.That(UnicodeString.ToUpper("ABc", new Locale("en-US")), Is.EqualTo("ABC"));
-			Assert.That(UnicodeString.ToUpper("ABC", "en"), Is.EqualTo("ABC"));
-			Assert.That(UnicodeString.ToUpper("abc", "en"), Is.EqualTo("ABC"));
-			Assert.That(UnicodeString.ToUpper("aBc", "en"), Is.EqualTo("ABC"));
-			Assert.That(UnicodeString.ToUpper("a", "en"), Is.EqualTo("A"));
-			Assert.That(UnicodeString.ToUpper(";,.", "en"), Is.EqualTo(";,."));
+		}
+
+		[Category("Full ICU")]
+		[TestCase("a", "en", ExpectedResult = "A")]
+		[TestCase("Abc", "en", ExpectedResult = "Abc")]
+		[TestCase("abc", "en", ExpectedResult = "Abc")]
+		[TestCase("ABC", "en", ExpectedResult = "Abc")]
+		[TestCase(";,.", "en", ExpectedResult = ";,.")]
+		[TestCase("ABc", "en-US", ExpectedResult = "Abc")]
+		public string ToTitle(string src, string locale)
+		{
+			return UnicodeString.ToTitle(src, locale);
 		}
 
 		[Test]
 		[Category("Full ICU")]
-		public void ToTitle()
+		public void ToTitle_Locale()
 		{
-			Assert.That(UnicodeString.ToTitle("ABc", "en-US"), Is.EqualTo("Abc"));
 			Assert.That(UnicodeString.ToTitle("ABc", new Locale("en-US")), Is.EqualTo("Abc"));
-			Assert.That(UnicodeString.ToTitle("a", "en"), Is.EqualTo("A"));
-			Assert.That(UnicodeString.ToTitle("Abc", "en"), Is.EqualTo("Abc"));
-			Assert.That(UnicodeString.ToTitle("abc", "en"), Is.EqualTo("Abc"));
-			Assert.That(UnicodeString.ToTitle("ABC", "en"), Is.EqualTo("Abc"));
-			Assert.That(UnicodeString.ToTitle(";,.", "en"), Is.EqualTo(";,."));
 		}
 
 		[Test]
