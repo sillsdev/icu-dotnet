@@ -458,7 +458,7 @@ namespace Icu
 				case ErrorCode.RESOURCE_TYPE_MISMATCH:
 					throw new InvalidOperationException("an operation is requested over a resource that does not support it " + extraInfo);
 				case ErrorCode.ILLEGAL_ESCAPE_SEQUENCE:
-					throw new ArgumentException("ISO-2022 illlegal escape sequence " + extraInfo);
+					throw new ArgumentException("ISO-2022 illegal escape sequence " + extraInfo);
 				case ErrorCode.UNSUPPORTED_ESCAPE_SEQUENCE:
 					throw new ArgumentException("ISO-2022 unsupported escape sequence " + extraInfo);
 				case ErrorCode.NO_SPACE_AVAILABLE:

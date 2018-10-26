@@ -1,14 +1,15 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2018 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
+using Icu.Normalization;
 
 namespace Icu
 {
 	/// <summary>
 	/// Unicode normalization functionality for standard Unicode normalization or for using custom mapping tables.
 	/// </summary>
-	public class Normalizer
+	public static class Normalizer
 	{
 		/// <summary>
 		/// Normalization mode constants.
@@ -31,21 +32,13 @@ namespace Icu
 			UNORM_FCD = 6
 		}
 
-		internal enum UNormalization2Mode
-		{
-			UNORM2_COMPOSE = 0,
-			UNORM2_DECOMPOSE = 1,
-			UNORM2_FCD = 2,
-			UNORM2_COMPOSE_CONTIGUOUS = 3
-		}
-
 		private static IntPtr GetNormalizer(UNormalizationMode mode)
 		{
 			ErrorCode errorCode;
-			var ret = NativeMethods.unorm2_getInstance(IntPtr.Zero,
+			var ret = NativeMethods.unorm2_getInstance(null,
 				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFD) ? "nfc" : "nfkc",
 				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFKC) ?
-					UNormalization2Mode.UNORM2_COMPOSE : UNormalization2Mode.UNORM2_DECOMPOSE,
+					Normalizer2.Mode.COMPOSE : Normalizer2.Mode.DECOMPOSE,
 				out errorCode);
 			if (errorCode != ErrorCode.NoErrors)
 				throw new Exception("Normalizer.Normalize() failed with code " + errorCode);
@@ -107,11 +100,11 @@ namespace Icu
 			if (string.IsNullOrEmpty(src))
 				return true;
 
-			ErrorCode err;
-			var fIsNorm = NativeMethods.unorm2_isNormalized(GetNormalizer(mode), src, src.Length, out err);
+			var isNormalized = NativeMethods.unorm2_isNormalized(GetNormalizer(mode), src,
+				src.Length, out var err);
 			if (err != ErrorCode.NoErrors)
 				throw new Exception("Normalizer.IsNormalized() failed with code " + err);
-			return fIsNorm != 0;
+			return isNormalized;
 		}
 	}
 }

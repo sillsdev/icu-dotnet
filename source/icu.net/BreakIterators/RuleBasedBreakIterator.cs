@@ -559,14 +559,7 @@ namespace Icu
 		/// </summary>
 		public override string ToString()
 		{
-			if (Rules == null)
-			{
-				return string.Format("Locale: {0}, BreakIteratorType: {1}", _locale, _iteratorType);
-			}
-			else
-			{
-				return Rules;
-			}
+			return Rules ?? $"Locale: {_locale}, BreakIteratorType: {_iteratorType}";
 		}
 
 		#region IDisposable Support

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Icu.Collation;
+using Icu.Normalization;
 
 namespace Icu
 {
@@ -460,7 +461,7 @@ namespace Icu
 		public static RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRules(
 			[MarshalAs(UnmanagedType.LPWStr)] string rules,
 			int rulesLength,
-			NormalizationMode normalizationMode,
+			Collation.NormalizationMode normalizationMode,
 			CollationStrength strength,
 			ref ParseError parseError,
 			out ErrorCode status)
@@ -871,7 +872,7 @@ namespace Icu
 			internal delegate RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_openRulesDelegate(
 				[MarshalAs(UnmanagedType.LPWStr)] string rules,
 				int rulesLength,
-				NormalizationMode normalizationMode,
+				Collation.NormalizationMode normalizationMode,
 				CollationStrength strength,
 				ref ParseError parseError,
 				out ErrorCode status);
@@ -1016,17 +1017,38 @@ namespace Icu
 				Normalizer.UNormalizationMode mode, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr unorm2_getInstanceDelegate(IntPtr packageName,
+			internal delegate IntPtr unorm2_getInstanceDelegate(
+				[MarshalAs(UnmanagedType.LPStr)] string packageName,
 				[MarshalAs(UnmanagedType.LPStr)] string name,
-				Normalizer.UNormalization2Mode mode, out ErrorCode errorCode);
+				Normalizer2.Mode mode, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int unorm2_normalizeDelegate(IntPtr norm2, string source,
 				int sourceLength, IntPtr dest, int capacity, ref ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate byte unorm2_isNormalizedDelegate(IntPtr norm2, string source,
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool unorm2_isNormalizedDelegate(IntPtr norm2, string source,
 				int sourceLength, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool unorm2_hasBoundaryAfterDelegate(IntPtr norm2, int c);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool unorm2_hasBoundaryBeforeDelegate(IntPtr norm2, int c);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int unorm2_getDecompositionDelegate(IntPtr norm2, int c,
+				IntPtr decomposition, int capacity, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int unorm2_getRawDecompositionDelegate(IntPtr norm2, int c,
+				IntPtr decomposition, int capacity, out ErrorCode errorCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int unorm2_getCombiningClassDelegate(IntPtr norm2, int c);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
@@ -1173,11 +1195,16 @@ namespace Icu
 			internal u_strToLowerDelegate u_strToLower;
 			internal u_strToTitleDelegate u_strToTitle;
 			internal u_strToUpperDelegate u_strToUpper;
-			internal unorm_normalizeDelegate _unorm_normalize;
-			internal unorm_isNormalizedDelegate _unorm_isNormalized;
-			internal unorm2_getInstanceDelegate _unorm2_getInstance;
-			internal unorm2_normalizeDelegate _unorm2_normalize;
-			internal unorm2_isNormalizedDelegate _unorm2_isNormalized;
+			internal unorm_normalizeDelegate unorm_normalize;
+			internal unorm_isNormalizedDelegate unorm_isNormalized;
+			internal unorm2_getInstanceDelegate unorm2_getInstance;
+			internal unorm2_normalizeDelegate unorm2_normalize;
+			internal unorm2_isNormalizedDelegate unorm2_isNormalized;
+			internal unorm2_hasBoundaryAfterDelegate unorm2_hasBoundaryAfter;
+			internal unorm2_hasBoundaryBeforeDelegate unorm2_hasBoundaryBefore;
+			internal unorm2_getDecompositionDelegate unorm2_getDecomposition;
+			internal unorm2_getRawDecompositionDelegate unorm2_getRawDecomposition;
+			internal unorm2_getCombiningClassDelegate unorm2_getCombiningClass;
 			internal ubrk_openDelegate ubrk_open;
 			internal ubrk_openRulesDelegate ubrk_openRules;
 			internal ubrk_closeDelegate ubrk_close;
@@ -1742,9 +1769,9 @@ namespace Icu
 			Normalizer.UNormalizationMode mode, int options,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
-			if (Methods._unorm_normalize == null)
-				Methods._unorm_normalize = GetMethod<MethodsContainer.unorm_normalizeDelegate>(IcuCommonLibHandle, "unorm_normalize");
-			return Methods._unorm_normalize(source, sourceLength, mode, options, result,
+			if (Methods.unorm_normalize == null)
+				Methods.unorm_normalize = GetMethod<MethodsContainer.unorm_normalizeDelegate>(IcuCommonLibHandle, "unorm_normalize");
+			return Methods.unorm_normalize(source, sourceLength, mode, options, result,
 				resultLength, out errorCode);
 		}
 
@@ -1756,9 +1783,9 @@ namespace Icu
 		public static byte unorm_isNormalized(string source, int sourceLength,
 			Normalizer.UNormalizationMode mode, out ErrorCode errorCode)
 		{
-			if (Methods._unorm_isNormalized == null)
-				Methods._unorm_isNormalized = GetMethod<MethodsContainer.unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
-			return Methods._unorm_isNormalized(source, sourceLength, mode, out errorCode);
+			if (Methods.unorm_isNormalized == null)
+				Methods.unorm_isNormalized = GetMethod<MethodsContainer.unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
+			return Methods.unorm_isNormalized(source, sourceLength, mode, out errorCode);
 		}
 
 		#endregion normalize
@@ -1770,15 +1797,15 @@ namespace Icu
 		/// similar to ucnv_openPackage() and ures_open()/ResourceBundle) and which composes or
 		/// decomposes text according to the specified mode.
 		/// </summary>
-		public static IntPtr unorm2_getInstance(IntPtr packageName, string name,
-			Normalizer.UNormalization2Mode mode, out ErrorCode errorCode)
+		public static IntPtr unorm2_getInstance(string packageName, string name,
+			Normalizer2.Mode mode, out ErrorCode errorCode)
 		{
-			if (Methods._unorm2_getInstance == null)
+			if (Methods.unorm2_getInstance == null)
 			{
-				Methods._unorm2_getInstance = GetMethod<MethodsContainer.unorm2_getInstanceDelegate>(
+				Methods.unorm2_getInstance = GetMethod<MethodsContainer.unorm2_getInstanceDelegate>(
 					IcuCommonLibHandle, "unorm2_getInstance");
 			}
-			return Methods._unorm2_getInstance(packageName, name, mode, out errorCode);
+			return Methods.unorm2_getInstance(packageName, name, mode, out errorCode);
 		}
 
 		/// <summary>
@@ -1787,9 +1814,9 @@ namespace Icu
 		public static int unorm2_normalize(IntPtr norm2, string source, int sourceLength,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
-			if (Methods._unorm2_normalize == null)
+			if (Methods.unorm2_normalize == null)
 			{
-				Methods._unorm2_normalize = GetMethod<MethodsContainer.unorm2_normalizeDelegate>(
+				Methods.unorm2_normalize = GetMethod<MethodsContainer.unorm2_normalizeDelegate>(
 					IcuCommonLibHandle, "unorm2_normalize");
 			}
 			// Theoretically it should be unnecessary to initialize errorCode here. Instead we
@@ -1797,7 +1824,7 @@ namespace Icu
 			// if this method gets called twice and errorCode != NoErrors, the error code won't
 			// get reset, even though the method seems to work without errors.
 			errorCode = ErrorCode.NoErrors;
-			return Methods._unorm2_normalize(norm2, source, sourceLength, result,
+			return Methods.unorm2_normalize(norm2, source, sourceLength, result,
 				resultLength, ref errorCode);
 		}
 
@@ -1806,18 +1833,79 @@ namespace Icu
 		/// <summary>
 		/// Check whether a string is normalized according to the given mode and options.
 		/// </summary>
-		public static byte unorm2_isNormalized(IntPtr norm2, string source, int sourceLength,
+		public static bool unorm2_isNormalized(IntPtr norm2, string source, int sourceLength,
 			out ErrorCode errorCode)
 		{
-			if (Methods._unorm2_isNormalized == null)
+			if (Methods.unorm2_isNormalized == null)
 			{
-				Methods._unorm2_isNormalized = GetMethod<MethodsContainer.unorm2_isNormalizedDelegate>(
+				Methods.unorm2_isNormalized = GetMethod<MethodsContainer.unorm2_isNormalizedDelegate>(
 					IcuCommonLibHandle, "unorm2_isNormalized");
 			}
-			return Methods._unorm2_isNormalized(norm2, source, sourceLength, out errorCode);
+			return Methods.unorm2_isNormalized(norm2, source, sourceLength, out errorCode);
 		}
 
-		#endregion normalize
+		/// <summary>Tests if the character always has a normalization boundary after it,
+		/// regardless of context.</summary>
+		public static bool unorm2_hasBoundaryAfter(IntPtr norm2, int codePoint)
+		{
+			if (Methods.unorm2_hasBoundaryAfter == null)
+			{
+				Methods.unorm2_hasBoundaryAfter = GetMethod<MethodsContainer.unorm2_hasBoundaryAfterDelegate>(
+					IcuCommonLibHandle, nameof(unorm2_hasBoundaryAfter));
+			}
+			return Methods.unorm2_hasBoundaryAfter(norm2, codePoint);
+		}
+
+		/// <summary>Tests if the character always has a normalization boundary before it,
+		/// regardless of context.</summary>
+		public static bool unorm2_hasBoundaryBefore(IntPtr norm2, int codePoint)
+		{
+			if (Methods.unorm2_hasBoundaryBefore == null)
+			{
+				Methods.unorm2_hasBoundaryBefore = GetMethod<MethodsContainer.unorm2_hasBoundaryBeforeDelegate>(
+					IcuCommonLibHandle, nameof(unorm2_hasBoundaryBefore));
+			}
+			return Methods.unorm2_hasBoundaryBefore(norm2, codePoint);
+		}
+
+		/// <summary>Gets the decomposition mapping of c.</summary>
+		public static int unorm2_getDecomposition(IntPtr norm2, int c, IntPtr decomposition,
+			int capacity, out ErrorCode errorCode)
+		{
+			if (Methods.unorm2_getDecomposition == null)
+			{
+				Methods.unorm2_getDecomposition = GetMethod<MethodsContainer.unorm2_getDecompositionDelegate>(
+					IcuCommonLibHandle, nameof(unorm2_getDecomposition));
+			}
+			return Methods.unorm2_getDecomposition(norm2, c, decomposition, capacity,
+				out errorCode);
+		}
+
+		/// <summary>Gets the raw decomposition mapping of c.</summary>
+		public static int unorm2_getRawDecomposition(IntPtr norm2, int c, IntPtr decomposition,
+			int capacity, out ErrorCode errorCode)
+		{
+			if (Methods.unorm2_getRawDecomposition == null)
+			{
+				Methods.unorm2_getRawDecomposition = GetMethod<MethodsContainer.unorm2_getRawDecompositionDelegate>(
+					IcuCommonLibHandle, nameof(unorm2_getRawDecomposition));
+			}
+			return Methods.unorm2_getRawDecomposition(norm2, c, decomposition, capacity,
+				out errorCode);
+		}
+
+		/// <summary>Gets the combining class of c. </summary>
+		public static int unorm2_getCombiningClass(IntPtr norm2, int c)
+		{
+			if (Methods.unorm2_getCombiningClass == null)
+			{
+				Methods.unorm2_getCombiningClass = GetMethod<MethodsContainer.unorm2_getCombiningClassDelegate>(
+					IcuCommonLibHandle, nameof(unorm2_getCombiningClass));
+			}
+			return Methods.unorm2_getCombiningClass(norm2, c);
+		}
+
+		#endregion normalize2
 
 		#region Break iterator
 
@@ -2045,7 +2133,8 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Adds the given character to the given Unicode set.  After this call, uset_contains(set, c) will return TRUE.  A frozen set will not be modified.
+		/// Adds the given character to the given Unicode set.  After this call,
+		/// uset_contains(set, c) will return TRUE.  A frozen set will not be modified.
 		/// </summary>
 		/// <param name="set">The object to which to add the character</param>
 		/// <param name="c">The character to add</param>

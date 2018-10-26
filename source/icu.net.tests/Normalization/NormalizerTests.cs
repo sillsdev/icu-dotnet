@@ -2,7 +2,7 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Text;
-using Icu.Collation;
+using Icu.Normalization;
 using NUnit.Framework;
 
 namespace Icu.Tests

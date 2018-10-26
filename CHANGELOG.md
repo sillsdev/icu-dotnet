@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - additional Character methods: CharDirection, GetIntPropertyValue, ToLower, ToTitle, ToUpper
+- partially implemented Normalizer2 class
 
 ### Changed
 

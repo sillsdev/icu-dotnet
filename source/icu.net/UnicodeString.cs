@@ -2,6 +2,7 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
+using Icu.Normalization;
 
 namespace Icu
 {
@@ -10,7 +11,7 @@ namespace Icu
 	/// and provides similar functionality as the Java String and
 	/// StringBuffer/StringBuilder classes.
 	/// </summary>
-	public class UnicodeString
+	public static class UnicodeString
 	{
 
 		/// ------------------------------------------------------------------------------------
