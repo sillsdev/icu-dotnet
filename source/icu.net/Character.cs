@@ -417,7 +417,7 @@ namespace Icu
 		///<summary>
 		/// enumerated Unicode general category types.
 		/// See http://www.unicode.org/Public/UNIDATA/UnicodeData.html .
-		/// ///</summary>
+		/// </summary>
 		public enum UCharCategory
 		{
 			///<summary>Non-category for unassigned and non-character code points.</summary>
@@ -775,7 +775,7 @@ namespace Icu
 		/// </summary>
 		public static bool IsControl(string chr)
 		{
-			return (string.IsNullOrEmpty(chr) || chr.Length != 1 ? false : IsControl(chr[0]));
+			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsControl(chr[0]);
 		}
 
 		/// <summary>Determines whether the specified character is a space character, as
@@ -790,7 +790,7 @@ namespace Icu
 		/// </summary>
 		public static bool IsSpace(string chr)
 		{
-			return (string.IsNullOrEmpty(chr) || chr.Length != 1 ? false : IsSpace(chr[0]));
+			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]);
 		}
 
 		/// <summary>
@@ -896,6 +896,66 @@ namespace Icu
 		public static int GetIntPropertyValue(int codePoint, UProperty which)
 		{
 			return NativeMethods.u_getIntPropertyValue(codePoint, which);
+		}
+
+		/// <summary>
+		/// The given character is mapped to its lowercase equivalent according to UnicodeData.txt;
+		/// if the character has no lowercase equivalent, the character itself is returned.
+		///
+		/// This function only returns the simple, single-code point case mapping. Full case
+		/// mappings should be used whenever possible because they produce better results by
+		/// working on whole strings. They take into account the string context and the language
+		/// and can map to a result string with a different length as appropriate. Full case
+		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
+		/// See also the User Guide chapter on C/POSIX migration:
+		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// </summary>
+		/// <param name="codePoint">the code point to be mapped </param>
+		/// <returns>the Simple_Lowercase_Mapping of the code point, if any; otherwise the code
+		/// point itself. </returns>
+		public static int ToLower(int codePoint)
+		{
+			return NativeMethods.u_tolower(codePoint);
+		}
+
+		/// <summary>
+		/// The given character is mapped to its titlecase equivalent according to UnicodeData.txt;
+		/// if the character has no lowercase equivalent, the character itself is returned.
+		///
+		/// This function only returns the simple, single-code point case mapping. Full case
+		/// mappings should be used whenever possible because they produce better results by
+		/// working on whole strings. They take into account the string context and the language
+		/// and can map to a result string with a different length as appropriate. Full case
+		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
+		/// See also the User Guide chapter on C/POSIX migration:
+		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// </summary>
+		/// <param name="codePoint">the code point to be mapped </param>
+		/// <returns>the Simple_Titlecase_Mapping of the code point, if any; otherwise the code
+		/// point itself. </returns>
+		public static int ToTitle(int codePoint)
+		{
+			return NativeMethods.u_totitle(codePoint);
+		}
+
+		/// <summary>
+		/// The given character is mapped to its uppercase equivalent according to UnicodeData.txt;
+		/// if the character has no lowercase equivalent, the character itself is returned.
+		///
+		/// This function only returns the simple, single-code point case mapping. Full case
+		/// mappings should be used whenever possible because they produce better results by
+		/// working on whole strings. They take into account the string context and the language
+		/// and can map to a result string with a different length as appropriate. Full case
+		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
+		/// See also the User Guide chapter on C/POSIX migration:
+		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// </summary>
+		/// <param name="codePoint">the code point to be mapped </param>
+		/// <returns>the Simple_Uppercase_Mapping of the code point, if any; otherwise the code
+		/// point itself. </returns>
+		public static int ToUpper(int codePoint)
+		{
+			return NativeMethods.u_toupper(codePoint);
 		}
 	}
 }

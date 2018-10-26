@@ -831,6 +831,15 @@ namespace Icu
 			internal delegate bool u_isspaceDelegate(int characterCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_tolowerDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_totitleDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate int u_toupperDelegate(int characterCode);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uenum_closeDelegate(IntPtr en);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -1125,6 +1134,9 @@ namespace Icu
 			internal u_isMirroredDelegate u_isMirrored;
 			internal u_iscntrlDelegate u_iscntrl;
 			internal u_isspaceDelegate u_isspace;
+			internal u_tolowerDelegate u_tolower;
+			internal u_totitleDelegate u_totitle;
+			internal u_toupperDelegate u_toupper;
 			internal uenum_closeDelegate uenum_close;
 			internal uenum_unextDelegate uenum_unext;
 			internal ucol_openDelegate ucol_open;
@@ -1429,6 +1441,30 @@ namespace Icu
 			if (Methods.u_isspace == null)
 				Methods.u_isspace = GetMethod<MethodsContainer.u_isspaceDelegate>(IcuCommonLibHandle, "u_isspace");
 			return Methods.u_isspace(characterCode);
+		}
+
+		/// <summary>Map character to its lowercase equivalent according to UnicodeData.txt</summary>
+		public static int u_tolower(int characterCode)
+		{
+			if (Methods.u_tolower == null)
+				Methods.u_tolower = GetMethod<MethodsContainer.u_tolowerDelegate>(IcuCommonLibHandle, "u_tolower");
+			return Methods.u_tolower(characterCode);
+		}
+
+		/// <summary>Map character to its titlecase equivalent according to UnicodeData.txt</summary>
+		public static int u_totitle(int characterCode)
+		{
+			if (Methods.u_totitle == null)
+				Methods.u_totitle = GetMethod<MethodsContainer.u_totitleDelegate>(IcuCommonLibHandle, "u_totitle");
+			return Methods.u_totitle(characterCode);
+		}
+
+		/// <summary>Map character to its uppercase equivalent according to UnicodeData.txt</summary>
+		public static int u_toupper(int characterCode)
+		{
+			if (Methods.u_toupper == null)
+				Methods.u_toupper = GetMethod<MethodsContainer.u_toupperDelegate>(IcuCommonLibHandle, "u_toupper");
+			return Methods.u_toupper(characterCode);
 		}
 
 		#region LCID

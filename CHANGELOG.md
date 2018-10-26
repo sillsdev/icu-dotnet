@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- additional Character methods: CharDirection, GetIntPropertyValue, ToLower, ToTitle, ToUpper
+
 ### Changed
 
 - output error on Linux if unmanaged libraries can't be loaded

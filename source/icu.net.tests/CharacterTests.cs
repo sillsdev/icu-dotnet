@@ -9,6 +9,16 @@ namespace Icu.Tests
 	[TestFixture]
 	public class CharacterTests
 	{
+		private void SetUICulture(string culture)
+		{
+			var cultureInfo = new CultureInfo(culture);
+#if NET40
+			System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
+#else
+			CultureInfo.CurrentUICulture = cultureInfo;
+#endif
+		}
+
 		// valid digit tests
 		[TestCase('9', 10, ExpectedResult = 9)]
 		[TestCase('A', 16, ExpectedResult = 10)]
@@ -153,14 +163,28 @@ namespace Icu.Tests
 			return Character.CharDirection(c);
 		}
 
-		private void SetUICulture(string culture)
+		[TestCase('A', ExpectedResult = 'a')]
+		[TestCase('a', ExpectedResult = 'a')]
+		[TestCase('/', ExpectedResult = '/')]
+		public int ToLower(int c)
 		{
-			var cultureInfo = new CultureInfo(culture);
-#if NET40
-			System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
-#else
-			CultureInfo.CurrentUICulture = cultureInfo;
-#endif
+			return Character.ToLower(c);
+		}
+
+		[TestCase('A', ExpectedResult = 'A')]
+		[TestCase('a', ExpectedResult = 'A')]
+		[TestCase('/', ExpectedResult = '/')]
+		public int ToTitle(int c)
+		{
+			return Character.ToTitle(c);
+		}
+
+		[TestCase('A', ExpectedResult = 'A')]
+		[TestCase('a', ExpectedResult = 'A')]
+		[TestCase('/', ExpectedResult = '/')]
+		public int ToUpper(int c)
+		{
+			return Character.ToUpper(c);
 		}
 	}
 }
