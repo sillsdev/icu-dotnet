@@ -1139,6 +1139,45 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uregex_closeDelegate(IntPtr regexp);
 
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_openDelegate(string packageName, string locale,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ures_closeDelegate(IntPtr resourceBundle);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getKeyDelegate(IntPtr resourceBundle);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getStringDelegate(IntPtr resourceBundle, out int len,
+				out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getLocaleDelegate(IntPtr resourceBundle, out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getByKeyDelegate(IntPtr resourceBundle, string key,
+				IntPtr fillIn, out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getStringByKeyDelegate(IntPtr resourceBundle, string key,
+				out int len, out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void ures_resetIteratorDelegate(IntPtr resourceBundle);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getNextStringDelegate(IntPtr resourceBundle, out int len,
+				out IntPtr key, out ErrorCode status);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.I1)]
+			internal delegate bool ures_hasNextDelegate(IntPtr resourceBundle);
+
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ures_getNextResourceDelegate(IntPtr resourceBundle,
+				IntPtr fillIn, out ErrorCode status);
 
 			internal u_initDelegate u_init;
 			internal u_cleanupDelegate u_cleanup;
@@ -1226,6 +1265,17 @@ namespace Icu
 			internal uregex_matchesDelegate uregex_matches;
 			internal uregex_setTextDelegate uregex_setText;
 			internal uregex_closeDelegate uregex_close;
+			internal ures_openDelegate ures_open;
+			internal ures_closeDelegate ures_close;
+			internal ures_getKeyDelegate ures_getKey;
+			internal ures_getStringDelegate ures_getString;
+			internal ures_getLocaleDelegate ures_getLocale;
+			internal ures_getByKeyDelegate ures_getByKey;
+			internal ures_getStringByKeyDelegate ures_getStringByKey;
+			internal ures_resetIteratorDelegate ures_resetIterator;
+			internal ures_getNextStringDelegate ures_getNextString;
+			internal ures_hasNextDelegate ures_hasNext;
+			internal ures_getNextResourceDelegate ures_getNextResource;
 		}
 
 		/// <summary>get the name of an ICU code point</summary>
@@ -2210,5 +2260,145 @@ namespace Icu
 		}
 
 		#endregion // Unicode set
+
+		#region Resource Bundles
+
+		/// <summary/>
+		public static IntPtr ures_open(string packageName, string locale, out ErrorCode status)
+		{
+			if (Methods.ures_open == null)
+			{
+				Methods.ures_open = GetMethod<MethodsContainer.ures_openDelegate>(
+					IcuCommonLibHandle, nameof(ures_open));
+			}
+
+			return Methods.ures_open(packageName, locale, out status);
+		}
+
+		/// <summary/>
+		public static void ures_close(IntPtr resourceBundle)
+		{
+			if (Methods.ures_close == null)
+			{
+				Methods.ures_close = GetMethod<MethodsContainer.ures_closeDelegate>(
+					IcuCommonLibHandle, nameof(ures_close));
+			}
+
+			Methods.ures_close(resourceBundle);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getKey(IntPtr resourceBundle)
+		{
+			if (Methods.ures_getKey == null)
+			{
+				Methods.ures_getKey = GetMethod<MethodsContainer.ures_getKeyDelegate>(
+					IcuCommonLibHandle, nameof(ures_getKey));
+			}
+
+			return Methods.ures_getKey(resourceBundle);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getString(IntPtr resourceBundle, out int len, out ErrorCode status)
+		{
+			if (Methods.ures_getString == null)
+			{
+				Methods.ures_getString = GetMethod<MethodsContainer.ures_getStringDelegate>(
+					IcuCommonLibHandle, nameof(ures_getString));
+			}
+
+			return Methods.ures_getString(resourceBundle, out len, out status);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getLocale(IntPtr resourceBundle, out ErrorCode status)
+		{
+			if (Methods.ures_getLocale == null)
+			{
+				Methods.ures_getLocale = GetMethod<MethodsContainer.ures_getLocaleDelegate>(
+					IcuCommonLibHandle, nameof(ures_getLocale));
+			}
+
+			return Methods.ures_getLocale(resourceBundle, out status);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getByKey(IntPtr resourceBundle, string key, IntPtr fillIn,
+			out ErrorCode status)
+		{
+			if (Methods.ures_getByKey == null)
+			{
+				Methods.ures_getByKey = GetMethod<MethodsContainer.ures_getByKeyDelegate>(
+					IcuCommonLibHandle, nameof(ures_getByKey));
+			}
+
+			return Methods.ures_getByKey(resourceBundle, key, fillIn, out status);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getStringByKey(IntPtr resourceBundle, string key, out int len,
+			out ErrorCode status)
+		{
+			if (Methods.ures_getStringByKey == null)
+			{
+				Methods.ures_getStringByKey = GetMethod<MethodsContainer.ures_getStringByKeyDelegate>(
+					IcuCommonLibHandle, nameof(ures_getStringByKey));
+			}
+
+			return Methods.ures_getStringByKey(resourceBundle, key, out len, out status);
+		}
+
+		/// <summary/>
+		public static void ures_resetIterator(IntPtr resourceBundle)
+		{
+			if (Methods.ures_resetIterator == null)
+			{
+				Methods.ures_resetIterator = GetMethod<MethodsContainer.ures_resetIteratorDelegate>(
+					IcuCommonLibHandle, nameof(ures_resetIterator));
+			}
+
+			Methods.ures_resetIterator(resourceBundle);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getNextString(IntPtr resourceBundle, out int len,
+			out IntPtr key, out ErrorCode status)
+		{
+			if (Methods.ures_getNextString == null)
+			{
+				Methods.ures_getNextString = GetMethod<MethodsContainer.ures_getNextStringDelegate>(
+					IcuCommonLibHandle, nameof(ures_getNextString));
+			}
+
+			return Methods.ures_getNextString(resourceBundle, out len, out key, out status);
+		}
+
+		/// <summary/>
+		public static IntPtr ures_getNextResource(IntPtr resourceBundle, IntPtr fillIn,
+			out ErrorCode status)
+		{
+			if (Methods.ures_getNextResource == null)
+			{
+				Methods.ures_getNextResource = GetMethod<MethodsContainer.ures_getNextResourceDelegate>(
+					IcuCommonLibHandle, nameof(ures_getNextResource));
+			}
+
+			return Methods.ures_getNextResource(resourceBundle, fillIn, out status);
+		}
+
+		/// <summary/>
+		public static bool ures_hasNext(IntPtr resourceBundle)
+		{
+			if (Methods.ures_hasNext == null)
+			{
+				Methods.ures_hasNext = GetMethod<MethodsContainer.ures_hasNextDelegate>(
+					IcuCommonLibHandle, nameof(ures_hasNext));
+			}
+
+			return Methods.ures_hasNext(resourceBundle);
+		}
+
+		#endregion
 	}
 }
