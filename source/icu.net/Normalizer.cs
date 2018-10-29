@@ -28,7 +28,10 @@ namespace Icu
 			///<summary>Compatibility decomposition followed by canonical composition.</summary>
 			UNORM_NFKC = 5,
 			/// <summary>"Fast C or D" form.</summary>
-			UNORM_FCD = 6
+			UNORM_FCD = 6,
+			/// NFKC followed by case folding
+			UNORM_NFKC_CF = 7
+
 		}
 
 		internal enum UNormalization2Mode
@@ -43,8 +46,8 @@ namespace Icu
 		{
 			ErrorCode errorCode;
 			var ret = NativeMethods.unorm2_getInstance(IntPtr.Zero,
-				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFD) ? "nfc" : "nfkc",
-				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFKC) ?
+				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFD) ? "nfc" : (mode == UNormalizationMode.UNORM_NFKC_CF ? "nfkc_cf" : "nfkc"),
+				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFKC || mode == UNormalizationMode.UNORM_NFKC_CF) ?
 					UNormalization2Mode.UNORM2_COMPOSE : UNormalization2Mode.UNORM2_DECOMPOSE,
 				out errorCode);
 			if (errorCode != ErrorCode.NoErrors)

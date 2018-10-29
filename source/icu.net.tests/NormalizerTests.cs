@@ -15,6 +15,9 @@ namespace Icu.Tests
 		[TestCase("tést", Normalizer.UNormalizationMode.UNORM_NFD, ExpectedResult = "te\u0301st")]
 		[TestCase("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFC, ExpectedResult = "tést")]
 		[TestCase("te\u0301st", Normalizer.UNormalizationMode.UNORM_NFD, ExpectedResult = "te\u0301st")]
+		[TestCase("Te\u0301st", Normalizer.UNormalizationMode.UNORM_NFKC, ExpectedResult = "Tést")]
+        [TestCase("Te\u0301st", Normalizer.UNormalizationMode.UNORM_NFKC_CF, ExpectedResult = "tést")]
+
 		public string Normalize(string src, Normalizer.UNormalizationMode mode)
 		{
 			return Normalizer.Normalize(src, mode);
