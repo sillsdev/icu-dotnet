@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - partially implemented Normalizer2 class
 - partially implemented ResourceBundle class
 - partially implemented CodepageConversion class
+- partially implemented MessageFormatter and Transliterator classes
 
 ### Changed
 

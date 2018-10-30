@@ -337,9 +337,11 @@ namespace Icu
 				_CodepageConversionMethods = null;
 				_CollatorMethods = null;
 				_LocalesMethods = null;
+				_MessageFormatMethods = null;
 				_NormalizeMethods = null;
 				_RegexMethods = null;
 				_ResourceBundleMethods = null;
+				_TransliteratorMethods = null;
 				_UnicodeSetMethods = null;
 				ResetIcuVersionInfo();
 			}
