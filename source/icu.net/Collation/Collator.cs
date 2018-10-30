@@ -329,7 +329,7 @@ namespace Icu.Collation
 		public static string GetCollationRules(Locale locale, UColRuleOption collatorRuleOption = UColRuleOption.UCOL_TAILORING_ONLY)
 		{
 			ErrorCode err;
-			using (RuleBasedCollator.SafeRuleBasedCollatorHandle coll = NativeMethods.ucol_open(locale.Id, out err))
+			using (var coll = NativeMethods.ucol_open(locale.Id, out err))
 			{
 				if (coll.IsInvalid || err.IsFailure())
 					return null;

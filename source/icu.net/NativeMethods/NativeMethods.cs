@@ -415,7 +415,7 @@ namespace Icu
 		/// <returns>next element as string, or <c>null</c> after all elements haven been
 		/// enumerated</returns>
 		public static IntPtr uenum_unext(
-			RuleBasedCollator.SafeEnumeratorHandle en,
+			SafeEnumeratorHandle en,
 			out int resultLength,
 			out ErrorCode status)
 		{
@@ -564,7 +564,7 @@ namespace Icu
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr uenum_unextDelegate(
-				RuleBasedCollator.SafeEnumeratorHandle en,
+				SafeEnumeratorHandle en,
 				out int resultLength,
 				out ErrorCode status);
 

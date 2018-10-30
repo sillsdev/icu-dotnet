@@ -34,7 +34,7 @@ namespace Icu
 			internal delegate int ucol_countAvailableDelegate();
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocalesDelegate(out ErrorCode status);
+			internal delegate SafeEnumeratorHandle ucol_openAvailableLocalesDelegate(out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucol_getSortKeyDelegate(
@@ -211,7 +211,7 @@ namespace Icu
 		 * responsible for closing the result.
 		 * @stable ICU 3.0
 		 */
-		public static RuleBasedCollator.SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status)
+		public static SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status)
 		{
 			if (CollatorMethods.ucol_openAvailableLocales == null)
 				CollatorMethods.ucol_openAvailableLocales = GetMethod<CollatorMethodsContainer.ucol_openAvailableLocalesDelegate>(IcuI18NLibHandle, "ucol_openAvailableLocales");
