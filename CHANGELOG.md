@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - additional Character methods: CharDirection, GetIntPropertyValue, ToLower, ToTitle, ToUpper
 - partially implemented Normalizer2 class
 - partially implemented ResourceBundle class
+- partially implemented CodepageConversion class
 
 ### Changed
 

@@ -56,9 +56,10 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <PackageReference Include="SIL.ReleaseTasks" Version="2.0.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <Target Name="StoreVersion" AfterTargets="Build">
-    <MakeDir Directories="$(OutputPath)"/>
+    <MakeDir Directories="$(OutputPath)" />
     <WriteLinesToFile File="$(OutputPath)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" />
   </Target>
 </Project>

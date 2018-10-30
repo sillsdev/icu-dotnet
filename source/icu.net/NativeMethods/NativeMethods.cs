@@ -334,6 +334,7 @@ namespace Icu
 
 				Methods = new MethodsContainer();
 				_BreakIteratorMethods = null;
+				_CodepageConversionMethods = null;
 				_CollatorMethods = null;
 				_LocalesMethods = null;
 				_NormalizeMethods = null;
