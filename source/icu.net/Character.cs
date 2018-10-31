@@ -661,7 +661,7 @@ namespace Icu
 		/// Special value that is returned by <see cref="GetNumericValue(int)"/>
 		/// when no numeric value is defined for a code point.
 		/// </summary>
-		public const double NO_NUMERIC_VALUE = (double)-123456789;
+		public const double NO_NUMERIC_VALUE = -123456789;
 
 		/// <summary>
 		/// Returns the decimal digit value of the code point in the specified radix.
@@ -709,21 +709,69 @@ namespace Icu
 		/// <param name="characterCode">the code point to be tested</param>
 		public static bool IsSymbol(int characterCode)
 		{
-			var nAns = NativeMethods.u_charType(characterCode);
-			return nAns == (sbyte)UCharCategory.MATH_SYMBOL ||
-				nAns == (sbyte)UCharCategory.CURRENCY_SYMBOL ||
-				nAns == (sbyte)UCharCategory.MODIFIER_SYMBOL ||
-				nAns == (sbyte)UCharCategory.OTHER_SYMBOL;
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.MATH_SYMBOL:
+				case UCharCategory.CURRENCY_SYMBOL:
+				case UCharCategory.MODIFIER_SYMBOL:
+				case UCharCategory.OTHER_SYMBOL:
+					return true;
+				default:
+					return false;
+			}
 		}
 
-		///<summary>
-		/// Get the general character category value for the given code point.
-		///</summary>
-		///<param name="ch">the code point to be checked</param>
-		///<returns></returns>
-		public static UCharCategory GetCharType(int ch)
+		/// <summary>
+		/// Determines whether the specified character is a letter, i.e. if code point is in the
+		/// category Lu, Ll, Lt, Lm and Lo.
+		/// </summary>
+		public static bool IsLetter(int characterCode)
 		{
-			return (UCharCategory)NativeMethods.u_charType(ch);
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.UPPERCASE_LETTER:
+				case UCharCategory.LOWERCASE_LETTER:
+				case UCharCategory.TITLECASE_LETTER:
+				case UCharCategory.MODIFIER_LETTER:
+				case UCharCategory.OTHER_LETTER:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Determines whether the specified character is a mark, i.e. if code point is in the
+		/// category Mn, Me and Mc.
+		/// </summary>
+		public static bool IsMark(int characterCode)
+		{
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.NON_SPACING_MARK:
+				case UCharCategory.ENCLOSING_MARK:
+				case UCharCategory.COMBINING_SPACING_MARK:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Determines whether the specified character is a separator, i.e. if code point is in
+		/// the category Zs, Zl and Zp.
+		/// </summary>
+		public static bool IsSeparator(int characterCode)
+		{
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.SPACE_SEPARATOR:
+				case UCharCategory.LINE_SEPARATOR:
+				case UCharCategory.PARAGRAPH_SEPARATOR:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		/// <summary>
@@ -734,12 +782,6 @@ namespace Icu
 		public static bool IsNumeric(int characterCode)
 		{
 			return NativeMethods.u_getIntPropertyValue(characterCode, UProperty.NUMERIC_TYPE) != 0;
-		}
-
-		/// <summary></summary>
-		public static double GetNumericValue(int characterCode)
-		{
-			return NativeMethods.u_getNumericValue(characterCode);
 		}
 
 		/// <summary>Determines whether the specified code point is a punctuation character, as
@@ -791,6 +833,22 @@ namespace Icu
 		public static bool IsSpace(string chr)
 		{
 			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]);
+		}
+
+		///<summary>
+		/// Get the general character category value for the given code point.
+		///</summary>
+		///<param name="ch">the code point to be checked</param>
+		///<returns></returns>
+		public static UCharCategory GetCharType(int ch)
+		{
+			return (UCharCategory)NativeMethods.u_charType(ch);
+		}
+
+		/// <summary></summary>
+		public static double GetNumericValue(int characterCode)
+		{
+			return NativeMethods.u_getNumericValue(characterCode);
 		}
 
 		/// <summary>
@@ -957,5 +1015,6 @@ namespace Icu
 		{
 			return NativeMethods.u_toupper(codePoint);
 		}
+
 	}
 }

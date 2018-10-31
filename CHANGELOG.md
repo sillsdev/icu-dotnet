@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - now supports case folding tokenizer (#88)
-- additional Character methods: CharDirection, GetIntPropertyValue, ToLower, ToTitle, ToUpper
+- additional Character methods: CharDirection, GetIntPropertyValue, ToLower, ToTitle, ToUpper,
+  IsLetter, IsMark, IsSeparator
 - partially implemented Normalizer2 class
 - partially implemented ResourceBundle class
 - partially implemented CodepageConversion class
