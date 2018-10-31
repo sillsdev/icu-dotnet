@@ -32,17 +32,15 @@ namespace Icu
 			UNORM_FCD = 6
 		}
 
-		private static IntPtr GetNormalizer(UNormalizationMode mode)
+		private static Normalizer2 GetNormalizer(UNormalizationMode mode)
 		{
-			ErrorCode errorCode;
-			var ret = NativeMethods.unorm2_getInstance(null,
-				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFD) ? "nfc" : "nfkc",
-				(mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFKC) ?
-					Normalizer2.Mode.COMPOSE : Normalizer2.Mode.DECOMPOSE,
-				out errorCode);
-			if (errorCode != ErrorCode.NoErrors)
-				throw new Exception("Normalizer.Normalize() failed with code " + errorCode);
-			return ret;
+			return Normalizer2.GetInstance(null,
+				mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFD
+					? "nfc"
+					: "nfkc",
+				mode == UNormalizationMode.UNORM_NFC || mode == UNormalizationMode.UNORM_NFKC
+					? Normalizer2.Mode.COMPOSE
+					: Normalizer2.Mode.DECOMPOSE);
 		}
 
 		/// <summary>
@@ -53,40 +51,8 @@ namespace Icu
 		/// <returns></returns>
 		public static string Normalize(string src, UNormalizationMode mode)
 		{
-			if (string.IsNullOrEmpty(src))
-				return string.Empty;
-
-			var length = src.Length + 10;
-			var resPtr = Marshal.AllocCoTaskMem(length * 2);
-			try
-			{
-				ErrorCode err;
-				var normalizer = GetNormalizer(mode);
-				var outLength = NativeMethods.unorm2_normalize(normalizer, src, src.Length, resPtr, length, out err);
-				if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
-					throw new Exception("Normalizer.Normalize() failed with code " + err);
-				if (outLength >= length)
-				{
-					Marshal.FreeCoTaskMem(resPtr);
-					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
-					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					outLength = NativeMethods.unorm2_normalize(normalizer, src, src.Length, resPtr, length, out err);
-				}
-				if (err > 0)
-					throw new Exception("Normalizer.Normalize() failed with code " + err);
-
-				var result = Marshal.PtrToStringUni(resPtr);
-				// Strip any garbage left over at the end of the string.
-				if (err == ErrorCode.STRING_NOT_TERMINATED_WARNING && result != null)
-					return result.Substring(0, outLength);
-
-				return result;
-
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+			var normalizer = GetNormalizer(mode);
+			return normalizer.Normalize(src);
 		}
 
 		/// <summary>
@@ -97,14 +63,8 @@ namespace Icu
 		/// <returns></returns>
 		public static bool IsNormalized(string src, UNormalizationMode mode)
 		{
-			if (string.IsNullOrEmpty(src))
-				return true;
-
-			var isNormalized = NativeMethods.unorm2_isNormalized(GetNormalizer(mode), src,
-				src.Length, out var err);
-			if (err != ErrorCode.NoErrors)
-				throw new Exception("Normalizer.IsNormalized() failed with code " + err);
-			return isNormalized;
+			var normalizer = GetNormalizer(mode);
+			return normalizer.IsNormalized(src);
 		}
 	}
 }

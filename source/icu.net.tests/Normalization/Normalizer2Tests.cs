@@ -18,6 +18,19 @@ namespace Icu.Tests
 			return normalizer.GetDecomposition(codePoint);
 		}
 
+		[TestCase("XA\u0308bc", "nfc", Normalizer2.Mode.COMPOSE, ExpectedResult = "X\u00C4bc")]
+		[TestCase("X\u00C4bc", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "XA\u0308bc")]
+		[TestCase("tést", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "te\u0301st")]
+		[TestCase("te\u0301st", "nfc", Normalizer2.Mode.COMPOSE, ExpectedResult = "tést")]
+		[TestCase("te\u0301st", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "te\u0301st")]
+		[TestCase("Te\u0301st", "nfkc", Normalizer2.Mode.COMPOSE, ExpectedResult = "Tést")]
+		[TestCase("Te\u0301st", "nfkc_cf", Normalizer2.Mode.COMPOSE, ExpectedResult = "tést")]
+		public string Normalize(string src, string name, Normalizer2.Mode mode)
+		{
+			var normalizer = Normalizer2.GetInstance(null, name, mode);
+			return normalizer.Normalize(src);
+		}
+
 		[TestCase("t\u00E9st", Normalizer2.Mode.COMPOSE, ExpectedResult = true)]
 		[TestCase("t\u00E9st", Normalizer2.Mode.DECOMPOSE, ExpectedResult = false)]
 		[TestCase("te\u0301st", Normalizer2.Mode.COMPOSE, ExpectedResult = false)]

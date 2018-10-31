@@ -228,5 +228,47 @@ namespace Icu.Normalization
 		{
 			return NativeMethods.unorm2_getCombiningClass(_Normalizer, c);
 		}
+
+		/// <summary>
+		/// Normalize the string according to the mode of the current normalizer.
+		/// </summary>
+		/// <param name="src">source string</param>
+		/// <returns>Returns the normalized form of the source string.</returns>
+		public string Normalize(string src)
+		{
+			if (string.IsNullOrEmpty(src))
+				return string.Empty;
+
+			var length = src.Length + 10;
+			var resPtr = Marshal.AllocCoTaskMem(length * 2);
+			try
+			{
+				var outLength = NativeMethods.unorm2_normalize(_Normalizer, src, src.Length,
+					resPtr, length, out var status);
+				if (status.IsFailure() && status != ErrorCode.BUFFER_OVERFLOW_ERROR)
+					ExceptionFromErrorCode.ThrowIfError(status);
+				if (outLength >= length)
+				{
+					Marshal.FreeCoTaskMem(resPtr);
+					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
+					resPtr = Marshal.AllocCoTaskMem(length * 2);
+					outLength = NativeMethods.unorm2_normalize(_Normalizer, src, src.Length,
+						resPtr, length, out status);
+				}
+				ExceptionFromErrorCode.ThrowIfError(status);
+
+				var result = Marshal.PtrToStringUni(resPtr);
+				// Strip any garbage left over at the end of the string.
+				if (status == ErrorCode.STRING_NOT_TERMINATED_WARNING && result != null)
+					return result.Substring(0, outLength);
+
+				return result;
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem(resPtr);
+			}
+		}
+
 	}
 }
