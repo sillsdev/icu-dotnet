@@ -10,7 +10,7 @@ namespace Icu
 	{
 		private class CodepageConversionMethodsContainer
 		{
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate SafeEnumeratorHandle ucnv_openAllNamesDelegate(out ErrorCode err);
 			
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]

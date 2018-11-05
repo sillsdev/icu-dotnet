@@ -59,22 +59,29 @@ namespace Icu
 		}
 		#endregion
 
+		public string Pattern
+		{
+			get
+			{
+				return NativeMethods.GetUnicodeString((ptr2, length) =>
+				{
+					length = NativeMethods.umsg_toPattern(_Formatter, ptr2, length, out var err);
+					return new Tuple<ErrorCode, int>(err, length);
+				});
+			}
+		}
 		/// <summary>
-		/// Formats the given arguments into a user-readable string. 
+		/// Formats the given arguments into a user-readable string.
 		/// </summary>
 		/// <returns>The user-readable string</returns>
+		/// <remarks>This method with these args is probably only useful in the context of transliterators</remarks>
 		public string Format(double arg0, string arg1, string arg2)
 		{
-			var builder = new StringBuilder(255);
-			var actualLen = NativeMethods.umsg_format(_Formatter, builder, 255, out var status,
-				arg0, arg1, arg2);
-			if (status.IsSuccess() && actualLen > 255)
+			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				builder = new StringBuilder(actualLen);
-				NativeMethods.umsg_format(_Formatter, builder, 255, out status, arg0, arg1, arg2);
-			}
-
-			return status.IsSuccess() ? builder.ToString() : string.Empty;
+				length = NativeMethods.umsg_format(_Formatter, ptr, length, out var err, arg0, arg1, arg2);
+				return new Tuple<ErrorCode, int>(err, length);
+			});
 		}
 
 		/// <summary>

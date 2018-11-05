@@ -301,7 +301,7 @@ namespace Icu
 		/// </summary>
 		/// <returns>An IEnumerable providing all the string contents of this bundle, along with
 		/// the keys associated with those strings in the bundle.</returns>
-		public IEnumerable<KeyValuePair<string, string>> GetStringContentsWithKeys()
+		public IEnumerable<(string key, string value)> GetStringContentsWithKeys()
 		{
 			if (IsNull)
 				yield break;
@@ -311,7 +311,7 @@ namespace Icu
 			while ((strValue = GetNextString(out var key)) != null)
 			{
 				if (key != null)
-					yield return new KeyValuePair<string, string>(key, strValue);
+					yield return (key, strValue);
 			}
 		}
 	}

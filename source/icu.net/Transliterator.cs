@@ -26,7 +26,10 @@ namespace Icu
 		{
 			using (var icuEnumerator = GetEnumerator())
 			{
-				yield return icuEnumerator.Next();
+				for (var id = icuEnumerator.Next(); !string.IsNullOrEmpty(id); id = icuEnumerator.Next())
+				{
+					yield return id;
+				}
 			}
 		}
 

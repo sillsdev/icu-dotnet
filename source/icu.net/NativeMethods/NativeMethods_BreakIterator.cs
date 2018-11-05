@@ -18,16 +18,16 @@ namespace Icu
 			internal delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
 				string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void ubrk_closeDelegate(IntPtr bi);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubrk_firstDelegate(IntPtr bi);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubrk_nextDelegate(IntPtr bi);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
 
 			/// <summary>
@@ -41,13 +41,13 @@ namespace Icu
 			/// </summary>
 			/// <returns>The number of rule status values that determined the most recent
 			/// boundary returned from the break iterator.</returns>
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
-				[Out, MarshalAs(UnmanagedType.LPArray)]Int32[] fillInVector,
-				Int32 capacity,
+				[Out, MarshalAs(UnmanagedType.LPArray)]int[] fillInVector,
+				int capacity,
 				out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate IntPtr ubrk_safeCloneDelegate(IntPtr bi, IntPtr stackBuffer,
 				IntPtr bufferSize, out ErrorCode errorCode);
 

@@ -12,7 +12,7 @@ namespace Icu
 		private class TransliteratorMethodsContainer
 		{
 			/// <summary/>
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate SafeEnumeratorHandle utrans_openIDsDelegate(out ErrorCode errorCode);
 
 			internal utrans_openIDsDelegate utrans_openIDs;
@@ -29,7 +29,7 @@ namespace Icu
 		public static SafeEnumeratorHandle utrans_openIDs(out ErrorCode errorCode)
 		{
 			if (TransliteratorMethods.utrans_openIDs == null)
-				TransliteratorMethods.utrans_openIDs = GetMethod<TransliteratorMethodsContainer.utrans_openIDsDelegate>(IcuCommonLibHandle, nameof(utrans_openIDs));
+				TransliteratorMethods.utrans_openIDs = GetMethod<TransliteratorMethodsContainer.utrans_openIDsDelegate>(IcuI18NLibHandle, nameof(utrans_openIDs), true);
 			return TransliteratorMethods.utrans_openIDs(out errorCode);
 		}
 

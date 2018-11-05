@@ -10,44 +10,44 @@ namespace Icu
 	{
 		private class ResourceBundleMethodsContainer
 		{
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_openDelegate(string packageName, string locale,
 				out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void ures_closeDelegate(IntPtr resourceBundle);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getKeyDelegate(IntPtr resourceBundle);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr ures_getStringDelegate(IntPtr resourceBundle, out int len,
 				out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getLocaleDelegate(IntPtr resourceBundle,
 				out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getByKeyDelegate(IntPtr resourceBundle,
 				string key, IntPtr fillIn, out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getStringByKeyDelegate(IntPtr resourceBundle,
 				string key, out int len, out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate void ures_resetIteratorDelegate(IntPtr resourceBundle);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getNextStringDelegate(IntPtr resourceBundle,
 				out int len, out IntPtr key, out ErrorCode status);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			[return: MarshalAs(UnmanagedType.I1)]
 			internal delegate bool ures_hasNextDelegate(IntPtr resourceBundle);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr ures_getNextResourceDelegate(IntPtr resourceBundle,
 				IntPtr fillIn, out ErrorCode status);
 

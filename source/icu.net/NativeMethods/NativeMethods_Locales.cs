@@ -24,10 +24,10 @@ namespace Icu
 			internal delegate IntPtr uloc_getISO3LanguageDelegate(
 				[MarshalAs(UnmanagedType.LPStr)]string locale);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int uloc_countAvailableDelegate();
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate IntPtr uloc_getAvailableDelegate(int n);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
