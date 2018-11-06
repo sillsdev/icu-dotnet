@@ -1,8 +1,6 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-using System.Runtime.InteropServices;
-using Icu.Normalization;
 
 namespace Icu
 {
@@ -37,38 +35,7 @@ namespace Icu
 		/// locale or NULL for the default locale.</param>
 		public static string ToLower(string src, string locale)
 		{
-			if (src == null)
-				return string.Empty;
-
-			int length = src.Length + 10;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
-			try
-			{
-				ErrorCode err;
-				int outLength = NativeMethods.u_strToLower(resPtr, length, src, src.Length, locale, out err);
-				if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
-					throw new Exception("UnicodeString.ToLower() failed with code " + err);
-				if (outLength > length)
-				{
-					Marshal.FreeCoTaskMem(resPtr);
-					length = outLength + 1;
-					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					NativeMethods.u_strToLower(resPtr, length, src, src.Length, locale, out err);
-				}
-				if (err > 0)
-					throw new Exception("UnicodeString.ToLower() failed with code " + err);
-
-				string result = Marshal.PtrToStringUni(resPtr);
-
-				// Strip any garbage left over at the end of the string.
-				if (err == ErrorCode.STRING_NOT_TERMINATED_WARNING && result != null)
-					return result.Substring(0, outLength);
-				return result;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+			return GetString(NativeMethods.u_strToLower, src, locale);
 		}
 
 		/// <summary>
@@ -91,38 +58,7 @@ namespace Icu
 		/// locale or NULL for the default locale.</param>
 		public static string ToUpper(string src, string locale)
 		{
-			if (src == null)
-				return string.Empty;
-
-			int length = src.Length + 10;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
-			try
-			{
-				ErrorCode err;
-				int outLength = NativeMethods.u_strToUpper(resPtr, length, src, src.Length, locale, out err);
-				if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
-					throw new Exception("UnicodeString.ToUpper() failed with code " + err);
-				if (outLength > length)
-				{
-					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR
-					Marshal.FreeCoTaskMem(resPtr);
-					length = outLength + 1;
-					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					NativeMethods.u_strToUpper(resPtr, length, src, src.Length, locale, out err);
-				}
-				if (err > 0)
-					throw new Exception("UnicodeString.ToUpper() failed with code " + err);
-
-				string result = Marshal.PtrToStringUni(resPtr);
-				// Strip any garbage left over at the end of the string.
-				if (err == ErrorCode.STRING_NOT_TERMINATED_WARNING && result != null)
-					return result.Substring(0, outLength);
-				return result;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+			return GetString(NativeMethods.u_strToUpper, src, locale);
 		}
 
 		/// <summary>
@@ -149,41 +85,7 @@ namespace Icu
 		/// <returns></returns>
 		public static string ToTitle(string src, string locale)
 		{
-			if (src == null)
-				return string.Empty;
-
-			int length = src.Length + 10;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
-			try
-			{
-				ErrorCode err;
-				int outLength = NativeMethods.u_strToTitle(resPtr, length, src, src.Length, IntPtr.Zero, locale, out err);
-				if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
-					throw new Exception("UnicodeString.ToTitle() failed with code " + err);
-				if (outLength > length)
-				{
-					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR
-					Marshal.FreeCoTaskMem(resPtr);
-					length = outLength + 1;
-					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					NativeMethods.u_strToTitle(resPtr, length, src, src.Length, IntPtr.Zero, locale, out err);
-				}
-				if (err > 0)
-					throw new Exception("UnicodeString.ToTitle() failed with code " + err);
-
-				string result = Marshal.PtrToStringUni(resPtr);
-				if (result != null)
-				{
-					// Strip any garbage left over at the end of the string.
-					if (err == ErrorCode.STRING_NOT_TERMINATED_WARNING)
-						result = result.Substring(0, outLength);
-				}
-				return result;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+			return GetString(NativeMethods.u_strToTitle, src, locale);
 		}
 
 		/// <summary>
@@ -203,6 +105,18 @@ namespace Icu
 			// The dotted I in Turkish and other characters like it are not handled properly unless we are NFC, since
 			// by default ICU only looks at the first character.
 			return Normalizer.Normalize(result, normMode);
+		}
+
+		private delegate int GetStringMethod(IntPtr dest, int destCapacity, string src,
+			int srcLength, string locale, out ErrorCode errorCode);
+
+		private static string GetString(GetStringMethod method, string src, string locale)
+		{
+			return NativeMethods.GetUnicodeString((ptr, length) =>
+				{
+					length = method(ptr, length, src, src.Length, locale, out var err);
+					return new Tuple<ErrorCode, int>(err, length);
+				}, src.Length + 10);
 		}
 
 	}

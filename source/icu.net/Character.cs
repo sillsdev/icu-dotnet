@@ -874,25 +874,12 @@ namespace Icu
 		/// <returns>length of string</returns>
 		private static int CharName(int code, UCharNameChoice nameChoice, out string name)
 		{
-			const int nSize = 255;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(nSize);
-			try
+			name = NativeMethods.GetAnsiString((ptr, length) =>
 			{
-				ErrorCode error;
-				int nResult = NativeMethods.u_charName(code, nameChoice, resPtr, nSize, out error);
-				if (error != ErrorCode.NoErrors)
-				{
-					nResult = -1;
-					name = null;
-				}
-				else
-					name = Marshal.PtrToStringAnsi(resPtr);
-				return nResult;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+				length = NativeMethods.u_charName(code, nameChoice, ptr, length, out var err);
+				return new Tuple<ErrorCode, int>(err, length);
+			});
+			return name.Length;
 		}
 
 		/// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -328,29 +328,17 @@ namespace Icu.Collation
 		/// <param name="collatorRuleOption">UColRuleOption to use. Default is UColRuleOption.UCOL_TAILORING_ONLY</param>
 		public static string GetCollationRules(Locale locale, UColRuleOption collatorRuleOption = UColRuleOption.UCOL_TAILORING_ONLY)
 		{
-			ErrorCode err;
-			using (var coll = NativeMethods.ucol_open(locale.Id, out err))
+			using (var coll = NativeMethods.ucol_open(locale.Id, out var err))
 			{
 				if (coll.IsInvalid || err.IsFailure())
 					return null;
 
-				const int len = 1000;
-				IntPtr buffer = Marshal.AllocCoTaskMem(len * 2);
-				try
+				return NativeMethods.GetUnicodeString((ptr, length) =>
 				{
-					int actualLen = NativeMethods.ucol_getRulesEx(coll, collatorRuleOption, buffer, len);
-					if (actualLen > len)
-					{
-						Marshal.FreeCoTaskMem(buffer);
-						buffer = Marshal.AllocCoTaskMem(actualLen * 2);
-						NativeMethods.ucol_getRulesEx(coll, collatorRuleOption, buffer, actualLen);
-					}
-					return Marshal.PtrToStringUni(buffer, actualLen);
-				}
-				finally
-				{
-					Marshal.FreeCoTaskMem(buffer);
-				}
+					// ReSharper disable once AccessToDisposedClosure
+					length = NativeMethods.ucol_getRulesEx(coll, collatorRuleOption, ptr, length);
+					return new Tuple<ErrorCode, int>(ErrorCode.ZERO_ERROR, length);
+				}, 1000);
 			}
 		}
 

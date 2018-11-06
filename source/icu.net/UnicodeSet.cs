@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Icu
 		{
 			if (set == null)
 			{
-				throw new ArgumentNullException("set");
+				throw new ArgumentNullException(nameof(set));
 			}
 			// uset_openEmpty unavailable, so this is equivalent
 			IntPtr uset = NativeMethods.uset_open('1', '0');
@@ -39,21 +39,11 @@ namespace Icu
 					}
 				}
 
-				var err = ErrorCode.ZERO_ERROR;
-				int resultCapacity = NativeMethods.uset_toPattern(uset, IntPtr.Zero, 0, true, ref err);
-				IntPtr buffer = Marshal.AllocCoTaskMem(resultCapacity * 2);
-				try
-				{
-					err = ErrorCode.ZERO_ERROR;
-					resultCapacity = NativeMethods.uset_toPattern(uset, buffer, resultCapacity, true, ref err);
-					if (err > ErrorCode.NoErrors)
-						throw new Exception("UnicodeSet.ToPattern() failed with code " + err);
-					return Marshal.PtrToStringUni(buffer, resultCapacity);
-				}
-				finally
-				{
-					Marshal.FreeCoTaskMem(buffer);
-				}
+				return NativeMethods.GetUnicodeString((ptr, length) =>
+					{
+						length = NativeMethods.uset_toPattern(uset, ptr, length, true, out var err);
+						return new Tuple<ErrorCode, int>(err, length);
+					});
 			}
 			finally
 			{
@@ -73,23 +63,21 @@ namespace Icu
 				return Enumerable.Empty<string>();
 			}
 
-			var err = ErrorCode.ZERO_ERROR;
-			IntPtr result = NativeMethods.uset_openPattern(pattern, -1, ref err);
+			IntPtr result = NativeMethods.uset_openPattern(pattern, -1, out var err);
 			try
 			{
 				if (err != ErrorCode.NoErrors)
-					throw new ArgumentException("pattern");
+					throw new ArgumentException(nameof(pattern));
 				var output = new List<string>();
 
 				// Parse the number of items in the Unicode set
-				for (int i = 0; i < NativeMethods.uset_getItemCount(result); i++)
+				for (var i = 0; i < NativeMethods.uset_getItemCount(result); i++)
 				{
-					int startChar, endChar;
-					int strLength = NativeMethods.uset_getItem(result, i, out startChar, out endChar, IntPtr.Zero, 0, ref err);
+					var strLength = NativeMethods.uset_getItem(result, i, out var startChar, out var endChar, IntPtr.Zero, 0, out err);
 					if (strLength == 0)
 					{
 						// Add a character range to the set
-						for (int j = startChar; j <= endChar; j++)
+						for (var j = startChar; j <= endChar; j++)
 						{
 							output.Add(string.Format(CultureInfo.InvariantCulture, "{0}", (char)j));
 						}
@@ -97,19 +85,13 @@ namespace Icu
 					else
 					{
 						// Add a multiple-character string to the set
-						IntPtr buffer = Marshal.AllocCoTaskMem(strLength * 2);
-						try
-						{
-							err = ErrorCode.ZERO_ERROR;
-							strLength = NativeMethods.uset_getItem(result, i, out startChar, out endChar, buffer, strLength, ref err);
-							if (err > ErrorCode.NoErrors)
-								throw new Exception("UnicodeSet.ToCharacters() failed with code " + err);
-							output.Add(Marshal.PtrToStringUni(buffer, strLength));
-						}
-						finally
-						{
-							Marshal.FreeCoTaskMem(buffer);
-						}
+						var index = i;
+						output.Add(NativeMethods.GetUnicodeString((ptr, length) =>
+							{
+								length = NativeMethods.uset_getItem(result, index, out startChar,
+									out endChar, ptr, length, out var errorCode);
+								return new Tuple<ErrorCode, int>(errorCode, length);
+							}, strLength * 2));
 					}
 				}
 				return output;

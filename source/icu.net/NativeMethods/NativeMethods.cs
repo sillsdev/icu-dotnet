@@ -400,6 +400,56 @@ namespace Icu
 
 		#endregion
 
+		public static string GetAnsiString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
+			int initialLength = 255)
+		{
+			return GetString(lambda, false, initialLength);
+		}
+
+		public static string GetUnicodeString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
+			int initialLength = 255)
+		{
+			return GetString(lambda, true, initialLength);
+		}
+
+		private static string GetString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
+			bool isUnicodeString = false, int initialLength = 255)
+		{
+			var length = initialLength;
+			var resPtr = Marshal.AllocCoTaskMem(length * 2);
+			try
+			{
+				var (err, outLength) = lambda(resPtr, length);
+				if (err != ErrorCode.BUFFER_OVERFLOW_ERROR)
+					ExceptionFromErrorCode.ThrowIfError(err);
+				if (outLength > length)
+				{
+					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR
+					Marshal.FreeCoTaskMem(resPtr);
+					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
+					resPtr = Marshal.AllocCoTaskMem(length * 2);
+					(err, outLength) = lambda(resPtr, length);
+				}
+
+				ExceptionFromErrorCode.ThrowIfError(err);
+
+				if (outLength < 0)
+					return null;
+
+				var result = isUnicodeString
+					? Marshal.PtrToStringUni(resPtr)
+					: Marshal.PtrToStringAnsi(resPtr);
+				// Strip any garbage left over at the end of the string.
+				if (err == ErrorCode.STRING_NOT_TERMINATED_WARNING && result != null)
+					return result.Substring(0, outLength);
+				return result;
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem(resPtr);
+			}
+		}
+
 		/// <summary>
 		/// This function does cleanup of the enumerator object
 		/// </summary>
@@ -883,6 +933,14 @@ namespace Icu
 			if (Methods.u_strToLower == null)
 				Methods.u_strToLower = GetMethod<MethodsContainer.u_strToLowerDelegate>(IcuCommonLibHandle, "u_strToLower");
 			return Methods.u_strToLower(dest, destCapacity, src, srcLength, locale, out errorCode);
+		}
+
+		public static int u_strToTitle(IntPtr dest, int destCapacity, string src,
+			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale,
+			out ErrorCode errorCode)
+		{
+			return u_strToTitle(dest, destCapacity, src, srcLength, IntPtr.Zero, locale,
+				out errorCode);
 		}
 
 		/// <summary>Return the title case equivalent of the string.</summary>

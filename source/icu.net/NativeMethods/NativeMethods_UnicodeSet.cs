@@ -10,7 +10,7 @@ namespace Icu
 	{
 		private class UnicodeSetMethodsContainer
 		{
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void uset_closeDelegate(IntPtr set);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -18,23 +18,23 @@ namespace Icu
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr uset_openPatternDelegate(string pattern, int patternLength,
-				ref ErrorCode status);
+				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_addDelegate(IntPtr set, char c);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int uset_toPatternDelegate(IntPtr set, IntPtr result, int resultCapacity,
-				bool escapeUnprintable, ref ErrorCode status);
+				bool escapeUnprintable, out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate void uset_addStringDelegate(IntPtr set, string str, int strLen);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int uset_getItemDelegate(IntPtr set, int itemIndex, out int start,
-				out int end, IntPtr str, int strCapacity, ref ErrorCode ec);
+				out int end, IntPtr str, int strCapacity, out ErrorCode ec);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int uset_getItemCountDelegate(IntPtr set);
 
 			internal uset_closeDelegate uset_close;
@@ -85,11 +85,11 @@ namespace Icu
 		/// <param name="patternLength">Length of the pattern, or -1 if null terminated</param>
 		/// <param name="status">The error code</param>
 		/// <returns>Unicode set</returns>
-		public static IntPtr uset_openPattern(string pattern, int patternLength, ref ErrorCode status)
+		public static IntPtr uset_openPattern(string pattern, int patternLength, out ErrorCode status)
 		{
 			if (UnicodeSetMethods.uset_openPattern == null)
 				UnicodeSetMethods.uset_openPattern = GetMethod<UnicodeSetMethodsContainer.uset_openPatternDelegate>(IcuCommonLibHandle, "uset_openPattern");
-			return UnicodeSetMethods.uset_openPattern(pattern, patternLength, ref status);
+			return UnicodeSetMethods.uset_openPattern(pattern, patternLength, out status);
 		}
 
 		/// <summary>
@@ -117,11 +117,11 @@ namespace Icu
 		/// <param name="status">Error code</param>
 		/// <returns>Length of string, possibly larger than resultCapacity</returns>
 		public static int uset_toPattern(IntPtr set, IntPtr result, int resultCapacity,
-			bool escapeUnprintable, ref ErrorCode status)
+			bool escapeUnprintable, out ErrorCode status)
 		{
 			if (UnicodeSetMethods.uset_toPattern == null)
 				UnicodeSetMethods.uset_toPattern = GetMethod<UnicodeSetMethodsContainer.uset_toPatternDelegate>(IcuCommonLibHandle, "uset_toPattern");
-			return UnicodeSetMethods.uset_toPattern(set, result, resultCapacity, escapeUnprintable, ref status);
+			return UnicodeSetMethods.uset_toPattern(set, result, resultCapacity, escapeUnprintable, out status);
 		}
 
 		/// <summary>
@@ -150,11 +150,11 @@ namespace Icu
 		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it
 		///  is the range *start..*end, or -1 if itemIndex is out of range</returns>
 		public static int uset_getItem(IntPtr set, int itemIndex, out int start,
-			out int end, IntPtr str, int strCapacity, ref ErrorCode ec)
+			out int end, IntPtr str, int strCapacity, out ErrorCode ec)
 		{
 			if (UnicodeSetMethods.uset_getItem == null)
 				UnicodeSetMethods.uset_getItem = GetMethod<UnicodeSetMethodsContainer.uset_getItemDelegate>(IcuCommonLibHandle, "uset_getItem");
-			return UnicodeSetMethods.uset_getItem(set, itemIndex, out start, out end, str, strCapacity, ref ec);
+			return UnicodeSetMethods.uset_getItem(set, itemIndex, out start, out end, str, strCapacity, out ec);
 		}
 
 		/// <summary>

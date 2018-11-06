@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013 SIL International
+// Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -38,9 +38,8 @@ namespace Icu.Tests
 		public void ToChar()
 		{
 			const string pattern = "[A-GH-NO-ST-Z{TZ}]";
-			IEnumerable<string> unicodeSet = UnicodeSet.ToCharacters(pattern);
 			IEnumerable<string> expected = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z TZ".Split(' ');
-			Assert.That(unicodeSet, Is.EqualTo(expected));
+			Assert.That(UnicodeSet.ToCharacters(pattern), Is.EqualTo(expected));
 		}
 
 		[Test]

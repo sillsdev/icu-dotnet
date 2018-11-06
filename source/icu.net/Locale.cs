@@ -246,47 +246,41 @@ namespace Icu
 			return new Locale(localeId);
 		}
 
+		/// <summary>
+		/// Gets the locale for the specified Win32 LCID value
+		/// </summary>
+		/// <param name="lcid">the Win32 LCID to translate </param>
+		/// <returns>The locale for the specified Win32 LCID value, or <c>null</c> in the
+		/// case of an error.</returns>
+		public static Locale GetLocaleForLCID(int lcid)
+		{
+			var localeId = GetString(NativeMethods.uloc_getLocaleForLCID, lcid);
+			return !string.IsNullOrEmpty(localeId) ? new Locale(localeId) : null;
+		}
+
 		#region ICU wrapper methods
 
-		private delegate int GetStringMethod(string localeID, IntPtr name,
+		private delegate int GetStringMethod<in T>(T localeId, IntPtr name,
 			int nameCapacity, out ErrorCode err);
 		private delegate int GetStringDisplayMethod(string localeID, string displayLocaleID, IntPtr name,
 			int nameCapacity, out ErrorCode err);
 
-		private static string GetString(GetStringMethod method, string localeId)
+		private static string GetString<T>(GetStringMethod<T> method, T localeId)
 		{
-			const int nSize = 255;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(nSize);
-			try
+			return NativeMethods.GetAnsiString((ptr, length) =>
 			{
-				ErrorCode err;
-				method(localeId, resPtr, nSize, out err);
-				if (!Failure(err))
-					return Marshal.PtrToStringAnsi(resPtr);
-				return string.Empty;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+				length = method(localeId, ptr, length, out var err);
+				return new Tuple<ErrorCode, int>(err, length);
+			});
 		}
 
 		private static string GetString(GetStringDisplayMethod method, string localeId, string displayLocaleId)
 		{
-			const int nSize = 255;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(nSize * 2);
-			try
+			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				ErrorCode err;
-				method(localeId, displayLocaleId, resPtr, nSize, out err);
-				if (!Failure(err))
-					return Marshal.PtrToStringUni(resPtr);
-				return string.Empty;
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
+				length = method(localeId, displayLocaleId, ptr, length, out var err);
+				return new Tuple<ErrorCode, int>(err, length);
+			});
 		}
 
 		/// <summary>
@@ -295,11 +289,6 @@ namespace Icu
 		private static string Canonicalize(string localeID)
 		{
 			return GetString(NativeMethods.uloc_canonicalize, localeID);
-		}
-
-		private static bool Failure(ErrorCode err)
-		{
-			return (int)err > (int)ErrorCode.ZERO_ERROR;
 		}
 		#endregion
 	}
