@@ -1,7 +1,9 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Icu.BreakIterators;
 
 namespace Icu
 {
@@ -12,7 +14,7 @@ namespace Icu
 	/// as described here: http://userguide.icu-project.org/boundaryanalysis
 	/// for all UBreakIteratorTypes (including UBreakIteratorType.Word).
 	/// </summary>
-	public abstract class BreakIterator : IDisposable
+	public abstract class BreakIterator : IDisposable, IEnumerable<string>
 	{
 		/// <summary>
 		/// The possible types of text boundaries.
@@ -50,7 +52,7 @@ namespace Icu
 			/// <summary>
 			/// Upper bound for tags for uncategorized words.
 			/// </summary>
-			NONE_LIMIT     = 100,
+			NONE_LIMIT     = NUMBER,
 			/// <summary>
 			/// Tag value for words that appear to be numbers, lower limit.
 			/// </summary>
@@ -58,7 +60,7 @@ namespace Icu
 			/// <summary>
 			/// Tag value for words that appear to be numbers, upper limit.
 			/// </summary>
-			NUMBER_LIMIT   = 200,
+			NUMBER_LIMIT   = LETTER,
 			/// <summary>
 			/// Tag value for words that contain letters, excluding hiragana,
 			/// katakana or ideographic characters, lower limit.
@@ -67,7 +69,7 @@ namespace Icu
 			/// <summary>
 			/// Tag value for words containing letters, upper limit.
 			/// </summary>
-			LETTER_LIMIT   = 300,
+			LETTER_LIMIT   = KANA,
 			/// <summary>
 			/// Tag value for words containing kana characters, lower limit.
 			/// </summary>
@@ -75,7 +77,7 @@ namespace Icu
 			/// <summary>
 			/// Tag value for words containing kana characters, upper limit.
 			/// </summary>
-			KANA_LIMIT     = 400,
+			KANA_LIMIT     = IDEO,
 			/// <summary>
 			/// Tag value for words containing ideographic characters, lower limit.
 			/// </summary>
@@ -104,7 +106,7 @@ namespace Icu
 			/// <summary>
 			/// Upper bound for soft line breaks.
 			/// </summary>
-			SOFT_LIMIT      = 100,
+			SOFT_LIMIT      = HARD,
 			/// <summary>
 			/// Tag value for a hard, or mandatory line break
 			/// </summary>
@@ -134,7 +136,7 @@ namespace Icu
 			/// <summary>
 			/// Upper bound for tags for sentences ended by sentence terminators.
 			/// </summary>
-			TERM_LIMIT = 100,
+			TERM_LIMIT = SEP,
 			/// <summary>
 			/// Tag value for sentences that do not contain an ending
 			/// sentence terminator ('.', '?', '!', etc.) character, but
@@ -328,6 +330,11 @@ namespace Icu
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The text.</param>
 		/// <returns>The tokens.</returns>
+		/// <remarks>
+		/// If you want to get tokens for spaces and punctuations (as described
+		/// in http://userguide.icu-project.org/boundaryanalysis), consider using
+		/// <see cref="BreakIterator.GetEnumerator()"/>.
+		/// </remarks>
 		public static IEnumerable<string> Split(UBreakIteratorType type, string locale, string text)
 		{
 			return Split(type, new Locale(locale), text);
@@ -341,6 +348,11 @@ namespace Icu
 		/// <param name="locale">The locale.</param>
 		/// <param name="text">The text.</param>
 		/// <returns>The tokens.</returns>
+		/// <remarks>
+		/// If you want to get tokens for spaces and punctuations (as described
+		/// in http://userguide.icu-project.org/boundaryanalysis), consider using
+		/// <see cref="BreakIterator.GetEnumerator()"/>.
+		/// </remarks>
 		public static IEnumerable<string> Split(UBreakIteratorType type, Locale locale, string text)
 		{
 			if (string.IsNullOrEmpty(text))
@@ -455,5 +467,25 @@ namespace Icu
 		/// <param name="disposing">true to release managed and unmanaged
 		/// resources; false to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing) { }
+
+		/// <summary>
+		/// Retrieves an object that can iterate through the individual segments of
+		/// the text of this BreakIterator.
+		/// It iterates over boundaries as described in
+		/// http://userguide.icu-project.org/boundaryanalysis.
+		/// If you want to ignore spaces and punctuation, consider using:
+		/// <see cref="BreakIterator.Split(UBreakIteratorType, Icu.Locale, string)"/>
+		/// or <see cref="BreakIterator.GetWordBoundaries(Icu.Locale, string, bool)"/>,
+		/// </summary>
+		public IEnumerator<string> GetEnumerator()
+		{
+			return new BreakEnumerator(this);
+		}
+
+		/// <inheritdoc/>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
 	}
 }

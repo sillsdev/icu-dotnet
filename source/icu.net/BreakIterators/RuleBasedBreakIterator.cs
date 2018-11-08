@@ -106,12 +106,12 @@ namespace Icu
 		/// <summary>
 		/// Gets the locale for this BreakIterator.
 		/// </summary>
-		public override Locale Locale { get { return _locale; } }
+		public override Locale Locale => _locale;
 
 		/// <summary>
 		/// Gets the text being examined by this BreakIterator.
 		/// </summary>
-		public override string Text { get { return _text; } }
+		public override string Text => _text;
 
 		/// <summary>
 		/// Determine the most recently-returned text boundary.

@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - partially implemented ResourceBundle class
 - partially implemented CodepageConversion class
 - partially implemented MessageFormatter and Transliterator classes
+- add BreakIterator.GetEnumerator() method and BreakEnumerator class to allow
+  enumerating over word segments as described in the ICU user guide (the
+  existing method BreakIterator.Split ignores spaces and punctuation)
 
 ### Changed
 

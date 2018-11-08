@@ -1,6 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -10,37 +11,13 @@ namespace Icu.Tests
 	[Category("Full ICU")]
 	public class BreakIteratorTests
 	{
-		[Test]
-		public void Split_Character()
+		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER, "abc", ExpectedResult = new[] { "a", "b", "c"})]
+		[TestCase(BreakIterator.UBreakIteratorType.WORD, "Aa Bb. Cc", ExpectedResult = new[] { "Aa", "Bb", "Cc"})]
+		[TestCase(BreakIterator.UBreakIteratorType.LINE, "Aa Bb. Cc", ExpectedResult = new[] { "Aa ", "Bb. ", "Cc"})]
+		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, "Aa bb. Cc 3.5 x? Y?x! Z", ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z"})]
+		public IEnumerable<string> Split(BreakIterator.UBreakIteratorType type, string text)
 		{
-			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.CHARACTER, "en-US", "abc");
-
-			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "a", "b", "c"}));
-		}
-
-		[Test]
-		public void Split_Word()
-		{
-			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.WORD, "en-US", "Aa Bb. Cc");
-			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa", "Bb", "Cc"}));
-		}
-
-		[Test]
-		public void Split_Line()
-		{
-			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.LINE, "en-US", "Aa Bb. Cc");
-			Assert.That(parts.Count(), Is.EqualTo(3));
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa ", "Bb. ", "Cc"}));
-		}
-
-		[Test]
-		public void Split_Sentence()
-		{
-			var parts = BreakIterator.Split(BreakIterator.UBreakIteratorType.SENTENCE, "en-US", "Aa bb. Cc 3.5 x? Y?x! Z");
-			Assert.That(parts.ToArray(), Is.EquivalentTo(new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ","Z"}));
-			Assert.That(parts.Count(), Is.EqualTo(5));
+			return BreakIterator.Split(type, "en-US", text);
 		}
 
 		[Test]
@@ -532,7 +509,6 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
 		[TestCase(-1, false, 0)]
 		[TestCase(21, false, 20)]
 		[TestCase(11, false, 14)]
@@ -555,7 +531,6 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
 		[TestCase(-10, 0, 0)] // Offset < 0 returns the first offset.
 		[TestCase(0, 22, 22)] // Offset equals to the first offset should give the 2nd offset.
 		[TestCase(75, BreakIterator.DONE, 70)]
@@ -578,7 +553,6 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
 		[TestCase(-10, 0, 0)]
 		[TestCase(0, BreakIterator.DONE, 0)]
 		[TestCase(10, BreakIterator.DONE, 0)]
@@ -597,7 +571,6 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
 		[TestCase(-1, 0, 0)] // Offset < 0 returns the first offset.
 		[TestCase(0, BreakIterator.DONE, 0)]
 		[TestCase(25, 20, 20)] // Offset > length of text should return last offset.
@@ -620,7 +593,6 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
 		[TestCase(0, BreakIterator.DONE, 0)]
 		[TestCase(-5, 0, 0)]
 		[TestCase(10, 0, 0)]
@@ -661,6 +633,25 @@ namespace Icu.Tests
 					Assert.That(clone.Text, Is.EqualTo(text));
 					Assert.That(clone.Boundaries, Is.Not.EquivalentTo(bi.Boundaries));
 				}
+			}
+		}
+
+		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER, ExpectedResult = new[] { "A","a"," ","b","b","."," ","C","c"," ","3",".","5"," ","x","?"," ","Y","?","x","!"," ","Z"})]
+		[TestCase(BreakIterator.UBreakIteratorType.WORD, ExpectedResult = new[] { "Aa"," ","bb","."," ","Cc"," ","3.5"," ","x","?"," ","Y","?","x","!"," ","Z"})]
+		[TestCase(BreakIterator.UBreakIteratorType.LINE, ExpectedResult = new[] { "Aa ", "bb. ", "Cc ", "3.5 ", "x? ", "Y?", "x! ", "Z"})]
+		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z"})]
+		public List<string> GetEnumerator(BreakIterator.UBreakIteratorType type)
+		{
+			using (var breakIterator = new RuleBasedBreakIterator(type, "en-US"))
+			{
+				breakIterator.SetText("Aa bb. Cc 3.5 x? Y?x! Z");
+				var result = new List<string>();
+				foreach (var s in breakIterator)
+				{
+					result.Add(s);
+				}
+
+				return result;
 			}
 		}
 
