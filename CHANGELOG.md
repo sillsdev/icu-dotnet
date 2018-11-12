@@ -28,10 +28,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - add BreakIterator.GetEnumerator() method and BreakEnumerator class to allow
   enumerating over word segments as described in the ICU user guide (the
   existing method BreakIterator.Split ignores spaces and punctuation)
+- Wrapper.MinSupportedIcuVersion and Wrapper.MaxSupportedIcuVersion constants
 
 ### Changed
 
 - output error on Linux if unmanaged libraries can't be loaded
+- allow to confine version number after initialization. In this case we internally
+  do a reset and re-initialize with the new version number.
 
 ## [2.4.0] - 2018-10-24
 

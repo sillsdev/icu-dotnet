@@ -7,8 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Icu.Collation;
-using Icu.Normalization;
 
 namespace Icu
 {
@@ -16,30 +14,34 @@ namespace Icu
 	{
 		private static readonly object _lock = new object();
 
-		private const int MinIcuVersionDefault = 44;
-		private const int MaxIcuVersionDefault = 70;
-		private static int minIcuVersion = MinIcuVersionDefault;
-		private static int maxIcuVersion = MaxIcuVersionDefault;
+		internal static int MinIcuVersion { get; private set; } = Wrapper.MinSupportedIcuVersion;
+		internal static int MaxIcuVersion { get; private set; } = Wrapper.MaxSupportedIcuVersion;
 
-		public static void SetMinMaxIcuVersions(int minVersion = MinIcuVersionDefault,
-			int maxVersion = MaxIcuVersionDefault)
+		public static void SetMinMaxIcuVersions(int minVersion = Wrapper.MinSupportedIcuVersion,
+			int maxVersion = Wrapper.MaxSupportedIcuVersion)
 		{
-			if (minVersion < MinIcuVersionDefault || minVersion > MaxIcuVersionDefault)
+			if (minVersion < Wrapper.MinSupportedIcuVersion || minVersion > Wrapper.MaxSupportedIcuVersion)
 			{
 				throw new ArgumentOutOfRangeException(nameof(minVersion),
-					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
+					$"supported ICU versions are between {Wrapper.MinSupportedIcuVersion} and {Wrapper.MaxSupportedIcuVersion}");
 			}
-			if (maxVersion < MinIcuVersionDefault || maxVersion > MaxIcuVersionDefault)
+			if (maxVersion < Wrapper.MinSupportedIcuVersion || maxVersion > Wrapper.MaxSupportedIcuVersion)
 			{
 				throw new ArgumentOutOfRangeException(nameof(maxVersion),
-					$"supported ICU versions are between {MinIcuVersionDefault} and {MaxIcuVersionDefault}");
+					$"supported ICU versions are between {Wrapper.MinSupportedIcuVersion} and {Wrapper.MaxSupportedIcuVersion}");
 			}
 
 			lock (_lock)
 			{
-				minIcuVersion = Math.Min(minVersion, maxVersion);
-				maxIcuVersion = Math.Max(minVersion, maxVersion);
+				MinIcuVersion = Math.Min(minVersion, maxVersion);
+				MaxIcuVersion = Math.Max(minVersion, maxVersion);
 			}
+
+			if (!IsInitialized)
+				return;
+
+			Cleanup();
+			Wrapper.Init();
 		}
 
 		private static MethodsContainer Methods;
@@ -243,7 +245,7 @@ namespace Icu
 				if (IcuVersion <= 0)
 					LocateIcuLibrary(libraryName);
 
-				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : maxIcuVersion);
+				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : MaxIcuVersion);
 				if (handle == IntPtr.Zero)
 				{
 					throw new FileLoadException($"Can't load ICU library (version {IcuVersion})",
@@ -255,7 +257,7 @@ namespace Icu
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
 		{
-			if (icuVersion < minIcuVersion)
+			if (icuVersion < MinIcuVersion)
 				return IntPtr.Zero;
 
 			IntPtr handle;

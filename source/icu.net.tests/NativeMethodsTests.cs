@@ -19,9 +19,9 @@ namespace Icu.Tests
 	{
 		private string _tmpDir;
 		private string _pathEnvironmentVariable;
-		private const string FullIcuLibraryVersion = "62.1";
-		private const string MinIcuLibraryVersion = "59.1";
-		private const string MinIcuLibraryVersionMajor = "59";
+		public const string FullIcuLibraryVersion = "62.1";
+		public const string MinIcuLibraryVersion = "59.1";
+		public const string MinIcuLibraryVersionMajor = "59";
 
 		private static void CopyFile(string srcPath, string dstDir)
 		{

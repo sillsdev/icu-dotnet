@@ -120,10 +120,9 @@ namespace Icu
 		private static bool TryGetPathFromAssemblyDirectory()
 		{
 			var assemblyDirectory = new DirectoryInfo(NativeMethods.DirectoryOfThisAssembly);
-			int version;
 
 			// 1. Check in {assemblyDirectory}/
-			if (TryGetIcuVersionNumber(assemblyDirectory, out version))
+			if (TryGetIcuVersionNumber(assemblyDirectory, out var version))
 			{
 				IcuVersion = new IcuVersionInfo(assemblyDirectory, version);
 				return true;
@@ -179,8 +178,12 @@ namespace Icu
 				.Select(x =>
 				{
 					var match = IcuBinaryRegex.Match(x.Name);
-					if (match.Success && int.TryParse(match.Groups["version"].Value, out var retVal))
+					if (match.Success &&
+						int.TryParse(match.Groups["version"].Value, out var retVal) &&
+						retVal >= NativeMethods.MinIcuVersion && retVal <= NativeMethods.MaxIcuVersion)
+					{
 						return retVal;
+					}
 
 					return new int?();
 				})

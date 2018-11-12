@@ -11,6 +11,9 @@ namespace Icu
 	/// </summary>
 	public static class Wrapper
 	{
+		public const int MinSupportedIcuVersion = 44;
+		public const int MaxSupportedIcuVersion = 70;
+
 		#region Public Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -73,8 +76,7 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		public static ErrorCode Init()
 		{
-			ErrorCode errorCode;
-			NativeMethods.u_init(out errorCode);
+			NativeMethods.u_init(out var errorCode);
 			return errorCode;
 		}
 

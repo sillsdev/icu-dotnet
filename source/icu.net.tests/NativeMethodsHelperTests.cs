@@ -1,6 +1,7 @@
 // Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.IO;
 using System.Reflection;
 using NUnit.Framework;
@@ -31,9 +32,9 @@ namespace Icu.Tests
 		{
 			// Trying to get the ICU version checks for filename, so we create a dummy file with
 			// a version number.
-			_filenameWindows = Path.Combine(NativeMethodsTests.OutputDirectory,"icuuc99.1.dll");
+			_filenameWindows = Path.Combine(NativeMethodsTests.OutputDirectory, $"icuuc{Wrapper.MaxSupportedIcuVersion}.dll");
 			File.WriteAllText(_filenameWindows, "just a dummy file");
-			_filenameLinux = Path.Combine(NativeMethodsTests.OutputDirectory,"libicuuc.so.99.1");
+			_filenameLinux = Path.Combine(NativeMethodsTests.OutputDirectory, $"libicuuc.so.{Wrapper.MaxSupportedIcuVersion}.1");
 			File.WriteAllText(_filenameLinux, "just a dummy file");
 		}
 
@@ -50,7 +51,7 @@ namespace Icu.Tests
 		{
 			Wrapper.Cleanup();
 			var result = CallGetIcuVersionInfoForNetCoreOrWindows();
-			Assert.That(result, Is.EqualTo(99));
+			Assert.That(result, Is.EqualTo(Wrapper.MaxSupportedIcuVersion));
 		}
 	}
 #endif
