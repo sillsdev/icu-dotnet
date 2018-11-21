@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
@@ -43,16 +43,19 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
-  <ItemGroup Condition="!$(TargetFramework.Contains('netstandard'))">
-    <!-- still missing GitVersionTask for netstandard! -->
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="GitVersionTask" Version="4.0.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="UtilPack.NuGet.MSBuild" Version="2.9.0" Condition="!$(TargetFramework.StartsWith('net4'))">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="UtilPack.NuGet.MSBuild" Version="2.8.0" Condition="$(TargetFramework.StartsWith('net4'))">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="SIL.ReleaseTasks" Version="2.0.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

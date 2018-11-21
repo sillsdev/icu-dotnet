@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - allow to confine version number after initialization. In this case we internally
   do a reset and re-initialize with the new version number.
 
+### Fixed
+
+- icu.net.dll for netstandard1.6 now has the correct version number (#72)
+
+
 ## [2.4.0] - 2018-10-24
 
 ### Known bug
