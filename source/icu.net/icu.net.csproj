@@ -56,7 +56,7 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <PackageReference Include="UtilPack.NuGet.MSBuild" Version="2.8.0" Condition="$(TargetFramework.StartsWith('net4'))">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SIL.ReleaseTasks" Version="2.0.2">
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.1.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
