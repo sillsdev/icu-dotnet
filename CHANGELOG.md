@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.5.0] - 2018-11-26
+
 ### Added
 
 - now supports case folding tokenizer (#88)
@@ -39,7 +41,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - icu.net.dll for netstandard1.6 now has the correct version number (#72)
-
 
 ## [2.4.0] - 2018-10-24
 
