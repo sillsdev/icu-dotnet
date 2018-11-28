@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- `AssemblyFileVersion` only changes when major or minor version number changes.
+
 ### Fixed
 
 - Set ErrorCode to `ErrorCode.NoErrors` before calling native methods. This fixes some
