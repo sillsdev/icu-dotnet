@@ -66,8 +66,9 @@ namespace Icu
 			var uset = NativeMethods.uset_openPattern(pattern, -1, out var err);
 			try
 			{
-				if (err != ErrorCode.NoErrors)
+				if (err.IsFailure())
 					throw new ArgumentException(nameof(pattern));
+
 				var output = new List<string>();
 
 				// Parse the number of items in the Unicode set
@@ -75,7 +76,8 @@ namespace Icu
 				for (var i = 0; i < itemCount; i++)
 				{
 					var strLength = NativeMethods.uset_getItem(uset, i, out var startChar, out var endChar, IntPtr.Zero, 0, out err);
-					if (strLength == 0)
+
+					if (strLength == 0 && err.IsSuccess())
 					{
 						// Add a character range to the set
 						for (var j = startChar; j <= endChar; j++)
