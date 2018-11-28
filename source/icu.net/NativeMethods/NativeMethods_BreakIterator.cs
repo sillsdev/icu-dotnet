@@ -86,6 +86,7 @@ namespace Icu
 		public static IntPtr ubrk_open(BreakIterator.UBreakIteratorType type,
 			string locale, string text, int textLength, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_open == null)
 				BreakIteratorMethods.ubrk_open = GetMethod<BreakIteratorMethodsContainer.ubrk_openDelegate>(IcuCommonLibHandle, "ubrk_open", true);
 			return BreakIteratorMethods.ubrk_open(type, locale, text, textLength, out errorCode);
@@ -106,6 +107,7 @@ namespace Icu
 			string text, int textLength,
 			out ParseError parseError, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_openRules == null)
 				BreakIteratorMethods.ubrk_openRules = GetMethod<BreakIteratorMethodsContainer.ubrk_openRulesDelegate>(IcuCommonLibHandle, "ubrk_openRules", true);
 			return BreakIteratorMethods.ubrk_openRules(rules, rulesLength, text, textLength, out parseError, out errorCode);
@@ -122,6 +124,7 @@ namespace Icu
 		public static IntPtr ubrk_safeClone(IntPtr bi, IntPtr stackBuffer, IntPtr bufferSize,
 			out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_safeClone == null)
 				BreakIteratorMethods.ubrk_safeClone = GetMethod<BreakIteratorMethodsContainer.ubrk_safeCloneDelegate>(IcuCommonLibHandle, "ubrk_safeClone", true);
 			return BreakIteratorMethods.ubrk_safeClone(bi, stackBuffer, bufferSize, out errorCode);
@@ -136,6 +139,7 @@ namespace Icu
 		/// <param name="errorCode">The error code</param>
 		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_setText == null)
 				BreakIteratorMethods.ubrk_setText = GetMethod<BreakIteratorMethodsContainer.ubrk_setTextDelegate>(IcuCommonLibHandle, "ubrk_setText", true);
 			BreakIteratorMethods.ubrk_setText(bi, text, textLength, out errorCode);
@@ -201,6 +205,7 @@ namespace Icu
 			int capacity,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_getRuleStatusVec == null)
 				BreakIteratorMethods.ubrk_getRuleStatusVec = GetMethod<BreakIteratorMethodsContainer.ubrk_getRuleStatusVecDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatusVec", true);
 			return BreakIteratorMethods.ubrk_getRuleStatusVec(bi, fillInVector, capacity, out status);

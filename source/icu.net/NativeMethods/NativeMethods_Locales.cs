@@ -105,7 +105,7 @@ namespace Icu
 			(_LocalesMethods = new LocalesMethodsContainer());
 
 		/// <summary>Get the ICU LCID for a locale</summary>
-		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)]string localeID)
+		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)] string localeID)
 		{
 			if (LocalesMethods.uloc_getLCID == null)
 				LocalesMethods.uloc_getLCID = GetMethod<LocalesMethodsContainer.uloc_getLCIDDelegate>(IcuCommonLibHandle, "uloc_getLCID");
@@ -115,6 +115,7 @@ namespace Icu
 		/// <summary>Gets the ICU locale ID for the specified Win32 LCID value. </summary>
 		public static int uloc_getLocaleForLCID(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getLocaleForLCID == null)
 				LocalesMethods.uloc_getLocaleForLCID = GetMethod<LocalesMethodsContainer.uloc_getLocaleForLCIDDelegate>(IcuCommonLibHandle, "uloc_getLocaleForLCID");
 			return LocalesMethods.uloc_getLocaleForLCID(lcid, locale, localeCapacity, out err);
@@ -122,7 +123,7 @@ namespace Icu
 
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
 		public static IntPtr uloc_getISO3Country(
-			[MarshalAs(UnmanagedType.LPStr)]string locale)
+			[MarshalAs(UnmanagedType.LPStr)] string locale)
 		{
 			if (LocalesMethods.uloc_getISO3Country == null)
 				LocalesMethods.uloc_getISO3Country = GetMethod<LocalesMethodsContainer.uloc_getISO3CountryDelegate>(IcuCommonLibHandle, "uloc_getISO3Country");
@@ -131,7 +132,7 @@ namespace Icu
 
 		/// <summary>Return the ISO 3 char value, if it exists</summary>
 		public static IntPtr uloc_getISO3Language(
-			[MarshalAs(UnmanagedType.LPStr)]string locale)
+			[MarshalAs(UnmanagedType.LPStr)] string locale)
 		{
 			if (LocalesMethods.uloc_getISO3Language == null)
 				LocalesMethods.uloc_getISO3Language = GetMethod<LocalesMethodsContainer.uloc_getISO3LanguageDelegate>(IcuCommonLibHandle, "uloc_getISO3Language");
@@ -177,6 +178,7 @@ namespace Icu
 		public static int uloc_getLanguage(string localeID, IntPtr language,
 			int languageCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getLanguage == null)
 				LocalesMethods.uloc_getLanguage = GetMethod<LocalesMethodsContainer.uloc_getLanguageDelegate>(IcuCommonLibHandle, "uloc_getLanguage");
 			return LocalesMethods.uloc_getLanguage(localeID, language, languageCapacity, out err);
@@ -195,6 +197,7 @@ namespace Icu
 		public static int uloc_getScript(string localeID, IntPtr script,
 			int scriptCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getScript == null)
 				LocalesMethods.uloc_getScript = GetMethod<LocalesMethodsContainer.uloc_getScriptDelegate>(IcuCommonLibHandle, "uloc_getScript");
 			return LocalesMethods.uloc_getScript(localeID, script, scriptCapacity, out err);
@@ -213,6 +216,7 @@ namespace Icu
 		public static int uloc_getCountry(string localeID, IntPtr country,
 			int countryCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getCountry == null)
 				LocalesMethods.uloc_getCountry = GetMethod<LocalesMethodsContainer.uloc_getCountryDelegate>(IcuCommonLibHandle, "uloc_getCountry");
 			return LocalesMethods.uloc_getCountry(localeID, country, countryCapacity, out err);
@@ -231,6 +235,7 @@ namespace Icu
 		public static int uloc_getVariant(string localeID, IntPtr variant,
 			int variantCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getVariant == null)
 				LocalesMethods.uloc_getVariant = GetMethod<LocalesMethodsContainer.uloc_getVariantDelegate>(IcuCommonLibHandle, "uloc_getVariant");
 			return LocalesMethods.uloc_getVariant(localeID, variant, variantCapacity, out err);
@@ -253,6 +258,7 @@ namespace Icu
 		public static int uloc_getDisplayName(string localeID, string inLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayName == null)
 				LocalesMethods.uloc_getDisplayName = GetMethod<LocalesMethodsContainer.uloc_getDisplayNameDelegate>(IcuCommonLibHandle, "uloc_getDisplayName");
 			return LocalesMethods.uloc_getDisplayName(localeID, inLocaleID, result, maxResultSize, out err);
@@ -261,6 +267,7 @@ namespace Icu
 		public static int uloc_getDisplayLanguage(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayLanguage == null)
 				LocalesMethods.uloc_getDisplayLanguage = GetMethod<LocalesMethodsContainer.uloc_getDisplayLanguageDelegate>(IcuCommonLibHandle, "uloc_getDisplayLanguage");
 			return LocalesMethods.uloc_getDisplayLanguage(localeID, displayLocaleID, result, maxResultSize, out err);
@@ -269,6 +276,7 @@ namespace Icu
 		public static int uloc_getDisplayScript(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayScript == null)
 				LocalesMethods.uloc_getDisplayScript = GetMethod<LocalesMethodsContainer.uloc_getDisplayScriptDelegate>(IcuCommonLibHandle, "uloc_getDisplayScript");
 			return LocalesMethods.uloc_getDisplayScript(localeID, displayLocaleID, result, maxResultSize, out err);
@@ -277,6 +285,7 @@ namespace Icu
 		public static int uloc_getDisplayCountry(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayCountry == null)
 				LocalesMethods.uloc_getDisplayCountry = GetMethod<LocalesMethodsContainer.uloc_getDisplayCountryDelegate>(IcuCommonLibHandle, "uloc_getDisplayCountry");
 			return LocalesMethods.uloc_getDisplayCountry(localeID, displayLocaleID, result, maxResultSize, out err);
@@ -285,6 +294,7 @@ namespace Icu
 		public static int uloc_getDisplayVariant(string localeID, string displayLocaleID,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayVariant == null)
 				LocalesMethods.uloc_getDisplayVariant = GetMethod<LocalesMethodsContainer.uloc_getDisplayVariantDelegate>(IcuCommonLibHandle, "uloc_getDisplayVariant");
 			return LocalesMethods.uloc_getDisplayVariant(localeID, displayLocaleID, result, maxResultSize, out err);
@@ -293,6 +303,7 @@ namespace Icu
 		public static int uloc_getName(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getName == null)
 				LocalesMethods.uloc_getName = GetMethod<LocalesMethodsContainer.uloc_getNameDelegate>(IcuCommonLibHandle, "uloc_getName");
 			return LocalesMethods.uloc_getName(localeID, name, nameCapacity, out err);
@@ -301,6 +312,7 @@ namespace Icu
 		public static int uloc_getBaseName(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getBaseName == null)
 				LocalesMethods.uloc_getBaseName = GetMethod<LocalesMethodsContainer.uloc_getBaseNameDelegate>(IcuCommonLibHandle, "uloc_getBaseName");
 			return LocalesMethods.uloc_getBaseName(localeID, name, nameCapacity, out err);
@@ -309,6 +321,7 @@ namespace Icu
 		public static int uloc_canonicalize(string localeID, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_canonicalize == null)
 				LocalesMethods.uloc_canonicalize = GetMethod<LocalesMethodsContainer.uloc_canonicalizeDelegate>(IcuCommonLibHandle, "uloc_canonicalize");
 			var res = LocalesMethods.uloc_canonicalize(localeID, name, nameCapacity, out err);

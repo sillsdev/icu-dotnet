@@ -29,6 +29,7 @@ namespace Icu
 
 		public static SafeEnumeratorHandle ucnv_openAllNames(out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (CodepageConversionMethods.ucnv_openAllNames == null)
 				CodepageConversionMethods.ucnv_openAllNames = GetMethod<CodepageConversionMethodsContainer.ucnv_openAllNamesDelegate>(IcuCommonLibHandle, nameof(ucnv_openAllNames));
 			return CodepageConversionMethods.ucnv_openAllNames(out err);
@@ -36,6 +37,7 @@ namespace Icu
 
 		public static IntPtr ucnv_getStandardName(string name, string standard, out ErrorCode err)
 		{
+			err = ErrorCode.NoErrors;
 			if (CodepageConversionMethods.ucnv_getStandardName == null)
 				CodepageConversionMethods.ucnv_getStandardName = GetMethod<CodepageConversionMethodsContainer.ucnv_getStandardNameDelegate>(IcuCommonLibHandle, nameof(ucnv_getStandardName));
 			return CodepageConversionMethods.ucnv_getStandardName(name, standard, out err);

@@ -112,6 +112,7 @@ namespace Icu
 			[MarshalAs(UnmanagedType.LPStr)] string loc,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_open == null)
 				CollatorMethods.ucol_open = GetMethod<CollatorMethodsContainer.ucol_openDelegate>(IcuI18NLibHandle, "ucol_open");
 			return CollatorMethods.ucol_open(loc, out status);
@@ -142,6 +143,7 @@ namespace Icu
 			ref ParseError parseError,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_openRules == null)
 				CollatorMethods.ucol_openRules = GetMethod<CollatorMethodsContainer.ucol_openRulesDelegate>(IcuI18NLibHandle, "ucol_openRules");
 			return CollatorMethods.ucol_openRules(rules, rulesLength, normalizationMode, strength, ref parseError,
@@ -179,9 +181,9 @@ namespace Icu
 		public static CollationResult ucol_strcoll(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			[MarshalAs(UnmanagedType.LPWStr)] string source,
-			Int32 sourceLength,
+			int sourceLength,
 			[MarshalAs(UnmanagedType.LPWStr)] string target,
-			Int32 targetLength)
+			int targetLength)
 		{
 			if (CollatorMethods.ucol_strcoll == null)
 				CollatorMethods.ucol_strcoll = GetMethod<CollatorMethodsContainer.ucol_strcollDelegate>(IcuI18NLibHandle, "ucol_strcoll");
@@ -196,7 +198,7 @@ namespace Icu
 		 * @see ucol_getAvailable
 		 * @stable ICU 2.0
 		 */
-		public static Int32 ucol_countAvailable()
+		public static int ucol_countAvailable()
 		{
 			if (CollatorMethods.ucol_countAvailable == null)
 				CollatorMethods.ucol_countAvailable = GetMethod<CollatorMethodsContainer.ucol_countAvailableDelegate>(IcuI18NLibHandle, "ucol_countAvailable");
@@ -213,6 +215,7 @@ namespace Icu
 		 */
 		public static SafeEnumeratorHandle ucol_openAvailableLocales(out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_openAvailableLocales == null)
 				CollatorMethods.ucol_openAvailableLocales = GetMethod<CollatorMethodsContainer.ucol_openAvailableLocalesDelegate>(IcuI18NLibHandle, "ucol_openAvailableLocales");
 			return CollatorMethods.ucol_openAvailableLocales(out status);
@@ -230,12 +233,10 @@ namespace Icu
 		 * @see ucol_keyHashCode
 		 * @stable ICU 2.0
 		 */
-		public static Int32 ucol_getSortKey(
+		public static int ucol_getSortKey(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-			[MarshalAs(UnmanagedType.LPWStr)] string source,
-			Int32 sourceLength,
-			[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result,
-			Int32 resultLength)
+			[MarshalAs(UnmanagedType.LPWStr)] string source, int sourceLength,
+			[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result, int resultLength)
 		{
 			if (CollatorMethods.ucol_getSortKey == null)
 				CollatorMethods.ucol_getSortKey = GetMethod<CollatorMethodsContainer.ucol_getSortKeyDelegate>(IcuI18NLibHandle, "ucol_getSortKey");
@@ -259,6 +260,7 @@ namespace Icu
 			CollationAttributeValue value,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_setAttribute == null)
 				CollatorMethods.ucol_setAttribute = GetMethod<CollatorMethodsContainer.ucol_setAttributeDelegate>(IcuI18NLibHandle, "ucol_setAttribute");
 			CollatorMethods.ucol_setAttribute(collator, attr, value, out status);
@@ -280,6 +282,7 @@ namespace Icu
 			CollationAttribute attr,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_getAttribute == null)
 				CollatorMethods.ucol_getAttribute = GetMethod<CollatorMethodsContainer.ucol_getAttributeDelegate>(IcuI18NLibHandle, "ucol_getAttribute");
 			return CollatorMethods.ucol_getAttribute(collator, attr, out status);
@@ -310,9 +313,10 @@ namespace Icu
 		public static RuleBasedCollator.SafeRuleBasedCollatorHandle ucol_safeClone(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
 			IntPtr stackBuffer,
-			ref Int32 pBufferSize,
+			ref int pBufferSize,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_safeClone == null)
 				CollatorMethods.ucol_safeClone = GetMethod<CollatorMethodsContainer.ucol_safeCloneDelegate>(IcuI18NLibHandle, "ucol_safeClone");
 			return CollatorMethods.ucol_safeClone(collator, stackBuffer, ref pBufferSize, out status);
@@ -345,6 +349,7 @@ namespace Icu
 			LocaleType type,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_getLocaleByType == null)
 				CollatorMethods.ucol_getLocaleByType = GetMethod<CollatorMethodsContainer.ucol_getLocaleByTypeDelegate>(IcuI18NLibHandle, "ucol_getLocaleByType");
 			return CollatorMethods.ucol_getLocaleByType(collator, type, out status);
@@ -353,8 +358,7 @@ namespace Icu
 		public static int ucol_getRulesEx(
 			RuleBasedCollator.SafeRuleBasedCollatorHandle coll,
 			UColRuleOption delta,
-			IntPtr buffer,
-			int bufferLen)
+			IntPtr buffer, int bufferLen)
 		{
 			if (CollatorMethods.ucol_getRulesEx == null)
 				CollatorMethods.ucol_getRulesEx = GetMethod<CollatorMethodsContainer.ucol_getRulesExDelegate>(IcuI18NLibHandle, "ucol_getRulesEx");
@@ -365,6 +369,7 @@ namespace Icu
 			UColBoundMode boundType, int noOfLevels, byte[] result, int resultLength,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (CollatorMethods.ucol_getBound == null)
 				CollatorMethods.ucol_getBound = GetMethod<CollatorMethodsContainer.ucol_getBoundDelegate>(IcuI18NLibHandle, "ucol_getBound");
 			return CollatorMethods.ucol_getBound(source, sourceLength, boundType, noOfLevels, result, resultLength, out status);

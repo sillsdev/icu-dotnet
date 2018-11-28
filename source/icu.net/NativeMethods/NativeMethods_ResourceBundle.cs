@@ -73,6 +73,7 @@ namespace Icu
 		/// <summary/>
 		public static IntPtr ures_open(string packageName, string locale, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_open == null)
 			{
 				ResourceBundleMethods.ures_open = GetMethod<ResourceBundleMethodsContainer.ures_openDelegate>(
@@ -109,6 +110,7 @@ namespace Icu
 		/// <summary/>
 		public static IntPtr ures_getString(IntPtr resourceBundle, out int len, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getString == null)
 			{
 				ResourceBundleMethods.ures_getString = GetMethod<ResourceBundleMethodsContainer.ures_getStringDelegate>(
@@ -121,6 +123,7 @@ namespace Icu
 		/// <summary/>
 		public static IntPtr ures_getLocale(IntPtr resourceBundle, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getLocale == null)
 			{
 				ResourceBundleMethods.ures_getLocale = GetMethod<ResourceBundleMethodsContainer.ures_getLocaleDelegate>(
@@ -134,6 +137,7 @@ namespace Icu
 		public static IntPtr ures_getByKey(IntPtr resourceBundle, string key, IntPtr fillIn,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getByKey == null)
 			{
 				ResourceBundleMethods.ures_getByKey = GetMethod<ResourceBundleMethodsContainer.ures_getByKeyDelegate>(
@@ -147,6 +151,7 @@ namespace Icu
 		public static IntPtr ures_getStringByKey(IntPtr resourceBundle, string key, out int len,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getStringByKey == null)
 			{
 				ResourceBundleMethods.ures_getStringByKey = GetMethod<ResourceBundleMethodsContainer.ures_getStringByKeyDelegate>(
@@ -172,6 +177,7 @@ namespace Icu
 		public static IntPtr ures_getNextString(IntPtr resourceBundle, out int len,
 			out IntPtr key, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getNextString == null)
 			{
 				ResourceBundleMethods.ures_getNextString = GetMethod<ResourceBundleMethodsContainer.ures_getNextStringDelegate>(
@@ -185,6 +191,7 @@ namespace Icu
 		public static IntPtr ures_getNextResource(IntPtr resourceBundle, IntPtr fillIn,
 			out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getNextResource == null)
 			{
 				ResourceBundleMethods.ures_getNextResource = GetMethod<ResourceBundleMethodsContainer.ures_getNextResourceDelegate>(

@@ -45,6 +45,7 @@ namespace Icu
 		public static IntPtr uregex_open(string pattern, int patternLength,uint flags,
 			out ParseError parseError, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (RegexMethods.uregex_open == null)
 				RegexMethods.uregex_open = GetMethod<RegexMethodsContainer.uregex_openDelegate>(IcuI18NLibHandle, "uregex_open", true);
 			return RegexMethods.uregex_open(pattern, patternLength, flags, out parseError, out errorCode);
@@ -53,27 +54,24 @@ namespace Icu
 		/// <summary>
 		/// Attempts to match the input string against the pattern.
 		/// </summary>
-		public static bool uregex_matches(
-			IntPtr regexp,
-			int startIndex,
-			out ErrorCode errorCode)
+		public static bool uregex_matches(IntPtr regexp, int startIndex, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (RegexMethods.uregex_matches == null)
 				RegexMethods.uregex_matches = GetMethod<RegexMethodsContainer.uregex_matchesDelegate>(IcuI18NLibHandle, "uregex_matches", true);
 			return RegexMethods.uregex_matches(regexp, startIndex, out errorCode);
 		}
-		public static void uregex_setText(
-			IntPtr regexp,
-			string text, int textLength,
+
+		public static void uregex_setText(IntPtr regexp, string text, int textLength,
 			out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (RegexMethods.uregex_setText == null)
 				RegexMethods.uregex_setText = GetMethod<RegexMethodsContainer.uregex_setTextDelegate>(IcuI18NLibHandle, "uregex_setText", true);
 			RegexMethods.uregex_setText(regexp, text, textLength, out errorCode);
 		}
 
-		public static void uregex_close(
-			IntPtr regexp)
+		public static void uregex_close(IntPtr regexp)
 		{
 			if (RegexMethods.uregex_close == null)
 				RegexMethods.uregex_close = GetMethod<RegexMethodsContainer.uregex_closeDelegate>(IcuI18NLibHandle, "uregex_close", true);

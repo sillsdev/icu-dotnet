@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Set ErrorCode to `ErrorCode.NoErrors` before calling native methods. This fixes some
+  strange and hard-to-debug errors.
+
 ## [2.5.0] - 2018-11-26
 
 ### Added

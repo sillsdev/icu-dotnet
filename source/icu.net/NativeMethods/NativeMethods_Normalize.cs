@@ -81,6 +81,7 @@ namespace Icu
 			Normalizer.UNormalizationMode mode, int options,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm_normalize == null)
 				NormalizeMethods.unorm_normalize = GetMethod<NormalizeMethodsContainer.unorm_normalizeDelegate>(IcuCommonLibHandle, "unorm_normalize");
 			return NormalizeMethods.unorm_normalize(source, sourceLength, mode, options, result,
@@ -95,6 +96,7 @@ namespace Icu
 		public static byte unorm_isNormalized(string source, int sourceLength,
 			Normalizer.UNormalizationMode mode, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm_isNormalized == null)
 				NormalizeMethods.unorm_isNormalized = GetMethod<NormalizeMethodsContainer.unorm_isNormalizedDelegate>(IcuCommonLibHandle, "unorm_isNormalized");
 			return NormalizeMethods.unorm_isNormalized(source, sourceLength, mode, out errorCode);
@@ -112,6 +114,7 @@ namespace Icu
 		public static IntPtr unorm2_getInstance(string packageName, string name,
 			Normalizer2.Mode mode, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm2_getInstance == null)
 			{
 				NormalizeMethods.unorm2_getInstance = GetMethod<NormalizeMethodsContainer.unorm2_getInstanceDelegate>(
@@ -126,6 +129,7 @@ namespace Icu
 		public static int unorm2_normalize(IntPtr norm2, string source, int sourceLength,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm2_normalize == null)
 			{
 				NormalizeMethods.unorm2_normalize = GetMethod<NormalizeMethodsContainer.unorm2_normalizeDelegate>(
@@ -148,6 +152,7 @@ namespace Icu
 		public static bool unorm2_isNormalized(IntPtr norm2, string source, int sourceLength,
 			out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm2_isNormalized == null)
 			{
 				NormalizeMethods.unorm2_isNormalized = GetMethod<NormalizeMethodsContainer.unorm2_isNormalizedDelegate>(
@@ -184,6 +189,7 @@ namespace Icu
 		public static int unorm2_getDecomposition(IntPtr norm2, int c, IntPtr decomposition,
 			int capacity, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm2_getDecomposition == null)
 			{
 				NormalizeMethods.unorm2_getDecomposition = GetMethod<NormalizeMethodsContainer.unorm2_getDecompositionDelegate>(
@@ -197,6 +203,7 @@ namespace Icu
 		public static int unorm2_getRawDecomposition(IntPtr norm2, int c, IntPtr decomposition,
 			int capacity, out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (NormalizeMethods.unorm2_getRawDecomposition == null)
 			{
 				NormalizeMethods.unorm2_getRawDecomposition = GetMethod<NormalizeMethodsContainer.unorm2_getRawDecompositionDelegate>(

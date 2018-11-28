@@ -46,6 +46,7 @@ namespace Icu
 		/// <summary/>
 		public static IntPtr umsg_open(string pattern, int patternLen, string locale, out ParseError parseError, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (MessageFormatMethods.umsg_open == null)
 				MessageFormatMethods.umsg_open = GetMethod<MessageFormatMethodsContainer.umsg_openDelegate>(IcuI18NLibHandle, nameof(umsg_open), true);
 			return MessageFormatMethods.umsg_open(pattern, patternLen, locale, out parseError, out status);
@@ -70,6 +71,7 @@ namespace Icu
 		/// <summary/>
 		public static int umsg_toPattern(IntPtr format, IntPtr result, int resultLen, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (MessageFormatMethods.umsg_toPattern == null)
 				MessageFormatMethods.umsg_toPattern = GetMethod<MessageFormatMethodsContainer.umsg_toPatternDelegate>(IcuI18NLibHandle, nameof(umsg_toPattern), true);
 			return MessageFormatMethods.umsg_toPattern(format, result, resultLen, out status);

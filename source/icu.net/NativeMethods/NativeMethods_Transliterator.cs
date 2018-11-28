@@ -28,6 +28,7 @@ namespace Icu
 		/// <summary/>
 		public static SafeEnumeratorHandle utrans_openIDs(out ErrorCode errorCode)
 		{
+			errorCode = ErrorCode.NoErrors;
 			if (TransliteratorMethods.utrans_openIDs == null)
 				TransliteratorMethods.utrans_openIDs = GetMethod<TransliteratorMethodsContainer.utrans_openIDsDelegate>(IcuI18NLibHandle, nameof(utrans_openIDs), true);
 			return TransliteratorMethods.utrans_openIDs(out errorCode);

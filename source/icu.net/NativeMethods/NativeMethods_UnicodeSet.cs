@@ -87,6 +87,7 @@ namespace Icu
 		/// <returns>Unicode set</returns>
 		public static IntPtr uset_openPattern(string pattern, int patternLength, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (UnicodeSetMethods.uset_openPattern == null)
 				UnicodeSetMethods.uset_openPattern = GetMethod<UnicodeSetMethodsContainer.uset_openPatternDelegate>(IcuCommonLibHandle, "uset_openPattern");
 			return UnicodeSetMethods.uset_openPattern(pattern, patternLength, out status);
@@ -119,6 +120,7 @@ namespace Icu
 		public static int uset_toPattern(IntPtr set, IntPtr result, int resultCapacity,
 			bool escapeUnprintable, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (UnicodeSetMethods.uset_toPattern == null)
 				UnicodeSetMethods.uset_toPattern = GetMethod<UnicodeSetMethodsContainer.uset_toPatternDelegate>(IcuCommonLibHandle, "uset_toPattern");
 			return UnicodeSetMethods.uset_toPattern(set, result, resultCapacity, escapeUnprintable, out status);
@@ -146,15 +148,16 @@ namespace Icu
 		/// <param name="end">POinter to variable to receive the last character in range, inclusive</param>
 		/// <param name="str">Buffer to receive the string, may be NULL</param>
 		/// <param name="strCapacity">Capcacity of str, or 0 if str is NULL</param>
-		/// <param name="ec">Error Code</param>
+		/// <param name="status">Error Code</param>
 		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it
 		///  is the range *start..*end, or -1 if itemIndex is out of range</returns>
 		public static int uset_getItem(IntPtr set, int itemIndex, out int start,
-			out int end, IntPtr str, int strCapacity, out ErrorCode ec)
+			out int end, IntPtr str, int strCapacity, out ErrorCode status)
 		{
+			status = ErrorCode.NoErrors;
 			if (UnicodeSetMethods.uset_getItem == null)
 				UnicodeSetMethods.uset_getItem = GetMethod<UnicodeSetMethodsContainer.uset_getItemDelegate>(IcuCommonLibHandle, "uset_getItem");
-			return UnicodeSetMethods.uset_getItem(set, itemIndex, out start, out end, str, strCapacity, out ec);
+			return UnicodeSetMethods.uset_getItem(set, itemIndex, out start, out end, str, strCapacity, out status);
 		}
 
 		/// <summary>
