@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.5.1] - 2018-11-28
+
 ### Changed
 
 - `AssemblyFileVersion` only changes when major or minor version number changes.
