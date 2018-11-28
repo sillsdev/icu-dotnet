@@ -63,7 +63,7 @@ namespace Icu
 				return Enumerable.Empty<string>();
 			}
 
-			IntPtr result = NativeMethods.uset_openPattern(pattern, -1, out var err);
+			var uset = NativeMethods.uset_openPattern(pattern, -1, out var err);
 			try
 			{
 				if (err != ErrorCode.NoErrors)
@@ -71,9 +71,10 @@ namespace Icu
 				var output = new List<string>();
 
 				// Parse the number of items in the Unicode set
-				for (var i = 0; i < NativeMethods.uset_getItemCount(result); i++)
+				var itemCount = NativeMethods.uset_getItemCount(uset);
+				for (var i = 0; i < itemCount; i++)
 				{
-					var strLength = NativeMethods.uset_getItem(result, i, out var startChar, out var endChar, IntPtr.Zero, 0, out err);
+					var strLength = NativeMethods.uset_getItem(uset, i, out var startChar, out var endChar, IntPtr.Zero, 0, out err);
 					if (strLength == 0)
 					{
 						// Add a character range to the set
@@ -88,7 +89,7 @@ namespace Icu
 						var index = i;
 						output.Add(NativeMethods.GetUnicodeString((ptr, length) =>
 							{
-								length = NativeMethods.uset_getItem(result, index, out startChar,
+								length = NativeMethods.uset_getItem(uset, index, out startChar,
 									out endChar, ptr, length, out var errorCode);
 								return new Tuple<ErrorCode, int>(errorCode, length);
 							}, strLength * 2));
@@ -98,7 +99,7 @@ namespace Icu
 			}
 			finally
 			{
-				NativeMethods.uset_close(result);
+				NativeMethods.uset_close(uset);
 			}
 		}
 	}
