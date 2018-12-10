@@ -1,4 +1,4 @@
-assembly-file-versioning-scheme: MajorMinor
+assembly-versioning-scheme: MajorMinor
 mode: ContinuousDeployment
 branches:
   master:

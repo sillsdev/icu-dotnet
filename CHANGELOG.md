@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.5.2] - 2018-12-10
+
+### Changed
+
+- `AssemblyVersion` only changes when major or minor version number changes (instead
+  of `AssemblyFileVersion` accidentally introduced in previous patch version). This is
+  necessary so that the assembly signature doesn't change and icu.net.dll referenced in
+  a project can be replaced with a bugfix version without requiring to change the
+  binding redirect.
+
 ### Fixed
 
 - Ignore exceptions that might occur when releasing `SafeRuleBasedCollatorHandle` (but
