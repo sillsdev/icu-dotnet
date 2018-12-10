@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Ignore exceptions that might occur when releasing `SafeRuleBasedCollatorHandle` (but
+  generate a ReleaseHandleFailed Managed Debugging Assistant).
+
 ## [2.5.1] - 2018-11-28
 
 ### Changed

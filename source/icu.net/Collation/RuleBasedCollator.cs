@@ -36,10 +36,18 @@ namespace Icu.Collation
 #endif
 			protected override bool ReleaseHandle()
 			{
-				if (handle != IntPtr.Zero)
-					NativeMethods.ucol_close(handle);
-				handle = IntPtr.Zero;
-				return true;
+				try
+				{
+					if (handle != IntPtr.Zero)
+						NativeMethods.ucol_close(handle);
+					handle = IntPtr.Zero;
+					return true;
+				}
+				catch (Exception)
+				{
+					handle = IntPtr.Zero;
+					return false;
+				}
 			}
 
 			///<summary>
