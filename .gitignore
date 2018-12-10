@@ -2,6 +2,7 @@ build/Palaso.BuildTasks.dll
 build/Dependencies.files
 build/NuGet.exe
 build/nuget.exe
+build/packages/
 lib/
 output/
 bin/

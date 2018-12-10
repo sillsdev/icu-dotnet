@@ -17,46 +17,45 @@
 
 		<NuGetPackageDir Condition="'$(OS)'=='Windows_NT'">$(UserProfile)/.nuget/packages</NuGetPackageDir>
 		<NuGetPackageDir Condition="'$(OS)'!='Windows_NT'">$(Home)/.nuget/packages</NuGetPackageDir>
+
+		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
 	</PropertyGroup>
 
 	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
 	<!-- To increment the version number create and push a new tag in git -->
 
-	<UsingTask TaskName="NUnit3" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
 		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'"/>
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_agent_home_dir)/plugins/dotnetPlugin/bin/JetBrains.BuildServer.MSBuildLoggers.dll"
 		Condition=" '$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'!='true'"/>
+	<UsingTask TaskName="SIL.BuildTasks.UnitTestTasks.NUnit3"
+		AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 
 	<Import Project="NuGet.targets"/>
 
-	<ItemGroup>
-		<AllBuildDependencyTasksFiles Include="$(SolutionDir)/packages/BuildDependencyTasks*/**"/>
-		<AllBuildDependencyTasksDirs Include="@(AllBuildDependencyTasksFiles->'%(RootDir)%(Directory)')"/>
-	</ItemGroup>
-
-	<Target Name="RemoveOldBuildDependencyTaskPackages">
-		<!-- Delete BuildDependencyTasks.* package directories so that we end up with having only the desired version -->
-		<!-- NOTE: because of limited functionality of msbuild on Linux we always delete the directories even when we have only one. -->
-		<RemoveDir Directories="@(AllBuildDependencyTasksDirs)" />
-	</Target>
-
-	<Target Name="DownloadDependencies" DependsOnTargets="RemoveOldBuildDependencyTaskPackages;RestorePackages">
-		<MSBuild
-			Projects="DownloadDeps.targets"
-			Targets="DownloadDependenciesTarget"
-			Properties="Configuration=$(Configuration);RootDir=$(RootDir);SolutionDir=$(SolutionDir)" />
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+		<Message Text="RestartBuild=$(RestartBuild)"/>
+		<Message Text="MSBuildProjectDirectory=$(MSBuildProjectDirectory)"/>
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 	</Target>
 
 	<Target Name="Build">
+		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal" Properties="Configuration=$(Configuration);DotNetCLI=$(DotNetCLI);teamcity_version=$(teamcity_version);teamcity_agent_home_dir=$(teamcity_agent_home_dir)" Condition="$(RestartBuild)" />
+	</Target>
+
+	<Target Name="BuildInternal">
 		<CallTarget Targets="Clean"/>
 		<CallTarget Targets="Compile"/>
 		<Message Text="Build Complete"/>
 	</Target>
 
-	<Target Name="Compile" DependsOnTargets="DownloadDependencies;RestorePackages">
+	<Target Name="Compile" DependsOnTargets="RestorePackages">
 		<MSBuild Projects="$(SolutionPath)"
 			Targets="Rebuild"
 			Properties="Configuration=$(Configuration)" />
@@ -94,7 +93,7 @@
 			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net461/*tests.dll"/>
 		</ItemGroup>
 
-		<NUnit3 Assemblies="@(TestAssemblies)"
+		<SIL.BuildTasks.UnitTestTasks.NUnit3 Assemblies="@(TestAssemblies)"
 			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.8.0/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
@@ -109,9 +108,10 @@
 	<Target Name="RunNUnitNetCore">
 		<PropertyGroup>
 			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
+			<DotNetCommand Condition="'$(OS)'!='Windows_NT'">DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true $(DotNetCLI)</DotNetCommand>
+			<DotNetCommand Condition="'$(OS)'=='Windows_NT'">$(DotNetCLI)</DotNetCommand>
 		</PropertyGroup>
-		<Exec Command="$(DotNetCLI) run --configuration $(Configuration) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml"
-			WorkingDirectory="$(NetCoreTestRunner)" />
+		<Exec Command="$(DotNetCommand) run --configuration $(Configuration) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml" WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 
 	<Target Name="Restore">
