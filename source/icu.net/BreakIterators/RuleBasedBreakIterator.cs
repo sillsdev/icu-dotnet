@@ -427,42 +427,49 @@ namespace Icu
 			{
 				InitializeBreakIterator();
 			}
-			else
+
+			unsafe
 			{
-				ErrorCode err;
+				// Need to lock down the pointer to _text between calls to the unmanaged ICU
+				// code in case the GC kicks in and moves it.
+				fixed (char* p = _text)
+				{
+					ErrorCode err;
 
-				NativeMethods.ubrk_setText(_breakIterator, Text, Text.Length, out err);
+					NativeMethods.ubrk_setText(_breakIterator, Text, Text.Length, out err);
 
-				if (err.IsFailure())
-					throw new Exception("BreakIterator.ubrk_setText() failed with code " + err);
+					if (err.IsFailure())
+						throw new Exception(
+							"BreakIterator.ubrk_setText() failed with code " + err);
+
+					List<TextBoundary> textBoundaries = new List<TextBoundary>();
+
+					// Start at the the beginning of the text and iterate until all
+					// of the boundaries are consumed.
+					int cur = NativeMethods.ubrk_first(_breakIterator);
+
+					TextBoundary textBoundary;
+
+					if (!TryGetTextBoundaryFromOffset(cur, out textBoundary))
+						return;
+
+					textBoundaries.Add(textBoundary);
+
+					while (cur != DONE)
+					{
+						int next = NativeMethods.ubrk_next(_breakIterator);
+
+						if (!TryGetTextBoundaryFromOffset(next, out textBoundary))
+							break;
+
+						textBoundaries.Add(textBoundary);
+						cur = next;
+					}
+
+					_textBoundaries = textBoundaries.ToArray();
+					_currentIndex = 0;
+				}
 			}
-
-			List<TextBoundary> textBoundaries = new List<TextBoundary>();
-
-			// Start at the the beginning of the text and iterate until all
-			// of the boundaries are consumed.
-			int cur = NativeMethods.ubrk_first(_breakIterator);
-
-			TextBoundary textBoundary;
-
-			if (!TryGetTextBoundaryFromOffset(cur, out textBoundary))
-				return;
-
-			textBoundaries.Add(textBoundary);
-
-			while (cur != DONE)
-			{
-				int next = NativeMethods.ubrk_next(_breakIterator);
-
-				if (!TryGetTextBoundaryFromOffset(next, out textBoundary))
-					break;
-
-				textBoundaries.Add(textBoundary);
-				cur = next;
-			}
-
-			_textBoundaries = textBoundaries.ToArray();
-			_currentIndex = 0;
 		}
 
 		/// <summary>

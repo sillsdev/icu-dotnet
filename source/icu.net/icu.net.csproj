@@ -39,6 +39,9 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup >
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
