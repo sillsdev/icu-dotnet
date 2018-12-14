@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `BreakIterator.SetText` if break iterator hasn't been initialized before (emrobinson)
+- Fix random `AccessViolationException` in break iterator (#81) (emrobinson)
+
 ## [2.5.2] - 2018-12-10
 
 ### Changed
