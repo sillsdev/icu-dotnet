@@ -60,12 +60,6 @@ namespace Icu.Collation
 			{
 				get { return handle == IntPtr.Zero; }
 			}
-
-			protected override void Dispose(bool disposing)
-			{
-				base.Dispose(disposing);
-				ReleaseHandle();
-			}
 		}
 
 		private bool _disposingValue = false; // To detect redundant calls

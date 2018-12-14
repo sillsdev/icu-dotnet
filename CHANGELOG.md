@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- remove double call of dispose when disposing `RuleBasedCollator`
+
 ## [2.5.2] - 2018-12-10
 
 ### Changed
