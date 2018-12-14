@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- remove double call of dispose when disposing `RuleBasedCollator`
 - Fix `BreakIterator.SetText` if break iterator hasn't been initialized before (emrobinson)
 - Fix random `AccessViolationException` in break iterator (#81) (emrobinson)
 

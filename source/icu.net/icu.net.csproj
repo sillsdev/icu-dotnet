@@ -9,7 +9,7 @@
     <WarningLevel>4</WarningLevel>
     <Company>SIL International</Company>
     <Authors>SIL International</Authors>
-    <PackageLicenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
     <Copyright>Copyright © 2007-2018 SIL International</Copyright>
     <Description>icu.net is a C# Wrapper around ICU4C
@@ -17,9 +17,9 @@
 This version of icu.net works with (more or less) any version of ICU4C.
 
 NOTE: this package contains the managed wrapper part of icu.net. You'll also have to have the unmanaged binaries of ICU installed. On Linux it is recommended to install the official ICU package that comes with the system. On Windows you can install one of the binary nuget packages, e.g. Icu4c.Win.</Description>
-	  <AppendToReleaseNotesProperty><![CDATA[
+    <AppendToReleaseNotesProperty><![CDATA[
 See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGELOG.md.]]>
-	  </AppendToReleaseNotesProperty>
+    </AppendToReleaseNotesProperty>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
