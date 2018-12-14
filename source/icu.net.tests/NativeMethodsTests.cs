@@ -3,7 +3,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -117,7 +119,42 @@ namespace Icu.Tests
 		public void TearDown()
 		{
 			Wrapper.Cleanup();
-			new DirectoryInfo(_tmpDir).Delete(true);
+			try
+			{
+				Directory.Delete(_tmpDir, true);
+			}
+			catch (IOException e)
+			{
+				Console.WriteLine($"IOException trying to delete temporary directory {_tmpDir}: {e.Message}");
+				foreach (var f in new DirectoryInfo(_tmpDir).EnumerateFileSystemInfos())
+				{
+					try
+					{
+						if (f is DirectoryInfo directoryInfo)
+							directoryInfo.Delete(true);
+						else
+							f.Delete();
+					}
+					catch (Exception)
+					{
+						// just ignore - not worth failing the test if we can't delete
+						// a temporary file
+						Console.WriteLine($"Can't delete {f.Name}");
+					}
+				}
+				// Try again to delete the directory
+				try
+				{
+					Directory.Delete(_tmpDir, true);
+				}
+				catch (Exception)
+				{
+					// just ignore - not worth failing the test if we can't delete
+					// a temporary directory
+					Console.WriteLine($"Still can't delete {_tmpDir}");
+				}
+			}
+
 			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
 		}
 
