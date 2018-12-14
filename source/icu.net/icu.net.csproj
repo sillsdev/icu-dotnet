@@ -9,7 +9,7 @@
     <WarningLevel>4</WarningLevel>
     <Company>SIL International</Company>
     <Authors>SIL International</Authors>
-    <PackageLicenseUrl>https://github.com/sillsdev/icu-dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
     <Copyright>Copyright © 2007-2018 SIL International</Copyright>
     <Description>icu.net is a C# Wrapper around ICU4C
