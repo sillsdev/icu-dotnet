@@ -422,11 +422,11 @@ namespace Icu
 			try
 			{
 				var (err, outLength) = lambda(resPtr, length);
-				if (err != ErrorCode.BUFFER_OVERFLOW_ERROR)
+				if (err != ErrorCode.BUFFER_OVERFLOW_ERROR && err != ErrorCode.STRING_NOT_TERMINATED_WARNING)
 					ExceptionFromErrorCode.ThrowIfError(err);
-				if (outLength > length)
+				if (outLength >= length)
 				{
-					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR
+					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR or STRING_NOT_TERMINATED_WARNING
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
 					resPtr = Marshal.AllocCoTaskMem(length * 2);

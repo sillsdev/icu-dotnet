@@ -25,6 +25,8 @@ namespace Icu.Tests
 		[TestCase("te\u0301st", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "te\u0301st")]
 		[TestCase("Te\u0301st", "nfkc", Normalizer2.Mode.COMPOSE, ExpectedResult = "Tést")]
 		[TestCase("Te\u0301st", "nfkc_cf", Normalizer2.Mode.COMPOSE, ExpectedResult = "tést")]
+		[TestCase("éééééééééé", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301")]
+		[TestCase("ééééééééééé", "nfc", Normalizer2.Mode.DECOMPOSE, ExpectedResult = "e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301e\u0301")]
 		public string Normalize(string src, string name, Normalizer2.Mode mode)
 		{
 			var normalizer = Normalizer2.GetInstance(null, name, mode);

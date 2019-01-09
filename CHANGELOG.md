@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- Normalization of strings that failed to decompose under certain conditions (#106)
+
 ## [2.5.3] - 2018-12-17
 
 ### Fixed
