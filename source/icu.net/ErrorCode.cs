@@ -392,36 +392,44 @@ namespace Icu
 					break;
 				case ErrorCode.USING_FALLBACK_WARNING:
 					if (throwOnWarnings)
-					{
 						throw new WarningException("Warning: A resource bundle lookup returned a fallback result " + extraInfo);
-					}
+
 					break;
 				case ErrorCode.USING_DEFAULT_WARNING:
 					if (throwOnWarnings)
-					{
 						throw new WarningException("Warning: A resource bundle lookup returned a result from the root locale " + extraInfo);
-					}
+
 					break;
 				case ErrorCode.SAFECLONE_ALLOCATED_WARNING:
 					if (throwOnWarnings)
-					{
 						throw new WarningException("Notice: A SafeClone operation required allocating memory " + extraInfo);
-					}
+
 					break;
 				case ErrorCode.STATE_OLD_WARNING:
-					throw new WarningException("ICU has to use compatibility layer to construct the service. Expect performance/memory usage degradation. Consider upgrading " + extraInfo);
+					if (throwOnWarnings)
+						throw new WarningException("ICU has to use compatibility layer to construct the service. Expect performance/memory usage degradation. Consider upgrading " + extraInfo);
+
+					break;
 				case ErrorCode.STRING_NOT_TERMINATED_WARNING:
-					throw new WarningException("An output string could not be NUL-terminated because output length==destCapacity. " + extraInfo);
+					if (throwOnWarnings)
+						throw new WarningException("An output string could not be NUL-terminated because output length==destCapacity. " + extraInfo);
+
+					break;
 				case ErrorCode.SORT_KEY_TOO_SHORT_WARNING:
-					throw new WarningException("Number of levels requested in getBound is higher than the number of levels in the sort key " + extraInfo);
+					if (throwOnWarnings)
+						throw new WarningException("Number of levels requested in getBound is higher than the number of levels in the sort key " + extraInfo);
+
+					break;
 				case ErrorCode.AMBIGUOUS_ALIAS_WARNING:
-					throw new WarningException("This converter alias can go to different converter implementations " + extraInfo);
+					if (throwOnWarnings)
+						throw new WarningException("This converter alias can go to different converter implementations " + extraInfo);
+
+					break;
 				case ErrorCode.DIFFERENT_UCA_VERSION:
 					if (throwOnWarnings)
-					{
 						throw new WarningException(
 								"Warning: ucol_open encountered a mismatch between UCA version and collator image version, so the collator was constructed from rules. No impact to further function " + extraInfo);
-					}
+
 					break;
 				case ErrorCode.ILLEGAL_ARGUMENT_ERROR:
 					throw new ArgumentException(extraInfo);
