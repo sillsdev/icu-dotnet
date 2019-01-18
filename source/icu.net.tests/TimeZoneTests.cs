@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -34,19 +32,22 @@ namespace Icu.Tests
 		{
 			var timezones = TimeZone.GetTimeZones();
 
-			Assert.AreEqual(632, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Asia/Seoul"));
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Europe/London"));
+			Assert.GreaterOrEqual(timezones.Count(), 400);
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Asia/Seoul"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/London"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/GMT-10"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/GMT+3"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/UTC"));
 		}
 
 		[Test]
-		public void GetTimeZoneIDsTest()
+		public void GetRegionTimeZonesTest()
 		{
 			var timezones = TimeZone.GetTimeZones(USystemTimeZoneType.Any, "PL");
 
 			Assert.AreEqual(2, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Poland"));
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Europe/Warsaw"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Poland"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/Warsaw"));
 		}
 
 		[Test]
@@ -55,18 +56,18 @@ namespace Icu.Tests
 			var timezones = TimeZone.GetCountryTimeZones("PL");
 
 			Assert.AreEqual(2, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Poland"));
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Europe/Warsaw"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Poland"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/Warsaw"));
 		}
 
 		[Test]
-		public void GetTimeZoneIDsTest2()
+		public void GetOffsetTimeZonesTest()
 		{
 			var timezones = TimeZone.GetTimeZones(USystemTimeZoneType.Any, null, -1 * 3600 * 1000);
 
-			Assert.AreEqual(4, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "Atlantic/Azores"));
-			Assert.AreEqual(1, timezones.Count(x => x.ID == "America/Scoresbysund"));
+			Assert.GreaterOrEqual(timezones.Count(), 4);
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Atlantic/Azores"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "America/Scoresbysund"));
 		}
 
 		[Test]
