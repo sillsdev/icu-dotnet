@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -90,6 +91,14 @@ namespace Icu.Tests
 			var id = TimeZone.GetIdForWindowsId(winId, "HR");
 
 			Assert.AreEqual(expected, id);
+		}
+
+		[Test]
+		public void GetTZVersionTest()
+		{
+			var version = TimeZone.GetTZDataVersion();
+
+			Assert.True(Regex.IsMatch(version, "[0-9]{4}[a-z]"));
 		}
 
 		[Test]

@@ -168,6 +168,18 @@ namespace Icu
 		}
 
 		/// <summary>
+		/// Returns the timezone data version currently used by ICU. 
+		/// </summary>
+		/// <returns>the version string, such as "2007f"</returns>
+		public static string GetTZDataVersion()
+		{
+			var ptr = NativeMethods.ucal_getTZDataVersion(out ErrorCode ec);
+			ExceptionFromErrorCode.ThrowIfError(ec);
+
+			return Marshal.PtrToStringAnsi(ptr);
+		}
+
+		/// <summary>
 		/// Converts a system time zone ID to an equivalent Windows time zone ID.
 		///
 		/// For example, Windows time zone ID "Pacific Standard Time" is returned for input "America/Los_Angeles".
