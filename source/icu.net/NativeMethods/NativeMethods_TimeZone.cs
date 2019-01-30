@@ -49,6 +49,9 @@ namespace Icu
 				[MarshalAs(UnmanagedType.LPWStr)] string zoneID,
 				out ErrorCode ec);
 
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate IntPtr ucal_getTZDataVersionDelegate(
+				out ErrorCode ec);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucal_getWindowsTimeZoneIdDelegate(
@@ -74,6 +77,7 @@ namespace Icu
 			internal ucal_getDefaultTimeZoneDelegate ucal_getDefaultTimeZone;
 			internal ucal_setDefaultTimeZoneDelegate ucal_setDefaultTimeZone;
 			internal ucal_getDSTSavingsDelegate ucal_getDSTSavings;
+			internal ucal_getTZDataVersionDelegate ucal_getTZDataVersion;
 			internal ucal_getWindowsTimeZoneIdDelegate ucal_getWindowsTimeZoneId;
 			internal ucal_getTimeZoneIDForWindowsIdDelegate ucal_getTimeZoneIDForWindowsId;
 		}
@@ -148,6 +152,13 @@ namespace Icu
 			if (TimeZoneMethods.ucal_getDSTSavings == null)
 				TimeZoneMethods.ucal_getDSTSavings = GetMethod<TimeZoneMethodsContainer.ucal_getDSTSavingsDelegate>(IcuI18NLibHandle, "ucal_getDSTSavings");
 			return TimeZoneMethods.ucal_getDSTSavings(zoneID, out ec);
+		}
+
+		public static IntPtr ucal_getTZDataVersion(out ErrorCode ec)
+		{
+			if (TimeZoneMethods.ucal_getTZDataVersion == null)
+				TimeZoneMethods.ucal_getTZDataVersion = GetMethod<TimeZoneMethodsContainer.ucal_getTZDataVersionDelegate>(IcuI18NLibHandle, "ucal_getTZDataVersion");
+			return TimeZoneMethods.ucal_getTZDataVersion(out ec);
 		}
 
 		public static int ucal_getWindowsTimeZoneId(
