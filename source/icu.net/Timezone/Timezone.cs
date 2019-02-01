@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Icu
 {
@@ -10,100 +8,59 @@ namespace Icu
 	{
 		private readonly string zoneID;
 
+		/// <summary>
+		/// Returns TimeZone's ID.
+		/// </summary>
 		public string ID => zoneID;
 
+		/// <summary>
+		/// Creates a TimeZone for the given ID.
+		/// </summary>
+		/// <param name="id">ID	the ID for a TimeZone, such as "America/Los_Angeles"</param>
 		public TimeZone(string id)
 		{
 			zoneID = id;
 		}
 
 		/// <summary>
-		/// Returns an enumeration over system TimeZones with the given filter conditions. 
+		/// Returns an enumeration over system TimeZones with the given filter conditions.
 		/// </summary>
 		/// <param name="zoneType">The system time zone type.</param>
 		/// <param name="region">The ISO 3166 two-letter country code or UN M.49 three-digit area code. When NULL, no filtering done by region.</param>
 		public static IEnumerable<TimeZone> GetTimeZones(USystemTimeZoneType zoneType, string region)
 		{
-			List<TimeZone> timeZones = new List<TimeZone>();
-
-			SafeEnumeratorHandle en = NativeMethods.
-				ucal_openTimeZoneIDEnumeration(zoneType,
-											   region,
-											   out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
-			try
+			return CreateTimeZoneList(() =>
 			{
-				string str = en.Next();
-				while (str != null)
-				{
-					timeZones.Add(new TimeZone(str));
-					str = en.Next();
-				}
-			}
-			finally
-			{
-				en.Dispose();
-			}
-			return timeZones;
+				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, out ErrorCode ec);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+			});
 		}
 
 		/// <summary>
-		/// Returns an enumeration over system TimeZones with the given filter conditions. 
+		/// Returns an enumeration over system TimeZones with the given filter conditions.
 		/// </summary>
 		/// <param name="zoneType">The system time zone type.</param>
 		/// <param name="region">The ISO 3166 two-letter country code or UN M.49 three-digit area code. When NULL, no filtering done by region.</param>
 		/// <param name="zoneOffset">An offset from GMT in milliseconds, ignoring the effect of daylight savings time, if any. When NULL, no filtering done by zone offset.</param>
 		public static IEnumerable<TimeZone> GetTimeZones(USystemTimeZoneType zoneType, string region, int zoneOffset)
 		{
-			List<TimeZone> timeZones = new List<TimeZone>();
-			
-			SafeEnumeratorHandle en = NativeMethods.
-				ucal_openTimeZoneIDEnumeration(zoneType,
-											   region,
-											   ref zoneOffset,
-											   out ErrorCode ec);
-			
-
-			ExceptionFromErrorCode.ThrowIfError(ec);
-			try
+			return CreateTimeZoneList(() =>
 			{
-				string str = en.Next();
-				while (str != null)
-				{
-					timeZones.Add(new TimeZone(str));
-					str = en.Next();
-				}
-			}
-			finally
-			{
-				en.Dispose();
-			}
-			return timeZones;
+				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, ref zoneOffset, out ErrorCode ec);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+			});
 		}
 
 		/// <summary>
-		/// Returns an enumeration over system TimeZones. 
+		/// Returns an enumeration over system TimeZones.
 		/// </summary>
 		public static IEnumerable<TimeZone> GetTimeZones()
 		{
-			List<TimeZone> timeZones = new List<TimeZone>();
-
-			SafeEnumeratorHandle en = NativeMethods.ucal_openTimeZones(out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
-			try
+			return CreateTimeZoneList(() =>
 			{
-				string str = en.Next();
-				while (str != null)
-				{
-					timeZones.Add(new TimeZone(str));
-					str = en.Next();
-				}
-			}
-			finally
-			{
-				en.Dispose();
-			}
-			return timeZones;
+				var en = NativeMethods.ucal_openTimeZones(out ErrorCode ec);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+			});
 		}
 
 		/// <summary>
@@ -112,9 +69,18 @@ namespace Icu
 		/// <param name="country">The ISO 3166 two-letter country code, or NULL to retrieve zones not affiliated with any country.</param>
 		public static IEnumerable<TimeZone> GetCountryTimeZones(string country)
 		{
+			return CreateTimeZoneList(() =>
+			{
+				var en = NativeMethods.ucal_openCountryTimeZones(country, out ErrorCode ec);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+			});
+		}
+
+		private static List<TimeZone> CreateTimeZoneList(Func<Tuple<SafeEnumeratorHandle, ErrorCode>> enumeratorSource)
+		{
 			List<TimeZone> timeZones = new List<TimeZone>();
 
-			SafeEnumeratorHandle en = NativeMethods.ucal_openCountryTimeZones(country, out ErrorCode ec);
+			(SafeEnumeratorHandle en, ErrorCode ec) = enumeratorSource();
 			ExceptionFromErrorCode.ThrowIfError(ec);
 			try
 			{
@@ -133,7 +99,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Return the default time zone. 
+		/// Return the default time zone.
 		/// </summary>
 		/// <returns>Default timezone.</returns>
 		public static TimeZone GetDefault()
@@ -147,7 +113,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Sets the default time zone to be the specified time zone. 
+		/// Sets the default time zone to be the specified time zone.
 		/// </summary>
 		/// <param name="timezone">The given timezone. </param>
 		public static void SetDefault(TimeZone timezone)
@@ -168,7 +134,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Returns the timezone data version currently used by ICU. 
+		/// Returns the timezone data version currently used by ICU.
 		/// </summary>
 		/// <returns>the version string, such as "2007f"</returns>
 		public static string GetTZDataVersion()
