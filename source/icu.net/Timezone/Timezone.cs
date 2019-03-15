@@ -6,20 +6,20 @@ namespace Icu
 {
 	public class TimeZone
 	{
-		private readonly string zoneID;
+		private readonly string zoneId;
 
 		/// <summary>
-		/// Returns TimeZone's ID.
+		/// Returns TimeZone's Id.
 		/// </summary>
-		public string ID => zoneID;
+		public string Id => zoneId;
 
 		/// <summary>
-		/// Creates a TimeZone for the given ID.
+		/// Creates a TimeZone for the given <paramref name="id"/>.
 		/// </summary>
-		/// <param name="id">ID	the ID for a TimeZone, such as "America/Los_Angeles"</param>
+		/// <param name="id">The Id for a TimeZone, such as "America/Los_Angeles"</param>
 		public TimeZone(string id)
 		{
-			zoneID = id;
+			zoneId = id;
 		}
 
 		/// <summary>
@@ -31,8 +31,8 @@ namespace Icu
 		{
 			return CreateTimeZoneList(() =>
 			{
-				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, out ErrorCode ec);
-				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, out ErrorCode errorCode);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, errorCode);
 			});
 		}
 
@@ -46,8 +46,8 @@ namespace Icu
 		{
 			return CreateTimeZoneList(() =>
 			{
-				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, ref zoneOffset, out ErrorCode ec);
-				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+				var en = NativeMethods.ucal_openTimeZoneIDEnumeration(zoneType, region, ref zoneOffset, out ErrorCode errorCode);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, errorCode);
 			});
 		}
 
@@ -58,8 +58,8 @@ namespace Icu
 		{
 			return CreateTimeZoneList(() =>
 			{
-				var en = NativeMethods.ucal_openTimeZones(out ErrorCode ec);
-				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+				var en = NativeMethods.ucal_openTimeZones(out ErrorCode errorCode);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, errorCode);
 			});
 		}
 
@@ -71,29 +71,29 @@ namespace Icu
 		{
 			return CreateTimeZoneList(() =>
 			{
-				var en = NativeMethods.ucal_openCountryTimeZones(country, out ErrorCode ec);
-				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, ec);
+				var en = NativeMethods.ucal_openCountryTimeZones(country, out ErrorCode errorCode);
+				return new Tuple<SafeEnumeratorHandle, ErrorCode>(en, errorCode);
 			});
 		}
 
-		private static List<TimeZone> CreateTimeZoneList(Func<Tuple<SafeEnumeratorHandle, ErrorCode>> enumeratorSource)
+		private static IEnumerable<TimeZone> CreateTimeZoneList(Func<Tuple<SafeEnumeratorHandle, ErrorCode>> enumeratorSource)
 		{
 			List<TimeZone> timeZones = new List<TimeZone>();
 
-			(SafeEnumeratorHandle en, ErrorCode ec) = enumeratorSource();
-			ExceptionFromErrorCode.ThrowIfError(ec);
+			(SafeEnumeratorHandle enumerator, ErrorCode errorCode) = enumeratorSource();
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
 			try
 			{
-				string str = en.Next();
-				while (str != null)
+				string timezoneId = enumerator.Next();
+				while (timezoneId != null)
 				{
-					timeZones.Add(new TimeZone(str));
-					str = en.Next();
+					timeZones.Add(new TimeZone(timezoneId));
+					timezoneId = enumerator.Next();
 				}
 			}
 			finally
 			{
-				en.Dispose();
+				enumerator.Dispose();
 			}
 			return timeZones;
 		}
@@ -106,8 +106,8 @@ namespace Icu
 		{
 			var timeZoneName = NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.ucal_getDefaultTimeZone(ptr, length, out ErrorCode err);
-				return new Tuple<ErrorCode, int>(err, length);
+				length = NativeMethods.ucal_getDefaultTimeZone(ptr, length, out ErrorCode errorCode);
+				return new Tuple<ErrorCode, int>(errorCode, length);
 			});
 			return new TimeZone(timeZoneName);
 		}
@@ -118,8 +118,8 @@ namespace Icu
 		/// <param name="timezone">The given timezone. </param>
 		public static void SetDefault(TimeZone timezone)
 		{
-			NativeMethods.ucal_setDefaultTimeZone(timezone.ID, out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
+			NativeMethods.ucal_setDefaultTimeZone(timezone.Id, out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
 		}
 
 		/// <summary>
@@ -128,8 +128,8 @@ namespace Icu
 		/// <returns>the amount of saving time in milliseconds</returns>
 		public int GetDstSavings()
 		{
-			int result = NativeMethods.ucal_getDSTSavings(zoneID, out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
+			int result = NativeMethods.ucal_getDSTSavings(zoneId, out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
 			return result;
 		}
 
@@ -139,8 +139,8 @@ namespace Icu
 		/// <returns>the version string, such as "2007f"</returns>
 		public static string GetTZDataVersion()
 		{
-			var ptr = NativeMethods.ucal_getTZDataVersion(out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
+			var ptr = NativeMethods.ucal_getTZDataVersion(out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
 
 			return Marshal.PtrToStringAnsi(ptr);
 		}
@@ -156,8 +156,8 @@ namespace Icu
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.ucal_getWindowsTimeZoneId(id, ptr, length, out ErrorCode err);
-				return new Tuple<ErrorCode, int>(err, length);
+				length = NativeMethods.ucal_getWindowsTimeZoneId(id, ptr, length, out ErrorCode errorCode);
+				return new Tuple<ErrorCode, int>(errorCode, length);
 			});
 		}
 
@@ -173,8 +173,8 @@ namespace Icu
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.ucal_getTimeZoneIDForWindowsId(winId, region, ptr, length, out ErrorCode err);
-				return new Tuple<ErrorCode, int>(err, length);
+				length = NativeMethods.ucal_getTimeZoneIDForWindowsId(winId, region, ptr, length, out ErrorCode errorCode);
+				return new Tuple<ErrorCode, int>(errorCode, length);
 			});
 		}
 	}
