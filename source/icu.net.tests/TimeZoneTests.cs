@@ -8,16 +8,6 @@ namespace Icu.Tests
 	[TestFixture]
 	class TimeZoneTests
 	{
-		[Test]
-		public void DefaultTimeZoneTest()
-		{
-			var toSet = new TimeZone("AST");
-
-			TimeZone.SetDefault(toSet);
-			var def = TimeZone.GetDefault();
-
-			Assert.AreEqual(toSet.Id, def.Id);
-		}
 
 		[Test]
 		public void GetDstSavingsTest()
@@ -83,6 +73,17 @@ namespace Icu.Tests
 			var resultWinId = TimeZone.GetWindowsId(result.Id);
 
 			Assert.Contains(expected.Id, new List<string>() { result.Id, resultWinId });
+		}
+
+		[Test]
+		public void SetDefaultTimeZoneTest()
+		{
+			var toSet = new TimeZone("AST");
+
+			TimeZone.SetDefault(toSet);
+			var def = TimeZone.GetDefault();
+
+			Assert.AreEqual(toSet.Id, def.Id);
 		}
 
 		[Test]
