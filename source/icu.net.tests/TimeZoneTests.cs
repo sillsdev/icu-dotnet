@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -15,7 +16,7 @@ namespace Icu.Tests
 			TimeZone.SetDefault(toSet);
 			var def = TimeZone.GetDefault();
 
-			Assert.AreEqual(toSet.ID, def.ID);
+			Assert.AreEqual(toSet.Id, def.Id);
 		}
 
 		[Test]
@@ -34,11 +35,11 @@ namespace Icu.Tests
 			var timezones = TimeZone.GetTimeZones();
 
 			Assert.GreaterOrEqual(timezones.Count(), 400);
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Asia/Seoul"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/London"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/GMT-10"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/GMT+3"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Etc/UTC"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Asia/Seoul"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Europe/London"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Etc/GMT-10"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Etc/GMT+3"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Etc/UTC"));
 		}
 
 		[Test]
@@ -47,8 +48,8 @@ namespace Icu.Tests
 			var timezones = TimeZone.GetTimeZones(USystemTimeZoneType.Any, "PL");
 
 			Assert.AreEqual(2, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Poland"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/Warsaw"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Poland"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Europe/Warsaw"));
 		}
 
 		[Test]
@@ -57,8 +58,8 @@ namespace Icu.Tests
 			var timezones = TimeZone.GetCountryTimeZones("PL");
 
 			Assert.AreEqual(2, timezones.Count());
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Poland"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Europe/Warsaw"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Poland"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Europe/Warsaw"));
 		}
 
 		[Test]
@@ -67,19 +68,21 @@ namespace Icu.Tests
 			var timezones = TimeZone.GetTimeZones(USystemTimeZoneType.Any, null, -1 * 3600 * 1000);
 
 			Assert.GreaterOrEqual(timezones.Count(), 4);
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "Atlantic/Azores"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.ID == "America/Scoresbysund"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Atlantic/Azores"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "America/Scoresbysund"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Atlantic/Cape_Verde"));
+			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Etc/GMT+1"));
 		}
 
 		[Test]
 		public void GetDefaultTimeZoneTest()
 		{
-			var expected = new TimeZone("AST");
-			TimeZone.SetDefault(expected);
+			var expected = System.TimeZoneInfo.Local;
 
 			var result = TimeZone.GetDefault();
+			var resultWinId = TimeZone.GetWindowsId(result.Id);
 
-			Assert.AreEqual(expected.ID, result.ID);
+			Assert.Contains(expected.Id, new List<string>() { result.Id, resultWinId });
 		}
 
 		[Test]
