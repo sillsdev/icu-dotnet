@@ -93,6 +93,64 @@ namespace Icu.Tests.Collation
 			Assert.That(() => Collator.Create((CultureInfo)null), Throws.TypeOf<ArgumentNullException>());
 		}
 
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
+		public void Create_NoPredefinedCollator_Throws()
+		{
+			Assert.That(() =>
+			{
+				using (Collator.Create("my-MM")) {}
+			}, Throws.ArgumentException);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
+		public void Create_NoPredefinedCollator_NoFallback_Throws()
+		{
+			Assert.That(() =>
+				{
+					using (Collator.Create("my-MM", Collator.Fallback.NoFallback)) {}
+				},
+				Throws.ArgumentException);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
+		public void Create_NoPredefinedCollator_FallbackAllowed_Works()
+		{
+			Assert.That(() =>
+				{
+					using (Collator.Create("my-MM", Collator.Fallback.FallbackAllowed)) {}
+				},
+				Throws.Nothing);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
+		public void Create_PredefinedCollator_Works()
+		{
+			Assert.That(() =>
+				{
+					using (Collator.Create("my")) {}
+				},
+				Throws.Nothing);
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		//This fails when ICU's data DLL is built without rules for the root locale.
+		public void Create_PredefinedCollator_NoFallback_Works()
+		{
+			Assert.That(() =>
+				{
+					using (Collator.Create("my", Collator.Fallback.NoFallback)) {}
+				},
+				Throws.Nothing);
+		}
 	}
 
 }
