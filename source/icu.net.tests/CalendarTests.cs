@@ -465,9 +465,16 @@ namespace Icu.Tests
 		[Test]
 		public void SetTimeZone2Test()
 		{
+			var tzdbId = "Europe/Paris";
 			var winId = "Romance Standard Time";
-			var expected = "Europe/Paris";
-			var timezone = TimeZoneInfo.FindSystemTimeZoneById(winId);
+			
+			var timezones = TimeZoneInfo.GetSystemTimeZones();
+
+			var timezone = timezones.FirstOrDefault(tzi => tzi.Id == tzdbId);
+			if(timezone==null)
+			{
+				timezone = timezones.First(tzi => tzi.Id == winId);
+			}
 
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
@@ -475,21 +482,23 @@ namespace Icu.Tests
 
 				var tz = cal.GetTimeZone();
 
-				Assert.AreEqual(expected, tz.Id);
+				Assert.AreEqual(tzdbId, tz.Id);
 			}
 		}
 
 		[Test]
 		public void GetTimeZoneInfoTest()
 		{
-			var timezone = new TimeZone("Europe/Zagreb");
-			var expected = "Central European Standard Time";
+			var tzdbId = "Europe/Zagreb";
+			var winId = "Central European Standard Time";
+
+			var timezone = new TimeZone(tzdbId);
 
 			using (var cal = new GregorianCalendar(timezone))
 			{
-				var tz = cal.GetTimeZoneInfo();
+				var result = cal.GetTimeZoneInfo();
 
-				Assert.AreEqual(expected, tz.Id);
+				Assert.IsTrue(result.Id == winId || result.Id == tzdbId);
 			}
 		}
 
