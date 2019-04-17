@@ -75,8 +75,7 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucal_getAttributeDelegate(
 				Calendar.SafeCalendarHandle cal,
-				Calendar.UCalendarAttribute attribute,
-				out ErrorCode status);
+				Calendar.UCalendarAttribute attribute);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucal_getFieldDifferenceDelegate(
@@ -256,12 +255,11 @@ namespace Icu
 
 		public static int ucal_getAttribute(
 				Calendar.SafeCalendarHandle cal,
-				Calendar.UCalendarAttribute attribute,
-				out ErrorCode status)
+				Calendar.UCalendarAttribute attribute)
 		{
 			if (CalendarMethods.ucal_getAttribute == null)
 				CalendarMethods.ucal_getAttribute = GetMethod<CalendarMehodsContainer.ucal_getAttributeDelegate>(IcuI18NLibHandle, "ucal_getAttribute");
-			return CalendarMethods.ucal_getAttribute(cal, attribute, out status);
+			return CalendarMethods.ucal_getAttribute(cal, attribute);
 		}
 
 		public static void ucal_clear(
@@ -319,26 +317,13 @@ namespace Icu
 					Calendar.SafeCalendarHandle cal,
 					Calendar.UCalendarDisplayNameType type,
 					string locale,
-					out string result,
+					IntPtr result,
 					int resultLength,
 					out ErrorCode status)
 		{
 			if (CalendarMethods.ucal_getTimeZoneDisplayName == null)
 				CalendarMethods.ucal_getTimeZoneDisplayName = GetMethod<CalendarMehodsContainer.ucal_getTimeZoneDisplayNameDelegate>(IcuI18NLibHandle, "ucal_getTimeZoneDisplayName");
-
-			IntPtr outBuf = Marshal.AllocHGlobal(resultLength * sizeof(char));
-			try
-			{
-				int length = CalendarMethods.ucal_getTimeZoneDisplayName(cal, type, locale, outBuf, resultLength, out status);
-				char[] buf = new char[Math.Min(resultLength, length)];
-				Marshal.Copy(outBuf, buf, 0, buf.Length);
-				result = new string(buf);
-				return length;
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(outBuf);
-			}
+			return CalendarMethods.ucal_getTimeZoneDisplayName(cal, type, locale, result, resultLength, out status);
 		}
 
 		public static bool ucal_inDaylightTime(

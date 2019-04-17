@@ -107,7 +107,7 @@ namespace Icu
 			Am,
 			Pm
 		};
-		
+
 		internal protected sealed class SafeCalendarHandle : SafeHandle
 		{
 			public SafeCalendarHandle() :
@@ -150,11 +150,11 @@ namespace Icu
 			}
 		}
 
-		private bool _disposingValue; // To detect redundant calls
+		private bool _isDisposed; // To detect redundant calls
 		protected SafeCalendarHandle _calendarHandle = default(SafeCalendarHandle);
 		protected Locale _locale;
 
-		
+
 		/// <summary>
 		/// Gets this Calendar's time as milliseconds.
 		/// </summary>
@@ -186,21 +186,23 @@ namespace Icu
 
 		/// <summary>
 		/// Sets this Calendar's current time with the given date.
-		///The time specified should be in non-local UTC(GMT) time.
+		/// Time will be set to matching time in calendar's timezone.
 		/// </summary>
-		/// <param name="dateTime">The given date in UTC (GMT) time.</param>
+		/// <param name="dateTime">The given date</param>
 		public void SetTime(DateTime dateTime)
 		{
-			Year = dateTime.Year;
-			Month = (Calendar.UCalendarMonths)(dateTime.Month - 1);
-			DayOfMonth = dateTime.Day;
-			HourOfDay = dateTime.Hour;
-			Minute = dateTime.Minute;
-			Second = dateTime.Second;
-			Millisecond = dateTime.Millisecond;
+			var universalTime = dateTime.ToUniversalTime();
 
-			//correct for utc
-			Add(UCalendarDateFields.Millisecond, ZoneOffset);
+			Year = universalTime.Year;
+			Month = (Calendar.UCalendarMonths)(universalTime.Month - 1);
+			DayOfMonth = universalTime.Day;
+			HourOfDay = universalTime.Hour;
+			Minute = universalTime.Minute;
+			Second = universalTime.Second;
+			Millisecond = universalTime.Millisecond;
+
+			// Offset to calendars local timezone
+			Add(UCalendarDateFields.Millisecond, ZoneOffset+DstOffset);
 		}
 
 		/// <summary>
@@ -343,7 +345,7 @@ namespace Icu
 			if (length >= 32)
 			{
 				ec = ErrorCode.NoErrors;
-				NativeMethods.ucal_getTimeZoneId(_calendarHandle, out result, length+1, out ec);
+				NativeMethods.ucal_getTimeZoneId(_calendarHandle, out result, length + 1, out ec);
 			}
 			ExceptionFromErrorCode.ThrowIfError(ec);
 			return new TimeZone(result);
@@ -359,11 +361,11 @@ namespace Icu
 
 			var timeZoneInfo = TimeZoneInfo.GetSystemTimeZones().FirstOrDefault(zone => zone.Id == id);
 
-			if(timeZoneInfo != null)
+			if (timeZoneInfo != null)
 			{
 				return timeZoneInfo;
 			}
-			
+
 			string winid = TimeZone.GetWindowsId(id);
 
 			if (!string.IsNullOrWhiteSpace(winid))
@@ -406,14 +408,11 @@ namespace Icu
 		/// <returns>Formatted time zone name</returns>
 		public string GetTimeZoneDisplayName(UCalendarDisplayNameType type)
 		{
-			int length = NativeMethods.ucal_getTimeZoneDisplayName(_calendarHandle, type, _locale.Name, out string result, 60, out ErrorCode ec);
-			if (length >= 60)
+			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				NativeMethods.ucal_getTimeZoneDisplayName(_calendarHandle, type, _locale.Name, out result, length + 1, out ec);
-			}
-			ExceptionFromErrorCode.ThrowIfError(ec);
-
-			return result;
+				length = NativeMethods.ucal_getTimeZoneDisplayName(_calendarHandle, type, _locale.Name, ptr, length, out ErrorCode status);
+				return new Tuple<ErrorCode, int>(status, length);
+			}, 255);
 		}
 
 		#region Properties
@@ -425,7 +424,7 @@ namespace Icu
 		{
 			get
 			{
-				var result = NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.Lenient, out _);
+				var result = NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.Lenient);
 				return (result != 0);
 			}
 			set
@@ -441,7 +440,7 @@ namespace Icu
 		{
 			get
 			{
-				return (UCalendarDaysOfWeek)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.FirstDayOfWeek, out _);
+				return (UCalendarDaysOfWeek)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.FirstDayOfWeek);
 			}
 			set
 			{
@@ -456,12 +455,12 @@ namespace Icu
 		{
 			get
 			{
-				var result = NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.FirstDayOfWeek, out _);
+				var result = NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.MinimalDaysInFirstWeek);
 				return result;
 			}
 			set
 			{
-				NativeMethods.ucal_setAttribute(_calendarHandle, UCalendarAttribute.FirstDayOfWeek, value);
+				NativeMethods.ucal_setAttribute(_calendarHandle, UCalendarAttribute.MinimalDaysInFirstWeek, value);
 			}
 		}
 
@@ -472,7 +471,8 @@ namespace Icu
 		{
 			get
 			{
-				var result = (UCalendarWallTimeOption)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.RepeatedWallTime, out _);
+				var result = (UCalendarWallTimeOption)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.RepeatedWallTime);
+
 				return result;
 			}
 			set
@@ -488,7 +488,8 @@ namespace Icu
 		{
 			get
 			{
-				var result = (UCalendarWallTimeOption)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.SkippedWallTime, out _);
+				var result = (UCalendarWallTimeOption)NativeMethods.ucal_getAttribute(_calendarHandle, UCalendarAttribute.SkippedWallTime);
+				
 				return result;
 			}
 			set
@@ -504,7 +505,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Era, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Era, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -519,7 +522,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Year, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Year, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -534,7 +539,9 @@ namespace Icu
 		{
 			get
 			{
-				return (UCalendarMonths)NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Month, out _);
+				var result = (UCalendarMonths)NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Month, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -549,7 +556,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.WeekOfYear, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.WeekOfYear, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -564,7 +573,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.WeekOfMonth, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.WeekOfMonth, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -579,7 +590,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfWeek, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfWeek, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -594,7 +607,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfMonth, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfMonth, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -617,7 +632,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfWeekInMonth, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfWeekInMonth, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -632,7 +649,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfYear, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DayOfYear, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -643,15 +662,17 @@ namespace Icu
 		/// <summary>
 		/// Gets or seths whether the hour is before or after noon.
 		/// </summary>
-		public int AmPm
+		public UCalendarAMPMs AmPm
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.AmPm, out _);
+				var result = (UCalendarAMPMs)NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.AmPm, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
-				NativeMethods.ucal_set(_calendarHandle, UCalendarDateFields.AmPm, value);
+				NativeMethods.ucal_set(_calendarHandle, UCalendarDateFields.AmPm, (int)value);
 			}
 		}
 
@@ -662,7 +683,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Hour, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Hour, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -677,7 +700,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.HourOfDay, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.HourOfDay, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -692,7 +717,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Minute, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Minute, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -707,7 +734,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Second, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Second, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -722,7 +751,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Millisecond, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.Millisecond, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -737,7 +768,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.ZoneOffset, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.ZoneOffset, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -752,7 +785,9 @@ namespace Icu
 		{
 			get
 			{
-				return NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DstOffset, out _);
+				var result = NativeMethods.ucal_get(_calendarHandle, UCalendarDateFields.DstOffset, out ErrorCode errorCode);
+				ExceptionFromErrorCode.ThrowIfError(errorCode);
+				return result;
 			}
 			set
 			{
@@ -796,15 +831,14 @@ namespace Icu
 		/// resources; false to release only unmanaged resources.</param>
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!_disposingValue)
+			if (!_isDisposed)
 			{
 				if (disposing)
 				{
-					// Dispose managed state (managed objects), if any.
+					_calendarHandle.Dispose();
 				}
 
-				_calendarHandle.Dispose();
-				_disposingValue = true;
+				_isDisposed = true;
 			}
 		}
 		~Calendar()
