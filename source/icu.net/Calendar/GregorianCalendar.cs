@@ -25,8 +25,8 @@ namespace Icu
 		{
 			_locale = locale;
 			_calendarHandle = NativeMethods.ucal_open(timezone.Id,
-									 locale.Name, UCalendarType.Gregorian, out ErrorCode ec);
-			ExceptionFromErrorCode.ThrowIfError(ec);
+									 locale.Name, UCalendarType.Gregorian, out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
 		}
 
 		private GregorianCalendar(SafeCalendarHandle handle)
@@ -36,13 +36,18 @@ namespace Icu
 
 		public override Calendar Clone()
 		{
-			var handle = NativeMethods.ucal_clone(_calendarHandle, out ErrorCode status);
-			return new GregorianCalendar(handle);
+			var handle = NativeMethods.ucal_clone(_calendarHandle, out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
+			var calendar = new GregorianCalendar(handle);
+			calendar._locale = _locale;
+			return calendar;
 		}
 				
 		public override bool InDaylightTime()
 		{
-			return NativeMethods.ucal_inDaylightTime(_calendarHandle, out _);
+			bool isDaylightTime = NativeMethods.ucal_inDaylightTime(_calendarHandle, out ErrorCode errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode);
+			return isDaylightTime;
 		}
 	}
 }
