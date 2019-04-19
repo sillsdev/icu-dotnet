@@ -320,17 +320,13 @@ namespace Icu
 		/// <summary>
 		/// Sets the calendar's time zone to be equivalent to the one passed in. 
 		/// </summary>
-		/// <param name="timezone">The given time zone info.</param>
+		/// <param name="timeZoneInfo">The given time zone info.</param>
 		public void SetTimeZone(TimeZoneInfo timeZoneInfo)
 		{
 			var id = timeZoneInfo.Id;
 
-			var converted = TimeZone.GetIdForWindowsId(id, _locale?.Country);
-
-			if (!string.IsNullOrWhiteSpace(converted))
-			{
-				id = converted;
-			}
+			if(!TimeZone.GetTimeZones().Any(tz=>tz.Id == id))
+				id = TimeZone.GetIdForWindowsId(id, _locale?.Country);
 
 			SetTimeZone(id);
 		}
@@ -341,13 +337,11 @@ namespace Icu
 		/// <returns>Time zone set for this calendar.</returns>
 		public TimeZone GetTimeZone()
 		{
-			int length = NativeMethods.ucal_getTimeZoneId(_calendarHandle, out string result, 32, out ErrorCode ec);
-			if (length >= 32)
+			string result = NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				ec = ErrorCode.NoErrors;
-				NativeMethods.ucal_getTimeZoneId(_calendarHandle, out result, length + 1, out ec);
-			}
-			ExceptionFromErrorCode.ThrowIfError(ec);
+				length = NativeMethods.ucal_getTimeZoneId(_calendarHandle, ptr, length, out ErrorCode status);
+				return new Tuple<ErrorCode, int>(status, length);
+			}, 255);
 			return new TimeZone(result);
 		}
 
