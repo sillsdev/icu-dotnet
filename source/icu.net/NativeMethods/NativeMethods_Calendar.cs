@@ -181,26 +181,14 @@ namespace Icu
 
 		public static int ucal_getTimeZoneId(
 			Calendar.SafeCalendarHandle cal,
-			out string result,
+			IntPtr result,
 			int resultLength,
 			out ErrorCode ec)
 		{
 			if (CalendarMethods.ucal_getTimeZoneId == null)
 				CalendarMethods.ucal_getTimeZoneId = GetMethod<CalendarMehodsContainer.ucal_getTimeZoneIdDelegate>(IcuI18NLibHandle, "ucal_getTimeZoneID");
 
-			IntPtr outBuf = Marshal.AllocHGlobal(resultLength * sizeof(char));
-			try
-			{
-				int length = CalendarMethods.ucal_getTimeZoneId(cal, outBuf, resultLength, out ec);
-				char[] buf = new char[Math.Min(resultLength, length)];
-				Marshal.Copy(outBuf, buf, 0, buf.Length);
-				result = new string(buf);
-				return length;
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(outBuf);
-			}
+			return CalendarMethods.ucal_getTimeZoneId(cal, result, resultLength, out ec);
 		}
 
 		public static Calendar.SafeCalendarHandle ucal_open(
