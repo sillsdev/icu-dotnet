@@ -94,7 +94,7 @@
 		</ItemGroup>
 
 		<SIL.BuildTasks.UnitTestTasks.NUnit3 Assemblies="@(TestAssemblies)"
-			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.8.0/tools"
+			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.10.0/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)/"
