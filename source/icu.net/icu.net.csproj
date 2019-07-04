@@ -28,6 +28,8 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <NoBuild>true</NoBuild>
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
