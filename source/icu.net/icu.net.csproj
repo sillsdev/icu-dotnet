@@ -20,12 +20,6 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <AppendToReleaseNotesProperty><![CDATA[
 See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGELOG.md.]]>
     </AppendToReleaseNotesProperty>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <NoBuild>true</NoBuild>
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
