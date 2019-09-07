@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add TimeZone class (#108; j-troc)
 - Create nuget symbol package
+- Add BiDi class (#121; jeffska)
 
 ## [2.5.4] - 2019-01-09
 

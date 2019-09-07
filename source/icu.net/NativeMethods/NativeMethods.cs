@@ -335,6 +335,7 @@ namespace Icu
 				_IcuI18NLibHandle = IntPtr.Zero;
 
 				Methods = new MethodsContainer();
+				_BiDiMethods = null;
 				_BreakIteratorMethods = null;
 				_CodepageConversionMethods = null;
 				_CollatorMethods = null;
