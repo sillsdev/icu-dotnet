@@ -30,7 +30,7 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup >
+  </PropertyGroup>
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
@@ -40,7 +40,7 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
   <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+  </PropertyGroup >
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
