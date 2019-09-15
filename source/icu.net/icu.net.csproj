@@ -26,11 +26,11 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <NoBuild>false</NoBuild>
+    <NoBuild>true</NoBuild>
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
+  </PropertyGroup >
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
