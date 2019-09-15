@@ -1,3 +1,4 @@
+// Copyright (c) 2019 Jeff Skaistis
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
 using System;
@@ -51,9 +52,6 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void ubidi_setLineDelegate(IntPtr bidi, int start, int limit, out IntPtr lineBiDi, out ErrorCode errorCode);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate void ubidi_setContextDelegate(IntPtr bidi, string prologue, int proLength, string epilogue, int epiLength, out ErrorCode errorCode);
-
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubidi_getLengthDelegate(IntPtr bidi);
 
@@ -63,8 +61,8 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubidi_getResultLengthDelegate(IntPtr bidi);
 
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate string ubidi_getTextDelegate(IntPtr bidi);
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+			internal delegate IntPtr ubidi_getTextDelegate(IntPtr bidi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate IntPtr ubidi_getLevelsDelegate(IntPtr bidi, out ErrorCode errorCode);
@@ -128,7 +126,6 @@ namespace Icu
 			internal ubidi_getDirectionDelegate ubidi_getDirection;
 			internal ubidi_setParaDelegate ubidi_setPara;
 			internal ubidi_setLineDelegate ubidi_setLine;
-			internal ubidi_setContextDelegate ubidi_setContext;
 			internal ubidi_getLengthDelegate ubidi_getLength;
 			internal ubidi_getProcessedLengthDelegate ubidi_getProcessedLength;
 			internal ubidi_getResultLengthDelegate ubidi_getResultLength;
@@ -153,8 +150,7 @@ namespace Icu
 
 		private static BiDiMethodsContainer _BiDiMethods;
 
-		private static BiDiMethodsContainer BiDiMethods =>
-			_BiDiMethods ?? (_BiDiMethods = new BiDiMethodsContainer());
+		private static BiDiMethodsContainer BiDiMethods => _BiDiMethods ?? (_BiDiMethods = new BiDiMethodsContainer());
 
 		/// <summary>
 		/// Create a UBiDi structure.
@@ -332,22 +328,6 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Set the context before a call to ubidi_setPara().
-		/// </summary>
-		/// <param name="bidi">The BiDi object</param>
-		/// <param name="prologue">The prologue string</param>
-		/// <param name="proLength">Length of the prologue string</param>
-		/// <param name="epilogue">The epilogue string</param>
-		/// <param name="epiLength">The length of the epilogue string</param>
-		/// <param name="errorCode">The error code</param>
-		public static void ubidi_setContext(IntPtr bidi, string prologue, int proLength, string epilogue, int epiLength, out ErrorCode errorCode)
-		{
-			if (BiDiMethods.ubidi_setContext == null)
-				BiDiMethods.ubidi_setContext = GetMethod<BiDiMethodsContainer.ubidi_setContextDelegate>(IcuCommonLibHandle, "ubidi_setContext");
-			BiDiMethods.ubidi_setContext(bidi, prologue, proLength, epilogue, epiLength, out errorCode);
-		}
-
-		/// <summary>
 		/// Get the length of the text.
 		/// </summary>
 		/// <param name="bidi">The BiDi object</param>
@@ -388,7 +368,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bidi">The BiDi object</param>
 		/// <returns>The text</returns>
-		public static string ubidi_getText(IntPtr bidi)
+		public static IntPtr ubidi_getText(IntPtr bidi)
 		{
 			if (BiDiMethods.ubidi_getText == null)
 				BiDiMethods.ubidi_getText = GetMethod<BiDiMethodsContainer.ubidi_getTextDelegate>(IcuCommonLibHandle, "ubidi_getText");
@@ -574,7 +554,6 @@ namespace Icu
 				BiDiMethods.ubidi_getVisualRun = GetMethod<BiDiMethodsContainer.ubidi_getVisualRunDelegate>(IcuCommonLibHandle, "ubidi_getVisualRun");
 			return BiDiMethods.ubidi_getVisualRun(bidi, runIndex, out logicalStart, out length);
 		}
-
 
 		/// <summary>
 		/// Take a BiDi object containing the reordering information for a piece of text (one or more paragraphs) set by ubidi_setPara() or for a line of text set by ubidi_setLine() and write a reordered string to the destination buffer.

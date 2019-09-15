@@ -1,3 +1,4 @@
+// Copyright (c) 2019 Jeff Skaistis
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
 using System;
@@ -16,59 +17,33 @@ namespace Icu
 	public sealed class BiDi : IDisposable
 	{
 		/// <summary>
-		/// Paragraph level setting.
-		/// 
 		/// Constant indicating that the base direction depends on the first strong directional character in the text
-		/// according to the Unicode Bidirectional Algorithm.If no strong directional character is present, then
+		/// according to the Unicode Bidirectional Algorithm. If no strong directional character is present, then
 		/// set the paragraph level to 0 (left-to-right).
-		/// 
-		/// If this value is used in conjunction with reordering modes <see cref="BiDiReorderingMode.INVERSE_LIKE_DIRECT"/> or
-		/// <see cref="BiDiReorderingMode.INVERSE_FOR_NUMBERS_SPECIAL"/>, the text to reorder is assumed to be visual LTR, and the text
-		/// after reordering is required to be the corresponding logical string with appropriate contextual direction.
-		/// The direction of the result string will be <see cref="BiDiDirection.RTL"/> if either the rightmost or leftmost strong character of the
-		/// source text is RTL or Arabic Letter, the direction will be <see cref="BiDiDirection.LTR"/> otherwise.
-		/// 
-		/// If reordering option <see cref="BiDiReorderingOption.INSERT_MARKS"/> is set, an RLM may be added at the beginning of the result
-		/// string to ensure round trip (that the result string, when reordered back to visual, will produce the original
-		/// source text).
 		/// </summary>
 		public const byte DEFAULT_LTR = 0xfe;
 
 		/// <summary>
-		/// Paragraph level setting.
-		/// 
 		/// Constant indicating that the base direction depends on the first strong directional character in the text according
 		/// to the Unicode Bidirectional Algorithm.If no strong directional character is present, then set the paragraph
 		/// level to 1 (right-to-left).
-		/// 
-		/// If this value is used in conjunction with reordering modes <see cref="BiDiReorderingMode.INVERSE_LIKE_DIRECT"/> or
-		/// <see cref="BiDiReorderingMode.INVERSE_FOR_NUMBERS_SPECIAL"/>, the text to reorder is assumed to be visual LTR, and the text
-		/// after reordering is required to be the corresponding logical string with appropriate contextual direction.
-		/// The direction of the result string will be <see cref="BiDiDirection.RTL"/>  if either the rightmost or leftmost strong character of the
-		/// source text is RTL or Arabic Letter, or if the text contains no strong character; the direction will be <see cref="BiDiDirection.LTR"/> otherwise.
-		/// 
-		/// If reordering option <see cref="BiDiReorderingOption.INSERT_MARKS"/> is set, an RLM may be added at the beginning of the result string to
-		/// ensure round trip (that the result string, when reordered back to visual, will produce the original source text).
 		/// </summary>
 		public const byte DEFAULT_RTL = 0xff;
 
 		/// <summary>
 		/// Maximum explicit embedding level.
-		/// 
 		/// Same as the max_depth value in the Unicode Bidirectional Algorithm. (The maximum resolved level can be up to MAX_EXPLICIT_LEVEL+1).
 		/// </summary>
 		public const int MAX_EXPLICIT_LEVEL = 125;
 
 		/// <summary>
 		/// Bit flag for level input.
-		/// 
 		/// Overrides directional properties.
 		/// </summary>
 		public const byte LEVEL_OVERRIDE = 0x80;
 
 		/// <summary>
 		/// Special value which can be returned by the mapping functions when a logical index has no corresponding visual index or vice-versa.
-		/// 
 		/// This may happen for the logical-to-visual mapping of a Bidi control when option <see cref="BiDiReorderingOption.REMOVE_CONTROLS"/> is specified.
 		/// This can also happen for the visual-to-logical mapping of a Bidi mark(LRM or RLM) inserted by option <see cref="BiDiReorderingOption.INSERT_MARKS"/>.
 		/// </summary>
@@ -76,71 +51,83 @@ namespace Icu
 
 
 		/// <summary>
-		/// Option bit for <see cref="GetReordered(ushort)"/>: keep combining characters after their base characters in RTL runs.
+		/// Options for <see cref="GetReordered(CallReorderingOptions)"/> and <see cref="ReverseString(string, CallReorderingOptions)"/>.
 		/// </summary>
-		public const ushort KEEP_BASE_COMBINING = 1;
+		[Flags]
+		public enum CallReorderingOptions
+		{
+			/// <summary>Disables all the options which can be set.</summary>
+			DEFAULT = 0,
+			/// <summary>Keep combining characters after their base characters in RTL runs.</summary>
+			KEEP_BASE_COMBINING = 1,
+			/// <summary>Replace characters with the "mirrored" property in RTL runs by their mirror-image mappings.</summary>
+			DO_MIRRORING = 2,
+			/// <summary>Surround the run with LRMs if necessary; this is part of the approximate "inverse Bidi" algorithm.</summary>
+			INSERT_LRM_FOR_NUMERIC = 4,
+			/// <summary>Remove Bidi control characters (this does not affect <see cref="INSERT_LRM_FOR_NUMERIC"/>).</summary>
+			REMOVE_BIDI_CONTROLS = 8,
+			/// <summary>Write the output in reverse order.</summary>
+			OUTPUT_REVERSE = 16
+		};
 
 		/// <summary>
-		/// Option bit for <see cref="GetReordered(ushort)"/>: replace characters with the "mirrored" property in RTL runs by their mirror-image mappings.
-		/// </summary>
-		public const ushort DO_MIRRORING = 2;
-
-		/// <summary>
-		/// Option bit for <see cref="GetReordered(ushort)"/>: surround the run with LRMs if necessary; this is part of the approximate "inverse Bidi" algorithm.
-		/// </summary>
-		public const ushort INSERT_LRM_FOR_NUMERIC = 4;
-
-		/// <summary>
-		/// Option bit for <see cref="GetReordered(ushort)"/>: remove Bidi control characters (this does not affect <see cref="INSERT_LRM_FOR_NUMERIC"/>).
-		/// </summary>
-		public const ushort REMOVE_BIDI_CONTROLS = 8;
-
-		/// <summary>
-		/// Option bit for <see cref="GetReordered(ushort)"/>: write the output in reverse order.
-		/// </summary>
-		public const ushort OUTPUT_REVERSE = 16;
-
-
-		/// <summary>
-		/// BiDiDirection values indicate the text direction.
+		/// Values indicate the text direction.
 		/// </summary>
 		public enum BiDiDirection
 		{
+			/// <summary>Left-to-right text.</summary>
 			LTR,
+			/// <summary>Right-to-left text.</summary>
 			RTL,
+			/// <summary>Mixed-directional text.</summary>
 			MIXED,
+			/// <summary>No strongly directional text.</summary>
 			NEUTRAL
 		};
 
 		/// <summary>
-		/// BiDiReorderingMode values indicate which variant of the Bidi algorithm to use.
+		/// Values indicate which variant of the Bidi algorithm to use.
 		/// </summary>
 		public enum BiDiReorderingMode
 		{
-			DEFAULT = 0,
+			/// <summary>Regular Logical to Visual Bidi algorithm according to Unicode.</summary>
+			DEFAULT,
+			/// <summary>Logical to Visual algorithm which handles numbers in a way which mimics the behavior of Windows XP.</summary>
 			NUMBERS_SPECIAL,
+			/// <summary>Logical to Visual algorithm grouping numbers with adjacent R characters (reversible algorithm).</summary>
 			GROUP_NUMBERS_WITH_R,
+			/// <summary>Reorder runs only to transform a Logical LTR string to the Logical RTL string with the same display, or vice-versa.</summary>
 			RUNS_ONLY,
+			/// <summary>Visual to Logical algorithm which handles numbers like L (same algorithm as selected by <see cref="IsInverse"/> = true).</summary>
 			INVERSE_NUMBERS_AS_L,
+			/// <summary>Visual to Logical algorithm equivalent to the regular Logical to Visual algorithm.</summary>
 			INVERSE_LIKE_DIRECT,
+			/// <summary>Inverse Bidi (Visual to Logical) algorithm for the <see cref="NUMBERS_SPECIAL"/> Bidi algorithm.</summary>
 			INVERSE_FOR_NUMBERS_SPECIAL
 		};
 
 		/// <summary>
-		/// BiDiReorderingOption values indicate which options are specified to affect the Bidi algorithm.
+		/// Values indicate which options are specified to affect the Bidi algorithm.
 		/// </summary>
 		[Flags]
 		public enum BiDiReorderingOption
 		{
+			/// <summary>Disables all the options which can be set.</summary>
 			DEFAULT = 0,
+			/// <summary>Insert Bidi marks (LRM or RLM) when needed to ensure correct result of a reordering to a Logical order.</summary>
 			INSERT_MARKS = 1,
+			/// <summary>Remove Bidi control characters.</summary>
 			REMOVE_CONTROLS = 2,
+			/// <summary>Process the output as part of a stream to be continued.</summary>
 			STREAMING = 4
 		}
 
 
 		private IntPtr _biDi = IntPtr.Zero;
+
+		// The ICU Bidi object accepts pointers and expects that the caller keeps buffers allocated, so we handle allocating unmananged memory
 		private IntPtr _para = IntPtr.Zero;
+
 		private bool _disposedValue = false; // To detect redundant calls
 
 		/// <summary>
@@ -334,6 +321,9 @@ namespace Icu
 				_para = IntPtr.Zero;
 			}
 
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+
 			// icu BiDi expects the para pointer to live for the life of the structure, so we have to stash it
 			_para = Marshal.StringToHGlobalUni(text);
 			NativeMethods.ubidi_setPara(_biDi, _para, text.Length, paraLevel, embeddingLevels, out errorCode);
@@ -358,26 +348,13 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Set the context before a call to <see cref="SetPara(string, byte, byte[])"/>.
-		/// </summary>
-		/// <param name="prologue">The text which precedes the text that will be specified in a coming call to <see cref="SetPara(string, byte, byte[])"/></param>
-		/// <param name="epilogue">The text which follows the text that will be specified in a coming call to <see cref="SetPara(string, byte, byte[])"/></param>
-		public void SetContext(string prologue, string epilogue)
-		{
-			ErrorCode errorCode;
-			NativeMethods.ubidi_setContext(_biDi, prologue, prologue?.Length ?? 0, epilogue, epilogue?.Length ?? 0, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi setting context failed! " + errorCode);
-		}
-
-		/// <summary>
 		/// Get the text.
 		/// </summary>
 		public string Text
 		{
 			get
 			{
-				return NativeMethods.ubidi_getText(_biDi);
+				return Marshal.PtrToStringUni(NativeMethods.ubidi_getText(_biDi), NativeMethods.ubidi_getLength(_biDi));
 			}
 		}
 
@@ -589,11 +566,11 @@ namespace Icu
 		/// </summary>
 		/// <param name="options">Options for the reordering that control how the reordered text is written.</param>
 		/// <returns>The reordered string</returns>
-		public string GetReordered(ushort options)
+		public string GetReordered(CallReorderingOptions options)
 		{
 			ErrorCode errorCode;
 			var buff = new char[ProcessedLength * 2];
-			var len = NativeMethods.ubidi_writeReordered(_biDi, buff, buff.Length * 2, options, out errorCode);
+			var len = NativeMethods.ubidi_writeReordered(_biDi, buff, buff.Length * 2, (ushort)options, out errorCode);
 			if (errorCode.IsFailure())
 				throw new Exception("BiDi reordering failed! " + errorCode);
 
@@ -616,14 +593,14 @@ namespace Icu
 		/// <param name="str">The RTL text.</param>
 		/// <param name="options">Options for the reordering that control how the reordered text is written.</param>
 		/// <returns>The reversed string</returns>
-		public static string ReverseString(string str, ushort options)
+		public static string ReverseString(string str, CallReorderingOptions options)
 		{
 			if (str == null)
 				return "";
 
 			ErrorCode errorCode;
 			var buff = new char[str.Length];
-			var len = NativeMethods.ubidi_writeReverse(str, str.Length, buff, buff.Length, options, out errorCode);
+			var len = NativeMethods.ubidi_writeReverse(str, str.Length, buff, buff.Length, (ushort)options, out errorCode);
 			if (errorCode.IsFailure())
 				throw new Exception("BiDi reversing failed! " + errorCode);
 
