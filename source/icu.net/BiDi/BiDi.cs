@@ -123,12 +123,11 @@ namespace Icu
 		}
 
 
-		private IntPtr _biDi = IntPtr.Zero;
+		private IntPtr _biDi;
 
 		// The ICU Bidi object accepts pointers and expects that the caller keeps buffers allocated, so we handle allocating unmananged memory
-		private IntPtr _para = IntPtr.Zero;
+		private IntPtr _para;
 
-		private bool _disposedValue = false; // To detect redundant calls
 
 		/// <summary>
 		/// Creates a new empty BiDi object.
@@ -147,10 +146,8 @@ namespace Icu
 		/// <param name="maxRunCount">The maximum anticipated number of same-level runs that internal memory will be preallocated for</param>
 		public BiDi(int maxLength, int maxRunCount)
 		{
-			ErrorCode errorCode;
-			_biDi = NativeMethods.ubidi_openSized(maxLength, maxRunCount, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Creating BiDi object failed! " + errorCode);
+			_biDi = NativeMethods.ubidi_openSized(maxLength, maxRunCount, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Creating BiDi object failed! " + errorCode);
 		}
 
 		/// <summary>
@@ -171,26 +168,21 @@ namespace Icu
 		/// <param name="disposing"></param>
 		void Dispose(bool disposing)
 		{
-			if (!_disposedValue)
+			if (disposing)
 			{
-				if (disposing)
-				{
-					// TODO: dispose managed state (managed objects).
-				}
+				// TODO: dispose managed state (managed objects).
+			}
 
-				if (_biDi != IntPtr.Zero)
-				{
-					NativeMethods.ubidi_close(_biDi);
-					_biDi = IntPtr.Zero;
-				}
+			if (_biDi != IntPtr.Zero)
+			{
+				NativeMethods.ubidi_close(_biDi);
+				_biDi = IntPtr.Zero;
+			}
 
-				if (_para != IntPtr.Zero)
-				{
-					Marshal.FreeHGlobal(_para);
-					_para = IntPtr.Zero;
-				}
-
-				_disposedValue = true;
+			if (_para != IntPtr.Zero)
+			{
+				Marshal.FreeHGlobal(_para);
+				_para = IntPtr.Zero;
 			}
 		}
 
@@ -313,8 +305,6 @@ namespace Icu
 		/// </remarks>
 		public void SetPara(string text, byte paraLevel, byte[] embeddingLevels)
 		{
-			ErrorCode errorCode;
-
 			if (_para != IntPtr.Zero)
 			{
 				Marshal.FreeHGlobal(_para);
@@ -326,9 +316,8 @@ namespace Icu
 
 			// icu BiDi expects the para pointer to live for the life of the structure, so we have to stash it
 			_para = Marshal.StringToHGlobalUni(text);
-			NativeMethods.ubidi_setPara(_biDi, _para, text.Length, paraLevel, embeddingLevels, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi analysis failed! " + errorCode);
+			NativeMethods.ubidi_setPara(_biDi, _para, text.Length, paraLevel, embeddingLevels, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "BiDi analysis failed! " + errorCode);
 		}
 
 		/// <summary>
@@ -339,11 +328,8 @@ namespace Icu
 		/// <returns></returns>
 		public BiDi SetLine(int start, int limit)
 		{
-			ErrorCode errorCode;
-			IntPtr lineBidi;
-			NativeMethods.ubidi_setLine(_biDi, start, limit, out lineBidi, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi line creation failed! " + errorCode);
+			NativeMethods.ubidi_setLine(_biDi, start, limit, out var lineBidi, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "BiDi line creation failed! " + errorCode);
 			return new BiDi(lineBidi);
 		}
 
@@ -397,10 +383,8 @@ namespace Icu
 		/// <returns></returns>
 		public IEnumerable<byte> GetLevels()
 		{
-			ErrorCode errorCode;
-			var levels = NativeMethods.ubidi_getLevels(_biDi, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi level retrieval failed! " + errorCode);
+			var levels = NativeMethods.ubidi_getLevels(_biDi, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "BiDi level retrieval failed! " + errorCode);
 
 			var ret = new byte[ProcessedLength];
 			Marshal.Copy(levels, ret, 0, ret.Length);
@@ -445,10 +429,8 @@ namespace Icu
 		/// <returns>The index of the paragraph containing the specified position</returns>
 		public int GetParagraph(int charIndex, out int paraStart, out int paraLimit, out byte paraLevel)
 		{
-			ErrorCode errorCode;
-			var ret = NativeMethods.ubidi_getParagraph(_biDi, charIndex, out paraStart, out paraLimit, out paraLevel, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Paragraph retrieval failed! " + errorCode);
+			var ret = NativeMethods.ubidi_getParagraph(_biDi, charIndex, out paraStart, out paraLimit, out paraLevel, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Paragraph retrieval failed! " + errorCode);
 			return ret;
 		}
 
@@ -461,10 +443,8 @@ namespace Icu
 		/// <param name="paraLevel">Will receive the level of the paragraph</param>
 		public void GetParagraphByIndex(int paraIndex, out int paraStart, out int paraLimit, out byte paraLevel)
 		{
-			ErrorCode errorCode;
-			NativeMethods.ubidi_getParagraphByIndex(_biDi, paraIndex, out paraStart, out paraLimit, out paraLevel, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Paragraph retrieval failed! " + errorCode);
+			NativeMethods.ubidi_getParagraphByIndex(_biDi, paraIndex, out paraStart, out paraLimit, out paraLevel, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Paragraph retrieval failed! " + errorCode);
 		}
 
 		/// <summary>
@@ -473,10 +453,8 @@ namespace Icu
 		/// <returns>The number of runs</returns>
 		public int CountRuns()
 		{
-			ErrorCode errorCode;
-			var ret = NativeMethods.ubidi_countRuns(_biDi, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Run count failed! " + errorCode);
+			var ret = NativeMethods.ubidi_countRuns(_biDi, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Run count failed! " + errorCode);
 			return ret;
 		}
 
@@ -487,10 +465,8 @@ namespace Icu
 		/// <returns>The index of this character in the text</returns>
 		public int GetLogicalIndex(int visualIndex)
 		{
-			ErrorCode errorCode;
-			var ret = NativeMethods.ubidi_getLogicalIndex(_biDi, visualIndex, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Get logical index failed! " + errorCode);
+			var ret = NativeMethods.ubidi_getLogicalIndex(_biDi, visualIndex, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Get logical index failed! " + errorCode);
 			return ret;
 		}
 
@@ -500,11 +476,9 @@ namespace Icu
 		/// <returns>An array of <see cref="ProcessedLength"/>) indexes which will reflect the reordering of the characters</returns>
 		public int[] GetLogicalMap()
 		{
-			ErrorCode errorCode;
 			var map = new int[ResultLength];
-			NativeMethods.ubidi_getLogicalMap(_biDi, map, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Get logical map failed! " + errorCode);
+			NativeMethods.ubidi_getLogicalMap(_biDi, map, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Get logical map failed! " + errorCode);
 			return map;
 		}
 
@@ -527,10 +501,8 @@ namespace Icu
 		/// <returns>The visual position of this character.</returns>
 		public int GetVisualIndex(int logicalIndex)
 		{
-			ErrorCode errorCode;
-			var ret = NativeMethods.ubidi_getVisualIndex(_biDi, logicalIndex, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Get visual index failed! " + errorCode);
+			var ret = NativeMethods.ubidi_getVisualIndex(_biDi, logicalIndex, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Get visual index failed! " + errorCode);
 			return ret;
 		}
 
@@ -540,11 +512,9 @@ namespace Icu
 		/// <returns>An array of <see cref="ResultLength"/>indexes which will reflect the reordering of the character</returns>
 		public int[] GetVisualMap()
 		{
-			ErrorCode errorCode;
 			var map = new int[ResultLength];
-			NativeMethods.ubidi_getVisualMap(_biDi, map, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("Get visual map failed! " + errorCode);
+			NativeMethods.ubidi_getVisualMap(_biDi, map, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "Get visual map failed! " + errorCode);
 			return map;
 		}
 
@@ -568,11 +538,9 @@ namespace Icu
 		/// <returns>The reordered string</returns>
 		public string GetReordered(CallReorderingOptions options)
 		{
-			ErrorCode errorCode;
 			var buff = new char[ProcessedLength * 2];
-			var len = NativeMethods.ubidi_writeReordered(_biDi, buff, buff.Length * 2, (ushort)options, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi reordering failed! " + errorCode);
+			var len = NativeMethods.ubidi_writeReordered(_biDi, buff, buff.Length * 2, (ushort)options, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "BiDi reordering failed! " + errorCode);
 
 			return new string(buff, 0, len);
 		}
@@ -584,7 +552,7 @@ namespace Icu
 		/// <returns>The base direction of the text</returns>
 		public static BiDiDirection GetBaseDirection(string str)
 		{
-			return NativeMethods.ubidi_getBaseDirection(str, str.Length);
+			return NativeMethods.ubidi_getBaseDirection(str, str?.Length ?? 0);
 		}
 
 		/// <summary>
@@ -598,11 +566,9 @@ namespace Icu
 			if (str == null)
 				return "";
 
-			ErrorCode errorCode;
 			var buff = new char[str.Length];
-			var len = NativeMethods.ubidi_writeReverse(str, str.Length, buff, buff.Length, (ushort)options, out errorCode);
-			if (errorCode.IsFailure())
-				throw new Exception("BiDi reversing failed! " + errorCode);
+			var len = NativeMethods.ubidi_writeReverse(str, str.Length, buff, buff.Length, (ushort)options, out var errorCode);
+			ExceptionFromErrorCode.ThrowIfError(errorCode, "BiDi reversing failed! " + errorCode);
 
 			return new string(buff, 0, len);
 		}

@@ -1,8 +1,6 @@
 // Copyright (c) 2019 Jeff Skaistis
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -21,34 +19,27 @@ namespace Icu.Tests
 		private const string HEBREW_ENGLISH_MIXED = "סעיף א. כל בני אדם נולדו בני חורין ושווים בערכם ובזכויותיהם. כולם Some English in the text עליהם לנהוג איש ברעהו ברוח של אחוה.";
 		private const string PARAGRAPHS = ENGLISH_LONG + "\r\n" + HEBREW_ENGLISH_MIXED + "\r\n" + HEBREW_LONG + "\r\n\r\n" + ENGLISH_HEBREW_MIXED;
 
+
 		// Static method tests
 
-		[Test]
-		public void StaticReverseString()
+		[TestCase(HEBREW_SHORT, BiDi.CallReorderingOptions.DEFAULT, ExpectedResult = "תיִרְבִע")]
+		[TestCase(HEBREW_SHORT, BiDi.CallReorderingOptions.KEEP_BASE_COMBINING, ExpectedResult = "תירִבְעִ")]
+		[TestCase("", BiDi.CallReorderingOptions.DEFAULT, ExpectedResult = "")]
+		[TestCase(null, BiDi.CallReorderingOptions.DEFAULT, ExpectedResult = "")]
+		public string StaticReverseString(string str, BiDi.CallReorderingOptions options)
 		{
-			var reversed = BiDi.ReverseString(HEBREW_SHORT, BiDi.CallReorderingOptions.DEFAULT);
-			Assert.AreNotEqual(null, reversed);
-			Assert.AreEqual(HEBREW_SHORT.Length, reversed.Length);
-
-			var reverseHebrew = "תיִרְבִע";
-			Assert.AreEqual(reverseHebrew, reversed);
-
-			reversed = BiDi.ReverseString(HEBREW_SHORT, BiDi.CallReorderingOptions.KEEP_BASE_COMBINING);
-			Assert.AreNotEqual(null, reversed);
-			Assert.AreEqual(HEBREW_SHORT.Length, reversed.Length);
-
-			var reverseHebrewCombiningOrder = "תירִבְעִ";
-			Assert.AreEqual(reverseHebrewCombiningOrder, reversed);
+			return BiDi.ReverseString(str, options);
 		}
 
-		[Test]
-		public void StaticBaseDirection()
+		[TestCase(ENGLISH_LONG, ExpectedResult = BiDi.BiDiDirection.LTR)]
+		[TestCase(HEBREW_LONG, ExpectedResult = BiDi.BiDiDirection.RTL)]
+		[TestCase(ENGLISH_HEBREW_MIXED, ExpectedResult = BiDi.BiDiDirection.LTR)]
+		[TestCase(HEBREW_ENGLISH_MIXED, ExpectedResult = BiDi.BiDiDirection.RTL)]
+		[TestCase("", ExpectedResult = BiDi.BiDiDirection.NEUTRAL)]
+		[TestCase(null, ExpectedResult = BiDi.BiDiDirection.NEUTRAL)]
+		public BiDi.BiDiDirection StaticBaseDirection(string str)
 		{
-			Assert.AreEqual(BiDi.BiDiDirection.LTR, BiDi.GetBaseDirection(ENGLISH_LONG));
-			Assert.AreEqual(BiDi.BiDiDirection.RTL, BiDi.GetBaseDirection(HEBREW_LONG));
-			Assert.AreEqual(BiDi.BiDiDirection.LTR, BiDi.GetBaseDirection(ENGLISH_HEBREW_MIXED));
-			Assert.AreEqual(BiDi.BiDiDirection.RTL, BiDi.GetBaseDirection(HEBREW_ENGLISH_MIXED));
-			Assert.AreEqual(BiDi.BiDiDirection.NEUTRAL, BiDi.GetBaseDirection("102039"));
+			return BiDi.GetBaseDirection(str);
 		}
 
 
@@ -61,16 +52,31 @@ namespace Icu.Tests
 			{
 				bidi.SetPara(ENGLISH_HEBREW_MIXED, 0, null);
 
-				Assert.AreEqual(bidi.Text, ENGLISH_HEBREW_MIXED);
-				Assert.AreEqual(bidi.Length, ENGLISH_HEBREW_MIXED.Length);
-				Assert.AreEqual(bidi.ProcessedLength, ENGLISH_HEBREW_MIXED.Length);
-				Assert.AreEqual(bidi.ResultLength, ENGLISH_HEBREW_MIXED.Length);
-				Assert.AreEqual(bidi.Direction, BiDi.BiDiDirection.MIXED);
+				Assert.AreEqual(ENGLISH_HEBREW_MIXED, bidi.Text);
+				Assert.AreEqual(ENGLISH_HEBREW_MIXED.Length, bidi.Length);
+				Assert.AreEqual(ENGLISH_HEBREW_MIXED.Length, bidi.ProcessedLength);
+				Assert.AreEqual(ENGLISH_HEBREW_MIXED.Length, bidi.ResultLength);
+				Assert.AreEqual(BiDi.BiDiDirection.MIXED, bidi.Direction);
 			}
 		}
 
 		[Test]
-		public void Levels()
+		public void BasicPropertiesEmpty()
+		{
+			using (var bidi = new BiDi())
+			{
+				bidi.SetPara(string.Empty, 0, null);
+
+				Assert.AreEqual(string.Empty, bidi.Text);
+				Assert.AreEqual(string.Empty.Length, bidi.Length);
+				Assert.AreEqual(string.Empty.Length, bidi.ProcessedLength);
+				Assert.AreEqual(string.Empty.Length, bidi.ResultLength);
+				Assert.AreEqual(BiDi.BiDiDirection.LTR, bidi.Direction);
+			}
+		}
+
+		[Test]
+		public void LevelsEnglish()
 		{
 			using (var bidi = new BiDi())
 			{
@@ -83,7 +89,11 @@ namespace Icu.Tests
 				Assert.AreEqual(ENGLISH_LONG.Length, levels.Length);
 				Assert.That(levels.Where(ll => ll != 0).Count() == 0);
 			}
+		}
 
+		[Test]
+		public void LevelsHebrew()
+		{
 			using (var bidi = new BiDi())
 			{
 				bidi.SetPara(HEBREW_LONG, BiDi.DEFAULT_LTR, null);
@@ -95,7 +105,11 @@ namespace Icu.Tests
 				Assert.AreEqual(HEBREW_LONG.Length, levels.Length);
 				Assert.That(levels.Where(ll => ll != 1).Count() == 0);
 			}
+		}
 
+		[Test]
+		public void LevelsEnglishHebrew()
+		{
 			using (var bidi = new BiDi())
 			{
 				bidi.SetPara(ENGLISH_HEBREW_MIXED, BiDi.DEFAULT_LTR, null);
@@ -107,7 +121,11 @@ namespace Icu.Tests
 				Assert.AreEqual(ENGLISH_HEBREW_MIXED.Length, levels.Length);
 				Assert.AreEqual(HEBREW_SHORT.Length, levels.Where(ll => ll != 0).Count());
 			}
+		}
 
+		[Test]
+		public void LevelsHebrewEnglish()
+		{
 			using (var bidi = new BiDi())
 			{
 				bidi.SetPara(HEBREW_ENGLISH_MIXED, BiDi.DEFAULT_LTR, null);
@@ -243,7 +261,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void Reordering()
+		public void ReorderingDefault()
 		{
 			using (var bidi = new BiDi())
 			{
@@ -252,12 +270,27 @@ namespace Icu.Tests
 				Assert.AreEqual(ENGLISH_PART_1, reordered.Substring(0, ENGLISH_PART_1.Length));
 				Assert.AreEqual(string.Join("", HEBREW_SHORT.Reverse()), reordered.Substring(ENGLISH_PART_1.Length, HEBREW_SHORT.Length));
 				Assert.AreEqual(ENGLISH_PART_2, reordered.Substring(ENGLISH_PART_1.Length + HEBREW_SHORT.Length));
+			}
+		}
 
-				reordered = bidi.GetReordered(BiDi.CallReorderingOptions.KEEP_BASE_COMBINING);
+		[Test]
+		public void ReorderingBaseCombining()
+		{
+			using (var bidi = new BiDi())
+			{
+				bidi.SetPara(ENGLISH_HEBREW_MIXED, BiDi.DEFAULT_LTR, null);
+				var reordered = bidi.GetReordered(BiDi.CallReorderingOptions.KEEP_BASE_COMBINING);
 				Assert.AreEqual(ENGLISH_PART_1, reordered.Substring(0, ENGLISH_PART_1.Length));
 				Assert.AreNotEqual(string.Join("", HEBREW_SHORT.Reverse()), reordered.Substring(ENGLISH_PART_1.Length, HEBREW_SHORT.Length));
 				Assert.AreEqual(ENGLISH_PART_2, reordered.Substring(ENGLISH_PART_1.Length + HEBREW_SHORT.Length));
+			}
+		}
 
+		[Test]
+		public void ReorderingInverse()
+		{
+			using (var bidi = new BiDi())
+			{
 				bidi.SetPara(HEBREW_LONG, BiDi.DEFAULT_RTL, null);
 				var reorderedHebrew = bidi.GetReordered(BiDi.CallReorderingOptions.DEFAULT);
 				Assert.AreEqual(string.Join("", HEBREW_LONG.Reverse()), reorderedHebrew);
