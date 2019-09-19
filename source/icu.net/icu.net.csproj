@@ -55,13 +55,7 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="UtilPack.NuGet.MSBuild" Version="2.9.0" Condition="!$(TargetFramework.StartsWith('net4'))">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="UtilPack.NuGet.MSBuild" Version="2.8.0" Condition="$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="GitVersionTask" Version="5.0.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SIL.ReleaseTasks" Version="2.2.0">
