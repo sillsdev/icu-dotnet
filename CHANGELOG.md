@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.6.0] - 2019-09-27
+
 ### Added
 
 - Add TimeZone class (#108; j-troc)
@@ -24,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Crash on Linux disposing `RuleBasedCollator`
+- Crash on Linux disposing `RuleBasedCollator` (#124)
 
 ## [2.5.4] - 2019-01-09
 
