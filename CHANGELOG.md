@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Create nuget symbol package
 - Add BiDi class (#121; jeffska)
 
+### Fixed
+
+- Crash on Linux disposing `RuleBasedCollator`
+
 ## [2.5.4] - 2019-01-09
 
 ### Fixed

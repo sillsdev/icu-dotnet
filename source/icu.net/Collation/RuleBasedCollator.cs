@@ -37,7 +37,7 @@ namespace Icu.Collation
 			{
 				try
 				{
-					if (handle != IntPtr.Zero)
+					if (!IsInvalid)
 						NativeMethods.ucol_close(handle);
 					handle = IntPtr.Zero;
 					return true;
@@ -55,10 +55,7 @@ namespace Icu.Collation
 			///<returns>
 			///true if the handle is valid; otherwise, false.
 			///</returns>
-			public override bool IsInvalid
-			{
-				get { return handle == IntPtr.Zero; }
-			}
+			public override bool IsInvalid => handle == IntPtr.Zero || handle == new IntPtr(-1) || IsClosed;
 		}
 
 		private bool _disposingValue; // To detect redundant calls
@@ -447,25 +444,25 @@ namespace Icu.Collation
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			if (!_disposingValue)
+			if (_disposingValue)
+				return;
+
+			if (disposing)
 			{
-				if (disposing)
+				// Dispose managed state (managed objects), if any.
+
+				// although SafeRuleBasedCollatorHandle deals with an unmanaged resource
+				// it itself is a managed object, so we shouldn't try to dispose it
+				// if !disposing because that could lead to a corrupt stack (as observed
+				// in https://jenkins.lsdev.sil.org:45192/view/Icu/view/All/job/GitHub-IcuDotNet-Win-any-master-release/59)
+				if (!_collatorHandle.IsInvalid)
 				{
-					// Dispose managed state (managed objects), if any.
-
-					// although SafeRuleBasedCollatorHandle deals with an unmanaged resource
-					// it itself is a managed object, so we shouldn't try to dispose it
-					// if !disposing because that could lead to a corrupt stack (as observed
-					// in https://jenkins.lsdev.sil.org:45192/view/Icu/view/All/job/GitHub-IcuDotNet-Win-any-master-release/59)
-					if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
-					{
-						_collatorHandle.Dispose();
-					}
+					_collatorHandle.Dispose();
 				}
-				_collatorHandle = default(SafeRuleBasedCollatorHandle);
-
-				_disposingValue = true;
 			}
+			_collatorHandle = default;
+
+			_disposingValue = true;
 		}
 
 		/// <summary>
