@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013-2019 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
 #if NETSTANDARD1_6
 using Icu;
 #else
@@ -62,8 +61,8 @@ namespace Icu.Collation
 			}
 		}
 
-		private bool _disposingValue = false; // To detect redundant calls
-		private SafeRuleBasedCollatorHandle _collatorHandle = default(SafeRuleBasedCollatorHandle);
+		private bool _disposingValue; // To detect redundant calls
+		private SafeRuleBasedCollatorHandle _collatorHandle;
 
 		private RuleBasedCollator() {}
 
@@ -95,23 +94,21 @@ namespace Icu.Collation
 								 NormalizationMode normalizationMode,
 								 CollationStrength collationStrength)
 		{
-			ErrorCode status;
 			var parseError = new ParseError();
 			_collatorHandle = NativeMethods.ucol_openRules(rules,
 				rules.Length,
 				normalizationMode,
 				collationStrength,
 				ref parseError,
-				out status);
+				out var status);
 			try
 			{
 				ExceptionFromErrorCode.ThrowIfError(status, parseError.ToString(rules));
 			}
 			catch
 			{
-				if (_collatorHandle != default(SafeRuleBasedCollatorHandle))
-					_collatorHandle.Dispose();
-				_collatorHandle = default(SafeRuleBasedCollatorHandle);
+				_collatorHandle?.Dispose();
+				_collatorHandle = default;
 				throw;
 			}
 		}
@@ -127,12 +124,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CollationStrength Strength
 		{
-			get { return (CollationStrength) GetAttribute(NativeMethods.CollationAttribute.Strength); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.Strength,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (CollationStrength) GetAttribute(NativeMethods.CollationAttribute.Strength);
+			set => SetAttribute(NativeMethods.CollationAttribute.Strength,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -141,12 +135,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override NormalizationMode NormalizationMode
 		{
-			get { return (NormalizationMode) GetAttribute(NativeMethods.CollationAttribute.NormalizationMode); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.NormalizationMode,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (NormalizationMode) GetAttribute(NativeMethods.CollationAttribute.NormalizationMode);
+			set => SetAttribute(NativeMethods.CollationAttribute.NormalizationMode,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -154,12 +145,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override FrenchCollation FrenchCollation
 		{
-			get { return (FrenchCollation) GetAttribute(NativeMethods.CollationAttribute.FrenchCollation); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.FrenchCollation,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (FrenchCollation) GetAttribute(NativeMethods.CollationAttribute.FrenchCollation);
+			set => SetAttribute(NativeMethods.CollationAttribute.FrenchCollation,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -171,12 +159,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CaseLevel CaseLevel
 		{
-			get { return (CaseLevel) GetAttribute(NativeMethods.CollationAttribute.CaseLevel); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.CaseLevel,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (CaseLevel) GetAttribute(NativeMethods.CollationAttribute.CaseLevel);
+			set => SetAttribute(NativeMethods.CollationAttribute.CaseLevel,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -187,12 +172,9 @@ namespace Icu.Collation
 		[Obsolete("ICU 50 Implementation detail, cannot be set via API, was removed from implementation.")]
 		public override HiraganaQuaternary HiraganaQuaternary
 		{
-			get { return (HiraganaQuaternary) GetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (HiraganaQuaternary) GetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode);
+			set => SetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -202,12 +184,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override NumericCollation NumericCollation
 		{
-			get { return (NumericCollation) GetAttribute(NativeMethods.CollationAttribute.NumericCollation); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.NumericCollation,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (NumericCollation) GetAttribute(NativeMethods.CollationAttribute.NumericCollation);
+			set => SetAttribute(NativeMethods.CollationAttribute.NumericCollation,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -215,12 +194,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CaseFirst CaseFirst
 		{
-			get { return (CaseFirst) GetAttribute(NativeMethods.CollationAttribute.CaseFirst); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.CaseFirst,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (CaseFirst) GetAttribute(NativeMethods.CollationAttribute.CaseFirst);
+			set => SetAttribute(NativeMethods.CollationAttribute.CaseFirst,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		/// <summary>
@@ -228,12 +204,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override AlternateHandling AlternateHandling
 		{
-			get { return (AlternateHandling) GetAttribute(NativeMethods.CollationAttribute.AlternateHandling); }
-			set
-			{
-				SetAttribute(NativeMethods.CollationAttribute.AlternateHandling,
-							 (NativeMethods.CollationAttributeValue) value);
-			}
+			get => (AlternateHandling) GetAttribute(NativeMethods.CollationAttribute.AlternateHandling);
+			set => SetAttribute(NativeMethods.CollationAttribute.AlternateHandling,
+				(NativeMethods.CollationAttributeValue) value);
 		}
 
 		private byte[] keyData = new byte[1024];
@@ -253,11 +226,8 @@ namespace Icu.Collation
 			int actualLength;
 			for (;;)
 			{
-				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle,
-															 source,
-															 source.Length,
-															 keyData,
-															 keyData.Length);
+				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, source, source.Length,
+					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
 					keyData = new byte[keyData.Length*2];
@@ -270,16 +240,14 @@ namespace Icu.Collation
 
 		private NativeMethods.CollationAttributeValue GetAttribute(NativeMethods.CollationAttribute attr)
 		{
-			ErrorCode e;
-			NativeMethods.CollationAttributeValue value = NativeMethods.ucol_getAttribute(_collatorHandle, attr, out e);
+			var value = NativeMethods.ucol_getAttribute(_collatorHandle, attr, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 			return value;
 		}
 
 		private void SetAttribute(NativeMethods.CollationAttribute attr, NativeMethods.CollationAttributeValue value)
 		{
-			ErrorCode e;
-			NativeMethods.ucol_setAttribute(_collatorHandle, attr, value, out e);
+			NativeMethods.ucol_setAttribute(_collatorHandle, attr, value, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -290,18 +258,18 @@ namespace Icu.Collation
 		/// <returns></returns>
 		public static IList<string> GetAvailableCollationLocales()
 		{
-			List<string> locales = new List<string>();
-			// The ucol_openAvailableLocales call failes when there are no locales available, so check first.
+			var locales = new List<string>();
+			// The ucol_openAvailableLocales call fails when there are no locales available, so check first.
 			if (NativeMethods.ucol_countAvailable() == 0)
 			{
 				return locales;
 			}
-			ErrorCode ec;
-			SafeEnumeratorHandle en = NativeMethods.ucol_openAvailableLocales(out ec);
+
+			var en = NativeMethods.ucol_openAvailableLocales(out var ec);
 			ExceptionFromErrorCode.ThrowIfError(ec);
 			try
 			{
-				string str = en.Next();
+				var str = en.Next();
 				while (str != null)
 				{
 					locales.Add(str);
@@ -326,14 +294,13 @@ namespace Icu.Collation
 		///</returns>
 		public override object Clone()
 		{
-			RuleBasedCollator copy = new RuleBasedCollator();
-			ErrorCode status;
-			int buffersize = 512;
+			var copy = new RuleBasedCollator();
+			var buffersize = 512;
 			copy._collatorHandle = NativeMethods.ucol_safeClone(
 				_collatorHandle,
 				IntPtr.Zero,
 				ref buffersize,
-				out status);
+				out var status);
 			try
 			{
 				ExceptionFromErrorCode.ThrowIfError(status);
@@ -341,9 +308,8 @@ namespace Icu.Collation
 			}
 			catch
 			{
-				if (copy._collatorHandle != default(SafeRuleBasedCollatorHandle))
-					copy._collatorHandle.Dispose();
-				copy._collatorHandle = default(SafeRuleBasedCollatorHandle);
+				copy._collatorHandle?.Dispose();
+				copy._collatorHandle = default;
 				throw;
 			}
 		}
@@ -353,7 +319,7 @@ namespace Icu.Collation
 		/// Does not allow for locale fallback.
 		/// </summary>
 		/// <param name="localeId">Locale to use</param>
-		public static new Collator Create(string localeId)
+		public new static Collator Create(string localeId)
 		{
 			return Create(localeId, Fallback.NoFallback);
 		}
@@ -370,50 +336,46 @@ namespace Icu.Collation
 			// format that ICU expects.
 			var locale = new Locale(localeId);
 
-			var instance = new RuleBasedCollator();
-			ErrorCode status;
-			instance._collatorHandle = NativeMethods.ucol_open(locale.Id, out status);
+			var instance = new RuleBasedCollator {
+				_collatorHandle = NativeMethods.ucol_open(locale.Id, out var status)
+			};
 			try
 			{
-				if (status == ErrorCode.USING_FALLBACK_WARNING && fallback == Fallback.NoFallback)
+				switch (status)
 				{
-					throw new ArgumentException(
-						$"Could only create Collator '{localeId}' by falling back to " +
-						$"'{instance.ActualId}'. You can use the fallback option to create this.");
-				}
-				if (status == ErrorCode.USING_DEFAULT_WARNING && fallback == Fallback.NoFallback &&
-					!instance.ValidId.Equals(locale.Id) &&
-					locale.Id.Length > 0 && !locale.Id.Equals("root"))
-				{
-					throw new ArgumentException(
-						$"Could only create Collator '{localeId}' by falling back to the default " +
-						$"'{instance.ActualId}'. You can use the fallback option to create this.");
-				}
-				if (status == ErrorCode.INTERNAL_PROGRAM_ERROR && fallback == Fallback.FallbackAllowed)
-				{
-					instance = new RuleBasedCollator(string.Empty); // fallback to UCA
-				}
-				else
-				{
-					try
-					{
-						ExceptionFromErrorCode.ThrowIfError(status);
-					}
-					catch (Exception e)
-					{
+					case ErrorCode.USING_FALLBACK_WARNING when fallback == Fallback.NoFallback:
 						throw new ArgumentException(
-							$"Unable to create a collator using the given localeId '{localeId}'.\n" +
-							"This is likely because the ICU data file was created without collation " +
-							"rules for this locale. You can provide the rules yourself or replace " +
-							"the data dll.", e);
-					}
+							$"Could only create Collator '{localeId}' by falling back to " +
+							$"'{instance.ActualId}'. You can use the fallback option to create this.");
+					case ErrorCode.USING_DEFAULT_WARNING when fallback == Fallback.NoFallback && !instance.ValidId.Equals(locale.Id) && locale.Id.Length > 0 && !locale.Id.Equals("root"):
+						throw new ArgumentException(
+							$"Could only create Collator '{localeId}' by falling back to the default " +
+							$"'{instance.ActualId}'. You can use the fallback option to create this.");
+					case ErrorCode.INTERNAL_PROGRAM_ERROR when fallback == Fallback.FallbackAllowed:
+						instance = new RuleBasedCollator(string.Empty); // fallback to UCA
+						break;
+					default:
+						try
+						{
+							ExceptionFromErrorCode.ThrowIfError(status);
+						}
+						catch (Exception e)
+						{
+							throw new ArgumentException(
+								$"Unable to create a collator using the given localeId '{localeId}'.\n" +
+								"This is likely because the ICU data file was created without collation " +
+								"rules for this locale. You can provide the rules yourself or replace " +
+								"the data dll.", e);
+						}
+
+						break;
 				}
+
 				return instance;
 			}
 			catch
 			{
-				if (instance._collatorHandle != default(SafeRuleBasedCollatorHandle))
-					instance._collatorHandle.Dispose();
+				instance._collatorHandle?.Dispose();
 				instance._collatorHandle = default(SafeRuleBasedCollatorHandle);
 				throw;
 			}
@@ -423,17 +385,12 @@ namespace Icu.Collation
 		{
 			get
 			{
-				ErrorCode status;
 				if (_collatorHandle.IsInvalid)
 					return string.Empty;
 				// See NativeMethods.ucol_getLocaleByType for marshal information.
-				string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
-					_collatorHandle, NativeMethods.LocaleType.ActualLocale, out status));
-				if (status != ErrorCode.NoErrors)
-				{
-					return string.Empty;
-				}
-				return result;
+				var result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
+					_collatorHandle, NativeMethods.LocaleType.ActualLocale, out var status));
+				return status != ErrorCode.NoErrors ? string.Empty : result;
 			}
 		}
 
@@ -441,17 +398,12 @@ namespace Icu.Collation
 		{
 			get
 			{
-				ErrorCode status;
 				if (_collatorHandle.IsInvalid)
 					return string.Empty;
 				// See NativeMethods.ucol_getLocaleByType for marshal information.
-				string result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
-					_collatorHandle, NativeMethods.LocaleType.ValidLocale, out status));
-				if (status != ErrorCode.NoErrors)
-				{
-					return string.Empty;
-				}
-				return result;
+				var result = Marshal.PtrToStringAnsi(NativeMethods.ucol_getLocaleByType(
+					_collatorHandle, NativeMethods.LocaleType.ValidLocale, out var status));
+				return status != ErrorCode.NoErrors ? string.Empty : result;
 			}
 		}
 		#endregion
