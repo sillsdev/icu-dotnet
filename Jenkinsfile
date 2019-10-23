@@ -4,6 +4,20 @@
 
 @Library('lsdev-pipeline-library') _
 
+echo 'Testing...'
+echo "buildCauses=${currentBuild.buildCauses}"
+echo "GitHubPushCause=${currentBuild.getBuildCauses('java.com.cloudbees.jenkins.GitHubPushCause')}"
+echo "hudson.model.Cause.UserIdCause=${currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')}"
+userCause=currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+if (userCause) {
+	echo "userId=${userCause.userId}"
+} else {
+	echo "no userCause"
+}
+build_parent = currentBuild.rawBuild.parent
+echo "build_parent=${build_parent}"
+return
+
 xplatformBuildAndRunTests {
 	winNodeSpec = 'windows && supported && netcore && vs2017'
 	winTool = 'msbuild15'
