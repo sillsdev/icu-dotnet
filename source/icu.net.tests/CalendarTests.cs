@@ -111,7 +111,7 @@ namespace Icu.Tests
 				cal1.Add(Calendar.UCalendarDateFields.DayOfMonth, 1);
 				cal2.Roll(Calendar.UCalendarDateFields.DayOfMonth, 1);
 
-				Assert.AreEqual(Calendar.UCalendarMonths.May,cal1.Month);
+				Assert.AreEqual(Calendar.UCalendarMonths.May, cal1.Month);
 				Assert.AreEqual(1, cal1.DayOfMonth);
 
 				Assert.AreEqual(Calendar.UCalendarMonths.April, cal2.Month);
@@ -205,7 +205,7 @@ namespace Icu.Tests
 
 				// Truncate submillisecond part
 				dateTime = dateTime.AddTicks(-(dateTime.Ticks % TimeSpan.TicksPerMillisecond));
-				
+
 				Assert.AreEqual(dateTime, result);
 			}
 		}
@@ -261,56 +261,43 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
-		public void FirstDayOfWeekTest()
+		[TestCase(Calendar.UCalendarDaysOfWeek.Sunday, ExpectedResult = Calendar.UCalendarDaysOfWeek.Sunday)]
+		[TestCase(Calendar.UCalendarDaysOfWeek.Thursday, ExpectedResult = Calendar.UCalendarDaysOfWeek.Thursday)]
+		public Calendar.UCalendarDaysOfWeek FirstDayOfWeekTest(Calendar.UCalendarDaysOfWeek firstDayOfWeek)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
-				var newDay = Calendar.UCalendarDaysOfWeek.Thursday;
-
-				var val0 = cal.FirstDayOfWeek;
-				cal.FirstDayOfWeek = newDay;
-				var val1 = cal.FirstDayOfWeek;
-
-				Assert.AreEqual(Calendar.UCalendarDaysOfWeek.Sunday, val0);
-				Assert.AreEqual(newDay, val1);
+				cal.FirstDayOfWeek = firstDayOfWeek;
+				return cal.FirstDayOfWeek;
 			}
 		}
 
+		[TestCase(Calendar.UCalendarDaysOfWeek.Sunday, ExpectedResult = 2)]
+		[TestCase(Calendar.UCalendarDaysOfWeek.Thursday, ExpectedResult = 1)]
 		[Test]
-		public void WeekOfYearTest()
+		public int WeekOfYearTest(Calendar.UCalendarDaysOfWeek firstDayOfWeek)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
 				cal.Clear();
 				cal.DayOfMonth = 4;
-				var newDay = Calendar.UCalendarDaysOfWeek.Thursday;
 
-				var val0 = cal.WeekOfYear;
-				cal.FirstDayOfWeek = newDay;
-				var val1 = cal.WeekOfYear;
-
-
-				Assert.AreEqual(2, val0);
-				Assert.AreEqual(1, val1);
+				cal.FirstDayOfWeek = firstDayOfWeek;
+				return cal.WeekOfYear;
 			}
 		}
 
-		[Test]
-		public void MinimalDaysInFirstWeekTest()
+		[TestCase(5, ExpectedResult = 1)]
+		[TestCase(1, ExpectedResult = 2)]
+		public int MinimalDaysInFirstWeekTest(int minimumDaysInFirstWeek)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
 				cal.Clear();
 				cal.DayOfMonth = 4;
-				var newMinimum = 5;
 
-				var val0 = cal.WeekOfYear;
-				cal.MinimalDaysInFirstWeek = newMinimum;
-				var val1 = cal.WeekOfYear;
-
-				Assert.AreEqual(2, val0);
-				Assert.AreEqual(1, val1);
+				cal.MinimalDaysInFirstWeek = minimumDaysInFirstWeek;
+				return cal.WeekOfYear;
 			}
 		}
 
@@ -379,35 +366,28 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
-		public void WeekOfMonthTest()
+		[TestCase(5, ExpectedResult = 1)]
+		[TestCase(1, ExpectedResult = 2)]
+		public int WeekOfMonthTest(int minimumDaysInFirstWeek)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
 				cal.Clear();
 				cal.DayOfMonth = 4;
-				var newMinimum = 5;
 
-				var val0 = cal.WeekOfMonth;
-				cal.MinimalDaysInFirstWeek = newMinimum;
-				var val1 = cal.WeekOfMonth;
-
-				Assert.AreEqual(2, val0);
-				Assert.AreEqual(1, val1);
+				cal.MinimalDaysInFirstWeek = minimumDaysInFirstWeek;
+				return cal.WeekOfMonth;
 			}
 		}
 
-		[Test]
-		public void EraTest()
+		[TestCase(2000, ExpectedResult = 1)]
+		[TestCase(-1, ExpectedResult = 0)]
+		public int EraTest(int year)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
-				var era1 = cal.Era;
-				cal.Year = -1;
-				var era0 = cal.Era;
-
-				Assert.AreEqual(1, era1);
-				Assert.AreEqual(0, era0);
+				cal.Year = year;
+				return cal.Era;
 			}
 		}
 
@@ -425,56 +405,58 @@ namespace Icu.Tests
 			}
 		}
 
-		[Test]
-		public void DstOffsetTest()
+		[TestCase(Calendar.UCalendarMonths.July, ExpectedResult = 3600000 /* 60min * 60s * 1000ms */)]
+		[TestCase(Calendar.UCalendarMonths.January, ExpectedResult = 0)]
+		public int DstOffsetTest(Calendar.UCalendarMonths month)
 		{
-			var expected0 = 60 * 60 * 1000;
-			var expected1 = 0;
-
 			var zone = new TimeZone("Europe/Paris");
 
 			using (var cal = new GregorianCalendar(zone))
 			{
-				cal.Month = Calendar.UCalendarMonths.July;
+				cal.Month = month;
 				cal.DayOfMonth = 20;
 
-				var offset0 = cal.DstOffset;
-				cal.Month = Calendar.UCalendarMonths.January;
-				var offset1 = cal.DstOffset;
-
-				Assert.AreEqual(expected0, offset0);
-				Assert.AreEqual(expected1, offset1);
+				return cal.DstOffset;
 			}
 		}
 
-		[Test]
-		public void AmPmTest()
+		[TestCase(3, ExpectedResult = Calendar.UCalendarAMPMs.Am)]
+		[TestCase(14, ExpectedResult = Calendar.UCalendarAMPMs.Pm)]
+		public Calendar.UCalendarAMPMs AmPmTest(int hourOfDay)
 		{
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
-				cal.HourOfDay = 3;
-				var val0 = cal.AmPm;
-				cal.HourOfDay = 14;
-				var val1 = cal.AmPm;
-
-				Assert.AreEqual(Calendar.UCalendarAMPMs.Am, val0);
-				Assert.AreEqual(Calendar.UCalendarAMPMs.Pm, val1);
+				cal.HourOfDay = hourOfDay;
+				return cal.AmPm;
 			}
 		}
 
 		[Test]
-		public void SetTimeZone2Test()
+		[Platform(Include = "win")]
+		public void SetTimeZoneTestWin()
+		{
+			var timezones = TimeZoneInfo.GetSystemTimeZones();
+			var timezone = timezones.First(tzi => tzi.Id == "Romance Standard Time");
+
+			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
+			{
+				cal.SetTimeZone(timezone);
+
+				var tz = cal.GetTimeZone();
+
+				Assert.AreEqual("Europe/Paris", tz.Id);
+			}
+		}
+
+		[Test]
+		[Platform(Exclude = "win")]
+		public void SetTimeZoneTestLinux()
 		{
 			var tzdbId = "Europe/Paris";
-			var winId = "Romance Standard Time";
-			
+
 			var timezones = TimeZoneInfo.GetSystemTimeZones();
 
-			var timezone = timezones.FirstOrDefault(tzi => tzi.Id == tzdbId);
-			if(timezone==null)
-			{
-				timezone = timezones.First(tzi => tzi.Id == winId);
-			}
+			var timezone = timezones.First(tzi => tzi.Id == tzdbId);
 
 			using (var cal = new GregorianCalendar(new TimeZone("UTC")))
 			{
@@ -487,10 +469,24 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void GetTimeZoneInfoTest()
+		[Platform(Include = "win")]
+		public void GetTilmeZoneInfoTestWin()
+		{
+			var timezone = new TimeZone("Europe/Zagreb");
+
+			using (var cal = new GregorianCalendar(timezone))
+			{
+				var result = cal.GetTimeZoneInfo();
+
+				Assert.IsTrue(result.Id == "Central European Standard Time");
+			}
+		}
+
+		[Test]
+		[Platform(Exclude = "win")]
+		public void GetTimeZoneInfoTestLinux()
 		{
 			var tzdbId = "Europe/Zagreb";
-			var winId = "Central European Standard Time";
 
 			var timezone = new TimeZone(tzdbId);
 
@@ -498,10 +494,8 @@ namespace Icu.Tests
 			{
 				var result = cal.GetTimeZoneInfo();
 
-				Assert.IsTrue(result.Id == winId || result.Id == tzdbId);
+				Assert.IsTrue(result.Id == tzdbId);
 			}
 		}
-
-
 	}
 }
