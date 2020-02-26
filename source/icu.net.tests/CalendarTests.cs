@@ -470,7 +470,7 @@ namespace Icu.Tests
 
 		[Test]
 		[Platform(Include = "win")]
-		public void GetTilmeZoneInfoTestWin()
+		public void GetTimeZoneInfoTestWin()
 		{
 			var timezone = new TimeZone("Europe/Zagreb");
 
@@ -478,7 +478,7 @@ namespace Icu.Tests
 			{
 				var result = cal.GetTimeZoneInfo();
 
-				Assert.IsTrue(result.Id == "Central European Standard Time");
+				Assert.AreEqual("Central European Standard Time",result.Id);
 			}
 		}
 
@@ -494,7 +494,7 @@ namespace Icu.Tests
 			{
 				var result = cal.GetTimeZoneInfo();
 
-				Assert.IsTrue(result.Id == tzdbId);
+				Assert.AreEqual(tzdbId, result.Id);
 			}
 		}
 	}
