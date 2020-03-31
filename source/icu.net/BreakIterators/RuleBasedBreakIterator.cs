@@ -155,7 +155,7 @@ namespace Icu
 
 			// If the next index is going to move this out of boundaries, do
 			// not incremement the index.
-			if (nextIndex >= Boundaries.Length)
+			if (nextIndex >= _textBoundaries.Length)
 			{
 				return DONE;
 			}
@@ -196,7 +196,7 @@ namespace Icu
 				return 0;
 			}
 
-			_currentIndex = Boundaries.Length - 1;
+			_currentIndex = _textBoundaries.Length - 1;
 			return _textBoundaries[_currentIndex].Offset;
 		}
 
