@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add build number to AssemblyFileVersion
 
+### Fixed
+
+- Speed up BreakIterator.GetBoundaries (#127; atlastodor)
+
 ## [2.6.0] - 2019-09-27
 
 ### Added
