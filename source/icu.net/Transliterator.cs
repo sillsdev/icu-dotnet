@@ -1,12 +1,29 @@
 // Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Icu
 {
-	public static class Transliterator
+	public enum UTransDirection
 	{
+		UTRANS_FORWARD,
+		UTRANS_REVERSE
+	}
+
+	public class Transliterator : SafeHandle
+	{
+		#region Static Methods
+		public static Transliterator CreateInstance(string id, UTransDirection dir = UTransDirection.UTRANS_FORWARD)
+		{
+			Transliterator result = NativeMethods.utrans_open(id, dir, out ParseError parseError, out ErrorCode status);
+			ExceptionFromErrorCode.ThrowIfError(status);
+			
+			return result;
+		}
+
 		/// <summary>
 		/// Get an ICU UEnumeration pointer that will enumerate all transliterator IDs.
 		/// </summary>
@@ -200,6 +217,31 @@ namespace Icu
 				return transId; // If formatting fails, the transliterator's ID is still our final fallback
 			}
 		}
+		#endregion
 
+		#region Instance Methods
+		#region SafeHandle overrides
+		internal Transliterator() : base(IntPtr.Zero, true)
+		{ }
+
+		public override bool IsInvalid => handle == IntPtr.Zero;
+
+		protected override bool ReleaseHandle()
+		{
+			NativeMethods.utrans_close(handle);
+			return true;
+		}
+		#endregion
+
+		public string Transliterate(string text)
+		{
+			int textLength = text.Length;
+			int limit = textLength;
+			string result = NativeMethods.utrans_transUChars(handle, text, textLength, textLength, 0, limit, out ErrorCode status);
+			ExceptionFromErrorCode.ThrowIfError(status);
+			return result;
+		}
+
+		#endregion
 	}
 }
