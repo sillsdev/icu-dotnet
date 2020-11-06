@@ -2,7 +2,6 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using NUnit.Framework;
-using System;
 
 namespace Icu.Tests
 {
