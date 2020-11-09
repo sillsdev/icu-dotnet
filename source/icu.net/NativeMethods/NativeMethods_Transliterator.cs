@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Icu
 {
@@ -77,17 +78,24 @@ namespace Icu
 			if (TransliteratorMethods.utrans_transUChars == null)
 				TransliteratorMethods.utrans_transUChars = GetMethod<TransliteratorMethodsContainer.utrans_transUCharsDelegate>(IcuI18NLibHandle, nameof(utrans_transUChars), true);
 
-			int textLength = text.Length;
-			int textCapacity = textLength;
+			byte[] unicodeBytes = Encoding.Unicode.GetBytes(text);
+
+			int textLength = unicodeBytes.Length / 2;
+			int textCapacity = textLength * 2;
 			int start = 0;
 			int limit = textLength;
 
-			IntPtr textPtr = Marshal.StringToHGlobalUni(text);
+			IntPtr textPtr = Marshal.AllocHGlobal(unicodeBytes.Length * 2);
+			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
 
 			status = ErrorCode.NoErrors;
 			TransliteratorMethods.utrans_transUChars(trans, textPtr, ref textLength, textCapacity, start, ref limit, out status);
 
-			string result = Marshal.PtrToStringUni(textPtr);
+			unicodeBytes = new byte[2 * textLength];
+			for (int ofs = 0; ofs < unicodeBytes.Length; ofs++)
+				unicodeBytes[ofs] = Marshal.ReadByte(textPtr, ofs);
+
+			string result = Encoding.Unicode.GetString(unicodeBytes);
 			Marshal.FreeHGlobal(textPtr);
 
 			return result;
