@@ -81,7 +81,7 @@ namespace Icu
 			byte[] unicodeBytes = Encoding.Unicode.GetBytes(text);
 
 			int textLength = unicodeBytes.Length / 2;
-			int textCapacity = textLength * 2;
+			int textCapacity = textLength * 2 + 1;
 			int start = 0;
 			int limit = textLength;
 
