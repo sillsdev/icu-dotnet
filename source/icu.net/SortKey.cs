@@ -134,7 +134,7 @@ namespace Icu
 		/// <returns>A string that represents the current System.Globalization.SortKey object.</returns>
 		public override string ToString()
 		{
-			return string.Format("SortKey - {0}, {1}, {3}", localeName, options, OriginalString);
+			return $"SortKey - {localeName}, {options}, {OriginalString}";
 		}
 	}
 }

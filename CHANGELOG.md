@@ -22,15 +22,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Speed up BreakIterator.GetBoundaries (#127; atlastodor)
+- Speed up `BreakIterator.GetBoundaries` (#127; atlastodor)
+- Fix `SortKey.ToString`
 
 ## [2.6.0] - 2019-09-27
 
 ### Added
 
-- Add TimeZone class (#108; j-troc)
+- Add `TimeZone` class (#108; j-troc)
 - Create nuget symbol package
-- Add BiDi class (#121; jeffska)
+- Add `BiDi` class (#121; jeffska)
 
 ### Fixed
 
