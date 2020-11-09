@@ -15,20 +15,20 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate SafeEnumeratorHandle utrans_openIDsDelegate(out ErrorCode errorCode);
 
-			/// <summary/>
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate Transliterator utrans_openDelegate(string id, UTransDirection dir, string rules, int rulesLength, out ParseError parseError, out ErrorCode status);
+			/// <summary />
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate Transliterator utrans_openUDelegate(string id, int idLength, UTransDirection dir, string rules, int rulesLength, out ParseError parseError, out ErrorCode pErrorCode);
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void utrans_closeDelegate(IntPtr trans);
 
 			/// <summary/>
-			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate void utrans_transUCharsDelegate(IntPtr trans, IntPtr stringptr_text, IntPtr intptr_textLength, int textCapacity, int start, IntPtr intptr_limit, out ErrorCode status);
+			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+			internal delegate void utrans_transUCharsDelegate(IntPtr trans, IntPtr text, ref int textLength, int textCapacity, int start, ref int limit, out ErrorCode status);
 
 			internal utrans_openIDsDelegate utrans_openIDs;
-			internal utrans_openDelegate utrans_open;
+			internal utrans_openUDelegate utrans_openU;
 			internal utrans_closeDelegate utrans_close;
 			internal utrans_transUCharsDelegate utrans_transUChars;
 		}
@@ -49,15 +49,17 @@ namespace Icu
 		}
 
 		/// <summary />
-		public static Transliterator utrans_open(string id, UTransDirection dir, out ParseError parseError, out ErrorCode status)
+		public static Transliterator utrans_openU(string id, UTransDirection dir, string rules, out ParseError parseError, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			parseError = new ParseError();
 
-			if (TransliteratorMethods.utrans_open == null)
-				TransliteratorMethods.utrans_open = GetMethod<TransliteratorMethodsContainer.utrans_openDelegate>(IcuI18NLibHandle, nameof(utrans_open), true);
+			if (TransliteratorMethods.utrans_openU == null)
+				TransliteratorMethods.utrans_openU = GetMethod<TransliteratorMethodsContainer.utrans_openUDelegate>(IcuI18NLibHandle, nameof(utrans_openU), true);
 
-			return TransliteratorMethods.utrans_open(id, dir, null, -1, out parseError, out status);
+			int idLength = id?.Length ?? 0;
+			int rulesLength = rules?.Length ?? 0;
+			return TransliteratorMethods.utrans_openU(id, idLength, dir, rules, rulesLength, out parseError, out status);
 		}
 
 		/// <summary />
@@ -70,28 +72,25 @@ namespace Icu
 		}
 
 		/// <summary />
-		public static string utrans_transUChars(IntPtr trans, string text, int textLength, int textCapacity, int start, int limit, out ErrorCode status)
+		public static string utrans_transUChars(IntPtr trans, string text, out ErrorCode status)
 		{
-			status = ErrorCode.NoErrors;
 			if (TransliteratorMethods.utrans_transUChars == null)
 				TransliteratorMethods.utrans_transUChars = GetMethod<TransliteratorMethodsContainer.utrans_transUCharsDelegate>(IcuI18NLibHandle, nameof(utrans_transUChars), true);
 
+			int textLength = text.Length;
+			int textCapacity = textLength;
+			int start = 0;
+			int limit = textLength;
+
 			IntPtr textPtr = Marshal.StringToHGlobalUni(text);
-			IntPtr textLengthPtr = Marshal.AllocHGlobal(sizeof(int));
-			IntPtr limitPtr = Marshal.AllocHGlobal(sizeof(int));
 
-			Marshal.StructureToPtr(textLength, textLengthPtr, false);
-			Marshal.StructureToPtr(limit, limitPtr, false);
+			status = ErrorCode.NoErrors;
+			TransliteratorMethods.utrans_transUChars(trans, textPtr, ref textLength, textCapacity, start, ref limit, out status);
 
-			TransliteratorMethods.utrans_transUChars(trans, textPtr, textLengthPtr, textCapacity, start, limitPtr, out status);
-			text = Marshal.PtrToStringUni(textPtr);
-			textLength = Marshal.ReadInt32(textLengthPtr);
-			limit = Marshal.ReadInt32(limitPtr);
-
+			string result = Marshal.PtrToStringUni(textPtr);
 			Marshal.FreeHGlobal(textPtr);
-			Marshal.FreeHGlobal(textLengthPtr);
-			Marshal.FreeHGlobal(limitPtr);
-			return text;
+
+			return result;
 		}
 	}
 }
