@@ -8,52 +8,97 @@ namespace Icu.Tests
 	[TestFixture]
 	public class TransliteratorTests
 	{
-		[Test]
+		Transliterator _transSingle = null, _transCompound = null;
+
+		[Test, Order(1)]
 		public void GetIdsAndNames()
 		{
 			Assert.That(Transliterator.GetIdsAndNames(), Does.Contain(("Arabic-Latin", "Arabic to Latin")));
 		}
 
-		[Test]
+		[Test, Order(1)]
 		public void GetAvailableIds()
 		{
 			Assert.That(Transliterator.GetAvailableIds(), Does.Contain("Any-Accents"));
 		}
 
-		[Test]
+		[Test, Order(1)]
 		public void GetDisplayName()
 		{
 			Assert.That(Transliterator.GetDisplayName("Armenian-Latin", "de_DE"),
 				Is.EqualTo("Armenian to Latin"));
 		}
 
-		[Test]
+		private void MaybeOpenSingle(bool force = false)
+		{
+			if (force || _transSingle == null)
+			{
+				_transSingle?.Dispose();
+				_transSingle = null;
+				_transSingle = Transliterator.CreateInstance("Any-Latin");
+			}
+		}
+
+		[Test, Order(2)]
 		public void OpenSingleId()
 		{
-			Transliterator.CreateInstance(@"Any-Latin");
+			Assert.DoesNotThrow(() => MaybeOpenSingle(true));
+
+			Assert.That(
+				_transSingle,
+				Is.Not.Null);
 		}
 
-		[Test]
+		private void MaybeOpenCompound(bool force = false)
+		{
+			if (force || _transCompound == null)
+			{
+				_transCompound?.Dispose();
+				_transCompound = null;
+				_transCompound = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+			}
+		}
+
+		[Test, Order(2)]
 		public void OpenCompoundId()
 		{
-			Transliterator.CreateInstance(@"Any-Latin; Latin-ASCII");
+			Assert.DoesNotThrow(() => MaybeOpenCompound(true));
+
+			Assert.That(
+				_transCompound,
+				Is.Not.Null);
 		}
 
-		[Test]
-		public void CloseSingleId()
+		[Test, Order(3)]
+		public void TransliterateSameLength()
 		{
-			Transliterator trans = Transliterator.CreateInstance("Any-Latin");
-			trans.Dispose();
-		}
-
-		[Test]
-		public void Transliterate()
-		{
-			Transliterator trans = Transliterator.CreateInstance(@"Any-Latin; Latin-ASCII");
 			string source = @"Κοντογιαννάτος, Βασίλης";
 			string target = @"Kontogiannatos, Basiles";
 
-			Assert.That(trans.Transliterate(source), Is.EqualTo(target));
+			MaybeOpenCompound();
+
+			Assert.That(_transCompound.Transliterate(source), Is.EqualTo(target));
+		}
+
+		[Test, Order(3)]
+		public void TransliterateLonger()
+		{
+			string source = @"김, 국삼";
+			string target = @"gim, gugsam";
+
+			MaybeOpenCompound();
+
+			Assert.That(_transCompound.Transliterate(source), Is.EqualTo(target));
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			_transSingle?.Dispose();
+			_transSingle = null;
+
+			_transCompound?.Dispose();
+			_transCompound = null;
 		}
 	}
 }

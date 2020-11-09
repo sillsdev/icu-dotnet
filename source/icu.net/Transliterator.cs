@@ -16,9 +16,29 @@ namespace Icu
 	public class Transliterator : SafeHandle
 	{
 		#region Static Methods
-		public static Transliterator CreateInstance(string id, UTransDirection dir = UTransDirection.UTRANS_FORWARD)
+		/// <summary>
+		/// Shortcut method equivalent to `CreateInstance(id, UTransDirection.Forward, null)`.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns>
+		/// </returns>
+		public static Transliterator CreateInstance(string id)
 		{
-			Transliterator result = NativeMethods.utrans_open(id, dir, out ParseError parseError, out ErrorCode status);
+			return CreateInstance(id, UTransDirection.UTRANS_FORWARD, null);
+		}
+
+		/// <summary>
+		/// Get an ICU Transliterator.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="dir"></param>
+		/// <param name="rules"></param>
+		/// <returns>
+		/// A Transliterator class instance. Be sure to call the instance's `Dispose` method to clean up.
+		/// </returns>
+		public static Transliterator CreateInstance(string id, UTransDirection dir, string rules)
+		{
+			Transliterator result = NativeMethods.utrans_openU(id, dir, rules, out ParseError parseError, out ErrorCode status);
 			ExceptionFromErrorCode.ThrowIfError(status);
 			
 			return result;
@@ -233,11 +253,16 @@ namespace Icu
 		}
 		#endregion
 
+		/// <summary>
+		/// Transliterate `text`.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns>
+		/// The transliterated text, truncated to `text.Length` characters.
+		/// </returns>
 		public string Transliterate(string text)
 		{
-			int textLength = text.Length;
-			int limit = textLength;
-			string result = NativeMethods.utrans_transUChars(handle, text, textLength, textLength, 0, limit, out ErrorCode status);
+			string result = NativeMethods.utrans_transUChars(handle, text, out ErrorCode status);
 			ExceptionFromErrorCode.ThrowIfError(status);
 			return result;
 		}
