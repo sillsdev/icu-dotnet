@@ -80,24 +80,23 @@ namespace Icu
 
 			byte[] unicodeBytes = Encoding.Unicode.GetBytes(text);
 
-			int textLength = unicodeBytes.Length / 2;
-			int textCapacity = textLength * 2 + 1;
+			int textLength = text.Length;
+			int textCapacity = textLength * 3;
 			int start = 0;
 			int limit = textLength;
 
-			IntPtr textPtr = Marshal.AllocHGlobal(unicodeBytes.Length * 2);
+			int cb = textCapacity * Marshal.SystemDefaultCharSize;
+			IntPtr textPtr = Marshal.AllocHGlobal(cb);
 			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
 
 			status = ErrorCode.NoErrors;
 			TransliteratorMethods.utrans_transUChars(trans, textPtr, ref textLength, textCapacity, start, ref limit, out status);
 
-			unicodeBytes = new byte[2 * textLength];
-			for (int ofs = 0; ofs < unicodeBytes.Length; ofs++)
-				unicodeBytes[ofs] = Marshal.ReadByte(textPtr, ofs);
-
-			string result = Encoding.Unicode.GetString(unicodeBytes);
+			string result = Marshal.PtrToStringUni(textPtr);
 			Marshal.FreeHGlobal(textPtr);
 
+			// transUChars does not null-terminate the string. need to trim to textLength.
+			result = result.Substring(start, textLength);
 			return result;
 		}
 	}

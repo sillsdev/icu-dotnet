@@ -258,7 +258,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns>
-		/// The transliterated text, truncated to `text.Length` characters.
+		/// The transliterated text, truncated to a maximum of `text.Length * 3` characters.
 		/// </returns>
 		public string Transliterate(string text)
 		{
