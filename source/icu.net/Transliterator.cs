@@ -258,11 +258,11 @@ namespace Icu
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns>
-		/// The transliterated text, truncated to a maximum of `text.Length * 3` characters.
+		/// The transliterated text, truncated to a maximum of `text.Length * textCapacityMultiplier` characters.
 		/// </returns>
-		public string Transliterate(string text)
+		public string Transliterate(string text, int textCapacityMultiplier = 3)
 		{
-			string result = NativeMethods.utrans_transUChars(handle, text, out ErrorCode status);
+			string result = NativeMethods.utrans_transUChars(handle, text, textCapacityMultiplier, out ErrorCode status);
 			ExceptionFromErrorCode.ThrowIfError(status);
 			return result;
 		}

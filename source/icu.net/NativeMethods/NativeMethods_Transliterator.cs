@@ -73,7 +73,7 @@ namespace Icu
 		}
 
 		/// <summary />
-		public static string utrans_transUChars(IntPtr trans, string text, out ErrorCode status)
+		public static string utrans_transUChars(IntPtr trans, string text, int textCapacityMultiplier, out ErrorCode status)
 		{
 			if (TransliteratorMethods.utrans_transUChars == null)
 				TransliteratorMethods.utrans_transUChars = GetMethod<TransliteratorMethodsContainer.utrans_transUCharsDelegate>(IcuI18NLibHandle, nameof(utrans_transUChars), true);
@@ -81,7 +81,7 @@ namespace Icu
 			byte[] unicodeBytes = Encoding.Unicode.GetBytes(text);
 
 			int textLength = text.Length;
-			int textCapacity = textLength * 3;
+			int textCapacity = textLength * textCapacityMultiplier;
 			int start = 0;
 			int limit = textLength;
 
