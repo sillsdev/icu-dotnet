@@ -55,7 +55,7 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.0.1">
+    <PackageReference Include="GitVersionTask" Version="5.5.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SIL.ReleaseTasks" Version="2.2.0">
