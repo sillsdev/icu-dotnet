@@ -2,6 +2,8 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics;
+using System.Text;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -9,7 +11,22 @@ namespace Icu.Tests
 	[TestFixture]
 	public class TransliteratorTests
 	{
-		Transliterator _trans = null;
+		private class TestableTraceListener : TraceListener
+		{
+			public StringBuilder _output = new StringBuilder();
+
+			public override void Write(string message)
+			{
+				_output.Append(message);
+			}
+
+			public override void WriteLine(string message)
+			{
+				_output.AppendLine(message);
+			}
+		}
+
+		private Transliterator _trans;
 
 		[TearDown]
 		public void TearDown()
@@ -45,14 +62,20 @@ namespace Icu.Tests
 			Assert.That(_trans, Is.Not.Null);
 		}
 
-		[Test]
-		public void Transliterate_CompoundTransliterateSameLength()
+		[TestCase(1)]
+		[TestCase(3)]
+		public void Transliterate_CompoundTransliterateSameLength(int multiplier)
 		{
 			const string source = @"Κοντογιαννάτος, Βασίλης";
 			const string target = @"Kontogiannatos, Basiles";
 
-			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			Assert.That(_trans.Transliterate(source), Is.EqualTo(target));
+			using (var traceListener = new TestableTraceListener())
+			{
+				Trace.Listeners.Add(traceListener);
+				_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+				Assert.That(_trans.Transliterate(source, multiplier), Is.EqualTo(target));
+				Assert.That(traceListener._output.ToString(), Is.EqualTo(""));
+			}
 		}
 
 		[Test]
