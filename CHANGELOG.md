@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Add build number to AssemblyFileVersion
+- Add basic non-static `Transliterator` class with transliterate functionality (tylerpayne)
 
 ### Fixed
 

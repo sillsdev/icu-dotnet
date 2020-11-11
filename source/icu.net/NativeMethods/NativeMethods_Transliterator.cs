@@ -18,7 +18,9 @@ namespace Icu
 
 			/// <summary />
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate Transliterator utrans_openUDelegate(string id, int idLength, UTransDirection dir, string rules, int rulesLength, out ParseError parseError, out ErrorCode pErrorCode);
+			internal delegate Transliterator.SafeTransliteratorHandle utrans_openUDelegate(string id,
+				int idLength, Transliterator.UTransDirection dir, string rules, int rulesLength,
+				out ParseError parseError, out ErrorCode pErrorCode);
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -26,7 +28,9 @@ namespace Icu
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate void utrans_transUCharsDelegate(IntPtr trans, IntPtr text, ref int textLength, int textCapacity, int start, ref int limit, out ErrorCode status);
+			internal delegate void utrans_transUCharsDelegate(
+				Transliterator.SafeTransliteratorHandle trans, IntPtr text, ref int textLength,
+				int textCapacity, int start, ref int limit, out ErrorCode status);
 
 			internal utrans_openIDsDelegate utrans_openIDs;
 			internal utrans_openUDelegate utrans_openU;
@@ -50,7 +54,8 @@ namespace Icu
 		}
 
 		/// <summary />
-		public static Transliterator utrans_openU(string id, UTransDirection dir, string rules, out ParseError parseError, out ErrorCode status)
+		public static Transliterator.SafeTransliteratorHandle utrans_openU(string id,
+			Transliterator.UTransDirection dir, string rules, out ParseError parseError, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			parseError = new ParseError();
@@ -58,8 +63,8 @@ namespace Icu
 			if (TransliteratorMethods.utrans_openU == null)
 				TransliteratorMethods.utrans_openU = GetMethod<TransliteratorMethodsContainer.utrans_openUDelegate>(IcuI18NLibHandle, nameof(utrans_openU), true);
 
-			int idLength = id?.Length ?? 0;
-			int rulesLength = rules?.Length ?? 0;
+			var idLength = id?.Length ?? 0;
+			var rulesLength = rules?.Length ?? 0;
 			return TransliteratorMethods.utrans_openU(id, idLength, dir, rules, rulesLength, out parseError, out status);
 		}
 
@@ -73,31 +78,18 @@ namespace Icu
 		}
 
 		/// <summary />
-		public static string utrans_transUChars(IntPtr trans, string text, int textCapacityMultiplier, out ErrorCode status)
+		public static void utrans_transUChars(Transliterator.SafeTransliteratorHandle trans, IntPtr textPtr,
+			ref int textLength, int textCapacity, int start, ref int limit, out ErrorCode status)
 		{
-			if (TransliteratorMethods.utrans_transUChars == null)
-				TransliteratorMethods.utrans_transUChars = GetMethod<TransliteratorMethodsContainer.utrans_transUCharsDelegate>(IcuI18NLibHandle, nameof(utrans_transUChars), true);
-
-			byte[] unicodeBytes = Encoding.Unicode.GetBytes(text);
-
-			int textLength = text.Length;
-			int textCapacity = textLength * textCapacityMultiplier;
-			int start = 0;
-			int limit = textLength;
-
-			int cb = textCapacity * Marshal.SystemDefaultCharSize;
-			IntPtr textPtr = Marshal.AllocHGlobal(cb);
-			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
-
 			status = ErrorCode.NoErrors;
+			if (TransliteratorMethods.utrans_transUChars == null)
+			{
+				TransliteratorMethods.utrans_transUChars =
+					GetMethod<TransliteratorMethodsContainer.utrans_transUCharsDelegate>(
+						IcuI18NLibHandle, nameof(utrans_transUChars), true);
+			}
+
 			TransliteratorMethods.utrans_transUChars(trans, textPtr, ref textLength, textCapacity, start, ref limit, out status);
-
-			string result = Marshal.PtrToStringUni(textPtr);
-			Marshal.FreeHGlobal(textPtr);
-
-			// transUChars does not null-terminate the string. need to trim to textLength.
-			result = result.Substring(start, textLength);
-			return result;
 		}
 	}
 }

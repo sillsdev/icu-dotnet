@@ -1,6 +1,7 @@
 // Copyright (c) 2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -17,62 +18,70 @@ namespace Icu.Tests
 			_trans = null;
 		}
 
-		[Test, Order(0)]
+		[Test]
 		public void GetIdsAndNames()
 		{
 			Assert.That(Transliterator.GetIdsAndNames(), Does.Contain(("Arabic-Latin", "Arabic to Latin")));
 		}
 
-		[Test, Order(1)]
+		[Test]
 		public void GetAvailableIds()
 		{
 			Assert.That(Transliterator.GetAvailableIds(), Does.Contain("Any-Accents"));
 		}
 
-		[Test, Order(2)]
+		[Test]
 		public void GetDisplayName()
 		{
 			Assert.That(Transliterator.GetDisplayName("Armenian-Latin", "de_DE"),
 				Is.EqualTo("Armenian to Latin"));
 		}
 
-		[Test, Order(3)]
-		public void OpenSingleId()
+		[TestCase("Any-Latin", TestName = "OpenSingleId")]
+		[TestCase("Any-Latin; Latin-ASCII", TestName = "OpenCompoundId")]
+		public void CreateInstance(string id)
 		{
-			Assert.DoesNotThrow(() => _trans = Transliterator.CreateInstance("Any-Latin"));
+			Assert.That(() => _trans = Transliterator.CreateInstance(id), Throws.Nothing);
 			Assert.That(_trans, Is.Not.Null);
 		}
 
-		[Test, Order(4)]
-		public void OpenCompoundId()
+		[Test]
+		public void Transliterate_CompoundTransliterateSameLength()
 		{
-			Assert.DoesNotThrow(() => _trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII"));
-			Assert.That(_trans, Is.Not.Null);
-		}
-
-		private void TestTransliteration(string source, string target)
-		{
-			Assert.That(_trans?.Transliterate(source), Is.EqualTo(target));
-		}
-
-		[Test, Order(5)]
-		public void CompoundTransliterateSameLength()
-		{
-			string source = @"Κοντογιαννάτος, Βασίλης";
-			string target = @"Kontogiannatos, Basiles";
+			const string source = @"Κοντογιαννάτος, Βασίλης";
+			const string target = @"Kontogiannatos, Basiles";
 
 			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			TestTransliteration(source, target);
+			Assert.That(_trans.Transliterate(source), Is.EqualTo(target));
 		}
 
-		[Test, Order(6)]
-		public void CompoundTransliterateLonger()
+		[Test]
+		public void Transliterate_CompoundTransliterateLonger()
 		{
-			string source = @"김, 국삼";
-			string target = @"gim, gugsam";
+			const string source = @"김, 국삼";
+			const string target = @"gim, gugsam";
 
 			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			TestTransliteration(source, target);
+			Assert.That(_trans.Transliterate(source), Is.EqualTo(target));
+		}
+
+		[TestCase(-1)]
+		[TestCase(0)]
+		public void Transliterate_InvalidMultiplier(int multiplier)
+		{
+			const string source = @"김, 국삼";
+
+			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+			Assert.That(() => _trans.Transliterate(source, multiplier), Throws.InstanceOf<ArgumentException>());
+		}
+
+		[Test]
+		public void Transliterate_Overflow()
+		{
+			const string source = @"김, 국삼";
+
+			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+			Assert.That(() => _trans.Transliterate(source, 1), Throws.InstanceOf<OverflowException>());
 		}
 	}
 }
