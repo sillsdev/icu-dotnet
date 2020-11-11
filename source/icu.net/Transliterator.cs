@@ -1,12 +1,58 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2020 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Icu
 {
-	public static class Transliterator
+	public class Transliterator : IDisposable
 	{
+		public enum UTransDirection
+		{
+			Forward,
+			Reverse
+		}
+
+		// ReSharper disable once ClassNeverInstantiated.Global
+		internal sealed class SafeTransliteratorHandle : SafeHandle
+		{
+			public SafeTransliteratorHandle() :
+				base(IntPtr.Zero, true) {}
+
+			public override bool IsInvalid => handle == IntPtr.Zero;
+
+			protected override bool ReleaseHandle()
+			{
+				NativeMethods.utrans_close(handle);
+				return true;
+			}
+		}
+
+		private SafeTransliteratorHandle _transliteratorHandle;
+
+		#region Static Methods
+		/// <summary>
+		/// Get an ICU Transliterator.
+		/// </summary>
+		/// <param name="id">a valid transliterator ID</param>
+		/// <param name="dir">the desired direction</param>
+		/// <param name="rules">the transliterator rules. If <c>null</c> then a system transliterator
+		/// matching the ID is returned.</param>
+		/// <returns>
+		/// A Transliterator class instance. Be sure to call the instance's `Dispose` method to clean up.
+		/// </returns>
+		public static Transliterator CreateInstance(string id, UTransDirection dir = UTransDirection.Forward, string rules = null)
+		{
+			var handle = NativeMethods.utrans_openU(id, dir, rules, out _, out var status);
+			ExceptionFromErrorCode.ThrowIfError(status);
+
+			return new Transliterator(handle);
+		}
+
 		/// <summary>
 		/// Get an ICU UEnumeration pointer that will enumerate all transliterator IDs.
 		/// </summary>
@@ -162,8 +208,7 @@ namespace Icu
 				// There was no specific localized name for this transliterator (which will be true of most cases). Build one.
 
 				// Try getting localized display names for the source and target, if possible.
-				var localizedSource = bundle.GetStringByKey(scriptDisplayNameRBKeyPrefix 
-				+ source);
+				var localizedSource = bundle.GetStringByKey(scriptDisplayNameRBKeyPrefix + source);
 				if (string.IsNullOrEmpty(localizedSource))
 				{
 					localizedSource = source; // Can't localize
@@ -179,8 +224,8 @@ namespace Icu
 				}
 
 				// Same thing for target
-				var localizedTarget = bundle.GetStringByKey
-				(scriptDisplayNameRBKeyPrefix + target);
+				var localizedTarget = bundle.GetStringByKey(scriptDisplayNameRBKeyPrefix + target);
+
 				if (string.IsNullOrEmpty(localizedTarget))
 				{
 					localizedTarget = target; // Can't localize
@@ -200,6 +245,69 @@ namespace Icu
 				return transId; // If formatting fails, the transliterator's ID is still our final fallback
 			}
 		}
+		#endregion
 
+		#region Instance Methods
+
+		private Transliterator(SafeTransliteratorHandle handle)
+		{
+			_transliteratorHandle = handle;
+		}
+
+		/// <summary>
+		/// Transliterate <paramref name="text"/>.
+		/// </summary>
+		/// <param name="text">The text to transliterate</param>
+		/// <<param name="textCapacityMultiplier">The capacity for the buffer that holds the
+		/// transliterated text, expressed as a multiplier of the text length.</param>
+		/// <returns>
+		/// The transliterated text, truncated to a maximum of `text.Length * textCapacityMultiplier` characters.
+		/// </returns>
+		public string Transliterate(string text, int textCapacityMultiplier = 3)
+		{
+			if (textCapacityMultiplier < 1)
+				throw new ArgumentException(nameof(textCapacityMultiplier));
+
+			var unicodeBytes = Encoding.Unicode.GetBytes(text);
+
+			var textLength = text.Length;
+			var textCapacity = textLength * textCapacityMultiplier;
+			var start = 0;
+			var limit = textLength;
+
+			Debug.Assert(textCapacity >= unicodeBytes.Length);
+
+			// it's tempting to use Marshal.SystemDefaultCharSize instead of sizeof(char).
+			// However, on Linux for whatever reason that returns 1 instead of the expected 2.
+			var textPtr = Marshal.AllocHGlobal(textCapacity * sizeof(char));
+			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
+
+			NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
+				textCapacity, start, ref limit, out var status);
+			ExceptionFromErrorCode.ThrowIfError(status);
+
+			var result = Marshal.PtrToStringUni(textPtr, textLength);
+			Marshal.FreeHGlobal(textPtr);
+
+			return result;
+		}
+
+		#region Disposable pattern
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_transliteratorHandle?.Dispose();
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+		#endregion
+
+		#endregion
 	}
 }
