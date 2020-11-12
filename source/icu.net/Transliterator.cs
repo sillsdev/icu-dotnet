@@ -274,12 +274,13 @@ namespace Icu
 			var textCapacity = textLength * textCapacityMultiplier;
 			var start = 0;
 			var limit = textLength;
+			const int charSize = sizeof(char);
 
-			Debug.Assert(textCapacity >= unicodeBytes.Length);
+			Debug.Assert(textCapacity * charSize >= unicodeBytes.Length);
 
 			// it's tempting to use Marshal.SystemDefaultCharSize instead of sizeof(char).
 			// However, on Linux for whatever reason that returns 1 instead of the expected 2.
-			var textPtr = Marshal.AllocHGlobal(textCapacity * sizeof(char));
+			var textPtr = Marshal.AllocHGlobal(textCapacity * charSize);
 			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
 
 			NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
