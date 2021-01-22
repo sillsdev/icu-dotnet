@@ -44,6 +44,15 @@ namespace Icu
 				return arg.ToString();
 			}
 		}
+
+		/// <summary>
+		/// Set to <c>true</c> to output diagnostic trace messages
+		/// </summary>
+		public static bool Verbose
+		{
+			get => NativeMethods.Verbose;
+			set => NativeMethods.Verbose = value;
+		}
 		#endregion
 
 		/// ------------------------------------------------------------------------------------

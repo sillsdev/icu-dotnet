@@ -17,9 +17,12 @@ namespace Icu
 		internal static int MinIcuVersion { get; private set; } = Wrapper.MinSupportedIcuVersion;
 		internal static int MaxIcuVersion { get; private set; } = Wrapper.MaxSupportedIcuVersion;
 
+		internal static bool Verbose { get; set; }
+
 		public static void SetMinMaxIcuVersions(int minVersion = Wrapper.MinSupportedIcuVersion,
 			int maxVersion = Wrapper.MaxSupportedIcuVersion)
 		{
+			Trace.WriteLineIf(Verbose, $"Setting min/max ICU versions to {minVersion} and {maxVersion}");
 			if (minVersion < Wrapper.MinSupportedIcuVersion || minVersion > Wrapper.MaxSupportedIcuVersion)
 			{
 				throw new ArgumentOutOfRangeException(nameof(minVersion),
@@ -151,7 +154,9 @@ namespace Icu
 				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
 				var uri = new Uri(managedPath);
 
-				return Path.GetDirectoryName(uri.LocalPath);
+				var directoryName = Path.GetDirectoryName(uri.LocalPath);
+				Trace.WriteLineIf(Verbose, $"icu.net: Directory of this assembly is {directoryName}");
+				return directoryName;
 			}
 		}
 
@@ -167,18 +172,23 @@ namespace Icu
 			if (!IsWindows)
 			{
 				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH",
-					$"{directory}:{ldLibPath}");
+				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
+				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
 			}
 		}
 
 		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
 		{
+			Trace.WriteLineIf(Verbose, $"icu.net: checking '{directory}' for ICU binaries");
 			if (!Directory.Exists(directory))
+			{
+				Trace.WriteLineIf(Verbose, $"icu.net: directory '{directory}' doesn't exist");
 				return false;
+			}
 
 			var filePattern = IsWindows ? libraryName + "*.dll" : "lib" + libraryName + ".so.*";
 			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
+			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
 			{
 				// Do a reverse sort so that we use the highest version
@@ -187,8 +197,8 @@ namespace Icu
 				var version = IsWindows
 					? Path.GetFileNameWithoutExtension(filePath).Substring(5) // strip icuuc
 					: Path.GetFileName(filePath).Substring(12); // strip libicuuc.so.
-				int icuVersion;
-				if (int.TryParse(version, out icuVersion))
+				Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
+				if (int.TryParse(version, out var icuVersion))
 				{
 					Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
 						icuVersion, directory);
@@ -198,12 +208,15 @@ namespace Icu
 					AddDirectoryToSearchPath(directory);
 					return true;
 				}
+				Trace.WriteLineIf(Verbose, $"icu.net: couldn't parse '{version}' as an int. Returning false.");
 			}
+			Trace.WriteLineIf(Verbose && files.Count <= 0, "icu.net: No files matching pattern. Returning false.");
 			return false;
 		}
 
 		private static bool LocateIcuLibrary(string libraryName)
 		{
+			Trace.WriteLineIf(Verbose, $"icu.net: Locating ICU library '{libraryName}'");
 			var arch = IsRunning64Bit ? "x64" : "x86";
 			// Look for ICU binaries in lib/{win,linux}-{x86,x64} subdirectory first
 			var platform = IsWindows ? "win" : "linux";
@@ -257,6 +270,7 @@ namespace Icu
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
 		{
+			Trace.WriteLineIf(Verbose, $"icu.net: Get ICU Lib handle for {basename}, version {icuVersion}");
 			if (icuVersion < MinIcuVersion)
 				return IntPtr.Zero;
 
@@ -306,6 +320,7 @@ namespace Icu
 
 		public static void Cleanup()
 		{
+			Trace.WriteLineIf(Verbose, "icu.net: Cleanup");
 			lock (_lock)
 			{
 				try
@@ -352,6 +367,7 @@ namespace Icu
 
 		private static void ResetIcuVersionInfo()
 		{
+			Trace.WriteLineIf(Verbose, "icu.net: Resetting ICU version info");
 			IcuVersion = 0;
 			_IcuPath = null;
 

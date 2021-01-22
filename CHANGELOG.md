@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add build number to AssemblyFileVersion
 - Add basic non-static `Transliterator` class with transliterate functionality (tylerpayne)
+- Add `Icu.Wrapper.Verbose` property to assist in diagnosing load problems
 
 ### Fixed
 
