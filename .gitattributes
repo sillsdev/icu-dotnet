@@ -18,5 +18,6 @@
 *.patch -whitespace
 *.svg -whitespace
 *.xml -whitespace
+*.yml -whitespace
 changelog -whitespace
 GitVersion.yml -whitespace
