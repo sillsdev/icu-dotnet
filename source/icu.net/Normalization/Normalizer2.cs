@@ -1,9 +1,7 @@
-// // Copyright (c) 2018 SIL International
-// // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+// Copyright (c) 2018-2021 SIL International
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
-using System.Runtime.InteropServices;
-using Icu;
 
 namespace Icu.Normalization
 {
@@ -210,7 +208,7 @@ namespace Icu.Normalization
 		/// <returns>c's combining class</returns>
 		public int GetCombiningClass(int c)
 		{
-			return NativeMethods.unorm2_getCombiningClass(_Normalizer, c);
+			return (byte)NativeMethods.unorm2_getCombiningClass(_Normalizer, c);
 		}
 
 		/// <summary>
