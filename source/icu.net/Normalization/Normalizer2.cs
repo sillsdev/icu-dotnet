@@ -206,7 +206,7 @@ namespace Icu.Normalization
 		/// </summary>
 		/// <param name="c">code point</param>
 		/// <returns>c's combining class</returns>
-		public int GetCombiningClass(int c)
+		public byte GetCombiningClass(int c)
 		{
 			return (byte)NativeMethods.unorm2_getCombiningClass(_Normalizer, c);
 		}
