@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2021 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using Icu.Normalization;
@@ -41,6 +41,14 @@ namespace Icu.Tests
 		{
 			var normalizer = Normalizer2.GetInstance(null, "nfc", mode);
 			return normalizer.IsNormalized(str);
+		}
+
+		[TestCase('a', ExpectedResult = 0)]
+		[TestCase(769, ExpectedResult = 0xE6)]
+		public int GetClassifierCode(int characterCode)
+		{
+			var normalizer = Normalizer2.GetInstance(null, "nfc", Normalizer2.Mode.COMPOSE);
+			return normalizer.GetCombiningClass(characterCode);
 		}
 	}
 }
