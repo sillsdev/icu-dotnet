@@ -57,11 +57,11 @@ namespace Icu
 
 		#region Dynamic method loading
 
-		#region Native methods for Linux
+		#region Native methods for Unix
 
 		private const int RTLD_NOW = 2;
 
-		private const string LIBDL_NAME = "libdl.so.2";
+		private const string LIBDL_NAME = "libdl.so";
 
 		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern IntPtr dlopen(string file, int mode);
