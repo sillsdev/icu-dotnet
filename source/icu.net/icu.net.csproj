@@ -11,7 +11,7 @@
     <Authors>SIL International</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
-    <Copyright>Copyright © 2007-2019 SIL International</Copyright>
+    <Copyright>Copyright © 2007-2021 SIL International</Copyright>
     <Description>icu.net is a C# Wrapper around ICU4C
 
 This version of icu.net works with (more or less) any version of ICU4C.

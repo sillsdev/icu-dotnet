@@ -9,7 +9,7 @@ xplatformBuildAndRunTests {
 	winTool = 'msbuild15'
 	linuxNodeSpec = 'linux64 && !packager && ubuntu && mono5 && netcore'
 	linuxTool = 'mono-msbuild15'
-	framework = 'netcore2.1'
+	framework = 'netcore3.1'
 	configuration = 'Release'
 	uploadNuGet = true
 }
