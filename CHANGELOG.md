@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.7.1] - 2021-03-04
+
+### Fixed
+
+- Fix CI builds
+
 ## [2.7.0] - 2021-03-04
 
 ### Added
