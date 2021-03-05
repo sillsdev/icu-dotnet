@@ -50,6 +50,24 @@ You can build and run the unit tests by running:
 
 If you run into issues you might want to try with a newer mono version or with our custom `mono-sil` package from [packages.sil.org](http://packages.sil.org/)
 
+### Docker
+
+icu-dotnet depends on libc dynamic libraries at run time. If running within Docker, you may
+need to install them, for example:
+
+```Dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:3.1
+
+# Install system dependencies.
+RUN apt-get update \
+    && apt-get install -y \
+        # icu.net dependency: libdl.so
+        libc6-dev \
+     && rm -rf /var/lib/apt/lists/*
+
+...
+```
+
 ### Windows
 
 Build and run the unit tests by running:
