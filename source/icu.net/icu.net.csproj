@@ -11,7 +11,7 @@
     <Authors>SIL International</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
-    <Copyright>Copyright © 2007-2021 SIL International</Copyright>
+    <Copyright>Copyright © 2007-2022 SIL International</Copyright>
     <Description>icu.net is a C# Wrapper around ICU4C
 
 This version of icu.net works with (more or less) any version of ICU4C.
@@ -20,29 +20,17 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <AppendToReleaseNotesProperty><![CDATA[
 See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGELOG.md.]]>
     </AppendToReleaseNotesProperty>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <ChangelogFile>../../CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <LangVersion>7.1</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!-- Full .NET Framework properties -->
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
-  </PropertyGroup>
-  <!-- Using Mono msbuild with .NET Core build targets does not support
-  assembly signing, yet. -->
-  <PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>icu.net.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
