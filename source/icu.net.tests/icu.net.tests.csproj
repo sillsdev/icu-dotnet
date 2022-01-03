@@ -1,23 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Icu.Tests</RootNamespace>
     <Configurations>Debug;Release</Configurations>
     <OutputPath>../../output/$(Configuration)</OutputPath>
     <AssemblyTitle>icu.net.tests</AssemblyTitle>
     <Company>SIL</Company>
-    <Copyright>Copyright © 2018 SIL International</Copyright>
+    <Copyright>Copyright © 2018-2022 SIL International</Copyright>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <IsPackable>false</IsPackable>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.1.4-beta" />
     <PackageReference Include="Icu4c.Win.Min" Version="59.1.7" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="NUnit.Console" Version="3.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.0" />
+    <PackageReference Include="NUnit.Console" Version="3.13.0" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\icu.net\icu.net.csproj" />

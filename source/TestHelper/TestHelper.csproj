@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
     <OutputPath>../../output/$(Configuration)</OutputPath>
     <OutputType>Exe</OutputType>
     <RootNamespace>Icu.Tests</RootNamespace>
@@ -9,5 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\icu.net\icu.net.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
   </ItemGroup>
 </Project>
