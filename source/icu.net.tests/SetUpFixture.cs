@@ -1,6 +1,7 @@
 // Copyright (c) 2017-2022 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
+using System;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -8,6 +9,29 @@ namespace Icu.Tests
 	[SetUpFixture]
 	public class SetUpFixture
 	{
+		private static bool IsWindows
+		{
+			get
+			{
+				// See Icu.Platform. Unfortunately that's internal, so we can't use it.
+
+#if !NETSTANDARD1_6
+				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
+				switch ((int)Environment.OSVersion.Platform)
+				{
+					case 4:
+					case 128:
+					case 6:
+						return false;
+					default:
+						return true;
+				}
+#else
+				return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#endif
+			}
+		}
+
 #if NUNIT2
 		[SetUp]
 #else
@@ -17,10 +41,13 @@ namespace Icu.Tests
 		{
 			Wrapper.Init();
 
-			// Limit maximum version to the version we install, otherwise some tests might fail
-			// if we find a higher version on the PATH.
-			Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion,
-				NativeMethodsTests.MaxInstalledIcuLibraryVersion);
+			if (IsWindows)
+			{
+				// Limit maximum version to the version we install, otherwise some tests might
+				// fail if we find a higher version on the PATH.
+				Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion,
+					NativeMethodsTests.MaxInstalledIcuLibraryVersion);
+			}
 		}
 
 #if NUNIT2
