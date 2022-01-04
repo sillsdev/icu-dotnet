@@ -1,21 +1,15 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2022 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using NUnit.Framework;
 
 namespace Icu.Tests
 {
-#if NETCOREAPP2_1
-	[Ignore("Platform is not supported in NUnit for .NET Core 2")]
-#else
 	[Platform(Exclude = "Linux",
 		Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
-#endif
 	[TestFixture]
 	public class NativeMethodsTests
 	{
@@ -91,36 +85,34 @@ namespace Icu.Tests
 			if (string.IsNullOrEmpty(exeDir))
 				exeDir = _tmpDir;
 
-			using (var process = new Process())
+			using var process = new Process();
+			process.StartInfo.RedirectStandardError = true;
+			process.StartInfo.RedirectStandardOutput = true;
+			process.StartInfo.UseShellExecute = false;
+			process.StartInfo.CreateNoWindow = true;
+			process.StartInfo.WorkingDirectory = workDir;
+			var filename = Path.Combine(exeDir, "TestHelper.exe");
+			if (File.Exists(filename))
 			{
-				process.StartInfo.RedirectStandardError = true;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.WorkingDirectory = workDir;
-				var filename = Path.Combine(exeDir, "TestHelper.exe");
-				if (File.Exists(filename))
-				{
-					process.StartInfo.Arguments = $"{Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
-				}
-				else
-				{
-					// netcore
-					process.StartInfo.Arguments = $"{Path.Combine(exeDir, "TestHelper.dll")} {Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
-					filename = "dotnet";
-				}
-
-				process.StartInfo.FileName = filename;
-
-				process.Start();
-				var output = process.StandardOutput.ReadToEnd();
-				process.WaitForExit();
-				if (process.ExitCode != 0)
-				{
-					Console.WriteLine(process.StandardError.ReadToEnd());
-				}
-				return output.TrimEnd('\r', '\n');
+				process.StartInfo.Arguments = $"{Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
 			}
+			else
+			{
+				// netcore
+				process.StartInfo.Arguments = $"{Path.Combine(exeDir, "TestHelper.dll")} {Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
+				filename = "dotnet";
+			}
+
+			process.StartInfo.FileName = filename;
+
+			process.Start();
+			var output = process.StandardOutput.ReadToEnd();
+			process.WaitForExit();
+			if (process.ExitCode != 0)
+			{
+				Console.WriteLine(process.StandardError.ReadToEnd());
+			}
+			return output.TrimEnd('\r', '\n');
 		}
 
 		private static void CopyMinimalIcuFiles(string targetDir)

@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 
 namespace Icu
 {
@@ -21,12 +22,12 @@ namespace Icu
 		/// Gets the currently supported Unicode version for the current version of ICU.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static string UnicodeVersion
 		{
 			get
 			{
-				VersionInfo arg;
-				NativeMethods.u_getUnicodeVersion(out arg);
+				NativeMethods.u_getUnicodeVersion(out var arg);
 				return arg.ToString();
 			}
 		}
@@ -36,12 +37,12 @@ namespace Icu
 		/// Get the current version of ICU.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static string IcuVersion
 		{
 			get
 			{
-				VersionInfo arg;
-				NativeMethods.u_getVersion(out arg);
+				NativeMethods.u_getVersion(out var arg);
 				return arg.ToString();
 			}
 		}
@@ -49,6 +50,7 @@ namespace Icu
 		/// <summary>
 		/// Set to <c>true</c> to output diagnostic trace messages
 		/// </summary>
+		[PublicAPI]
 		public static bool Verbose
 		{
 			get => NativeMethods.Verbose;
@@ -68,6 +70,7 @@ namespace Icu
 		/// maximum supported ICU version (currently 60). Set to <c>-1</c> to use the same value
 		/// as <paramref name="minIcuVersion"/>.</param>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static void ConfineIcuVersions(int minIcuVersion, int maxIcuVersion = -1)
 		{
 			if (maxIcuVersion == -1)
@@ -80,6 +83,7 @@ namespace Icu
 		/// directory contains a different version than should be used.
 		/// </summary>
 		/// <param name="directory">Path</param>
+		[PublicAPI]
 		public static void SetPreferredIcu4cDirectory(string directory)
 		{
 			if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
@@ -93,10 +97,11 @@ namespace Icu
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initialize ICU. In multi-threaded applications this should be the first ICU method
-		/// that gets called, preferrably before starting multiple threads.
+		/// that gets called, preferably before starting multiple threads.
 		/// </summary>
 		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static ErrorCode Init()
 		{
 			NativeMethods.u_init(out var errorCode);
@@ -110,6 +115,7 @@ namespace Icu
 		/// </summary>
 		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static void Cleanup()
 		{
 			NativeMethods.Cleanup();
@@ -121,17 +127,18 @@ namespace Icu
 		/// </summary>
 		/// <returns>the pathname</returns>
 		/// ------------------------------------------------------------------------------------
+		[PublicAPI]
 		public static string DataDirectory
 		{
 			get
 			{
-				IntPtr resPtr = NativeMethods.u_getDataDirectory();
+				var resPtr = NativeMethods.u_getDataDirectory();
 				return Marshal.PtrToStringAnsi(resPtr);
 			}
 			set
 			{
 				// Remove a trailing backslash if it exists.
-				if (value.Length > 0 && value[value.Length - 1] == '\\')
+				if (value.EndsWith("\\") || value.EndsWith("/"))
 					value = value.Substring(0, value.Length - 1);
 				NativeMethods.u_setDataDirectory(value);
 			}

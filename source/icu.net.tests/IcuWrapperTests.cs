@@ -76,7 +76,7 @@ namespace Icu.Tests
 		[Test]
 		public void UnicodeVersion()
 		{
-			string result = Wrapper.UnicodeVersion;
+			var result = Wrapper.UnicodeVersion;
 			Assert.That(result.Length, Is.GreaterThanOrEqualTo(3));
 			Assert.That(result.IndexOf("."), Is.GreaterThan(0));
 			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".")), out var major), Is.True);
@@ -85,18 +85,14 @@ namespace Icu.Tests
 		[Test]
 		public void IcuVersion()
 		{
-			string result = Wrapper.IcuVersion;
+			var result = Wrapper.IcuVersion;
 			Assert.That(result.Length, Is.GreaterThanOrEqualTo(4));
 			Assert.That(result.IndexOf("."), Is.GreaterThan(0));
 			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".")), out var major), Is.True);
 		}
 
-#if NETCOREAPP2_1
-		[Ignore("Platform is not supported in NUnit for .NET Core 2")]
-#else
 		[Platform(Exclude = "Linux",
 			Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
-#endif
 		[Test]
 		public void ConfineVersions_WorksAfterInit()
 		{

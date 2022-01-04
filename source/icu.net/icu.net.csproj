@@ -33,6 +33,12 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <DefineConstants>$(DefineConstants);FEATURE_ICLONEABLE</DefineConstants>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" Version="5.8.1"  PrivateAssets="all"/>
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0"  PrivateAssets="all" />
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="all" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
@@ -40,17 +46,11 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
   <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.6'">
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.8.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="all" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
+
   <Target Name="StoreVersion" AfterTargets="Build">
     <MakeDir Directories="$(OutputPath)" />
     <WriteLinesToFile File="$(OutputPath)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" />
