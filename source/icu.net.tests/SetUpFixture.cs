@@ -32,11 +32,7 @@ namespace Icu.Tests
 			}
 		}
 
-#if NUNIT2
-		[SetUp]
-#else
 		[OneTimeSetUp]
-#endif
 		public void RunBeforeAnyTests()
 		{
 			Wrapper.Init();
@@ -50,11 +46,7 @@ namespace Icu.Tests
 			}
 		}
 
-#if NUNIT2
-		[TearDown]
-#else
 		[OneTimeTearDown]
-#endif
 		public void RunAfterAnyTests()
 		{
 			Wrapper.Cleanup();

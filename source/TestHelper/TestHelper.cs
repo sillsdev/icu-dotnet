@@ -5,9 +5,9 @@ using System.IO;
 
 namespace Icu.Tests
 {
-	static class TestHelper
+	internal static class TestHelper
 	{
-		static void Main(string[] args)
+		internal static int Main(string[] args)
 		{
 			// The only purpose of this TestHelper app is to output the ICU version
 			// so that we can run unit tests that test loading of the unmanaged
@@ -15,16 +15,16 @@ namespace Icu.Tests
 
 			if (args.Length < 2)
 			{
-				Console.WriteLine("Missing min and max ICU versions");
-				return;
+				Console.Error.WriteLine("Missing min and max ICU versions");
+				return 1;
 			}
 
 			if (args.Length >= 4)
 			{
 				if (!int.TryParse(args[2], out var icuVersion))
 				{
-					Console.WriteLine($"Invalid ICU version: {args[2]}");
-					return;
+					Console.Error.WriteLine($"Invalid ICU version: {args[2]}");
+					return 2;
 				}
 
 				Wrapper.SetPreferredIcu4cDirectory(args[3]);
@@ -34,8 +34,8 @@ namespace Icu.Tests
 			{
 				if (!int.TryParse(args[0], out var minVersion) || !int.TryParse(args[1], out var maxVersion))
 				{
-					Console.WriteLine($"Invalid ICU versions: ({args[0]}, {args[1]})");
-					return;
+					Console.Error.WriteLine($"Invalid ICU versions: ({args[0]}, {args[1]})");
+					return 3;
 				}
 				Wrapper.ConfineIcuVersions(minVersion, maxVersion);
 			}
@@ -49,6 +49,8 @@ namespace Icu.Tests
 			{
 				// Ignore - means we can't load ICU
 			}
+
+			return 0;
 		}
 	}
 }

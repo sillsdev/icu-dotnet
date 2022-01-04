@@ -153,9 +153,9 @@ namespace Icu
 			{
 				//NOTE: .GetTypeInfo() is not supported until .NET 4.5 onwards.
 #if NET40
-				Assembly currentAssembly = typeof(NativeMethods).Assembly;
+				var currentAssembly = typeof(NativeMethods).Assembly;
 #else
-				Assembly currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
+				var currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
 #endif
 				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
 				var uri = new Uri(managedPath);
@@ -175,12 +175,12 @@ namespace Icu
 			// Only perform this for Linux because we are using LoadLibraryEx
 			// to ensure that a library's dependencies is loaded starting from
 			// where that library is located.
-			if (!IsWindows)
-			{
-				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
-				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
-			}
+			if (IsWindows)
+				return;
+
+			var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+			Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
+			Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
 		}
 
 		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
@@ -288,52 +288,51 @@ namespace Icu
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
 		{
-			Trace.WriteLineIf(Verbose, $"icu.net: Get ICU Lib handle for {basename}, version {icuVersion}");
-			if (icuVersion < MinIcuVersion)
-				return IntPtr.Zero;
-
-			IntPtr handle;
-			string libPath;
-			int lastError = 0;
-
-			if (IsWindows)
+			while (true)
 			{
-				var libName = $"{basename}{icuVersion}.dll";
-				var isIcuPathSpecified = !string.IsNullOrEmpty(_IcuPath);
-				libPath = isIcuPathSpecified ? Path.Combine(_IcuPath, libName) : libName;
+				Trace.WriteLineIf(Verbose, $"icu.net: Get ICU Lib handle for {basename}, version {icuVersion}");
+				if (icuVersion < MinIcuVersion)
+					return IntPtr.Zero;
 
-				var loadLibraryFlags = LoadLibraryFlags.NONE;
+				IntPtr handle;
+				string libPath;
+				var lastError = 0;
 
-				if (isIcuPathSpecified)
-					loadLibraryFlags |= LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
+				if (IsWindows)
+				{
+					var libName = $"{basename}{icuVersion}.dll";
+					var isIcuPathSpecified = !string.IsNullOrEmpty(_IcuPath);
+					libPath = isIcuPathSpecified ? Path.Combine(_IcuPath, libName) : libName;
 
-				handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
-				lastError = Marshal.GetLastWin32Error();
+					var loadLibraryFlags = LoadLibraryFlags.NONE;
 
-				Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0,
-					$"Unable to load [{libPath}]. Error: {new Win32Exception(lastError).Message}");
+					if (isIcuPathSpecified) loadLibraryFlags |= LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LoadLibraryFlags.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
+
+					handle = LoadLibraryEx(libPath, IntPtr.Zero, loadLibraryFlags);
+					lastError = Marshal.GetLastWin32Error();
+
+					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {new Win32Exception(lastError).Message}");
+				}
+				else
+				{
+					var libName = $"lib{basename}.so.{icuVersion}";
+					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+
+					handle = dlopen(libPath, RTLD_NOW);
+					lastError = Marshal.GetLastWin32Error();
+
+					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {lastError} ({dlerror()})");
+				}
+
+				if (handle != IntPtr.Zero)
+				{
+					IcuVersion = icuVersion;
+					return handle;
+				}
+
+				Trace.TraceWarning("{0} of {1} failed with error {2}", IsWindows ? "LoadLibraryEx" : "dlopen", libPath, lastError);
+				icuVersion -= 1;
 			}
-			else
-			{
-				var libName = $"lib{basename}.so.{icuVersion}";
-				libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
-
-				handle = dlopen(libPath, RTLD_NOW);
-				lastError = Marshal.GetLastWin32Error();
-
-				Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0,
-					$"Unable to load [{libPath}]. Error: {lastError} ({dlerror()})");
-			}
-			if (handle == IntPtr.Zero)
-			{
-				Trace.TraceWarning("{0} of {1} failed with error {2}",
-					IsWindows ? "LoadLibraryEx" : "dlopen",
-					libPath, lastError);
-				return GetIcuLibHandle(basename, icuVersion - 1);
-			}
-
-			IcuVersion = icuVersion;
-			return handle;
 		}
 
 		public static void Cleanup()
