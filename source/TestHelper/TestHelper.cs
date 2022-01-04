@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2022 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.IO;
@@ -12,6 +12,34 @@ namespace Icu.Tests
 			// The only purpose of this TestHelper app is to output the ICU version
 			// so that we can run unit tests that test loading of the unmanaged
 			// ICU binaries
+
+			if (args.Length < 2)
+			{
+				Console.WriteLine("Missing min and max ICU versions");
+				return;
+			}
+
+			if (args.Length >= 4)
+			{
+				if (!int.TryParse(args[2], out var icuVersion))
+				{
+					Console.WriteLine($"Invalid ICU version: {args[2]}");
+					return;
+				}
+
+				Wrapper.SetPreferredIcu4cDirectory(args[3]);
+				Wrapper.ConfineIcuVersions(icuVersion);
+			}
+			else
+			{
+				if (!int.TryParse(args[0], out var minVersion) || !int.TryParse(args[1], out var maxVersion))
+				{
+					Console.WriteLine($"Invalid ICU versions: ({args[0]}, {args[1]})");
+					return;
+				}
+				Wrapper.ConfineIcuVersions(minVersion, maxVersion);
+			}
+
 			try
 			{
 				Console.WriteLine(Wrapper.IcuVersion);

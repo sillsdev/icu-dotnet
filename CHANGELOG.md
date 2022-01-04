@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Added `Wrapper.SetPreferredIcu4cDirectory()` method to specify a
+  directory where to preferably look for icu4c
+
+### Fixed
+
+- Fix a problem confining ICU version if it's located in a different
+  directory. See `Wrapper.SetPreferredIcu4cDirectory()`.
+
 ## [2.7.1] - 2021-03-04
 
 ### Fixed

@@ -53,6 +53,11 @@ namespace Icu
 			// Set the default to IcuVersion with an empty path and no version set.
 			IcuVersion = new IcuVersionInfo();
 
+			if (TryPreferredDirectory())
+			{
+				return IcuVersion;
+			}
+
 			if (TryGetPathFromAssemblyDirectory())
 			{
 				return IcuVersion;
@@ -99,6 +104,21 @@ namespace Icu
 #endif
 
 			return IcuVersion;
+		}
+
+		private static bool TryPreferredDirectory()
+		{
+			if (string.IsNullOrEmpty(NativeMethods.PreferredDirectory))
+				return false;
+
+			var preferredDirectory = new DirectoryInfo(NativeMethods.PreferredDirectory);
+			if (TryGetIcuVersionNumber(preferredDirectory, out var version))
+			{
+				IcuVersion = new IcuVersionInfo(preferredDirectory, version);
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>

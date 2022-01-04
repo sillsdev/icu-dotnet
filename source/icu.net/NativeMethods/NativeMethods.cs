@@ -17,6 +17,8 @@ namespace Icu
 		internal static int MinIcuVersion { get; private set; } = Wrapper.MinSupportedIcuVersion;
 		internal static int MaxIcuVersion { get; private set; } = Wrapper.MaxSupportedIcuVersion;
 
+		internal static string PreferredDirectory { get; set; }
+
 		internal static bool Verbose { get; set; }
 
 		public static void SetMinMaxIcuVersions(int minVersion = Wrapper.MinSupportedIcuVersion,
@@ -41,7 +43,11 @@ namespace Icu
 			}
 
 			if (!IsInitialized)
+			{
+				// Now that we set min/max versions, reset the existing info again
+				ResetIcuVersionInfo();
 				return;
+			}
 
 			Cleanup();
 			Wrapper.Init();
@@ -217,6 +223,12 @@ namespace Icu
 		private static bool LocateIcuLibrary(string libraryName)
 		{
 			Trace.WriteLineIf(Verbose, $"icu.net: Locating ICU library '{libraryName}'");
+			if (!string.IsNullOrEmpty(PreferredDirectory) &&
+				CheckDirectoryForIcuBinaries(PreferredDirectory, libraryName))
+			{
+				return true;
+			}
+
 			var arch = IsRunning64Bit ? "x64" : "x86";
 			// Look for ICU binaries in lib/{win,linux}-{x86,x64} subdirectory first
 			var platform = IsWindows ? "win" : "linux";
@@ -240,6 +252,12 @@ namespace Icu
 			// next try just x86/x64 subdirectory
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, arch),
+				libraryName))
+				return true;
+
+			// Might also be in runtimes/win7-x64/native
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, "runtimes", $"win7-{arch}", "native"),
 				libraryName))
 				return true;
 

@@ -19,21 +19,41 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NativeMethodsTests
 	{
-		private string _tmpDir;
-		private string _pathEnvironmentVariable;
-		public const string FullIcuLibraryVersion = "62.1";
-		public const string MinIcuLibraryVersion = "59.1";
-		public const string MinIcuLibraryVersionMajor = "59";
+		private      string _tmpDir;
+		private      string _pathEnvironmentVariable;
+		public const string FullIcuLibraryVersion      = "62.1";
+		public const string FullIcuLibraryVersionMajor = "62";
+		public const string MinIcuLibraryVersion       = "59.1";
+		public const string MinIcuLibraryVersionMajor  = "59";
 
-		private static void CopyFile(string srcPath, string dstDir)
+		internal static int MaxInstalledIcuLibraryVersion
+		{
+			get
+			{
+				var fullVersion = int.Parse(FullIcuLibraryVersionMajor);
+				var minVersion = int.Parse(MinIcuLibraryVersionMajor);
+				return Math.Max(fullVersion, minVersion);
+			}
+		}
+
+		internal static void CopyFile(string srcPath, string dstDir)
 		{
 			var fileName = Path.GetFileName(srcPath);
 			File.Copy(srcPath, Path.Combine(dstDir, fileName));
 		}
 
+		private static void CopyFilesFromDirectory(string srcPath, string dstDir)
+		{
+			var srcDirectory = new DirectoryInfo(srcPath);
+			foreach (var file in srcDirectory.GetFiles())
+			{
+				CopyFile(file.FullName, dstDir);
+			}
+		}
+
 		private static bool IsRunning64Bit => IntPtr.Size == 8;
 
-		private static string GetArchSubdir(string prefix = "")
+		internal static string GetArchSubdir(string prefix = "")
 		{
 			var archSubdir = IsRunning64Bit ? "x64" : "x86";
 			return $"{prefix}{archSubdir}";
@@ -43,13 +63,28 @@ namespace Icu.Tests
 			new Uri(
 #if NET40
 				typeof(NativeMethodsTests).Assembly.CodeBase
+#elif NET5_0_OR_GREATER
+				typeof(NativeMethodsTests).GetTypeInfo().Assembly.Location
 #else
 				typeof(NativeMethodsTests).GetTypeInfo().Assembly.CodeBase
 #endif
 				)
 			.LocalPath);
 
-		private static string IcuDirectory => Path.Combine(OutputDirectory, "lib", GetArchSubdir("win-"));
+		internal static string IcuDirectory
+		{
+			get
+			{
+				var directory = Path.Combine(OutputDirectory, "lib", GetArchSubdir("win-"));
+				if (Directory.Exists(directory))
+					return directory;
+				directory = Path.Combine(OutputDirectory, "runtimes", GetArchSubdir("win7-"), "native");
+				if (Directory.Exists(directory))
+					return directory;
+
+				throw new DirectoryNotFoundException("Can't find ICU directory");
+			}
+		}
 
 		private string RunTestHelper(string workDir, string exeDir = null)
 		{
@@ -64,10 +99,14 @@ namespace Icu.Tests
 				process.StartInfo.CreateNoWindow = true;
 				process.StartInfo.WorkingDirectory = workDir;
 				var filename = Path.Combine(exeDir, "TestHelper.exe");
-				if (!File.Exists(filename))
+				if (File.Exists(filename))
+				{
+					process.StartInfo.Arguments = $"{Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
+				}
+				else
 				{
 					// netcore
-					process.StartInfo.Arguments = Path.Combine(exeDir, "TestHelper.dll");
+					process.StartInfo.Arguments = $"{Path.Combine(exeDir, "TestHelper.dll")} {Wrapper.MinSupportedIcuVersion} {MaxInstalledIcuLibraryVersion}";
 					filename = "dotnet";
 				}
 
@@ -91,16 +130,12 @@ namespace Icu.Tests
 			CopyFile(Path.Combine(IcuDirectory, $"icuuc{MinIcuLibraryVersionMajor}.dll"), targetDir);
 		}
 
-		private static void CopyTestFiles(string sourceDir, string targetDir)
+		internal static void CopyTestFiles(string sourceDir, string targetDir)
 		{
-			var testHelper = Path.Combine(sourceDir, "TestHelper.exe");
-			if (!File.Exists(testHelper))
-				testHelper = Path.Combine(sourceDir, "TestHelper.dll");
-			CopyFile(testHelper, targetDir);
-			CopyFile(Path.Combine(sourceDir, "icu.net.dll"), targetDir);
-			var dependencyModel = Path.Combine(sourceDir, "Microsoft.Extensions.DependencyModel.dll");
-			if (File.Exists(dependencyModel))
-				CopyFile(dependencyModel, targetDir);
+			// sourceDir is something like output/Debug/net461, TestHelper is in output/Debug/TestHelper/net461
+			var framework = Path.GetFileName(sourceDir);
+			sourceDir = Path.Combine(sourceDir, "..", "TestHelper", framework);
+			CopyFilesFromDirectory(sourceDir, targetDir);
 		}
 
 		[SetUp]
@@ -119,14 +154,25 @@ namespace Icu.Tests
 		public void TearDown()
 		{
 			Wrapper.Cleanup();
+			DeleteDirectory(_tmpDir);
+
+			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
+		}
+
+		internal static void DeleteDirectory(string tmpDir)
+		{
+			if (string.IsNullOrEmpty(tmpDir))
+				return;
+
 			try
 			{
-				Directory.Delete(_tmpDir, true);
+				Directory.Delete(tmpDir, true);
 			}
 			catch (IOException e)
 			{
-				Console.WriteLine($"IOException trying to delete temporary directory {_tmpDir}: {e.Message}");
-				foreach (var f in new DirectoryInfo(_tmpDir).EnumerateFileSystemInfos())
+				Console.WriteLine(
+					$"IOException trying to delete temporary directory {tmpDir}: {e.Message}");
+				foreach (var f in new DirectoryInfo(tmpDir).EnumerateFileSystemInfos())
 				{
 					try
 					{
@@ -142,20 +188,19 @@ namespace Icu.Tests
 						Console.WriteLine($"Can't delete {f.Name}");
 					}
 				}
+
 				// Try again to delete the directory
 				try
 				{
-					Directory.Delete(_tmpDir, true);
+					Directory.Delete(tmpDir, true);
 				}
 				catch (Exception)
 				{
 					// just ignore - not worth failing the test if we can't delete
 					// a temporary directory
-					Console.WriteLine($"Still can't delete {_tmpDir}");
+					Console.WriteLine($"Still can't delete {tmpDir}");
 				}
 			}
-
-			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
 		}
 
 		[Test]
@@ -199,7 +244,7 @@ namespace Icu.Tests
 		{
 			var subdir = Path.Combine(_tmpDir, "Dir With Spaces");
 			Directory.CreateDirectory(subdir);
-			CopyTestFiles(_tmpDir, subdir);
+			CopyTestFiles(OutputDirectory, subdir);
 			CopyMinimalIcuFiles(subdir);
 			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo(MinIcuLibraryVersion));
 		}

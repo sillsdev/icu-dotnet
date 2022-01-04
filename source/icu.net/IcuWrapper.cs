@@ -1,6 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Icu
@@ -72,6 +73,19 @@ namespace Icu
 			if (maxIcuVersion == -1)
 				maxIcuVersion = minIcuVersion;
 			NativeMethods.SetMinMaxIcuVersions(minIcuVersion, maxIcuVersion);
+		}
+
+		/// <summary>
+		/// Set directory where to look for unmanaged binaries first. This is helpful if the current
+		/// directory contains a different version than should be used.
+		/// </summary>
+		/// <param name="directory">Path</param>
+		public static void SetPreferredIcu4cDirectory(string directory)
+		{
+			if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+				throw new DirectoryNotFoundException(directory);
+
+			NativeMethods.PreferredDirectory = directory;
 		}
 
 		#region Public wrappers around the ICU methods
