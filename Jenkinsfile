@@ -12,4 +12,5 @@ xplatformBuildAndRunTests {
 	framework = 'netcore3.1'
 	configuration = 'Release'
 	uploadNuGet = true
+	nupkgPath = "output/*nupkg"
 }

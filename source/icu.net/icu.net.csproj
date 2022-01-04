@@ -3,6 +3,7 @@
     <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
     <OutputPath>..\..\output\$(Configuration)</OutputPath>
+    <PackageOutputPath>..\..\output</PackageOutputPath>
     <RootNamespace>Icu</RootNamespace>
     <AssemblyName>icu.net</AssemblyName>
     <ErrorReport>prompt</ErrorReport>
