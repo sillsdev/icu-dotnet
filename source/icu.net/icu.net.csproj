@@ -30,6 +30,10 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="App.config" Pack="true" PackagePath="contentFiles\any\any\$(AssemblyTitle).dll.config" />
+  </ItemGroup>
+
   <Target Name="StoreVersion" AfterTargets="Build">
     <MakeDir Directories="$(OutputPath)" />
     <WriteLinesToFile File="$(OutputPath)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" />
