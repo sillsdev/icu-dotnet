@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		.nuget\packages.config = .nuget\packages.config
 		..\.editorconfig = ..\.editorconfig
 		..\GitVersion.yml = ..\GitVersion.yml
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "TestHelper\TestHelper.csproj", "{F195ADCE-9129-446E-85E0-8EEAD01ED08D}"

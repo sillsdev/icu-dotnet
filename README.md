@@ -1,24 +1,28 @@
 # Overview
 
-icu-dotnet is the C# wrapper for a subset of [ICU4C](http://site.icu-project.org/home#TOC-What-is-ICU-) "ICU for C".
+icu-dotnet is the C# wrapper for a subset of [ICU](https://icu.unicode.org/).
 >ICU is a mature, widely used set of C/C++ and Java libraries providing Unicode and Globalization support for software applications. ICU is widely portable and gives applications the same results on all platforms and between C/C++ and Java software.
 
 ## Status
 
+<!--
 | OS      | Status |
 | ------- | ------ |
 | Linux   | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/) |
 | Windows | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/) |
+-->
+
+[![Build status](https://ci.appveyor.com/api/projects/status/moxh4lc39hfeotq9?svg=true)](https://ci.appveyor.com/project/SIL_Language_Technology/icu-dotnet)
 
 ## Usage
 
 This library provides .NET classes and methods for (a subset of) the ICU C API. Please refer to the
-[ICU API documentation](http://icu-project.org/apiref/icu4c/). In icu.net you'll find classes that
-correspond to the C++ classes of ICU4C.
+[ICU API documentation](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/). In icu.net
+you'll find classes that correspond to the C++ classes of ICU4C.
 
 Although not strictly required it is recommended to call `Icu.Wrapper.Init()` at the start of
 the application. This will allow to use icu.net from multiple threads
-(c.f. [ICU Initialization and Termination](http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination)).
+(c.f. [ICU Initialization and Termination](https://unicode-org.github.io/icu/userguide/icu/design.html#icu4c-initialization-and-termination)).
 Similarly, it might be beneficial to call `Icu.Wrapper.Cleanup()` before exiting.
 
 Sample code:

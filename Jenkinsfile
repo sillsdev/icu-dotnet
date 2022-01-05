@@ -11,6 +11,6 @@ xplatformBuildAndRunTests {
 	linuxTool = 'mono-msbuild16'
 	framework = 'netcore3.1'
 	configuration = 'Release'
-	uploadNuGet = true
+	uploadNuGet = false
 	nupkgPath = "output/*nupkg"
 }
