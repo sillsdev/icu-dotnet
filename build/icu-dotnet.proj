@@ -7,7 +7,7 @@
 		<RootDir Condition="'$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'">$(teamcity_build_checkoutDir)</RootDir>
 		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(IsOnWindows)'!='true'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
 		<Solution>icu.net.sln</Solution>
-		<SolutionDir>$(RootDir)/source</SolutionDir>
+		<SolutionDir>$(RootDir)</SolutionDir>
 		<SolutionPath>$(SolutionDir)/$(Solution)</SolutionPath>
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
@@ -107,7 +107,7 @@
 
 	<Target Name="RunNUnitNetCore">
 		<PropertyGroup>
-			<NetCoreTestRunner>$(SolutionDir)/icu.net.netstandard.testrunner</NetCoreTestRunner>
+			<NetCoreTestRunner>$(SolutionDir)/source/icu.net.netstandard.testrunner</NetCoreTestRunner>
 			<DotNetCommand Condition="'$(OS)'!='Windows_NT'">DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true $(DotNetCLI)</DotNetCommand>
 			<DotNetCommand Condition="'$(OS)'=='Windows_NT'">$(DotNetCLI)</DotNetCommand>
 		</PropertyGroup>

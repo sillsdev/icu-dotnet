@@ -3,21 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net", "source\icu.net\icu.net.csproj", "{28A0072F-AE0B-449A-8494-B53F09756273}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.tests", "icu.net.tests\icu.net.tests.csproj", "{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.tests", "source\icu.net.tests\icu.net.tests.csproj", "{9D7CFEF4-55F1-4C31-9B7B-EB6520AE4EDB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{ADD2D664-A179-47DE-BE36-94AF75330E29}"
 	ProjectSection(SolutionItems) = preProject
-		..\CHANGELOG.md = ..\CHANGELOG.md
-		.nuget\packages.config = .nuget\packages.config
-		..\.editorconfig = ..\.editorconfig
-		..\GitVersion.yml = ..\GitVersion.yml
+		CHANGELOG.md = CHANGELOG.md
+		.editorconfig = .editorconfig
+		GitVersion.yml = GitVersion.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "TestHelper\TestHelper.csproj", "{F195ADCE-9129-446E-85E0-8EEAD01ED08D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "source\TestHelper\TestHelper.csproj", "{F195ADCE-9129-446E-85E0-8EEAD01ED08D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.netstandard.testrunner", "icu.net.netstandard.testrunner\icu.net.netstandard.testrunner.csproj", "{30997039-1AD1-4A11-91EE-F53A41788FB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.netstandard.testrunner", "source\icu.net.netstandard.testrunner\icu.net.netstandard.testrunner.csproj", "{30997039-1AD1-4A11-91EE-F53A41788FB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +49,6 @@ Global
 		$0.StandardHeader = $1
 		$1.Text = @Copyright (c) ${Year} SIL International\nThis software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 		$1.IncludeInNewFiles = True
-		StartupItem = icu.net\icu.net.csproj
+		StartupItem = source\icu.net\icu.net.csproj
 	EndGlobalSection
 EndGlobal

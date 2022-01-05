@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
-    <OutputPath>$(MSBuildThisFileDirectory)\..\output\$(Configuration)</OutputPath>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)\..\output</PackageOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)\output\$(Configuration)</OutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)\output</PackageOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Company>SIL International</Company>
@@ -14,7 +14,7 @@
     <AppendToReleaseNotesProperty><![CDATA[
 See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGELOG.md.]]>
     </AppendToReleaseNotesProperty>
-    <ChangelogFile>$(MSBuildThisFileDirectory)/../CHANGELOG.md</ChangelogFile>
+    <ChangelogFile>$(MSBuildThisFileDirectory)/CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <LangVersion>7.1</LangVersion>
