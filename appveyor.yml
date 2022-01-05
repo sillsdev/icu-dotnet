@@ -4,7 +4,7 @@ branches:
   - master
 image: Visual Studio 2019
 init:
-  - cmd: >-
+  - cmd: |
       set GITVERSION_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
       set GitVersion_NoNormalizeEnabled=true
       set IGNORE_NORMALISATION_GIT_HEAD_MOVE=1
