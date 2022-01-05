@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
+    <PlatformAlias>netstandard</PlatformAlias>
+    <OutputPath>$(MSBuildThisFileDirectory)\..\output\$(Configuration)</OutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)\..\output</PackageOutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Company>SIL International</Company>
+    <Authors>SIL International</Authors>
+    <Copyright>Copyright © 2007-2022 SIL International</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
+    <AppendToReleaseNotesProperty><![CDATA[
+See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGELOG.md.]]>
+    </AppendToReleaseNotesProperty>
+    <ChangelogFile>$(MSBuildThisFileDirectory)/../CHANGELOG.md</ChangelogFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <LangVersion>7.1</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/icu.net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+</Project>
