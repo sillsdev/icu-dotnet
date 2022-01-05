@@ -2,13 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Icu.Tests</RootNamespace>
-    <Configurations>Debug;Release</Configurations>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
     <AssemblyTitle>icu.net.tests</AssemblyTitle>
-    <Company>SIL</Company>
-    <Copyright>Copyright © 2018-2022 SIL International</Copyright>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <IsPackable>false</IsPackable>
     <LangVersion>8</LangVersion>
   </PropertyGroup>

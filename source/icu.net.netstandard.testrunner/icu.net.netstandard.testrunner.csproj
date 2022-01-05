@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <TargetFrameworks/> <!-- override value from Directory.Build.props -->
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <OutputPath>../../output/$(Configuration)</OutputPath>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
