@@ -35,7 +35,7 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
   </ItemGroup>
 
   <Target Name="StoreVersion" AfterTargets="Build">
-    <MakeDir Directories="$(OutputPath)" />
-    <WriteLinesToFile File="$(OutputPath)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" />
+    <MakeDir Directories="$(MSBuildThisFileDirectory)/../../output/$(Configuration)" />
+    <WriteLinesToFile File="$(MSBuildThisFileDirectory)/../../output/$(Configuration)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" Condition="'$(GitVersion_FullSemVer)' != ''" />
   </Target>
 </Project>
