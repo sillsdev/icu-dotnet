@@ -5,6 +5,9 @@
 *.h     diff=cpp
 *.idh   diff=cpp
 
+*.props -whitespace=indent-with-non-tab
+*.targets -whitespace=indent-with-non-tab
+
 # Don't check whitespace for generated files
 *.csproj -whitespace
 *.resx -whitespace

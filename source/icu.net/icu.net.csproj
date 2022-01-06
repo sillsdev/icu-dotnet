@@ -34,6 +34,15 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <None Include="App.config" Pack="true" PackagePath="contentFiles\any\any\$(AssemblyTitle).dll.config" />
   </ItemGroup>
 
+  <Target Name="CollectRuntimeOutputs" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <None Include="$(PackageId).props" Pack="true" PackagePath="build" />
+      <None Include="$(PackageId).props" Pack="true" PackagePath="buildMultiTargeting" />
+      <None Include="$(PackageId).targets" Pack="true" PackagePath="build" />
+      <None Include="$(PackageId).targets" Pack="true" PackagePath="buildMultiTargeting" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="StoreVersion" AfterTargets="Build">
     <MakeDir Directories="$(MSBuildThisFileDirectory)/../../output/$(Configuration)" />
     <WriteLinesToFile File="$(MSBuildThisFileDirectory)/../../output/$(Configuration)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" Condition="'$(GitVersion_FullSemVer)' != ''" />

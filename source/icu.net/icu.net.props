@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <ConfigFiles Include="$(MSBuildThisFileDirectory)../contentFiles/any/any/icu.net.dll.config" />
+  </ItemGroup>
+</Project>

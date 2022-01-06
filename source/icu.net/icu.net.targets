@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="CopyConfigFiles" BeforeTargets="Build" Condition="!$(TargetFramework.StartsWith('netstandard'))">
+    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(TargetDir)" />
+  </Target>
+</Project>
