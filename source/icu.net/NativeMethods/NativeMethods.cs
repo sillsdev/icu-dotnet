@@ -49,7 +49,9 @@ namespace Icu
 				return;
 			}
 
+			var rescueDataDir = Wrapper.DataDirectory;
 			Cleanup();
+			Wrapper.DataDirectory = rescueDataDir;
 			Wrapper.Init();
 		}
 
