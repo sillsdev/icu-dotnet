@@ -98,9 +98,11 @@ namespace Icu.Tests
 		{
 			Wrapper.Init();
 			var version = int.Parse(NativeMethodsTests.MinIcuLibraryVersionMajor);
+			Wrapper.DataDirectory = "Test";
 			Wrapper.ConfineIcuVersions(version);
 
 			Assert.That(Wrapper.IcuVersion, Is.EqualTo(NativeMethodsTests.MinIcuLibraryVersion));
+			Assert.That(Wrapper.DataDirectory, Is.EqualTo("Test"));
 		}
 
 		[Platform(Exclude = "Linux",
