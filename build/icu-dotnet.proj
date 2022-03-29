@@ -3,6 +3,9 @@
 		<IsOnWindows Condition="'$(OS)'=='Windows_NT'">true</IsOnWindows>
 		<IsOnTeamCity Condition="'$(teamcity_version)' != ''">true</IsOnTeamCity>
 
+		<!-- this is necessary for building with "x64_x86 Cross Tools Command Prompt for VS 2019" -->
+		<Platform>Any CPU</Platform>
+
 		<RootDir Condition="'$(IsOnTeamCity)'!='true' Or '$(IsOnWindows)'!='true'">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(IsOnTeamCity)'=='true' And '$(IsOnWindows)'=='true'">$(teamcity_build_checkoutDir)</RootDir>
 		<teamcity_agent_home_dir Condition="'$(teamcity_agent_home_dir)'=='' And '$(IsOnWindows)'!='true'">/var/lib/TeamCity/agent</teamcity_agent_home_dir>
@@ -58,7 +61,7 @@
 	<Target Name="Compile" DependsOnTargets="RestorePackages">
 		<MSBuild Projects="$(SolutionPath)"
 			Targets="Rebuild"
-			Properties="Configuration=$(Configuration)" />
+			Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 
 	<Target Name="Clean">
@@ -111,21 +114,21 @@
 			<DotNetCommand Condition="'$(OS)'!='Windows_NT'">DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true $(DotNetCLI)</DotNetCommand>
 			<DotNetCommand Condition="'$(OS)'=='Windows_NT'">$(DotNetCLI)</DotNetCommand>
 		</PropertyGroup>
-		<Exec Command="$(DotNetCommand) run --configuration $(Configuration) --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml" WorkingDirectory="$(NetCoreTestRunner)" />
+		<Exec Command='$(DotNetCommand) run --configuration $(Configuration) -p:Platform="$(Platform)" --result=$(OutputDir)/$(Configuration)/TestResults.NetCore.xml' WorkingDirectory="$(NetCoreTestRunner)" />
 	</Target>
 
 	<Target Name="Restore">
 		<MSBuild
 			Projects="$(SolutionPath)"
 			Targets="Restore"
-			Properties="Configuration=$(Configuration)" />
+			Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 
 	<Target Name="Pack">
 		<MSBuild
 			Projects="$(SolutionPath)"
 			Targets="Pack"
-			Properties="Configuration=$(Configuration)" />
+			Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 	</Target>
 
 </Project>
