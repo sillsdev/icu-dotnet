@@ -180,6 +180,17 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		public void ConstructFromLanguageAndKeywords_ScriptAndKeywords()
+		{
+			Locale locale = new Locale("sr", string.Empty, string.Empty, "currency=USD");
+			Assert.That(locale.Id, Is.EqualTo("sr@currency=USD"));
+			Assert.That(locale.Language, Is.EqualTo("sr"));
+			Assert.That(locale.Script, Is.Empty);
+			Assert.That(locale.Country, Is.Empty);
+			Assert.That(locale.Variant, Is.Empty);
+		}
+
+		[Test]
 		public void ToString_SameAsId()
 		{
 			Locale locale = new Locale("en-US");

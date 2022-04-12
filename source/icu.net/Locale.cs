@@ -64,8 +64,11 @@ namespace Icu
 		/// <param name="keywordsAndValues">A string consisting of keyword/values pairs, such as "collation=phonebook;currency=euro"</param>
 		public Locale(string language, string country, string variant, string keywordsAndValues)
 		{
-			var bldr = new StringBuilder();
-			bldr.AppendFormat("{0}_{1}", language, country);
+			var bldr = new StringBuilder(language);
+			if (!string.IsNullOrEmpty(country) || !string.IsNullOrEmpty(variant))
+			{
+				bldr.AppendFormat("_{0}", country);
+			}
 			if (!string.IsNullOrEmpty(variant))
 			{
 				bldr.AppendFormat("_{0}", variant);
