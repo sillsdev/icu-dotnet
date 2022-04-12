@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   directory. See `Wrapper.SetPreferredIcu4cDirectory()`.
 - Include `icu.net.dll.config` file in nuget package. This is important for running on MacOSX.
 - Fix construction of locale with language and keywords (cbersch)
+- Fix passing locale to ubrk_open (cbersch)
 
 ## [2.7.1] - 2021-03-04
 
