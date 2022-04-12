@@ -12,7 +12,7 @@ namespace Icu
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
-				string locale, string text, int textLength, out ErrorCode errorCode);
+				[MarshalAs(UnmanagedType.LPStr)] string locale, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,

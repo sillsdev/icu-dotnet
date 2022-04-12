@@ -59,6 +59,17 @@ namespace Icu.Tests
 		}
 
 		[Test]
+		public void GetBoundaries_LocaleDependentBreakPoints_Line()
+		{
+			var text = "論‼";
+
+			var parts = BreakIterator.GetBoundaries(BreakIterator.UBreakIteratorType.LINE, new Locale("ja@lb=loose"), text);
+
+			// we only get 2 boundaries if the ja locale is passed correctly
+			Assert.That(parts.Count(), Is.EqualTo(2));
+		}
+
+		[Test]
 		public void GetBoundaries_Sentence()
 		{
 			var text = "Aa bb. Ccdef 3.5 x? Y?x! Z";
