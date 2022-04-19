@@ -38,11 +38,7 @@ namespace Icu
 			internal utrans_transUCharsDelegate utrans_transUChars;
 		}
 
-		private static TransliteratorMethodsContainer _TransliteratorMethods;
-
-		private static TransliteratorMethodsContainer TransliteratorMethods =>
-			_TransliteratorMethods ??
-			(_TransliteratorMethods = new TransliteratorMethodsContainer());
+		private static TransliteratorMethodsContainer TransliteratorMethods = new TransliteratorMethodsContainer();
 
 		/// <summary/>
 		public static SafeEnumeratorHandle utrans_openIDs(out ErrorCode errorCode)

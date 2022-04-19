@@ -66,11 +66,7 @@ namespace Icu
 			internal ubrk_setTextDelegate ubrk_setText;
 		}
 
-		private static BreakIteratorMethodsContainer _BreakIteratorMethods;
-
-		private static BreakIteratorMethodsContainer BreakIteratorMethods =>
-			_BreakIteratorMethods ??
-			(_BreakIteratorMethods = new BreakIteratorMethodsContainer());
+		private static BreakIteratorMethodsContainer BreakIteratorMethods = new BreakIteratorMethodsContainer();
 
 		#region Break iterator
 

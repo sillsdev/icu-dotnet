@@ -66,11 +66,7 @@ namespace Icu
 			internal unorm2_getCombiningClassDelegate unorm2_getCombiningClass;
 		}
 
-		private static NormalizeMethodsContainer _NormalizeMethods;
-
-		private static NormalizeMethodsContainer NormalizeMethods =>
-			_NormalizeMethods ??
-			(_NormalizeMethods = new NormalizeMethodsContainer());
+		private static NormalizeMethodsContainer NormalizeMethods = new NormalizeMethodsContainer();
 
 		#region normalize
 

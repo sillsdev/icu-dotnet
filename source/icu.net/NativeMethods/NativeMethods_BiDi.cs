@@ -148,9 +148,7 @@ namespace Icu
 			internal ubidi_getBaseDirectionDelegate ubidi_getBaseDirection;
 		}
 
-		private static BiDiMethodsContainer _BiDiMethods;
-
-		private static BiDiMethodsContainer BiDiMethods => _BiDiMethods ?? (_BiDiMethods = new BiDiMethodsContainer());
+		private static BiDiMethodsContainer BiDiMethods = new BiDiMethodsContainer();
 
 		/// <summary>
 		/// Create a UBiDi structure.

@@ -21,11 +21,7 @@ namespace Icu
 			internal ucnv_getStandardNameDelegate ucnv_getStandardName;
 		}
 
-		private static CodepageConversionMethodsContainer _CodepageConversionMethods;
-
-		private static CodepageConversionMethodsContainer CodepageConversionMethods =>
-			_CodepageConversionMethods ??
-			(_CodepageConversionMethods = new CodepageConversionMethodsContainer());
+		private static CodepageConversionMethodsContainer CodepageConversionMethods = new CodepageConversionMethodsContainer();
 
 		public static SafeEnumeratorHandle ucnv_openAllNames(out ErrorCode err)
 		{

@@ -98,11 +98,7 @@ namespace Icu
 			internal uloc_canonicalizeDelegate uloc_canonicalize;
 		}
 
-		private static LocalesMethodsContainer _LocalesMethods;
-
-		private static LocalesMethodsContainer LocalesMethods =>
-			_LocalesMethods ??
-			(_LocalesMethods = new LocalesMethodsContainer());
+		private static LocalesMethodsContainer LocalesMethods = new LocalesMethodsContainer();
 
 		/// <summary>Get the ICU LCID for a locale</summary>
 		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)] string localeID)

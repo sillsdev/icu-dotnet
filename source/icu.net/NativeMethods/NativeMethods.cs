@@ -369,17 +369,17 @@ namespace Icu
 				_IcuI18NLibHandle = IntPtr.Zero;
 
 				Methods = new MethodsContainer();
-				_BiDiMethods = null;
-				_BreakIteratorMethods = null;
-				_CodepageConversionMethods = null;
-				_CollatorMethods = null;
-				_LocalesMethods = null;
-				_MessageFormatMethods = null;
-				_NormalizeMethods = null;
-				_RegexMethods = null;
-				_ResourceBundleMethods = null;
-				_TransliteratorMethods = null;
-				_UnicodeSetMethods = null;
+				BiDiMethods = new BiDiMethodsContainer();
+				BreakIteratorMethods = new BreakIteratorMethodsContainer();
+				CodepageConversionMethods = new CodepageConversionMethodsContainer();
+				CollatorMethods = new CollatorMethodsContainer();
+				LocalesMethods = new LocalesMethodsContainer();
+				MessageFormatMethods = new MessageFormatMethodsContainer();
+				NormalizeMethods = new NormalizeMethodsContainer();
+				RegexMethods = new RegexMethodsContainer();
+				ResourceBundleMethods = new ResourceBundleMethodsContainer();
+				TransliteratorMethods = new TransliteratorMethodsContainer();
+				UnicodeSetMethods = new UnicodeSetMethodsContainer();
 				ResetIcuVersionInfo();
 			}
 		}
