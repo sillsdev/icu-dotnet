@@ -33,11 +33,7 @@ namespace Icu
 			internal uregex_closeDelegate uregex_close;
 		}
 
-		private static RegexMethodsContainer _RegexMethods;
-
-		private static RegexMethodsContainer RegexMethods =>
-			_RegexMethods ??
-			(_RegexMethods = new RegexMethodsContainer());
+		private static RegexMethodsContainer RegexMethods = new RegexMethodsContainer();
 
 		/// <summary>
 		/// Open (compile) an ICU regular expression.

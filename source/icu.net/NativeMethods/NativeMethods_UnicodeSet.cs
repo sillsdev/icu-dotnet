@@ -47,11 +47,7 @@ namespace Icu
 			internal uset_getItemCountDelegate uset_getItemCount;
 		}
 
-		private static UnicodeSetMethodsContainer _UnicodeSetMethods;
-
-		private static UnicodeSetMethodsContainer UnicodeSetMethods =>
-			_UnicodeSetMethods ??
-			(_UnicodeSetMethods = new UnicodeSetMethodsContainer());
+		private static UnicodeSetMethodsContainer UnicodeSetMethods = new UnicodeSetMethodsContainer();
 
 		/// <summary>
 		/// Disposes of the storage used by Unicode set.  This function should be called exactly once for objects returned by uset_open()

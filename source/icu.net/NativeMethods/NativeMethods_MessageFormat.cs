@@ -37,11 +37,7 @@ namespace Icu
 
 		}
 
-		private static MessageFormatMethodsContainer _MessageFormatMethods;
-
-		private static MessageFormatMethodsContainer MessageFormatMethods =>
-			_MessageFormatMethods ??
-			(_MessageFormatMethods = new MessageFormatMethodsContainer());
+		private static MessageFormatMethodsContainer MessageFormatMethods = new MessageFormatMethodsContainer();
 
 		/// <summary/>
 		public static IntPtr umsg_open(string pattern, int patternLen, string locale, out ParseError parseError, out ErrorCode status)

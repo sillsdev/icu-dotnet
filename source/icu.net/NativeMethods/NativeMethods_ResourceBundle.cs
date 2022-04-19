@@ -64,11 +64,7 @@ namespace Icu
 			internal ures_getNextResourceDelegate ures_getNextResource;
 		}
 
-		private static ResourceBundleMethodsContainer _ResourceBundleMethods;
-
-		private static ResourceBundleMethodsContainer ResourceBundleMethods =>
-			_ResourceBundleMethods ??
-			(_ResourceBundleMethods = new ResourceBundleMethodsContainer());
+		private static ResourceBundleMethodsContainer ResourceBundleMethods = new ResourceBundleMethodsContainer();
 
 		/// <summary/>
 		public static IntPtr ures_open(string packageName, string locale, out ErrorCode status)

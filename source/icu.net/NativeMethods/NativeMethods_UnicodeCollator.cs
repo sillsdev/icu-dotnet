@@ -87,11 +87,7 @@ namespace Icu
 			internal ucol_getBoundDelegate ucol_getBound;
 		}
 
-		private static CollatorMethodsContainer _CollatorMethods;
-
-		private static CollatorMethodsContainer CollatorMethods =>
-			_CollatorMethods ??
-			(_CollatorMethods = new CollatorMethodsContainer());
+		private static CollatorMethodsContainer CollatorMethods = new CollatorMethodsContainer();
 
 		#region Unicode collator
 
