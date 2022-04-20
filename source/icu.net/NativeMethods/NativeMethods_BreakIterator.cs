@@ -2,12 +2,16 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class BreakIteratorMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -66,6 +70,7 @@ namespace Icu
 			internal ubrk_setTextDelegate ubrk_setText;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static BreakIteratorMethodsContainer BreakIteratorMethods = new BreakIteratorMethodsContainer();
 
 		#region Break iterator
@@ -95,7 +100,7 @@ namespace Icu
 		/// <param name="rulesLength">The length of the rules.</param>
 		/// <param name="text">The text.</param>
 		/// <param name="textLength">Length of the text.</param>
-		/// <param name="parseError">Receives position and context information for any syntax errors detected while parsing the rules. </param>
+		/// <param name="parseError">Receives position and context information for any syntax errors detected while parsing the rules.</param>
 		/// <param name="errorCode">The error code.</param>
 		/// <returns></returns>
 		public static IntPtr ubrk_openRules(
@@ -193,7 +198,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <param name="fillInVector">An array to be filled in with the status values.</param>
-		/// <param name="capacity">The length of the supplied vector. A length of zero causes the function to return the number of status values, in the normal way, without attemtping to store any values.</param>
+		/// <param name="capacity">The length of the supplied vector. A length of zero causes the function to return the number of status values, in the normal way, without attempting to store any values.</param>
 		/// <param name="status">Receives error codes.</param>
 		/// <returns>The number of rule status values from rules that determined the most recent boundary returned by the break iterator.</returns>
 		public static int ubrk_getRuleStatusVec(IntPtr bi,

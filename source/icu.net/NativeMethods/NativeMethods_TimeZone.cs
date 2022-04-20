@@ -1,13 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class TimeZoneMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -57,13 +58,13 @@ namespace Icu
 			internal delegate int ucal_getWindowsTimeZoneIdDelegate(
 				[MarshalAs(UnmanagedType.LPWStr)] string id,
 				int len,
-				IntPtr winid,
-				int winidCapacity,
+				IntPtr winId,
+				int winIdCapacity,
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucal_getTimeZoneIDForWindowsIdDelegate(
-				[MarshalAs(UnmanagedType.LPWStr)] string winid,
+				[MarshalAs(UnmanagedType.LPWStr)] string winId,
 				int len,
 				[MarshalAs(UnmanagedType.LPStr)] string region,
 				IntPtr id,
@@ -137,21 +138,21 @@ namespace Icu
 		}
 
 		public static void ucal_setDefaultTimeZone(
-			string zoneID,
+			string zoneId,
 			out ErrorCode ec)
 		{
 			if (TimeZoneMethods.ucal_setDefaultTimeZone == null)
 				TimeZoneMethods.ucal_setDefaultTimeZone = GetMethod<TimeZoneMethodsContainer.ucal_setDefaultTimeZoneDelegate>(IcuI18NLibHandle, "ucal_setDefaultTimeZone");
-			TimeZoneMethods.ucal_setDefaultTimeZone(zoneID, out ec);
+			TimeZoneMethods.ucal_setDefaultTimeZone(zoneId, out ec);
 		}
 
 		public static int ucal_getDSTSavings(
-			string zoneID,
+			string zoneId,
 			out ErrorCode ec)
 		{
 			if (TimeZoneMethods.ucal_getDSTSavings == null)
 				TimeZoneMethods.ucal_getDSTSavings = GetMethod<TimeZoneMethodsContainer.ucal_getDSTSavingsDelegate>(IcuI18NLibHandle, "ucal_getDSTSavings");
-			return TimeZoneMethods.ucal_getDSTSavings(zoneID, out ec);
+			return TimeZoneMethods.ucal_getDSTSavings(zoneId, out ec);
 		}
 
 		public static IntPtr ucal_getTZDataVersion(out ErrorCode ec)
@@ -163,17 +164,17 @@ namespace Icu
 
 		public static int ucal_getWindowsTimeZoneId(
 			string id,
-			IntPtr winid,
-			int winidCapacity,
+			IntPtr winId,
+			int winIdCapacity,
 			out ErrorCode status)
 		{
 			if (TimeZoneMethods.ucal_getWindowsTimeZoneId == null)
 				TimeZoneMethods.ucal_getWindowsTimeZoneId = GetMethod<TimeZoneMethodsContainer.ucal_getWindowsTimeZoneIdDelegate>(IcuI18NLibHandle, "ucal_getWindowsTimeZoneID");
-			return TimeZoneMethods.ucal_getWindowsTimeZoneId(id, id.Length, winid, winidCapacity, out status);
+			return TimeZoneMethods.ucal_getWindowsTimeZoneId(id, id.Length, winId, winIdCapacity, out status);
 		}
 
 		public static int ucal_getTimeZoneIDForWindowsId(
-			string winid,
+			string winId,
 			string region,
 			IntPtr id,
 			int idCapacity,
@@ -181,7 +182,7 @@ namespace Icu
 		{
 			if (TimeZoneMethods.ucal_getTimeZoneIDForWindowsId == null)
 				TimeZoneMethods.ucal_getTimeZoneIDForWindowsId = GetMethod<TimeZoneMethodsContainer.ucal_getTimeZoneIDForWindowsIdDelegate>(IcuI18NLibHandle, "ucal_getTimeZoneIDForWindowsID");
-			return TimeZoneMethods.ucal_getTimeZoneIDForWindowsId(winid, winid.Length, region, id, idCapacity, out status);
+			return TimeZoneMethods.ucal_getTimeZoneIDForWindowsId(winId, winId.Length, region, id, idCapacity, out status);
 		}
 	}
 }

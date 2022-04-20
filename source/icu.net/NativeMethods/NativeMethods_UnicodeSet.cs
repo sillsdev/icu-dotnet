@@ -2,12 +2,16 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class UnicodeSetMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -47,12 +51,13 @@ namespace Icu
 			internal uset_getItemCountDelegate uset_getItemCount;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static UnicodeSetMethodsContainer UnicodeSetMethods = new UnicodeSetMethodsContainer();
 
 		/// <summary>
 		/// Disposes of the storage used by Unicode set.  This function should be called exactly once for objects returned by uset_open()
 		/// </summary>
-		/// <param name="set">Unicode set to dispose of </param>
+		/// <param name="set">Unicode set to dispose of</param>
 		public static void uset_close(IntPtr set)
 		{
 			if (UnicodeSetMethods.uset_close == null)
@@ -113,6 +118,7 @@ namespace Icu
 		/// \uxxxx or \Uxxxxxxxx. Unprintable characters are those other than U+000A, U+0020..U+007E.</param>
 		/// <param name="status">Error code</param>
 		/// <returns>Length of string, possibly larger than resultCapacity</returns>
+		[SuppressMessage("ReSharper", "CommentTypo")]
 		public static int uset_toPattern(IntPtr set, IntPtr result, int resultCapacity,
 			bool escapeUnprintable, out ErrorCode status)
 		{
@@ -136,14 +142,14 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Returns an item of this Unicode set.  An item is either a range of characters or a single multicharacter string.
+		/// Returns an item of this Unicode set.  An item is either a range of characters or a single multi-character string.
 		/// </summary>
 		/// <param name="set">The Unicode set</param>
 		/// <param name="itemIndex">A non-negative integer in the range 0..uset_getItemCount(set)-1</param>
 		/// <param name="start">Pointer to variable to receive first character in range, inclusive</param>
-		/// <param name="end">POinter to variable to receive the last character in range, inclusive</param>
+		/// <param name="end">Pointer to variable to receive the last character in range, inclusive</param>
 		/// <param name="str">Buffer to receive the string, may be NULL</param>
-		/// <param name="strCapacity">Capcacity of str, or 0 if str is NULL</param>
+		/// <param name="strCapacity">Capacity of str, or 0 if str is NULL</param>
 		/// <param name="status">Error Code</param>
 		/// <returns>The length of the string (>=2), or 0 if the item is a range, in which case it
 		///  is the range *start..*end, or -1 if itemIndex is out of range</returns>
@@ -157,7 +163,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Returns the number of items in this set.  An item is either a range of characters or a single multicharacter string
+		/// Returns the number of items in this set.  An item is either a range of characters or a single multi-character string
 		/// </summary>
 		/// <param name="set">The Unicode set</param>
 		/// <returns>A non-negative integer counting the character ranges and/or strings contained in the set</returns>

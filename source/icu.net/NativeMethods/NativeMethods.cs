@@ -1,15 +1,20 @@
 // Copyright (c) 2013-2017 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	[SuppressMessage("ReSharper", "IdentifierTypo")]
 	internal static partial class NativeMethods
 	{
 		private static readonly object _lock = new object();
@@ -21,7 +26,7 @@ namespace Icu
 
 		internal static bool Verbose { get; set; }
 
-		public static void SetMinMaxIcuVersions(int minVersion = Wrapper.MinSupportedIcuVersion,
+		internal static void SetMinMaxIcuVersions(int minVersion = Wrapper.MinSupportedIcuVersion,
 			int maxVersion = Wrapper.MaxSupportedIcuVersion)
 		{
 			Trace.WriteLineIf(Verbose, $"Setting min/max ICU versions to {minVersion} and {maxVersion}");
@@ -104,6 +109,7 @@ namespace Icu
 		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
 		[Flags]
+		[SuppressMessage("ReSharper", "UnusedMember.Local")]
 		private enum LoadLibraryFlags : uint
 		{
 			NONE = 0x00000000,
@@ -134,6 +140,7 @@ namespace Icu
 			get
 			{
 				if (_IcuCommonLibHandle == IntPtr.Zero)
+					// ReSharper disable once StringLiteralTypo
 					_IcuCommonLibHandle = LoadIcuLibrary("icuuc");
 				return _IcuCommonLibHandle;
 			}
@@ -298,7 +305,7 @@ namespace Icu
 
 				IntPtr handle;
 				string libPath;
-				var lastError = 0;
+				int lastError;
 
 				if (IsWindows)
 				{
@@ -337,7 +344,7 @@ namespace Icu
 			}
 		}
 
-		public static void Cleanup()
+		internal static void Cleanup()
 		{
 			Trace.WriteLineIf(Verbose, "icu.net: Cleanup");
 			lock (_lock)
@@ -438,13 +445,13 @@ namespace Icu
 
 		#endregion
 
-		public static string GetAnsiString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
+		internal static string GetAnsiString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
 			int initialLength = 255)
 		{
 			return GetString(lambda, false, initialLength);
 		}
 
-		public static string GetUnicodeString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
+		internal static string GetUnicodeString(Func<IntPtr, int, Tuple<ErrorCode, int>> lambda,
 			int initialLength = 255)
 		{
 			return GetString(lambda, true, initialLength);
@@ -492,7 +499,7 @@ namespace Icu
 		/// This function does cleanup of the enumerator object
 		/// </summary>
 		/// <param name="en">Enumeration to be closed</param>
-		public static void uenum_close(IntPtr en)
+		internal static void uenum_close(IntPtr en)
 		{
 			if (Methods.uenum_close == null)
 				Methods.uenum_close = GetMethod<MethodsContainer.uenum_closeDelegate>(IcuCommonLibHandle, "uenum_close");
@@ -505,7 +512,7 @@ namespace Icu
 		/// </summary>
 		/// <returns>next element as string, or <c>null</c> after all elements haven been
 		/// enumerated</returns>
-		public static IntPtr uenum_unext(
+		internal static IntPtr uenum_unext(
 			SafeEnumeratorHandle en,
 			out int resultLength,
 			out ErrorCode status)
@@ -515,7 +522,7 @@ namespace Icu
 			return Methods.uenum_unext(en, out resultLength, out status);
 		}
 
-		public enum LocaleType
+		internal enum LocaleType
 		{
 			/// <summary>
 			/// This is locale the data actually comes from
@@ -527,7 +534,7 @@ namespace Icu
 			ValidLocale = 1,
 		}
 
-		public enum CollationAttributeValue
+		internal enum CollationAttributeValue
 		{
 			Default = -1, //accepted by most attributes
 			Primary = 0, // primary collation strength
@@ -547,7 +554,7 @@ namespace Icu
 			UpperFirst = 25 // Valid for CaseFirst - upper case sorts before lower case
 		}
 
-		public enum CollationAttribute
+		internal enum CollationAttribute
 		{
 			FrenchCollation,
 			AlternateHandling,
@@ -561,13 +568,14 @@ namespace Icu
 			AttributeCount
 		}
 
-		public enum CollationResult
+		internal enum CollationResult
 		{
 			Equal = 0,
 			Greater = 1,
 			Less = -1
 		}
 
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class MethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -699,7 +707,7 @@ namespace Icu
 		}
 
 		/// <summary>get the name of an ICU code point</summary>
-		public static void u_init(out ErrorCode errorCode)
+		internal static void u_init(out ErrorCode errorCode)
 		{
 			IsInitialized = true;
 			if (Methods.u_init == null)
@@ -708,7 +716,8 @@ namespace Icu
 		}
 
 		/// <summary>Clean up the ICU files that could be locked</summary>
-		public static void u_cleanup()
+		// ReSharper disable once MemberCanBePrivate.Global
+		internal static void u_cleanup()
 		{
 			if (Methods.u_cleanup == null)
 				Methods.u_cleanup = GetMethod<MethodsContainer.u_cleanupDelegate>(IcuCommonLibHandle, "u_cleanup");
@@ -717,7 +726,7 @@ namespace Icu
 		}
 
 		/// <summary>Return the ICU data directory</summary>
-		public static IntPtr u_getDataDirectory()
+		internal static IntPtr u_getDataDirectory()
 		{
 			if (Methods.u_getDataDirectory == null)
 				Methods.u_getDataDirectory = GetMethod<MethodsContainer.u_getDataDirectoryDelegate>(IcuCommonLibHandle, "u_getDataDirectory");
@@ -725,7 +734,7 @@ namespace Icu
 		}
 
 		/// <summary>Set the ICU data directory</summary>
-		public static void u_setDataDirectory(
+		internal static void u_setDataDirectory(
 			[MarshalAs(UnmanagedType.LPStr)]string directory)
 		{
 			if (Methods.u_setDataDirectory == null)
@@ -734,7 +743,7 @@ namespace Icu
 		}
 
 		/// <summary>get the name of an ICU code point</summary>
-		public static int u_charName(
+		internal static int u_charName(
 			int code,
 			Character.UCharNameChoice nameChoice,
 			IntPtr buffer,
@@ -747,7 +756,7 @@ namespace Icu
 		}
 
 		/// <summary>Returns the bidirectional category value for the code point, which is used in the Unicode bidirectional algorithm</summary>
-		public static int u_charDirection(int characterCode)
+		internal static int u_charDirection(int characterCode)
 		{
 			if (Methods.u_charDirection == null)
 				Methods.u_charDirection = GetMethod<MethodsContainer.u_charDirectionDelegate>(IcuCommonLibHandle, "u_charDirection");
@@ -759,7 +768,7 @@ namespace Icu
 		/// get the numeric value for the Unicode digit
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static int u_digit(
+		internal static int u_digit(
 			int characterCode,
 			byte radix)
 		{
@@ -783,7 +792,7 @@ namespace Icu
 		/// </returns>
 		/// <remarks>Consider adding a specific implementation for each property!</remarks>
 		/// ------------------------------------------------------------------------------------
-		public static int u_getIntPropertyValue(
+		internal static int u_getIntPropertyValue(
 			int codePoint,
 			Character.UProperty which)
 		{
@@ -792,7 +801,7 @@ namespace Icu
 			return Methods.u_getIntPropertyValue(codePoint, which);
 		}
 
-		public static void u_getUnicodeVersion(out VersionInfo versionArray)
+		internal static void u_getUnicodeVersion(out VersionInfo versionArray)
 		{
 			if (Methods.u_getUnicodeVersion == null)
 				Methods.u_getUnicodeVersion = GetMethod<MethodsContainer.u_getUnicodeVersionDelegate>(IcuCommonLibHandle, "u_getUnicodeVersion");
@@ -805,7 +814,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="versionArray">Stores the version information for ICU.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void u_getVersion(out VersionInfo versionArray)
+		internal static void u_getVersion(out VersionInfo versionArray)
 		{
 			if (Methods.u_getVersion == null)
 				Methods.u_getVersion = GetMethod<MethodsContainer.u_getVersionDelegate>(IcuCommonLibHandle, "u_getVersion");
@@ -817,7 +826,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="characterCode"></param>
 		/// <returns></returns>
-		public static sbyte u_charType(int characterCode)
+		internal static sbyte u_charType(int characterCode)
 		{
 			if (Methods.u_charType == null)
 				Methods.u_charType = GetMethod<MethodsContainer.u_charTypeDelegate>(IcuCommonLibHandle, "u_charType");
@@ -844,7 +853,7 @@ namespace Icu
 		///<param name="characterCode">Code point to get the numeric value for</param>
 		///<returns>Numeric value of c, or U_NO_NUMERIC_VALUE if none is defined.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static double u_getNumericValue(
+		internal static double u_getNumericValue(
 			int characterCode)
 		{
 			if (Methods.u_getNumericValue == null)
@@ -858,7 +867,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		public static bool u_ispunct(
+		internal static bool u_ispunct(
 			int characterCode)
 		{
 			if (Methods.u_ispunct == null)
@@ -885,7 +894,7 @@ namespace Icu
 		/// <param name="characterCode">the code point to be tested</param>
 		/// <returns><c>true</c> if the character has the Bidi_Mirrored property</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool u_isMirrored(
+		internal static bool u_isMirrored(
 			int characterCode)
 		{
 			if (Methods.u_isMirrored == null)
@@ -907,7 +916,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		public static bool u_iscntrl(
+		internal static bool u_iscntrl(
 			int characterCode)
 		{
 			if (Methods.u_iscntrl == null)
@@ -932,7 +941,7 @@ namespace Icu
 		///	</remarks>
 		/// <param name="characterCode">the code point to be tested</param>
 		/// ------------------------------------------------------------------------------------
-		public static bool u_isspace(
+		internal static bool u_isspace(
 			int characterCode)
 		{
 			if (Methods.u_isspace == null)
@@ -941,15 +950,15 @@ namespace Icu
 		}
 
 		/// <summary>Map character to its lowercase equivalent according to UnicodeData.txt</summary>
-		public static int u_tolower(int characterCode)
+		internal static int u_tolower(int characterCode)
 		{
 			if (Methods.u_tolower == null)
 				Methods.u_tolower = GetMethod<MethodsContainer.u_tolowerDelegate>(IcuCommonLibHandle, "u_tolower");
 			return Methods.u_tolower(characterCode);
 		}
 
-		/// <summary>Map character to its titlecase equivalent according to UnicodeData.txt</summary>
-		public static int u_totitle(int characterCode)
+		/// <summary>Map character to its title-case equivalent according to UnicodeData.txt</summary>
+		internal static int u_totitle(int characterCode)
 		{
 			if (Methods.u_totitle == null)
 				Methods.u_totitle = GetMethod<MethodsContainer.u_totitleDelegate>(IcuCommonLibHandle, "u_totitle");
@@ -957,7 +966,7 @@ namespace Icu
 		}
 
 		/// <summary>Map character to its uppercase equivalent according to UnicodeData.txt</summary>
-		public static int u_toupper(int characterCode)
+		internal static int u_toupper(int characterCode)
 		{
 			if (Methods.u_toupper == null)
 				Methods.u_toupper = GetMethod<MethodsContainer.u_toupperDelegate>(IcuCommonLibHandle, "u_toupper");
@@ -965,7 +974,7 @@ namespace Icu
 		}
 
 		/// <summary>Return the lower case equivalent of the string.</summary>
-		public static int u_strToLower(IntPtr dest, int destCapacity, string src,
+		internal static int u_strToLower(IntPtr dest, int destCapacity, string src,
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode)
 		{
 			if (Methods.u_strToLower == null)
@@ -973,7 +982,7 @@ namespace Icu
 			return Methods.u_strToLower(dest, destCapacity, src, srcLength, locale, out errorCode);
 		}
 
-		public static int u_strToTitle(IntPtr dest, int destCapacity, string src,
+		internal static int u_strToTitle(IntPtr dest, int destCapacity, string src,
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale,
 			out ErrorCode errorCode)
 		{
@@ -982,7 +991,8 @@ namespace Icu
 		}
 
 		/// <summary>Return the title case equivalent of the string.</summary>
-		public static int u_strToTitle(IntPtr dest, int destCapacity, string src,
+		// ReSharper disable once MemberCanBePrivate.Global
+		internal static int u_strToTitle(IntPtr dest, int destCapacity, string src,
 			int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale,
 			out ErrorCode errorCode)
 		{
@@ -993,7 +1003,7 @@ namespace Icu
 		}
 
 		/// <summary>Return the upper case equivalent of the string.</summary>
-		public static int u_strToUpper(IntPtr dest, int destCapacity, string src,
+		internal static int u_strToUpper(IntPtr dest, int destCapacity, string src,
 			int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out ErrorCode errorCode)
 		{
 			if (Methods.u_strToUpper == null)

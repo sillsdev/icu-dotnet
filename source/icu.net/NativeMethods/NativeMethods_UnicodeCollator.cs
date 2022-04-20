@@ -2,13 +2,17 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Icu.Collation;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class CollatorMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -87,6 +91,7 @@ namespace Icu
 			internal ucol_getBoundDelegate ucol_getBound;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static CollatorMethodsContainer CollatorMethods = new CollatorMethodsContainer();
 
 		#region Unicode collator

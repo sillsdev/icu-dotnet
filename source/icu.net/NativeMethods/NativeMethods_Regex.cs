@@ -2,12 +2,16 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class RegexMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -33,6 +37,7 @@ namespace Icu
 			internal uregex_closeDelegate uregex_close;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static RegexMethodsContainer RegexMethods = new RegexMethodsContainer();
 
 		/// <summary>

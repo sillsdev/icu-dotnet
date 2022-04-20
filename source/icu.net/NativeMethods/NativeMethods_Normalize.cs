@@ -2,13 +2,17 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Icu.Normalization;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class NormalizeMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -66,6 +70,7 @@ namespace Icu
 			internal unorm2_getCombiningClassDelegate unorm2_getCombiningClass;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static NormalizeMethodsContainer NormalizeMethods = new NormalizeMethodsContainer();
 
 		#region normalize
@@ -209,7 +214,7 @@ namespace Icu
 				out errorCode);
 		}
 
-		/// <summary>Gets the combining class of c. </summary>
+		/// <summary>Gets the combining class of c.</summary>
 		public static int unorm2_getCombiningClass(IntPtr norm2, int c)
 		{
 			if (NormalizeMethods.unorm2_getCombiningClass == null)

@@ -2,12 +2,16 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class BiDiMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -148,6 +152,7 @@ namespace Icu
 			internal ubidi_getBaseDirectionDelegate ubidi_getBaseDirection;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static BiDiMethodsContainer BiDiMethods = new BiDiMethodsContainer();
 
 		/// <summary>
@@ -275,6 +280,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bidi">The BiDi object</param>
 		/// <param name="orderParagraphsLTR">True to use level 0 for block separators</param>
+		// ReSharper disable once InconsistentNaming
 		public static void ubidi_orderParagraphsLTR(IntPtr bidi, bool orderParagraphsLTR)
 		{
 			if (BiDiMethods.ubidi_orderParagraphsLTR == null)

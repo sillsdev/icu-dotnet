@@ -2,14 +2,17 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	/// <summary/>
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class TransliteratorMethodsContainer
 		{
 			/// <summary/>
@@ -38,6 +41,7 @@ namespace Icu
 			internal utrans_transUCharsDelegate utrans_transUChars;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static TransliteratorMethodsContainer TransliteratorMethods = new TransliteratorMethodsContainer();
 
 		/// <summary/>

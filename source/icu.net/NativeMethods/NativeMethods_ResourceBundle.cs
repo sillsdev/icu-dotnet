@@ -2,12 +2,16 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class ResourceBundleMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -64,6 +68,7 @@ namespace Icu
 			internal ures_getNextResourceDelegate ures_getNextResource;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static ResourceBundleMethodsContainer ResourceBundleMethods = new ResourceBundleMethodsContainer();
 
 		/// <summary/>

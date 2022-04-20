@@ -2,16 +2,20 @@
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	internal static partial class NativeMethods
 	{
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
 		private class LocalesMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)]string localeID);
+			internal delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)]string localeId);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate int uloc_getLocaleForLCIDDelegate(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err);
@@ -31,51 +35,51 @@ namespace Icu
 			internal delegate IntPtr uloc_getAvailableDelegate(int n);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getLanguageDelegate(string localeID, IntPtr language,
+			internal delegate int uloc_getLanguageDelegate(string localeId, IntPtr language,
 				int languageCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getScriptDelegate(string localeID, IntPtr script,
+			internal delegate int uloc_getScriptDelegate(string localeId, IntPtr script,
 				int scriptCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getCountryDelegate(string localeID, IntPtr country,
+			internal delegate int uloc_getCountryDelegate(string localeId, IntPtr country,
 				int countryCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getVariantDelegate(string localeID, IntPtr variant,
+			internal delegate int uloc_getVariantDelegate(string localeId, IntPtr variant,
 				int variantCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getDisplayNameDelegate(string localeID, string inLocaleID,
+			internal delegate int uloc_getDisplayNameDelegate(string localeId, string inLocaleID,
 				IntPtr result, int maxResultSize, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getDisplayLanguageDelegate(string localeID, string displayLocaleID,
+			internal delegate int uloc_getDisplayLanguageDelegate(string localeId, string displayLocaleID,
 				IntPtr result, int maxResultSize, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getDisplayScriptDelegate(string localeID, string displayLocaleID,
+			internal delegate int uloc_getDisplayScriptDelegate(string localeId, string displayLocaleID,
 				IntPtr result, int maxResultSize, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getDisplayCountryDelegate(string localeID, string displayLocaleID,
+			internal delegate int uloc_getDisplayCountryDelegate(string localeId, string displayLocaleID,
 				IntPtr result, int maxResultSize, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getDisplayVariantDelegate(string localeID, string displayLocaleID,
+			internal delegate int uloc_getDisplayVariantDelegate(string localeId, string displayLocaleID,
 				IntPtr result, int maxResultSize, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getNameDelegate(string localeID, IntPtr name,
+			internal delegate int uloc_getNameDelegate(string localeId, IntPtr name,
 				int nameCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getBaseNameDelegate(string localeID, IntPtr name,
+			internal delegate int uloc_getBaseNameDelegate(string localeId, IntPtr name,
 				int nameCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_canonicalizeDelegate(string localeID, IntPtr name,
+			internal delegate int uloc_canonicalizeDelegate(string localeId, IntPtr name,
 				int nameCapacity, out ErrorCode err);
 
 			internal uloc_countAvailableDelegate uloc_countAvailable;
@@ -98,17 +102,18 @@ namespace Icu
 			internal uloc_canonicalizeDelegate uloc_canonicalize;
 		}
 
+		// ReSharper disable once InconsistentNaming
 		private static LocalesMethodsContainer LocalesMethods = new LocalesMethodsContainer();
 
 		/// <summary>Get the ICU LCID for a locale</summary>
-		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)] string localeID)
+		public static int uloc_getLCID([MarshalAs(UnmanagedType.LPStr)] string localeId)
 		{
 			if (LocalesMethods.uloc_getLCID == null)
 				LocalesMethods.uloc_getLCID = GetMethod<LocalesMethodsContainer.uloc_getLCIDDelegate>(IcuCommonLibHandle, "uloc_getLCID");
-			return LocalesMethods.uloc_getLCID(localeID);
+			return LocalesMethods.uloc_getLCID(localeId);
 		}
 
-		/// <summary>Gets the ICU locale ID for the specified Win32 LCID value. </summary>
+		/// <summary>Gets the ICU locale ID for the specified Win32 LCID value.</summary>
 		public static int uloc_getLocaleForLCID(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
@@ -138,7 +143,7 @@ namespace Icu
 		/// <summary>
 		/// Gets the size of the all available locale list.
 		/// </summary>
-		/// <returns>the size of the locale list </returns>
+		/// <returns>the size of the locale list</returns>
 		public static int uloc_countAvailable()
 		{
 			if (LocalesMethods.uloc_countAvailable == null)
@@ -164,163 +169,165 @@ namespace Icu
 		/// <summary>
 		/// Gets the language code for the specified locale.
 		/// </summary>
-		/// <param name="localeID">the locale to get the language code with </param>
-		/// <param name="language">the language code for localeID </param>
+		/// <param name="localeId">the locale to get the language code with</param>
+		/// <param name="language">the language code for localeId</param>
 		/// <param name="languageCapacity">the size of the language buffer to store the language
-		/// code with </param>
+		/// code with</param>
 		/// <param name="err">error information if retrieving the language code failed</param>
 		/// <returns>the actual buffer size needed for the language code. If it's greater
 		/// than languageCapacity, the returned language code will be truncated</returns>
-		public static int uloc_getLanguage(string localeID, IntPtr language,
+		public static int uloc_getLanguage(string localeId, IntPtr language,
 			int languageCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getLanguage == null)
 				LocalesMethods.uloc_getLanguage = GetMethod<LocalesMethodsContainer.uloc_getLanguageDelegate>(IcuCommonLibHandle, "uloc_getLanguage");
-			return LocalesMethods.uloc_getLanguage(localeID, language, languageCapacity, out err);
+			return LocalesMethods.uloc_getLanguage(localeId, language, languageCapacity, out err);
 		}
 
 		/// <summary>
 		/// Gets the script code for the specified locale.
 		/// </summary>
-		/// <param name="localeID">the locale to get the script code with </param>
-		/// <param name="script">the script code for localeID </param>
+		/// <param name="localeId">the locale to get the script code with</param>
+		/// <param name="script">the script code for localeId</param>
 		/// <param name="scriptCapacity">the size of the script buffer to store the script
-		/// code with </param>
+		/// code with</param>
 		/// <param name="err">error information if retrieving the script code failed</param>
 		/// <returns>the actual buffer size needed for the script code. If it's greater
 		/// than scriptCapacity, the returned script code will be truncated</returns>
-		public static int uloc_getScript(string localeID, IntPtr script,
+		public static int uloc_getScript(string localeId, IntPtr script,
 			int scriptCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getScript == null)
 				LocalesMethods.uloc_getScript = GetMethod<LocalesMethodsContainer.uloc_getScriptDelegate>(IcuCommonLibHandle, "uloc_getScript");
-			return LocalesMethods.uloc_getScript(localeID, script, scriptCapacity, out err);
+			return LocalesMethods.uloc_getScript(localeId, script, scriptCapacity, out err);
 		}
 
 		/// <summary>
 		/// Gets the country code for the specified locale.
 		/// </summary>
-		/// <param name="localeID">the locale to get the country code with </param>
-		/// <param name="country">the country code for localeID </param>
+		/// <param name="localeId">the locale to get the country code with</param>
+		/// <param name="country">the country code for localeId</param>
 		/// <param name="countryCapacity">the size of the country buffer to store the country
-		/// code with </param>
+		/// code with</param>
 		/// <param name="err">error information if retrieving the country code failed</param>
 		/// <returns>the actual buffer size needed for the country code. If it's greater
 		/// than countryCapacity, the returned country code will be truncated</returns>
-		public static int uloc_getCountry(string localeID, IntPtr country,
+		public static int uloc_getCountry(string localeId, IntPtr country,
 			int countryCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getCountry == null)
 				LocalesMethods.uloc_getCountry = GetMethod<LocalesMethodsContainer.uloc_getCountryDelegate>(IcuCommonLibHandle, "uloc_getCountry");
-			return LocalesMethods.uloc_getCountry(localeID, country, countryCapacity, out err);
+			return LocalesMethods.uloc_getCountry(localeId, country, countryCapacity, out err);
 		}
 
 		/// <summary>
 		/// Gets the variant code for the specified locale.
 		/// </summary>
-		/// <param name="localeID">the locale to get the variant code with </param>
-		/// <param name="variant">the variant code for localeID </param>
+		/// <param name="localeId">the locale to get the variant code with</param>
+		/// <param name="variant">the variant code for localeId</param>
 		/// <param name="variantCapacity">the size of the variant buffer to store the variant
-		/// code with </param>
+		/// code with</param>
 		/// <param name="err">error information if retrieving the variant code failed</param>
 		/// <returns>the actual buffer size needed for the variant code. If it's greater
 		/// than variantCapacity, the returned variant code will be truncated</returns>
-		public static int uloc_getVariant(string localeID, IntPtr variant,
+		public static int uloc_getVariant(string localeId, IntPtr variant,
 			int variantCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getVariant == null)
 				LocalesMethods.uloc_getVariant = GetMethod<LocalesMethodsContainer.uloc_getVariantDelegate>(IcuCommonLibHandle, "uloc_getVariant");
-			return LocalesMethods.uloc_getVariant(localeID, variant, variantCapacity, out err);
+			return LocalesMethods.uloc_getVariant(localeId, variant, variantCapacity, out err);
 		}
 
+		// ReSharper disable CommentTypo
 		/// <summary>
 		/// Gets the full name suitable for display for the specified locale.
 		/// </summary>
-		/// <param name="localeID">the locale to get the displayable name with</param>
-		/// <param name="inLocaleID">Specifies the locale to be used to display the name. In
+		/// <param name="localeId">the locale to get the displayable name with</param>
+		/// <param name="inLocaleId">Specifies the locale to be used to display the name. In
 		/// other words, if the locale's language code is "en", passing Locale::getFrench()
 		/// for inLocale would result in "Anglais", while passing Locale::getGerman() for
-		/// inLocale would result in "Englisch".  </param>
-		/// <param name="result">the displayable name for localeID</param>
+		/// inLocale would result in "Englisch".</param>
+		/// <param name="result">the displayable name for localeId</param>
 		/// <param name="maxResultSize">the size of the name buffer to store the displayable
 		/// full name with</param>
 		/// <param name="err">error information if retrieving the displayable name failed</param>
 		/// <returns>the actual buffer size needed for the displayable name. If it's greater
 		/// than variantCapacity, the returned displayable name will be truncated.</returns>
-		public static int uloc_getDisplayName(string localeID, string inLocaleID,
+		// ReSharper restore CommentTypo
+		public static int uloc_getDisplayName(string localeId, string inLocaleId,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayName == null)
 				LocalesMethods.uloc_getDisplayName = GetMethod<LocalesMethodsContainer.uloc_getDisplayNameDelegate>(IcuCommonLibHandle, "uloc_getDisplayName");
-			return LocalesMethods.uloc_getDisplayName(localeID, inLocaleID, result, maxResultSize, out err);
+			return LocalesMethods.uloc_getDisplayName(localeId, inLocaleId, result, maxResultSize, out err);
 		}
 
-		public static int uloc_getDisplayLanguage(string localeID, string displayLocaleID,
+		public static int uloc_getDisplayLanguage(string localeId, string displayLocaleId,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayLanguage == null)
 				LocalesMethods.uloc_getDisplayLanguage = GetMethod<LocalesMethodsContainer.uloc_getDisplayLanguageDelegate>(IcuCommonLibHandle, "uloc_getDisplayLanguage");
-			return LocalesMethods.uloc_getDisplayLanguage(localeID, displayLocaleID, result, maxResultSize, out err);
+			return LocalesMethods.uloc_getDisplayLanguage(localeId, displayLocaleId, result, maxResultSize, out err);
 		}
 
-		public static int uloc_getDisplayScript(string localeID, string displayLocaleID,
+		public static int uloc_getDisplayScript(string localeId, string displayLocaleId,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayScript == null)
 				LocalesMethods.uloc_getDisplayScript = GetMethod<LocalesMethodsContainer.uloc_getDisplayScriptDelegate>(IcuCommonLibHandle, "uloc_getDisplayScript");
-			return LocalesMethods.uloc_getDisplayScript(localeID, displayLocaleID, result, maxResultSize, out err);
+			return LocalesMethods.uloc_getDisplayScript(localeId, displayLocaleId, result, maxResultSize, out err);
 		}
 
-		public static int uloc_getDisplayCountry(string localeID, string displayLocaleID,
+		public static int uloc_getDisplayCountry(string localeId, string displayLocaleId,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayCountry == null)
 				LocalesMethods.uloc_getDisplayCountry = GetMethod<LocalesMethodsContainer.uloc_getDisplayCountryDelegate>(IcuCommonLibHandle, "uloc_getDisplayCountry");
-			return LocalesMethods.uloc_getDisplayCountry(localeID, displayLocaleID, result, maxResultSize, out err);
+			return LocalesMethods.uloc_getDisplayCountry(localeId, displayLocaleId, result, maxResultSize, out err);
 		}
 
-		public static int uloc_getDisplayVariant(string localeID, string displayLocaleID,
+		public static int uloc_getDisplayVariant(string localeId, string displayLocaleId,
 			IntPtr result, int maxResultSize, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getDisplayVariant == null)
 				LocalesMethods.uloc_getDisplayVariant = GetMethod<LocalesMethodsContainer.uloc_getDisplayVariantDelegate>(IcuCommonLibHandle, "uloc_getDisplayVariant");
-			return LocalesMethods.uloc_getDisplayVariant(localeID, displayLocaleID, result, maxResultSize, out err);
+			return LocalesMethods.uloc_getDisplayVariant(localeId, displayLocaleId, result, maxResultSize, out err);
 		}
 
-		public static int uloc_getName(string localeID, IntPtr name,
+		public static int uloc_getName(string localeId, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getName == null)
 				LocalesMethods.uloc_getName = GetMethod<LocalesMethodsContainer.uloc_getNameDelegate>(IcuCommonLibHandle, "uloc_getName");
-			return LocalesMethods.uloc_getName(localeID, name, nameCapacity, out err);
+			return LocalesMethods.uloc_getName(localeId, name, nameCapacity, out err);
 		}
 
-		public static int uloc_getBaseName(string localeID, IntPtr name,
+		public static int uloc_getBaseName(string localeId, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_getBaseName == null)
 				LocalesMethods.uloc_getBaseName = GetMethod<LocalesMethodsContainer.uloc_getBaseNameDelegate>(IcuCommonLibHandle, "uloc_getBaseName");
-			return LocalesMethods.uloc_getBaseName(localeID, name, nameCapacity, out err);
+			return LocalesMethods.uloc_getBaseName(localeId, name, nameCapacity, out err);
 		}
 
-		public static int uloc_canonicalize(string localeID, IntPtr name,
+		public static int uloc_canonicalize(string localeId, IntPtr name,
 			int nameCapacity, out ErrorCode err)
 		{
 			err = ErrorCode.NoErrors;
 			if (LocalesMethods.uloc_canonicalize == null)
 				LocalesMethods.uloc_canonicalize = GetMethod<LocalesMethodsContainer.uloc_canonicalizeDelegate>(IcuCommonLibHandle, "uloc_canonicalize");
-			var res = LocalesMethods.uloc_canonicalize(localeID, name, nameCapacity, out err);
+			var res = LocalesMethods.uloc_canonicalize(localeId, name, nameCapacity, out err);
 			return res;
 		}
 	}

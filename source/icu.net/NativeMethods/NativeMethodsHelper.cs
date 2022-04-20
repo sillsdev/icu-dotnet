@@ -1,16 +1,16 @@
 // Copyright (c) 2013-2018 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
 #if !NET40
 using Microsoft.Extensions.DependencyModel;
 #endif
 
+// ReSharper disable once CheckNamespace
 namespace Icu
 {
 	/// <summary>
@@ -19,6 +19,8 @@ namespace Icu
 	/// </summary>
 	internal static class NativeMethodsHelper
 	{
+		// ReSharper disable once InconsistentNaming
+		// ReSharper disable once UnusedMember.Local
 		private const string Icu4c = nameof(Icu4c);
 		private const string IcuRegexLinux = @"libicu\w+.so\.(?<version>[0-9]{2,})(\.[0-9])*";
 		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9])*\.dll";
@@ -27,6 +29,7 @@ namespace Icu
 		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : "libicu*.so.*";
 		private static readonly string NugetPackageDirectory = GetDefaultPackageDirectory(Platform.OperatingSystem);
 
+		// ReSharper disable once InconsistentNaming
 		private static IcuVersionInfo IcuVersion;
 
 		/// <summary>
@@ -177,6 +180,7 @@ namespace Icu
 			// If we found the icu*.dll files under {directoryOfAssembly}/runtimes/{rid}/native/,
 			// they should ALL be there... or else something went wrong in publishing the app or
 			// restoring the files, or packaging the NuGet package.
+			// ReSharper disable once ExpressionIsAlwaysNull
 			return TrySetIcuPathFromDirectory(assemblyDirectory, nativeAssetPaths);
 		}
 
@@ -233,11 +237,12 @@ namespace Icu
 			var assetPaths = nativeAssetPaths
 				.Select(asset => new FileInfo(Path.Combine(baseDirectory.FullName, asset)));
 
-			var doAllAssetsExistInDirectory = assetPaths.All(x => x.Exists);
+			var fileInfos = assetPaths.ToList();
+			var doAllAssetsExistInDirectory = fileInfos.All(x => x.Exists);
 
 			if (doAllAssetsExistInDirectory)
 			{
-				var directories = assetPaths.Select(file => file.Directory).ToArray();
+				var directories = fileInfos.Select(file => file.Directory).ToArray();
 
 				if (directories.Length > 1)
 					Trace.TraceWarning($"There are multiple directories for these runtime assets: {string.Join(Path.PathSeparator.ToString(), directories.Select(x => x.FullName))}.  There should only be one... Using first directory.");
@@ -332,20 +337,8 @@ namespace Icu
 				return packageDirectory;
 			}
 
-			string basePath;
-			if (osPlatform == OperatingSystemType.Windows)
-			{
-				basePath = Environment.GetEnvironmentVariable("USERPROFILE");
-			}
-			else
-			{
-				basePath = Environment.GetEnvironmentVariable("HOME");
-			}
-			if (string.IsNullOrEmpty(basePath))
-			{
-				return null;
-			}
-			return Path.Combine(basePath, ".nuget", "packages");
+			var basePath = Environment.GetEnvironmentVariable(osPlatform == OperatingSystemType.Windows ? "USERPROFILE" : "HOME");
+			return string.IsNullOrEmpty(basePath) ? null : Path.Combine(basePath, ".nuget", "packages");
 		}
 	}
 }
