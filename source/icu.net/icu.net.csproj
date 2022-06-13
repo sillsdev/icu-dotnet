@@ -16,7 +16,7 @@ NOTE: this package contains the managed wrapper part of icu.net. You'll also hav
     <PackageReference Include="GitVersion.MsBuild" Version="5.8.1" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
     <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="all" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
