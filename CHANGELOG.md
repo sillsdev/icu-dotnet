@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix construction of locale with language and keywords (cbersch)
 - Fix passing locale to ubrk_open (cbersch)
 - Fix race condition during initialization of native methods container (cbersch)
+- Change .NET Standard target to reference System.ValueTuple 4.4 instead of 4.5
 
 ## [2.7.1] - 2021-03-04
 
