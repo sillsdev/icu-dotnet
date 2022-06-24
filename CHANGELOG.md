@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Wrapper.SetPreferredIcu4cDirectory()` method to specify a
   directory where to preferably look for icu4c
 
+### Changed
+
+- Increased maximum supported version to 90 (#167)
+
 ### Fixed
 
 - Fix a problem confining ICU version if it's located in a different
