@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix a problem confining ICU version if it's located in a different
   directory. See `Wrapper.SetPreferredIcu4cDirectory()`.
+- Also check in `runtimes/win7-*/native` for ICU binaries
 - Include `icu.net.dll.config` file in nuget package. This is important for running on MacOSX.
 - Fix construction of locale with language and keywords (cbersch)
 - Fix passing locale to ubrk_open (cbersch)
@@ -257,3 +258,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ICU binaries moved to separate nuget packages (`Icu4C.Win.*`)
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
+
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.1...master
+
+[2.7.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.0...v2.7.1
+[2.7.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.6.0...v2.7.0
+[2.6.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.4...v2.6.0
+[2.5.4]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.3...v2.5.4
+[2.5.3]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.2...v2.5.3
+[2.5.2]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.1...v2.5.2
+[2.5.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.0...v2.5.1
+[2.5.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.3.4...v2.4.0
+[2.3.4]: https://github.com/sillsdev/icu-dotnet/compare/v2.3.3...v2.3.4
+[2.3.3]: https://github.com/sillsdev/icu-dotnet/compare/v2.3.2...v2.3.3
+[2.3.2]: https://github.com/sillsdev/icu-dotnet/compare/v2.3.1...v2.3.2
+[2.3.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.3.0...v2.3.1
+[2.3.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.0.1...v2.1.0
+[2.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.0.0...v2.0.1
