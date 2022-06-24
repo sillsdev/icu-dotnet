@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.8.0] - 2022-06-24
+
 ### Added
 
 - Added `Wrapper.SetPreferredIcu4cDirectory()` method to specify a
@@ -259,8 +261,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
 
-[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.1...master
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.0...master
 
+[2.8.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.5.4...v2.6.0
