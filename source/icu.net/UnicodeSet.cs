@@ -82,7 +82,7 @@ namespace Icu
 						// Add a character range to the set
 						for (var j = startChar; j <= endChar; j++)
 						{
-								output.Add(char.ConvertFromUtf32(j));
+							output.Add(char.ConvertFromUtf32(j));
 						}
 					}
 					else
