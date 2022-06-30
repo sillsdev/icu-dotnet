@@ -52,5 +52,14 @@ namespace Icu.Tests
 		{
 			Assert.That(() => UnicodeSet.ToCharacters("[A-"), Throws.ArgumentException);
 		}
+
+		[Test]
+		public void ToCharacters_UpperPlane()
+		{
+			string pattern = @"[\U00010D00]";
+			string strForUpperPlaneCharacter = UnicodeSet.ToCharacters(pattern).First();
+			Assert.That(strForUpperPlaneCharacter, Is.EqualTo("𐴀"));
+			Assert.That(char.ConvertToUtf32(strForUpperPlaneCharacter, 0), Is.EqualTo(0x00010D00));
+		}
 	}
 }
