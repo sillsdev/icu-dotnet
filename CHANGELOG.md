@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Fixed
-- ToCharacters() fix bug with upper Unicode planes
+
+- Fix bug in `UnicodeSet.ToCharacters()`with upper Unicode planes (LT-21010)
 
 ## [2.8.0] - 2022-06-24
 
