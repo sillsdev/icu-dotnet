@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <Target Name="CopyConfigFiles" BeforeTargets="Build" Condition="!$(TargetFramework.StartsWith('netstandard'))">
     <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(OutputPath)" />
   </Target>
