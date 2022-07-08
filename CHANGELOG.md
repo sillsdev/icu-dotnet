@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix bug in `UnicodeSet.ToCharacters()`with upper Unicode planes (LT-21010)
+- Fix bug in `UnicodeSet.ToCharacters()` with upper Unicode planes (LT-21010)
+- Fix copying of `icu.net.dll.config` file in nuget package
 
 ## [2.8.0] - 2022-06-24
 
