@@ -2,8 +2,11 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
+
+[assembly: InternalsVisibleTo("icu.net.tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100f1a7e4dc5dedd55e54dbf599e2d82cf883c691e8bf81d0a8a993e2be9b7510ce6e7c2be8645e3b66d898f4f481b77bfcc57dfcbce28d744c06c3555d36afffaee59b1237e683cd9ea704d4529c5f48a9007a6408d6da069f991e4324c4ae804b0a6bff550ebf3cff44172b8df4bcb45841cf6fe23a2a34720d0ae059fa99a1d2")]
 
 namespace Icu
 {

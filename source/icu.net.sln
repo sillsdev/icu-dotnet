@@ -10,15 +10,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{ADD2D664-A179-47DE-BE36-94AF75330E29}"
 	ProjectSection(SolutionItems) = preProject
 		..\CHANGELOG.md = ..\CHANGELOG.md
-		.nuget\packages.config = .nuget\packages.config
 		..\.editorconfig = ..\.editorconfig
 		..\GitVersion.yml = ..\GitVersion.yml
 		..\README.md = ..\README.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "TestHelper\TestHelper.csproj", "{F195ADCE-9129-446E-85E0-8EEAD01ED08D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icu.net.netstandard.testrunner", "icu.net.netstandard.testrunner\icu.net.netstandard.testrunner.csproj", "{30997039-1AD1-4A11-91EE-F53A41788FB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,10 +37,6 @@ Global
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F195ADCE-9129-446E-85E0-8EEAD01ED08D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30997039-1AD1-4A11-91EE-F53A41788FB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30997039-1AD1-4A11-91EE-F53A41788FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30997039-1AD1-4A11-91EE-F53A41788FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30997039-1AD1-4A11-91EE-F53A41788FB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

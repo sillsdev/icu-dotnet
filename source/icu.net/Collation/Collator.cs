@@ -192,12 +192,12 @@ namespace Icu.Collation
 				throw new ArgumentOutOfRangeException("keyDataLength");
 			}
 
-			CompareOptions options = CompareOptions.None;
+			var options = CompareOptions.None;
 
 #if NETSTANDARD1_6
-			SortKey sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
+			var sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
 #else
-			SortKey sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
+			var sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
 			SetInternalOriginalStringField(sortKey, originalString);
 			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
 #endif
@@ -208,14 +208,16 @@ namespace Icu.Collation
 #if !NETSTANDARD1_6
 		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
 		{
-			byte[] keyDataCopy = new byte[keyDataLength];
+			var keyDataCopy = new byte[keyDataLength];
 			Array.Copy(keyData, keyDataCopy, keyDataLength);
 
-			string propertyName = "SortKey.KeyData";
-			string monoInternalFieldName = "key";
-			string netInternalFieldName = "m_KeyData";
+			var propertyName = "SortKey.KeyData";
+			var monoInternalFieldName = "key";
+			var frameworkInternalFieldName = "m_KeyData";
+			var netInternalFieldName = "_keyData";
 			SetInternalFieldForPublicProperty(sortKey,
 											  propertyName,
+											  frameworkInternalFieldName,
 											  netInternalFieldName,
 											  monoInternalFieldName,
 											  keyDataCopy);
@@ -224,11 +226,13 @@ namespace Icu.Collation
 
 		private static void SetInternalOriginalStringField(SortKey sortKey, string originalString)
 		{
-			string propertyName = "SortKey.OriginalString";
-			string monoInternalFieldName = "source";
-			string netInternalFieldName = "m_String";
+			var propertyName = "SortKey.OriginalString";
+			var monoInternalFieldName = "source";
+			var frameworkInternalFieldName = "m_String";
+			var netInternalFieldName = "_string";
 			SetInternalFieldForPublicProperty(sortKey,
 											  propertyName,
+											  frameworkInternalFieldName,
 											  netInternalFieldName,
 											  monoInternalFieldName,
 											  originalString);
@@ -237,15 +241,23 @@ namespace Icu.Collation
 		private static void SetInternalFieldForPublicProperty<T,P>(
 			T instance,
 			string propertyName,
+			string frameworkInternalFieldName,
 			string netInternalFieldName,
 			string monoInternalFieldName,
 			P value)
 		{
-			Type type = instance.GetType();
+			var type = instance.GetType();
 
-			string fieldName = IsRunningOnMono() ? monoInternalFieldName : netInternalFieldName;
+			var fieldName = IsRunningOnMono() ? monoInternalFieldName : frameworkInternalFieldName;
 
-			FieldInfo fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+#if NET
+			if (RuntimeInformation.FrameworkDescription != ".NET Framework")
+				fieldName = netInternalFieldName;
+#endif
+
+			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+
+			var fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 
 			Debug.Assert(fieldInfo != null,
 						 "Unsupported runtime",
@@ -351,7 +363,7 @@ namespace Icu.Collation
 		public static void GetSortKeyBound(byte[] sortKey, UColBoundMode boundType, ref byte[] result)
 		{
 			ErrorCode err;
-			int size = NativeMethods.ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
+			var size = NativeMethods.ucol_getBound(sortKey, sortKey.Length, boundType, 1, result, result.Length, out err);
 			if (err > 0 && err != ErrorCode.BUFFER_OVERFLOW_ERROR)
 				throw new Exception("Collator.GetSortKeyBound() failed with code " + err);
 			if (size > result.Length)

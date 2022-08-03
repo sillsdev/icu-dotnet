@@ -32,7 +32,7 @@ namespace Icu
 			}
 		}
 
-		private SafeTransliteratorHandle _transliteratorHandle;
+		private readonly SafeTransliteratorHandle _transliteratorHandle;
 
 		#region Static Methods
 		/// <summary>
