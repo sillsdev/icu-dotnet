@@ -19,6 +19,11 @@ namespace Icu
 	{
 		private static readonly object _lock = new object();
 
+#if NET
+		private static readonly DllResolver _DllResolver =
+			new DllResolver(Assembly.GetExecutingAssembly());
+#endif
+
 		internal static int MinIcuVersion { get; private set; } = Wrapper.MinSupportedIcuVersion;
 		internal static int MaxIcuVersion { get; private set; } = Wrapper.MaxSupportedIcuVersion;
 
@@ -166,7 +171,11 @@ namespace Icu
 #else
 				var currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
 #endif
+#if NET
+				var managedPath = currentAssembly.Location;
+#else
 				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
+#endif
 				var uri = new Uri(managedPath);
 
 				var directoryName = Path.GetDirectoryName(uri.LocalPath);

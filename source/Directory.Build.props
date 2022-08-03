@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <TargetFrameworks>net40;net451;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net40;net451;netstandard1.6;net6.0</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
     <OutputPath>$(MSBuildThisFileDirectory)\..\output\$(Configuration)</OutputPath>
     <PackageOutputPath>$(MSBuildThisFileDirectory)\..\output</PackageOutputPath>
@@ -17,7 +17,7 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <ChangelogFile>$(MSBuildThisFileDirectory)/../CHANGELOG.md</ChangelogFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>default</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/icu.net.snk</AssemblyOriginatorKeyFile>

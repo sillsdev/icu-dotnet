@@ -8,11 +8,12 @@ namespace Icu.Tests
 	/// <summary>
 	/// Tests to ensure compatibility with JDK 7
 	/// </summary>
+	// Ignore tests until a JavaBreakIterator using RuleBasedBreakIterator is written. The rules for JavaBreakIterator can be found at:
+	// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules.java/
+	// and http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules_th.java#BreakIteratorRules_th
 	[TestFixture]
 	[Category("Full ICU")]
-	[Ignore("Ignore tests until a JavaBreakIterator using RuleBasedBreakIterator is written. The rules for JavaBreakIterator can be found at:\n"
-		+ "http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules.java/ \n"
-		+ "and http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/sun/text/resources/BreakIteratorRules_th.java#BreakIteratorRules_th")]
+	[Ignore("Needs implementation of JavaBreakIterator using RuleBasedBreakIterator. See comment in code.")]
 	public class BreakIteratorTests_JDKCompatibility
 	{
 		static readonly String TEXT =
@@ -26,7 +27,7 @@ namespace Icu.Tests
 		[Test]
 		public void TestWordIteration()
 		{
-			BreakIterator bi = GetWordInstance(System.Globalization.CultureInfo.InvariantCulture);
+			using var bi = GetWordInstance(System.Globalization.CultureInfo.InvariantCulture);
 
 			// Test empty
 			Assert.AreEqual(0, bi.Current);
@@ -103,7 +104,7 @@ namespace Icu.Tests
 		[Test]
 		public void TestWordIterationThai()
 		{
-			BreakIterator bi = GetWordInstance(new System.Globalization.CultureInfo("th"));
+			using var bi = GetWordInstance(new System.Globalization.CultureInfo("th"));
 
 			// Test empty
 			Assert.AreEqual(0, bi.Current);
@@ -184,7 +185,7 @@ namespace Icu.Tests
 		[Test]
 		public void TestSentenceIteration()
 		{
-			BreakIterator bi = GetSentenceInstance(System.Globalization.CultureInfo.InvariantCulture);
+			using var bi = GetSentenceInstance(System.Globalization.CultureInfo.InvariantCulture);
 
 			// Test empty
 			Assert.AreEqual(0, bi.Current);
@@ -265,7 +266,7 @@ namespace Icu.Tests
 		[Test]
 		public void TestLineIteration()
 		{
-			BreakIterator bi = GetLineInstance(System.Globalization.CultureInfo.InvariantCulture);
+			using var bi = GetLineInstance(System.Globalization.CultureInfo.InvariantCulture);
 
 			// Test empty
 			Assert.AreEqual(0, bi.Current);

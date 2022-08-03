@@ -23,7 +23,7 @@ namespace Icu
 		/// failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging
 		/// Assistant.
 		///</returns>
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6 && !NET
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		protected override bool ReleaseHandle()

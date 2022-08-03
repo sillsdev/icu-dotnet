@@ -1,7 +1,10 @@
 # Overview
 
 icu-dotnet is the C# wrapper for a subset of [ICU](https://icu.unicode.org/).
->ICU is a mature, widely used set of C/C++ and Java libraries providing Unicode and Globalization support for software applications. ICU is widely portable and gives applications the same results on all platforms and between C/C++ and Java software.
+
+> ICU is a mature, widely used set of C/C++ and Java libraries providing Unicode and Globalization support
+> for software applications. ICU is widely portable and gives applications the same results on all platforms
+> and between C/C++ and Java software.
 
 ## Status
 
@@ -28,31 +31,32 @@ Similarly, it might be beneficial to call `Icu.Wrapper.Cleanup()` before exiting
 Sample code:
 
 ``` csharp
-	static class Program
-	{
-		public static void Main(string[] args)
-		{
-			Icu.Wrapper.Init();
-			// Will output "NFC form of XA\u0308bc is XÄbc"
-			Console.WriteLine($"NFC form of XA\\u0308bc is {Icu.Normalizer.Normalize("XA\u0308bc",
-				Icu.Normalizer.UNormalizationMode.UNORM_NFC)}");
-			Icu.Wrapper.Cleanup();
-		}
-	}
+    static class Program
+    {
+        public static void Main(string[] args)
+        {
+            Icu.Wrapper.Init();
+            // Will output "NFC form of XA\u0308bc is XÄbc"
+            Console.WriteLine($"NFC form of XA\\u0308bc is {Icu.Normalizer.Normalize("XA\u0308bc",
+                Icu.Normalizer.UNormalizationMode.UNORM_NFC)}");
+            Icu.Wrapper.Cleanup();
+        }
+    }
 ```
 
 ## Building
 
-icu-dotnet can be built with Visual Studio or MonoDevelop, but at least initially it might be
-easier to build from the command line because that will download all necessary dependencies.
+To build the current version of icu-dotnet you'll need .net 6.0 installed.
 
-### Linux
+icu-dotnet can be built from the command line as well as Visual Studio or JetBrains Rider.
+
+### Windows and Linux
 
 You can build and run the unit tests by running:
 
-    build/TestBuild.sh
-
-If you run into issues you might want to try with a newer mono version or with our custom `mono-sil` package from [packages.sil.org](http://packages.sil.org/)
+```bash
+dotnet test source/icu.net.sln
+```
 
 ### Docker
 
@@ -71,12 +75,6 @@ RUN apt-get update \
 
 ...
 ```
-
-### Windows
-
-Build and run the unit tests by running:
-
-    msbuild /t:Test build/icu-dotnet.proj
 
 ## ICU versions
 
@@ -118,7 +116,7 @@ The package installer should have added an import to the `*.csproj` file similar
 
 ```xml
 <Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets"
-	Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
+    Condition="Exists('..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets')" />
 ```
 
 ## Contributing

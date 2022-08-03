@@ -30,7 +30,7 @@ namespace Icu.Collation
 			/// true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.
 			/// In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6 && !NET
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			protected override bool ReleaseHandle()
