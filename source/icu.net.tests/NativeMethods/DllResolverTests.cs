@@ -18,7 +18,14 @@ namespace Icu.Tests
 			if (string.IsNullOrEmpty(_tempPath))
 				return;
 
-			Directory.Delete(_tempPath, true);
+			try
+			{
+				Directory.Delete(_tempPath, true);
+			}
+			catch (System.Exception)
+			{
+				// just ignore
+			}
 			_tempPath = null;
 		}
 
