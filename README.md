@@ -6,16 +6,7 @@ icu-dotnet is the C# wrapper for a subset of [ICU](https://icu.unicode.org/).
 > for software applications. ICU is widely portable and gives applications the same results on all platforms
 > and between C/C++ and Java software.
 
-## Status
-
-<!--
-| OS      | Status |
-| ------- | ------ |
-| Linux   | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Linux-any-master-release/) |
-| Windows | [![Build Status](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/badge/icon)](https://jenkins.lsdev.sil.org/view/Icu/view/All/job/IcuDotNet-Win-any-master-release/) |
--->
-
-[![Build status](https://ci.appveyor.com/api/projects/status/moxh4lc39hfeotq9?svg=true)](https://ci.appveyor.com/project/SIL_Language_Technology/icu-dotnet)
+[![Build, Test and Pack](https://github.com/sillsdev/icu-dotnet/actions/workflows/CI-CD.yml/badge.svg)](https://github.com/sillsdev/icu-dotnet/actions/workflows/CI-CD.yml)
 
 ## Usage
 
