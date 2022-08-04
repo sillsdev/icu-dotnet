@@ -45,11 +45,9 @@ namespace Icu.Tests
 			}
 		}
 
-		private static bool IsRunning64Bit => IntPtr.Size == 8;
-
 		internal static string GetArchSubdir(string prefix = "")
 		{
-			var archSubdir = IsRunning64Bit ? "x64" : "x86";
+			var archSubdir = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			return $"{prefix}{archSubdir}";
 		}
 
