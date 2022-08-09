@@ -1,4 +1,6 @@
-# Overview
+# icu.net
+
+## Overview
 
 icu-dotnet is the C# wrapper for a subset of [ICU](https://icu.unicode.org/).
 
@@ -6,6 +8,7 @@ icu-dotnet is the C# wrapper for a subset of [ICU](https://icu.unicode.org/).
 > for software applications. ICU is widely portable and gives applications the same results on all platforms
 > and between C/C++ and Java software.
 
+[![NuGet version (icu.net)](https://img.shields.io/nuget/v/icu.net.svg?style=flat-square)](https://www.nuget.org/packages/icu.net/)
 [![Build, Test and Pack](https://github.com/sillsdev/icu-dotnet/actions/workflows/CI-CD.yml/badge.svg)](https://github.com/sillsdev/icu-dotnet/actions/workflows/CI-CD.yml)
 
 ## Usage
@@ -115,4 +118,5 @@ The package installer should have added an import to the `*.csproj` file similar
 We love contributions! The library mainly contains the functionality we need for our products. If you
 miss something that is part of ICU4C but not yet wrapped in icu.net, add it and create a pull request.
 
-If you find a bug - create an issue on GitHub, then preferably fix it and create a pull request!
+If you find a bug - create an [issue on GitHub](https://github.com/sillsdev/icu-dotnet/issues/new/choose),
+then preferably fix it and create a pull request!
