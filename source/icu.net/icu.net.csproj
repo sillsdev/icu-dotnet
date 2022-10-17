@@ -17,6 +17,8 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <!--System.ValueTuple v4.5 caused MSB3277 when consuming LibChorus in LibTriboroughBridge-ChorusPlugin -->
+    <!-- The reason is that .NET Standard comes with System.ValueTuple AssemblyVersion 4.0.2 -->
+    <!-- which corresponds to package version 4.4.0 -->
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
