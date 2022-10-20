@@ -87,8 +87,8 @@ namespace Icu.Tests
 		{
 			var result = Wrapper.IcuVersion;
 			Assert.That(result.Length, Is.GreaterThanOrEqualTo(4));
-			Assert.That(result.IndexOf("."), Is.GreaterThan(0));
-			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".")), out var major), Is.True);
+			Assert.That(result.IndexOf(".", StringComparison.Ordinal), Is.GreaterThan(0));
+			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".", StringComparison.Ordinal)), out var major), Is.True);
 		}
 
 		[Platform(Exclude = "Linux",

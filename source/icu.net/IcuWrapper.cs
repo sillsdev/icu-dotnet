@@ -116,6 +116,8 @@ namespace Icu
 		/// Cleans up the ICU files that could be locked. This should be the last ICU method
 		/// that gets called.
 		/// </summary>
+		/// <remarks>This method is not thread-safe! All other threads should stop using ICU
+		/// before calling this function. </remarks>
 		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
 		/// ------------------------------------------------------------------------------------
 		[PublicAPI]

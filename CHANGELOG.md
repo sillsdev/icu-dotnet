@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support .net 6.0
 
+### Fixed
+
+- Fixed crash in `Wrapper.Cleanup` (#176)
+
 ## [2.8.1] - 2022-07-08
 
 ### Fixed
