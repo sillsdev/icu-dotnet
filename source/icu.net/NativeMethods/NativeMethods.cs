@@ -358,6 +358,20 @@ namespace Icu
 			Trace.WriteLineIf(Verbose, "icu.net: Cleanup");
 			lock (_lock)
 			{
+				Methods = new MethodsContainer();
+				BiDiMethods = new BiDiMethodsContainer();
+				BreakIteratorMethods = new BreakIteratorMethodsContainer();
+				CodepageConversionMethods = new CodepageConversionMethodsContainer();
+				CollatorMethods = new CollatorMethodsContainer();
+				LocalesMethods = new LocalesMethodsContainer();
+				MessageFormatMethods = new MessageFormatMethodsContainer();
+				NormalizeMethods = new NormalizeMethodsContainer();
+				RegexMethods = new RegexMethodsContainer();
+				ResourceBundleMethods = new ResourceBundleMethodsContainer();
+				TransliteratorMethods = new TransliteratorMethodsContainer();
+				UnicodeSetMethods = new UnicodeSetMethodsContainer();
+				ResetIcuVersionInfo();
+
 				try
 				{
 					u_cleanup();
@@ -383,20 +397,6 @@ namespace Icu
 				}
 				_IcuCommonLibHandle = IntPtr.Zero;
 				_IcuI18NLibHandle = IntPtr.Zero;
-
-				Methods = new MethodsContainer();
-				BiDiMethods = new BiDiMethodsContainer();
-				BreakIteratorMethods = new BreakIteratorMethodsContainer();
-				CodepageConversionMethods = new CodepageConversionMethodsContainer();
-				CollatorMethods = new CollatorMethodsContainer();
-				LocalesMethods = new LocalesMethodsContainer();
-				MessageFormatMethods = new MessageFormatMethodsContainer();
-				NormalizeMethods = new NormalizeMethodsContainer();
-				RegexMethods = new RegexMethodsContainer();
-				ResourceBundleMethods = new ResourceBundleMethodsContainer();
-				TransliteratorMethods = new TransliteratorMethodsContainer();
-				UnicodeSetMethods = new UnicodeSetMethodsContainer();
-				ResetIcuVersionInfo();
 			}
 		}
 
