@@ -3,6 +3,8 @@ name: "Build, Test and Pack"
 on:
   push:
     branches: [ master ]
+    # Trigger on release tags
+    tags: [ 'v[0-9]+*' ]
   pull_request:
     branches: [ master ]
 jobs:
