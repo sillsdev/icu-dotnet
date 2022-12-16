@@ -23,5 +23,6 @@
 *.svg -whitespace
 *.xml -whitespace
 *.yml -whitespace
+*.json -whitespace
 changelog -whitespace
 GitVersion.yml -whitespace
