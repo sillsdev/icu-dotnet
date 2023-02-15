@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.9.0] - 2023-02-15
+
 ### Added
 
 - Support .net 6.0
@@ -275,8 +277,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
 
-[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.1...master
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.9.0...master
 
+[2.9.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.7.0...v2.7.1

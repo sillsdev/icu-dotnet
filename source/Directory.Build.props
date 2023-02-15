@@ -8,7 +8,7 @@
     <WarningLevel>4</WarningLevel>
     <Company>SIL International</Company>
     <Authors>SIL International</Authors>
-    <Copyright>Copyright © 2007-2022 SIL International</Copyright>
+    <Copyright>Copyright © 2007-2023 SIL International</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sillsdev/icu-dotnet</PackageProjectUrl>
     <AppendToReleaseNotesProperty><![CDATA[
