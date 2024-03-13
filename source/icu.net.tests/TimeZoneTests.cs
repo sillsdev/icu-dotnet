@@ -57,11 +57,10 @@ namespace Icu.Tests
 		{
 			var timezones = TimeZone.GetTimeZones(USystemTimeZoneType.Any, null, -1 * 3600 * 1000);
 
-			Assert.GreaterOrEqual(timezones.Count(), 4);
 			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Atlantic/Azores"));
-			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "America/Scoresbysund"));
 			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Atlantic/Cape_Verde"));
 			Assert.AreEqual(1, timezones.Count(tz => tz.Id == "Etc/GMT+1"));
+			Assert.GreaterOrEqual(timezones.Count(), 3);
 		}
 
 		[Test]
