@@ -139,6 +139,7 @@ namespace Icu
 		private static IntPtr _IcuI18NLibHandle;
 
 		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
+		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
 
 		private static IntPtr IcuCommonLibHandle
 		{
@@ -210,7 +211,11 @@ namespace Icu
 				return false;
 			}
 
-			var filePattern = IsWindows ? libraryName + "*.dll" : "lib" + libraryName + ".so.*";
+			var filePattern = IsWindows
+				? libraryName + "*.dll"
+				: IsMac
+				? "lib" + libraryName + ".*.dylib"
+				: "lib" + libraryName + ".so.*";
 			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
 			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
@@ -220,6 +225,8 @@ namespace Icu
 				var filePath = files[0];
 				var version = IsWindows
 					? Path.GetFileNameWithoutExtension(filePath).Substring(5) // strip icuuc
+					: IsMac
+					? Path.GetFileNameWithoutExtension(filePath).Substring(9) // strip libicuuc.
 					: Path.GetFileName(filePath).Substring(12); // strip libicuuc.so.
 				Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
 				if (int.TryParse(version, out var icuVersion))
@@ -333,7 +340,7 @@ namespace Icu
 				}
 				else
 				{
-					var libName = $"lib{basename}.so.{icuVersion}";
+					var libName = IsMac ? $"lib{basename}.{icuVersion}.dylib" : $"lib{basename}.so.{icuVersion}";
 					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 
 					handle = dlopen(libPath, RTLD_NOW);
