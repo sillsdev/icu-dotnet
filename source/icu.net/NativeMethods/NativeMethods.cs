@@ -75,9 +75,9 @@ namespace Icu
 
 		#region Dynamic method loading
 
-		#region Native methods for Unix
-
 		private const int RTLD_NOW = 2;
+
+		#region Native methods for Linux
 
 		private const string LIBDL_NAME = "libdl.so";
 
@@ -97,6 +97,31 @@ namespace Icu
 		{
 			// Don't free the string returned from _dlerror()!
 			var ptr = _dlerror();
+			return Marshal.PtrToStringAnsi(ptr);
+		}
+
+		#endregion
+
+		#region Native methods for Mac
+
+		private const string DLFCN_NAME = "dlfcn.h";
+
+		[DllImport(DLFCN_NAME, EntryPoint = "dlopen", SetLastError = true)]
+		private static extern IntPtr dlopen_mac(string file, int mode);
+
+		[DllImport(DLFCN_NAME, EntryPoint = "dlclose", SetLastError = true)]
+		private static extern int dlclose_mac(IntPtr handle);
+
+		[DllImport(DLFCN_NAME, EntryPoint = "dlsym", SetLastError = true)]
+		private static extern IntPtr dlsym_mac(IntPtr handle, string name);
+
+		[DllImport(DLFCN_NAME, EntryPoint = "dlerror")]
+		private static extern IntPtr _dlerror_mac();
+
+		private static string dlerror_mac()
+		{
+			// Don't free the string returned from _dlerror()!
+			var ptr = _dlerror_mac();
 			return Marshal.PtrToStringAnsi(ptr);
 		}
 
@@ -338,9 +363,19 @@ namespace Icu
 
 					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {new Win32Exception(lastError).Message}");
 				}
+				else if (IsMac)
+				{
+					var libName = $"lib{basename}.{icuVersion}.dylib";
+					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+
+					handle = dlopen_mac(libPath, RTLD_NOW);
+					lastError = Marshal.GetLastWin32Error();
+
+					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {lastError} ({dlerror_mac()})");
+				}
 				else
 				{
-					var libName = IsMac ? $"lib{basename}.{icuVersion}.dylib" : $"lib{basename}.so.{icuVersion}";
+					var libName = $"lib{basename}.so.{icuVersion}";
 					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 
 					handle = dlopen(libPath, RTLD_NOW);
@@ -395,6 +430,13 @@ namespace Icu
 					if (_IcuI18NLibHandle != IntPtr.Zero)
 						FreeLibrary(_IcuI18NLibHandle);
 				}
+				else if (IsMac)
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						dlclose_mac(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						dlclose_mac(_IcuI18NLibHandle);
+				}
 				else
 				{
 					if (_IcuCommonLibHandle != IntPtr.Zero)
@@ -431,6 +473,8 @@ namespace Icu
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
 			var methodPointer = IsWindows ?
 				GetProcAddress(handle, versionedMethodName) :
+				IsMac ?
+				dlsym_mac(handle, versionedMethodName):
 				dlsym(handle, versionedMethodName);
 
 			// Some systems (eg. Tizen) don't use methods with IcuVersion suffix
@@ -438,6 +482,8 @@ namespace Icu
 			{
 				methodPointer = IsWindows ?
 				GetProcAddress(handle, methodName) :
+				IsMac ?
+				dlsym_mac(handle, methodName):
 				dlsym(handle, methodName);
 			}
 			if (methodPointer != IntPtr.Zero)
