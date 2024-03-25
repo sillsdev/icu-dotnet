@@ -104,18 +104,18 @@ namespace Icu
 
 		#region Native methods for Mac
 
-		private const string DLFCN_NAME = "libdl.dylib";
+		private const string LIBDL_MAC_NAME = "libdl.dylib";
 
-		[DllImport(DLFCN_NAME, EntryPoint = "dlopen", SetLastError = true)]
+		[DllImport(LIBDL_MAC_NAME, EntryPoint = "dlopen", SetLastError = true)]
 		private static extern IntPtr dlopen_mac(string file, int mode);
 
-		[DllImport(DLFCN_NAME, EntryPoint = "dlclose", SetLastError = true)]
+		[DllImport(LIBDL_MAC_NAME, EntryPoint = "dlclose", SetLastError = true)]
 		private static extern int dlclose_mac(IntPtr handle);
 
-		[DllImport(DLFCN_NAME, EntryPoint = "dlsym", SetLastError = true)]
+		[DllImport(LIBDL_MAC_NAME, EntryPoint = "dlsym", SetLastError = true)]
 		private static extern IntPtr dlsym_mac(IntPtr handle, string name);
 
-		[DllImport(DLFCN_NAME, EntryPoint = "dlerror")]
+		[DllImport(LIBDL_MAC_NAME, EntryPoint = "dlerror")]
 		private static extern IntPtr _dlerror_mac();
 
 		private static string dlerror_mac()
