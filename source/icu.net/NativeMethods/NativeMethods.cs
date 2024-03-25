@@ -104,7 +104,7 @@ namespace Icu
 
 		#region Native methods for Mac
 
-		private const string DLFCN_NAME = "dlfcn.h";
+		private const string DLFCN_NAME = "libdl.dylib";
 
 		[DllImport(DLFCN_NAME, EntryPoint = "dlopen", SetLastError = true)]
 		private static extern IntPtr dlopen_mac(string file, int mode);
