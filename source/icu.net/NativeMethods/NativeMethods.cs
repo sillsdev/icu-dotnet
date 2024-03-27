@@ -223,11 +223,12 @@ namespace Icu
 				// Do a reverse sort so that we use the highest version
 				files.Sort((x, y) => string.CompareOrdinal(y, x));
 				var filePath = files[0];
+				var libNameLen = libraryName.Length;
 				var version = IsWindows
-					? Path.GetFileNameWithoutExtension(filePath).Substring(5) // strip icuuc
+					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
 					: IsMac
-					? Path.GetFileNameWithoutExtension(filePath).Substring(9) // strip libicuuc.
-					: Path.GetFileName(filePath).Substring(12); // strip libicuuc.so.
+					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
+					: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
 				Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
 				if (int.TryParse(version, out var icuVersion))
 				{
@@ -255,38 +256,45 @@ namespace Icu
 			}
 
 			var arch = IsRunning64Bit ? "x64" : "x86";
-			// Look for ICU binaries in lib/{win,linux}-{x86,x64} subdirectory first
-			var platform = IsWindows ? "win" : "linux";
+			var platform = IsWindows ? "win" : IsMac? "osx" : "linux";
+
+			// Look for ICU binaries in lib/{win,osx,linux}-{x86,x64} subdirectory first
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, "lib", $"{platform}-{arch}"),
 				libraryName))
 				return true;
 
-			// Next look in lib/x86 or lib/x64 subdirectory
+			// Next look in lib/{x86,x64} subdirectory
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, "lib", arch),
 				libraryName))
 				return true;
 
-			// next try just {win,linux}-x86/x64 subdirectory
+			// Next try just {win,osx,linux}-{x86,x64} subdirectory
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, $"{platform}-{arch}"),
 				libraryName))
 				return true;
 
-			// next try just x86/x64 subdirectory
+			// Next try just {x86,x64} subdirectory
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, arch),
 				libraryName))
 				return true;
 
-			// Might also be in runtimes/win7-x64/native
+			// Might be in runtimes/{win,osx,linux}/native
+			if (CheckDirectoryForIcuBinaries(
+				Path.Combine(DirectoryOfThisAssembly, "runtimes", platform, "native"),
+				libraryName))
+				return true;
+
+			// Might also be in runtimes/win7-{x86,x64}/native
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, "runtimes", $"win7-{arch}", "native"),
 				libraryName))
 				return true;
 
-			// otherwise check the current directory
+			// Otherwise check the current directory
 			// If we don't find it here we rely on it being in the PATH somewhere...
 			return CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
 		}

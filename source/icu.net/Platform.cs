@@ -1,7 +1,7 @@
 // Copyright (c) 2013 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-#if NETSTANDARD1_6
+#if NET || NETSTANDARD
 using System.Runtime.InteropServices;
 #endif
 
@@ -33,7 +33,7 @@ namespace Icu
 		{
 			get {
 
-#if NETSTANDARD1_6
+#if NET || NETSTANDARD
 				// Workaround described here since the API does not exist:
 				// https://github.com/dotnet/corefx/issues/999#issuecomment-75907756
 				return IntPtr.Size == 4 ? x86 : x64;
@@ -47,7 +47,16 @@ namespace Icu
 		{
 			get
 			{
-#if !NETSTANDARD1_6
+#if NET || NETSTANDARD
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					return OperatingSystemType.Windows;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					return OperatingSystemType.Unix;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+					return OperatingSystemType.MacOSX;
+				else
+					throw new NotSupportedException("Cannot get OperatingSystemType from: " + RuntimeInformation.OSDescription);
+#else
 				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
 				switch ((int)Environment.OSVersion.Platform)
 				{
@@ -59,15 +68,6 @@ namespace Icu
 					default:
 						return OperatingSystemType.Windows;
 				}
-#else
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-					return OperatingSystemType.Windows;
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-					return OperatingSystemType.Unix;
-				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-					return OperatingSystemType.MacOSX;
-				else
-					throw new NotSupportedException("Cannot get OperatingSystemType from: " + RuntimeInformation.OSDescription);
 #endif
 			}
 		}
