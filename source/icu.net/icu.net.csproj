@@ -34,6 +34,15 @@
     <Compile Remove="SortKey.cs" />
   </ItemGroup>
 
+  <!-- ICU must be installed using MacPorts before this will work -->
+  <ItemGroup>
+    <Content Include="/opt/local/lib/*.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- Also add the following to .zprofile file. It is already included in the GitHub build. -->
+  <!-- export DYLD_FALLBACK_LIBRARY_PATH="$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib" -->
+
   <ItemGroup>
     <None Include="App.config" Pack="true" PackagePath="contentFiles\any\any\$(AssemblyTitle).dll.config" />
     <None Include="../../README.md" Pack="true" PackagePath="/">

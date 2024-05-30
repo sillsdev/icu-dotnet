@@ -91,8 +91,8 @@ namespace Icu.Tests
 			Assert.That(int.TryParse(result.Substring(0, result.IndexOf(".", StringComparison.Ordinal)), out var major), Is.True);
 		}
 
-		[Platform(Exclude = "Linux",
-			Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+		[Platform(Include = "Win",
+			Reason = "These tests require ICU4C installed from NuGet packages which is only available on Windows")]
 		[Test]
 		public void ConfineVersions_WorksAfterInit()
 		{
@@ -105,8 +105,8 @@ namespace Icu.Tests
 			Assert.That(Wrapper.DataDirectory, Is.EqualTo("Test"));
 		}
 
-		[Platform(Exclude = "Linux",
-			Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+		[Platform(Include = "Win",
+			Reason = "These tests require ICU4C installed from NuGet packages which is only available on Windows")]
 		[Test]
 		public void ConfineVersions_LoadFromDifferentDirectory_LowerVersion()
 		{
@@ -130,8 +130,8 @@ namespace Icu.Tests
 			Assert.That(result, Is.EqualTo(NativeMethodsTests.MinIcuLibraryVersion));
 		}
 
-		[Platform(Exclude = "Linux",
-			Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+		[Platform(Include = "Win",
+			Reason = "These tests require ICU4C installed from NuGet packages which is only available on Windows")]
 		[Test]
 		public void ConfineVersions_LoadFromDifferentDirectory_HigherVersion()
 		{
@@ -155,8 +155,8 @@ namespace Icu.Tests
 			Assert.That(result, Is.EqualTo(NativeMethodsTests.FullIcuLibraryVersion));
 		}
 
-		[Platform(Exclude = "Linux",
-			Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+		[Platform(Include = "Win",
+			Reason = "These tests require ICU4C installed from NuGet packages which is only available on Windows")]
 		[Test]
 		public void ConfineVersions_LoadFromDifferentDirectory_NotInPreferredDir()
 		{

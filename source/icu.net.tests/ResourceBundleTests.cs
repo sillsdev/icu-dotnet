@@ -51,14 +51,16 @@ namespace Icu.Tests
 			}
 		}
 
-		[TestCase("en_US", ExpectedResult = "[a b c d e f g h i j k l m n o p q r s t u v w x y z]")]
-		[TestCase("de_DE", ExpectedResult = "[a ä b c d e f g h i j k l m n o ö p q r s ß t u ü v w x y z]")]
-		[TestCase("fr_FR", ExpectedResult = "[a à â æ b c ç d e é è ê ë f g h i î ï j k l m n o ô œ p q r s t u ù û ü v w x y ÿ z]")]
+		[TestCase("en_US", ExpectedResult = "[abcdefghijklmnopqrstuvwxyz]")]
+		[TestCase("de_DE", ExpectedResult = "[aäbcdefghijklmnoöpqrsßtuüvwxyz]")]
+		[TestCase("fr_FR", ExpectedResult = "[aàâæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿz]")]
 		public string GetStringByKey(string localeId)
 		{
 			using (var resourceBundle = new ResourceBundle(null, localeId))
 			{
-				return resourceBundle.GetStringByKey("ExemplarCharacters");
+				// Ideally this should be parsed by something that understands UnicodeSet structures
+				// Since spaces aren't meaningful in UnicodeSets, we'll take a shortcut and remove them
+				return resourceBundle.GetStringByKey("ExemplarCharacters").Replace(" ", "");
 			}
 		}
 	}

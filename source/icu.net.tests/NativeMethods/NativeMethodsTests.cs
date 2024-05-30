@@ -8,8 +8,8 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
-	[Platform(Exclude = "Linux",
-		Reason = "These tests require ICU4C installed from NuGet packages which isn't available on Linux")]
+	[Platform(Include = "Win",
+		Reason = "These tests require ICU4C installed from NuGet packages which is only available on Windows")]
 	[TestFixture]
 	public class NativeMethodsTests
 	{

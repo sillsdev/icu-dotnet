@@ -24,9 +24,10 @@ namespace Icu
 		private const string Icu4c = nameof(Icu4c);
 		private const string IcuRegexLinux = @"libicu\w+.so\.(?<version>[0-9]{2,})(\.[0-9])*";
 		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9])*\.dll";
+		private const string IcuRegexMac = @"libicu\w+.(?<version>[0-9]{2,})(\.[0-9])*.dylib";
 
-		private static readonly Regex IcuBinaryRegex = new Regex($"{IcuRegexWindows}|{IcuRegexLinux}$", RegexOptions.Compiled);
-		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : "libicu*.so.*";
+		private static readonly Regex IcuBinaryRegex = new ($"{IcuRegexWindows}|{IcuRegexLinux}|{IcuRegexMac}$", RegexOptions.Compiled);
+		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : Platform.OperatingSystem == OperatingSystemType.MacOSX ? "libicu*.*.dylib" : "libicu*.so.*";
 		private static readonly string NugetPackageDirectory = GetDefaultPackageDirectory(Platform.OperatingSystem);
 
 		// ReSharper disable once InconsistentNaming
