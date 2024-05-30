@@ -63,6 +63,7 @@ namespace Icu.Tests
 			Assert.GreaterOrEqual(timezones.Count(), 3);
 		}
 
+		[Platform(Exclude = "MacOsX", Reason = "The timezone ID for UTC can come in as Universal")]
 		[Test]
 		public void GetDefaultTimeZoneTest()
 		{

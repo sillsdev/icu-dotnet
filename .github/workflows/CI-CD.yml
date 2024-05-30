@@ -23,10 +23,20 @@ jobs:
     name: "Build and Test"
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-12]
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Install MacPorts
+      if: ${{ matrix.os == 'macos-12' }}
+      uses: melusina-org/setup-macports@v1
+
+    - name: Install icu4c on macOS
+      if: ${{ matrix.os == 'macos-12' }}
+      run: |
+        sudo port -v install icu
+        echo "DYLD_FALLBACK_LIBRARY_PATH=$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib" >> $GITHUB_ENV
+
     - name: Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       with:
@@ -35,7 +45,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
 
     - name: Build
       run: dotnet build --configuration Release source/icu.net.sln
