@@ -53,7 +53,7 @@ namespace Icu.Tests
 
 		[TestCase("en_US", ExpectedResult = "[abcdefghijklmnopqrstuvwxyz]")]
 		[TestCase("de_DE", ExpectedResult = "[aäbcdefghijklmnoöpqrsßtuüvwxyz]")]
-		[TestCase("fr_FR",ExpectedResult = "[aàâæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿz]")]
+		[TestCase("fr_FR", ExpectedResult = "[aàâæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿz]")]
 		public string GetStringByKey(string localeId)
 		{
 			using (var resourceBundle = new ResourceBundle(null, localeId))

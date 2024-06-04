@@ -82,7 +82,7 @@ namespace Icu
 			// If this is false, something went wrong.  These files should have
 			// either been found above or we should have been able to locate the
 			// asset paths (for .NET Core and NuGet v3+ projects).
- 			if (!TryGetNativeAssetPaths(context, out var nativeAssetPaths))
+			if (!TryGetNativeAssetPaths(context, out var nativeAssetPaths))
 			{
 				Trace.WriteLine("Could not locate icu native assets from DependencyModel.");
 				return IcuVersion;

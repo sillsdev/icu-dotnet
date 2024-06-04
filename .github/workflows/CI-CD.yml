@@ -50,8 +50,12 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release source/icu.net.sln
 
-    - name: Test
-      run: dotnet test --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
+    - name: Test on .NET 8.0
+      run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
+
+    - name: Test on .NET Framework 4.6.1 (Windows only)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: dotnet test -p:TargetFramework=net461 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
     - name: Upload Test Results
       if: always()
