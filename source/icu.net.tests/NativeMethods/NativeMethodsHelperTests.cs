@@ -14,6 +14,7 @@ namespace Icu.Tests
 	{
 		private string _filenameWindows;
 		private string _filenameLinux;
+		private string _filenameMac;
 
 		private int CallGetIcuVersionInfoForNetCoreOrWindows()
 		{
@@ -36,6 +37,8 @@ namespace Icu.Tests
 			File.WriteAllText(_filenameWindows, "just a dummy file");
 			_filenameLinux = Path.Combine(NativeMethodsTests.OutputDirectory, $"libicuuc.so.{Wrapper.MaxSupportedIcuVersion}.1");
 			File.WriteAllText(_filenameLinux, "just a dummy file");
+			_filenameMac = Path.Combine(NativeMethodsTests.OutputDirectory, $"libicuuc.{Wrapper.MaxSupportedIcuVersion}.dylib");
+			File.WriteAllText(_filenameMac, "just a dummy file");
 		}
 
 		[TearDown]
@@ -43,6 +46,7 @@ namespace Icu.Tests
 		{
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
+			File.Delete(_filenameMac);
 			Wrapper.Cleanup();
 		}
 

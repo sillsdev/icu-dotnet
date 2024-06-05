@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <TargetFrameworks>net40;net451;netstandard1.6;net6.0</TargetFrameworks>
+    <TargetFrameworks>net40;net451;netstandard1.6;net8.0</TargetFrameworks>
     <PlatformAlias>netstandard</PlatformAlias>
     <OutputPath>$(MSBuildThisFileDirectory)\..\output\$(Configuration)</OutputPath>
     <PackageOutputPath>$(MSBuildThisFileDirectory)\..\output</PackageOutputPath>
