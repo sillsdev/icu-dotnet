@@ -40,16 +40,38 @@ Sample code:
 
 ## Building
 
-To build the current version of icu-dotnet you'll need .net 6.0 installed.
+To build the current version of icu-dotnet you'll need .net 8.0 installed.
 
 icu-dotnet can be built from the command line as well as Visual Studio or JetBrains Rider.
 
-### Windows and Linux
+### Running Unit Tests
 
 You can build and run the unit tests by running:
 
 ```bash
 dotnet test source/icu.net.sln
+```
+
+or, if wanting to run tests on just one specific .net version (v8.0 in this example):
+
+```bash
+dotnet test source/icu.net.sln -p:TargetFramework=net8.0
+```
+
+### Linux and macOS
+
+It is important for `icu.net.dll.config` to be bundled with your application when not
+running on Windows. If it doesn't copy reliably to the output directory, you might find
+adding something like the following to your `csproj` file will resolve the issue. Note
+that the version number in the path must match the version number of icu.net that is
+referenced in the project.
+
+```xml
+<ItemGroup>
+  <None Update="$(NuGetPackageRoot)\icu.net\2.9.0\contentFiles\any\any\icu.net.dll.config">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
 ```
 
 ### Docker
@@ -78,6 +100,10 @@ icu-dotnet links with any installed version of ICU shared objects. It is
 recommended to install the version provided by the distribution.  As of 2016,
 Ubuntu Trusty uses version ICU 52 and Ubuntu Xenial 55.
 
+If the version provided by the Linux distribution doesn't match your needs,
+[Microsoft's ICU package](https://www.nuget.org/packages/Microsoft.ICU.ICU4C.Runtime/)
+includes builds for Linux.
+
 ### Windows
 
 Rather than using the full version of ICU (which can be ~25 MB), a custom minimum
@@ -86,6 +112,9 @@ build can be used. It can be installed by the
 The full version of ICU is also available as
 [Icu4c.Win.Full.Lib](https://www.nuget.org/packages/Icu4c.Win.Full.Lib/) and
 [Icu4c.Win.Full.Bin](https://www.nuget.org/packages/Icu4c.Win.Full.Bin/).
+
+Microsoft also makes the full version available as
+[Microsoft.ICU.ICU4C.Runtime](https://www.nuget.org/packages/Microsoft.ICU.ICU4C.Runtime/).
 
 #### What's in the minimum build
 
@@ -96,17 +125,35 @@ The full version of ICU is also available as
 - Rules-based Collator
 - Unicode set to pattern conversions
 
+### macOS
+
+macOS doesn't come preinstalled with all the normal icu4c libraries. They must be
+installed separately. One option is to use [MacPorts](https://www.macports.org/).
+The [icu package on MacPorts](https://ports.macports.org/port/icu/) has the icu4c
+libraries needed for icu.net to run properly.
+
+If the icu4c libraries are not installed in a directory that is in the system path
+or your application directory, you will need to set an environment variable for
+the OS to find them. For example:
+
+```bash
+export DYLD_FALLBACK_LIBRARY_PATH="$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib"
+```
+
+If you need to set environment variables like the above, consider adding them to
+your `.zprofile` so you don't have to remember to do it manually.
+
 ## Troubleshooting
 
-- make sure you added the nuget packages `icu.net` and `Icu4c.Win.Min`
-  (or `Icu4c.Win.Full`).
+- make sure you added the nuget package `icu.net` and have native ICU libraries available.
 - the binaries of the nuget packages need to be copied to your output directory.
   For `icu.net` this happens by the assembly reference that the package
   adds to your project. The binaries of `Icu4c.Win.Min` are only relevant on
   Windows. They will get copied by the `Icu4c.Win.Min.targets` file included
   in the nuget package.
 
-The package installer should have added an import to the `*.csproj` file similar to the following:
+On Windows, the package installer should have added an import to the `*.csproj` file similar
+to the following:
 
 ```xml
 <Import Project="..\..\packages\Icu4c.Win.Min.54.1.31\build\Icu4c.Win.Min.targets"
