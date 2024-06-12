@@ -75,7 +75,7 @@ namespace Icu
 
 		#region Dynamic method loading
 
-		#region Native methods for Unix
+		#region Native methods for Linux
 
 		private const int RTLD_NOW = 2;
 
@@ -330,9 +330,11 @@ namespace Icu
 				IntPtr handle;
 				string libPath;
 				int lastError;
+				string loadMethod;
 
 				if (IsWindows)
 				{
+					loadMethod = nameof(LoadLibraryEx);
 					var libName = $"{basename}{icuVersion}.dll";
 					var isIcuPathSpecified = !string.IsNullOrEmpty(_IcuPath);
 					libPath = isIcuPathSpecified ? Path.Combine(_IcuPath, libName) : libName;
@@ -346,9 +348,32 @@ namespace Icu
 
 					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {new Win32Exception(lastError).Message}");
 				}
+				else if (IsMac)
+				{
+					loadMethod = "NativeLibrary.Load";
+					var libName = $"lib{basename}.{icuVersion}.dylib";
+					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
+#if NET6_0_OR_GREATER
+					try
+					{
+						handle = NativeLibrary.Load(libPath);
+					}
+					catch (DllNotFoundException)
+					{
+						handle = IntPtr.Zero;
+					}
+					lastError = Marshal.GetLastWin32Error();
+					Trace.WriteLineIf(handle == IntPtr.Zero && lastError != 0, $"Unable to load [{libPath}]. Error: {lastError}");
+#else
+					handle = IntPtr.Zero;
+					lastError = 0;
+					Trace.WriteLine($"Unable to load [{libPath}] on macOS without .NET 6 or higher.");
+#endif
+				}
 				else
 				{
-					var libName = IsMac ? $"lib{basename}.{icuVersion}.dylib" : $"lib{basename}.so.{icuVersion}";
+					loadMethod = nameof(dlopen);
+					var libName = $"lib{basename}.so.{icuVersion}";
 					libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 
 					handle = dlopen(libPath, RTLD_NOW);
@@ -363,7 +388,7 @@ namespace Icu
 					return handle;
 				}
 
-				Trace.TraceWarning("{0} of {1} failed with error {2}", IsWindows ? "LoadLibraryEx" : "dlopen", libPath, lastError);
+				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {lastError}");
 				icuVersion -= 1;
 			}
 		}
@@ -403,6 +428,15 @@ namespace Icu
 					if (_IcuI18NLibHandle != IntPtr.Zero)
 						FreeLibrary(_IcuI18NLibHandle);
 				}
+				else if (IsMac)
+				{
+#if NET6_0_OR_GREATER
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuI18NLibHandle);
+#endif
+				}
 				else
 				{
 					if (_IcuCommonLibHandle != IntPtr.Zero)
@@ -437,16 +471,49 @@ namespace Icu
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : class
 		{
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
-			var methodPointer = IsWindows ?
-				GetProcAddress(handle, versionedMethodName) :
-				dlsym(handle, versionedMethodName);
+			IntPtr methodPointer;
+			if (IsWindows)
+				methodPointer = GetProcAddress(handle, versionedMethodName);
+			else if (IsMac)
+			{
+#if NET6_0_OR_GREATER
+				try
+				{
+					NativeLibrary.TryGetExport(handle, versionedMethodName, out methodPointer);
+				}
+				catch (DllNotFoundException)
+				{
+					methodPointer = IntPtr.Zero;
+				}
+#else
+				methodPointer = IntPtr.Zero;
+#endif
+			}
+			else
+				methodPointer = dlsym(handle, versionedMethodName);
 
 			// Some systems (eg. Tizen) don't use methods with IcuVersion suffix
 			if (methodPointer == IntPtr.Zero)
 			{
-				methodPointer = IsWindows ?
-				GetProcAddress(handle, methodName) :
-				dlsym(handle, methodName);
+				if (IsWindows)
+					methodPointer = GetProcAddress(handle, methodName);
+				else if (IsMac)
+				{
+#if NET6_0_OR_GREATER
+				try
+				{
+					NativeLibrary.TryGetExport(handle, methodName, out methodPointer);
+				}
+				catch (DllNotFoundException)
+				{
+					methodPointer = IntPtr.Zero;
+				}
+#else
+					methodPointer = IntPtr.Zero;
+#endif
+				}
+				else
+					methodPointer = dlsym(handle, methodName);
 			}
 			if (methodPointer != IntPtr.Zero)
 			{
