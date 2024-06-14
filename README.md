@@ -40,7 +40,7 @@ Sample code:
 
 ## Building
 
-To build the current version of icu-dotnet you'll need .net 8.0 installed.
+To build the current version of icu-dotnet you'll need .NET 8.0 installed.
 
 icu-dotnet can be built from the command line as well as Visual Studio or JetBrains Rider.
 
