@@ -90,6 +90,16 @@ namespace Icu
 		[DllImport(LIBDL_NAME, SetLastError = true)]
 		private static extern IntPtr dlsym(IntPtr handle, string name);
 
+		[DllImport(LIBDL_NAME, EntryPoint = "dlerror")]
+		private static extern IntPtr _dlerror();
+
+		private static string dlerror()
+		{
+			// Don't free the string returned from _dlerror()!
+			var ptr = _dlerror();
+			return Marshal.PtrToStringAnsi(ptr);
+		}
+
 		#endregion
 
 		#region Native methods for Windows
@@ -366,8 +376,13 @@ namespace Icu
 				}
 
 				lastError = Marshal.GetLastWin32Error();
-				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {lastError}");
-				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {lastError}");
+				var errorMsg = IsWindows
+					? new Win32Exception(lastError).Message
+					: IsMac
+					? $"{lastError}"
+					: $"{lastError} ({dlerror()})";
+				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {errorMsg}");
+				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {errorMsg}");
 				icuVersion -= 1;
 			}
 		}
