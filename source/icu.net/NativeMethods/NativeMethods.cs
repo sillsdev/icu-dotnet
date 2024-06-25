@@ -75,6 +75,7 @@ namespace Icu
 
 		#region Dynamic method loading
 
+#if !NET6_0_OR_GREATER
 		#region Native methods for Linux
 
 		private const int RTLD_NOW = 2;
@@ -132,6 +133,7 @@ namespace Icu
 		}
 
 		#endregion
+#endif
 
 		private static int IcuVersion;
 		private static string _IcuPath;
