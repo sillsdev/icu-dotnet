@@ -378,11 +378,17 @@ namespace Icu
 				}
 
 				lastError = Marshal.GetLastWin32Error();
+#if NET6_0_OR_GREATER
+				var errorMsg = IsWindows
+					? new Win32Exception(lastError).Message
+					: $"{lastError}";
+#else
 				var errorMsg = IsWindows
 					? new Win32Exception(lastError).Message
 					: IsMac
 					? $"{lastError}"
 					: $"{lastError} ({dlerror()})";
+#endif
 				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {errorMsg}");
 				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {errorMsg}");
 				icuVersion -= 1;
