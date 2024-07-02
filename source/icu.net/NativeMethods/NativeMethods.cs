@@ -176,6 +176,12 @@ namespace Icu
 #endif
 #if NET
 				var managedPath = currentAssembly.Location;
+				// If the application is published as a single file, Assembly.Location will be null.
+				// Per the warning https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000 we should use AppContext.BaseDirectory instead.
+				if (string.IsNullOrEmpty(managedPath))
+				{
+					managedPath = AppContext.BaseDirectory;
+				}
 #else
 				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
 #endif
