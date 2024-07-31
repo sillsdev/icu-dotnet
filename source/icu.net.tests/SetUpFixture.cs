@@ -16,7 +16,7 @@ namespace Icu.Tests
 			{
 				// See Icu.Platform. Unfortunately that's internal, so we can't use it.
 
-#if !NETSTANDARD1_6 && !NET
+#if NETFRAMEWORK
 				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
 				switch ((int)Environment.OSVersion.Platform)
 				{

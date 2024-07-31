@@ -2,10 +2,8 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
-
-#if !NETSTANDARD1_6
 using System.Runtime.ConstrainedExecution;
-#endif
+
 
 namespace Icu
 {
@@ -23,9 +21,7 @@ namespace Icu
 		/// failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging
 		/// Assistant.
 		///</returns>
-#if !NETSTANDARD1_6 && !NET
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		protected override bool ReleaseHandle()
 		{
 			NativeMethods.uenum_close(handle);

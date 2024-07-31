@@ -29,19 +29,7 @@ namespace Icu
 		public const string x64 = nameof(x64);
 		public const string x86 = nameof(x86);
 
-		public static string ProcessArchitecture
-		{
-			get {
-
-#if NET || NETSTANDARD
-				// Workaround described here since the API does not exist:
-				// https://github.com/dotnet/corefx/issues/999#issuecomment-75907756
-				return IntPtr.Size == 4 ? x86 : x64;
-#else
-				return Environment.Is64BitProcess ? x64 : x86;
-#endif
-			}
-		}
+		public static string ProcessArchitecture => Environment.Is64BitProcess ? x64 : x86;
 
 		public static OperatingSystemType OperatingSystem
 		{
