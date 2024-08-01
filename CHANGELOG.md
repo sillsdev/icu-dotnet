@@ -16,11 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Breaking
-
-- Removed support for [netstandard1.6](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-1-6#select-net-standard-version)
-- Removed Icu.SortKey class which was only in the netstandard1.6 version of the dll
-
 ### Added
 
 - Added support for netstandard2.0
@@ -29,6 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed a bug when using a library compiled against icu-dotnet netstandard1.6, when your project referenced a different version of icu-dotnet
 
+### Removed
+
+- Removed support for [netstandard1.6](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-1-6#select-net-standard-version)
+- Removed Icu.SortKey class which was only in the netstandard1.6 version of the dll
 
 ## [2.10.0] - 2024-06-17
 
