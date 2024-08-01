@@ -21,7 +21,9 @@ namespace Icu
 		/// failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging
 		/// Assistant.
 		///</returns>
+#if NETFRAMEWORK
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		protected override bool ReleaseHandle()
 		{
 			NativeMethods.uenum_close(handle);
