@@ -3,12 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#if NETSTANDARD1_6
-using Icu;
-#else
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
-#endif
+
 
 namespace Icu.Collation
 {
@@ -30,7 +27,7 @@ namespace Icu.Collation
 			/// true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.
 			/// In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if !NETSTANDARD1_6 && !NET
+#if NETFRAMEWORK
 			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			protected override bool ReleaseHandle()

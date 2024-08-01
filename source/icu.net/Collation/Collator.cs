@@ -14,10 +14,7 @@ namespace Icu.Collation
 	/// You use this class to build searching and sorting routines for natural
 	/// language text.
 	/// </summary>
-	public abstract class Collator : IComparer<string>, IDisposable
-#if FEATURE_ICLONEABLE
-		, ICloneable
-#endif
+	public abstract class Collator : IComparer<string>, IDisposable, ICloneable
 	{
 		/// <summary>
 		/// Gets or sets the minimum strength that will be used in comparison
@@ -194,18 +191,13 @@ namespace Icu.Collation
 
 			var options = CompareOptions.None;
 
-#if NETSTANDARD1_6
-			var sortKey = new SortKey(CultureInfo.InvariantCulture.Name, originalString, options, keyData);
-#else
 			var sortKey = CultureInfo.InvariantCulture.CompareInfo.GetSortKey(string.Empty, options);
 			SetInternalOriginalStringField(sortKey, originalString);
 			SetInternalKeyDataField(sortKey, keyData, keyDataLength);
-#endif
 
 			return sortKey;
 		}
 
-#if !NETSTANDARD1_6
 		private static void SetInternalKeyDataField(SortKey sortKey, byte[] keyData, int keyDataLength)
 		{
 			var keyDataCopy = new byte[keyDataLength];
@@ -275,7 +267,6 @@ namespace Icu.Collation
 		{
 			return Type.GetType("Mono.Runtime") != null;
 		}
-#endif
 
 		/// <summary>
 		/// Simple class to allow passing collation error info back to the caller of CheckRules.
