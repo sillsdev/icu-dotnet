@@ -347,14 +347,16 @@ namespace Icu
 				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 
 #if NET6_0_OR_GREATER
+				string exceptionErrorMessage = null;
 				loadMethod = "NativeLibrary.Load";
 				try
 				{
 					handle = NativeLibrary.Load(libPath);
 				}
-				catch (DllNotFoundException)
+				catch (DllNotFoundException ex)
 				{
 					handle = IntPtr.Zero;
+					exceptionErrorMessage = ex.Message;
 				}
 #else
 				if (IsWindows)
@@ -385,14 +387,16 @@ namespace Icu
 
 				lastError = Marshal.GetLastWin32Error();
 #if NET6_0_OR_GREATER
+				if (!string.IsNullOrEmpty(exceptionErrorMessage))
+					exceptionErrorMessage = $" ({exceptionErrorMessage})";
 				var errorMsg = IsWindows
-					? new Win32Exception(lastError).Message
-					: $"{lastError}";
+					? $"{new Win32Exception(lastError).Message}{exceptionErrorMessage}"
+					: $"{lastError}({exceptionErrorMessage})";
 #else
 				var errorMsg = IsWindows
 					? new Win32Exception(lastError).Message
 					: IsMac
-					? $"{lastError}"
+					? $"{lastError} (macOS loading requires .NET 6 or greater)"
 					: $"{lastError} ({dlerror()})";
 #endif
 				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {errorMsg}");
