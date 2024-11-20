@@ -3,18 +3,19 @@ assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{env:GITVERSION_BUILD_
 mode: ContinuousDeployment
 branches:
   master:
-    tag: beta
+    label: beta
     regex: (origin/)?master
   hotfix:
-    tag: beta
+    label: beta
     regex: (origin/)?hotfix[/-]
     increment: Patch
-    prevent-increment-of-merged-branch-version: false
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   pull-request:
     mode: ContinuousDeployment
-    tag: PR
+    label: PR
 ignore:
   sha: []
