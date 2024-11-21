@@ -16,9 +16,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.0] - 2024-11-21
+
 ### Added
 
 - Added support for netstandard2.0
+
+### Changed
+
+- Exception messages on .NET 6+ contain more information when dynamic library loading fails
+- Update dependencies to the latest stable versions
 
 ### Fixed
 
