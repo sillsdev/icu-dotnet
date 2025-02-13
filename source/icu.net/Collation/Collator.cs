@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+#if NET || NETSTANDARD
+using System.Runtime.InteropServices;
+#endif
 
 namespace Icu.Collation
 {
