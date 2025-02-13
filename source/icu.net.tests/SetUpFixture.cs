@@ -1,5 +1,8 @@
 // Copyright (c) 2017-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+#if NETFRAMEWORK
+using System;
+#endif
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 

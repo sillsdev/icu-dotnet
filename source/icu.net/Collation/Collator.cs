@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-#if NET || NETSTANDARD
+#if NET
 using System.Runtime.InteropServices;
 #endif
 
