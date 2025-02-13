@@ -1,6 +1,9 @@
 // Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
+#if NET
+using System.Text;
+#endif
 
 namespace Icu
 {
