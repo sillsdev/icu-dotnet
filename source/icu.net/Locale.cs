@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Icu
 	/// <summary>
 	/// A Locale object represents a specific geographical, political, or cultural region.
 	/// </summary>
-	public class Locale	: ICloneable
+	public class Locale : ICloneable
 	{
 		/// <summary>
 		/// Construct a default locale object, a Locale for the default locale ID
@@ -36,10 +36,8 @@ namespace Icu
 		/// </summary>
 		/// <param name="language">Language.</param>
 		/// <param name="country">Country or script.</param>
-		public Locale(string language, string country):
-			this (language, country, null, null)
-		{
-		}
+		public Locale(string language, string country)
+			: this(language, country, null, null) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Locale"/> class.
@@ -47,10 +45,8 @@ namespace Icu
 		/// <param name="language">Lowercase two-letter or three-letter ISO-639 code.</param>
 		/// <param name="country">Uppercase two-letter ISO-3166 code.</param>
 		/// <param name="variant">Uppercase vendor and browser specific code.</param>
-		public Locale(string language, string country, string variant):
-			this (language, country, variant, null)
-		{
-		}
+		public Locale(string language, string country, string variant)
+			: this(language, country, variant, null) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Locale"/> class.

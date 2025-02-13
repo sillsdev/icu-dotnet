@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections;
@@ -48,44 +48,44 @@ namespace Icu
 			/// Tag value for "words" that do not fit into any of other categories.
 			/// Includes spaces and most punctuation.
 			/// </summary>
-			NONE           = 0,
+			NONE = 0,
 			/// <summary>
 			/// Upper bound for tags for uncategorized words.
 			/// </summary>
-			NONE_LIMIT     = NUMBER,
+			NONE_LIMIT = NUMBER,
 			/// <summary>
 			/// Tag value for words that appear to be numbers, lower limit.
 			/// </summary>
-			NUMBER         = 100,
+			NUMBER = 100,
 			/// <summary>
 			/// Tag value for words that appear to be numbers, upper limit.
 			/// </summary>
-			NUMBER_LIMIT   = LETTER,
+			NUMBER_LIMIT = LETTER,
 			/// <summary>
 			/// Tag value for words that contain letters, excluding hiragana,
 			/// katakana or ideographic characters, lower limit.
 			/// </summary>
-			LETTER         = 200,
+			LETTER = 200,
 			/// <summary>
 			/// Tag value for words containing letters, upper limit.
 			/// </summary>
-			LETTER_LIMIT   = KANA,
+			LETTER_LIMIT = KANA,
 			/// <summary>
 			/// Tag value for words containing kana characters, lower limit.
 			/// </summary>
-			KANA           = 300,
+			KANA = 300,
 			/// <summary>
 			/// Tag value for words containing kana characters, upper limit.
 			/// </summary>
-			KANA_LIMIT     = IDEO,
+			KANA_LIMIT = IDEO,
 			/// <summary>
 			/// Tag value for words containing ideographic characters, lower limit.
 			/// </summary>
-			IDEO           = 400,
+			IDEO = 400,
 			/// <summary>
 			/// Tag value for words containing ideographic characters, upper limit.
 			/// </summary>
-			IDEO_LIMIT     = 500,
+			IDEO_LIMIT = 500,
 		}
 
 		/// <summary>
@@ -102,19 +102,19 @@ namespace Icu
 			/// Tag value for soft line breaks, positions at which a line break
 			/// is acceptable but not required
 			/// </summary>
-			SOFT            = 0,
+			SOFT = 0,
 			/// <summary>
 			/// Upper bound for soft line breaks.
 			/// </summary>
-			SOFT_LIMIT      = HARD,
+			SOFT_LIMIT = HARD,
 			/// <summary>
 			/// Tag value for a hard, or mandatory line break
 			/// </summary>
-			HARD            = 100,
+			HARD = 100,
 			/// <summary>
 			/// Upper bound for hard line breaks.
 			/// </summary>
-			HARD_LIMIT      = 200,
+			HARD_LIMIT = 200,
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ namespace Icu
 			/// ('.', '?', '!', etc.) character, possibly followed by a
 			/// hard separator (CR, LF, PS, etc.)
 			/// </summary>
-			TERM       = 0,
+			TERM = 0,
 			/// <summary>
 			/// Upper bound for tags for sentences ended by sentence terminators.
 			/// </summary>
@@ -142,11 +142,11 @@ namespace Icu
 			/// sentence terminator ('.', '?', '!', etc.) character, but
 			/// are ended only by a hard separator (CR, LF, PS, etc.) or end of input.
 			/// </summary>
-			SEP        = 100,
+			SEP = 100,
 			/// <summary>
 			/// Upper bound for tags for sentences ended by a separator.
 			/// </summary>
-			SEP_LIMIT  = 200,
+			SEP_LIMIT = 200,
 		}
 
 		/// <summary>

@@ -1,8 +1,7 @@
-// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Icu
 {
@@ -328,7 +327,7 @@ namespace Icu
 			/// Used in UAX #9: Unicode Bidirectional Algorithm (http://www.unicode.org/reports/tr9/)
 			/// Returns UBidiPairedBracketType values.
 			/// </summary>
-			BIDI_PAIRED_BRACKET_TYPE =0x1015,
+			BIDI_PAIRED_BRACKET_TYPE = 0x1015,
 			/// <summary>One more than the last constant for enumerated/integer Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			INT_LIMIT = 0x1016,
@@ -862,7 +861,7 @@ namespace Icu
 		/// <para>Same as java.lang.Character.getDirectionality()</para></remarks>
 		public static UCharDirection CharDirection(int code)
 		{
-			return (UCharDirection) NativeMethods.u_charDirection(code);
+			return (UCharDirection)NativeMethods.u_charDirection(code);
 		}
 
 		/// <summary>

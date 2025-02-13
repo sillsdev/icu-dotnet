@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2013-2019 SIL International
+﻿// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
-
 
 namespace Icu.Collation
 {
@@ -17,8 +16,8 @@ namespace Icu.Collation
 	{
 		internal sealed class SafeRuleBasedCollatorHandle : SafeHandle
 		{
-			public SafeRuleBasedCollatorHandle() :
-					base(IntPtr.Zero, true) {}
+			public SafeRuleBasedCollatorHandle()
+				: base(IntPtr.Zero, true) { }
 
 			///<summary>
 			/// When overridden in a derived class, executes the code required to free the handle.
@@ -58,15 +57,15 @@ namespace Icu.Collation
 		private bool _disposingValue; // To detect redundant calls
 		private SafeRuleBasedCollatorHandle _collatorHandle;
 
-		private RuleBasedCollator() {}
+		private RuleBasedCollator() { }
 
 		/// <summary>
 		/// RuleBasedCollator constructor.
 		/// This takes the table rules and builds a collation table out of them.
 		/// </summary>
 		/// <param name="rules">the collation rules to build the collation table from</param>
-		public RuleBasedCollator(string rules) :
-				this(rules, CollationStrength.Default) {}
+		public RuleBasedCollator(string rules)
+			: this(rules, CollationStrength.Default) { }
 
 		/// <summary>
 		/// RuleBasedCollator constructor.
@@ -75,7 +74,7 @@ namespace Icu.Collation
 		/// <param name="rules">the collation rules to build the collation table from</param>
 		/// <param name="collationStrength">the collation strength to use</param>
 		public RuleBasedCollator(string rules, CollationStrength collationStrength)
-			: this(rules, NormalizationMode.Default, collationStrength) {}
+			: this(rules, NormalizationMode.Default, collationStrength) { }
 
 		/// <summary>
 		/// RuleBasedCollator constructor.
@@ -118,9 +117,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CollationStrength Strength
 		{
-			get => (CollationStrength) GetAttribute(NativeMethods.CollationAttribute.Strength);
+			get => (CollationStrength)GetAttribute(NativeMethods.CollationAttribute.Strength);
 			set => SetAttribute(NativeMethods.CollationAttribute.Strength,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -129,9 +128,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override NormalizationMode NormalizationMode
 		{
-			get => (NormalizationMode) GetAttribute(NativeMethods.CollationAttribute.NormalizationMode);
+			get => (NormalizationMode)GetAttribute(NativeMethods.CollationAttribute.NormalizationMode);
 			set => SetAttribute(NativeMethods.CollationAttribute.NormalizationMode,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -139,9 +138,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override FrenchCollation FrenchCollation
 		{
-			get => (FrenchCollation) GetAttribute(NativeMethods.CollationAttribute.FrenchCollation);
+			get => (FrenchCollation)GetAttribute(NativeMethods.CollationAttribute.FrenchCollation);
 			set => SetAttribute(NativeMethods.CollationAttribute.FrenchCollation,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -153,9 +152,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CaseLevel CaseLevel
 		{
-			get => (CaseLevel) GetAttribute(NativeMethods.CollationAttribute.CaseLevel);
+			get => (CaseLevel)GetAttribute(NativeMethods.CollationAttribute.CaseLevel);
 			set => SetAttribute(NativeMethods.CollationAttribute.CaseLevel,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -166,9 +165,9 @@ namespace Icu.Collation
 		[Obsolete("ICU 50 Implementation detail, cannot be set via API, was removed from implementation.")]
 		public override HiraganaQuaternary HiraganaQuaternary
 		{
-			get => (HiraganaQuaternary) GetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode);
+			get => (HiraganaQuaternary)GetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode);
 			set => SetAttribute(NativeMethods.CollationAttribute.HiraganaQuaternaryMode,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -178,9 +177,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override NumericCollation NumericCollation
 		{
-			get => (NumericCollation) GetAttribute(NativeMethods.CollationAttribute.NumericCollation);
+			get => (NumericCollation)GetAttribute(NativeMethods.CollationAttribute.NumericCollation);
 			set => SetAttribute(NativeMethods.CollationAttribute.NumericCollation,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -188,9 +187,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override CaseFirst CaseFirst
 		{
-			get => (CaseFirst) GetAttribute(NativeMethods.CollationAttribute.CaseFirst);
+			get => (CaseFirst)GetAttribute(NativeMethods.CollationAttribute.CaseFirst);
 			set => SetAttribute(NativeMethods.CollationAttribute.CaseFirst,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		/// <summary>
@@ -198,9 +197,9 @@ namespace Icu.Collation
 		/// </summary>
 		public override AlternateHandling AlternateHandling
 		{
-			get => (AlternateHandling) GetAttribute(NativeMethods.CollationAttribute.AlternateHandling);
+			get => (AlternateHandling)GetAttribute(NativeMethods.CollationAttribute.AlternateHandling);
 			set => SetAttribute(NativeMethods.CollationAttribute.AlternateHandling,
-				(NativeMethods.CollationAttributeValue) value);
+				(NativeMethods.CollationAttributeValue)value);
 		}
 
 		private byte[] keyData = new byte[1024];
@@ -213,18 +212,18 @@ namespace Icu.Collation
 		/// <returns></returns>
 		public override SortKey GetSortKey(string source)
 		{
-			if(source == null)
+			if (source == null)
 			{
 				throw new ArgumentNullException();
 			}
 			int actualLength;
-			for (;;)
+			for (; ; )
 			{
 				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, source, source.Length,
 					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
-					keyData = new byte[keyData.Length*2];
+					keyData = new byte[keyData.Length * 2];
 					continue;
 				}
 				break;
@@ -289,11 +288,11 @@ namespace Icu.Collation
 		public override object Clone()
 		{
 			var copy = new RuleBasedCollator();
-			var buffersize = 512;
+			var bufferSize = 512;
 			copy._collatorHandle = NativeMethods.ucol_safeClone(
 				_collatorHandle,
 				IntPtr.Zero,
-				ref buffersize,
+				ref bufferSize,
 				out var status);
 			try
 			{
@@ -330,7 +329,8 @@ namespace Icu.Collation
 			// format that ICU expects.
 			var locale = new Locale(localeId);
 
-			var instance = new RuleBasedCollator {
+			var instance = new RuleBasedCollator
+			{
 				_collatorHandle = NativeMethods.ucol_open(locale.Id, out var status)
 			};
 			try
@@ -413,19 +413,19 @@ namespace Icu.Collation
 		/// A null reference is considered to be less than any reference that is not null.</remarks>
 		public override int Compare(string string1, string string2)
 		{
-			if(string1 == null)
+			if (string1 == null)
 			{
-				if(string2 == null)
+				if (string2 == null)
 				{
 					return 0;
 				}
 				return -1;
 			}
-			if(string2 == null)
+			if (string2 == null)
 			{
 				return 1;
 			}
-			return (int) NativeMethods.ucol_strcoll(_collatorHandle,
+			return (int)NativeMethods.ucol_strcoll(_collatorHandle,
 													string1,
 													string1.Length,
 													string2,

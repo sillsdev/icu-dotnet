@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+﻿// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 
@@ -31,7 +31,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Line that the error occured at.
+		/// Line that the error occurred at.
 		/// </summary>
 		public int Line { get { return _error.Line; } }
 		/// <summary>

@@ -1,6 +1,5 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;

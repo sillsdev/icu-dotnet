@@ -1,6 +1,5 @@
-// Copyright (c) 2018-2020 SIL International
+// Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,8 +19,8 @@ namespace Icu
 		// ReSharper disable once ClassNeverInstantiated.Global
 		internal sealed class SafeTransliteratorHandle : SafeHandle
 		{
-			public SafeTransliteratorHandle() :
-				base(IntPtr.Zero, true) {}
+			public SafeTransliteratorHandle()
+				: base(IntPtr.Zero, true) { }
 
 			public override bool IsInvalid => handle == IntPtr.Zero;
 

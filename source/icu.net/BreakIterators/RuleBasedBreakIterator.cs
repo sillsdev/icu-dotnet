@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -64,7 +64,7 @@ namespace Icu
 		/// <summary>
 		/// Creates a copy of the given RuleBasedBreakIterator
 		/// </summary>
-		/// <param name="bi">break itrerator</param>
+		/// <param name="bi">break iterator</param>
 		/// <exception cref="Exception">Throws an exception if we get an error cloning the native
 		/// break iterator</exception>
 		private RuleBasedBreakIterator(RuleBasedBreakIterator bi)
@@ -154,7 +154,7 @@ namespace Icu
 			int nextIndex = _currentIndex + 1;
 
 			// If the next index is going to move this out of boundaries, do
-			// not incremement the index.
+			// not increment the index.
 			if (nextIndex >= _textBoundaries.Length)
 			{
 				return DONE;
@@ -404,7 +404,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Sets an existing iterator to point to a new piece of text. 
+		/// Sets an existing iterator to point to a new piece of text.
 		/// </summary>
 		/// <param name="text">New text</param>
 		public override void SetText(string text)

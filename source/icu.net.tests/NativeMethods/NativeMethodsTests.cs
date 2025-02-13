@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 SIL International
+// Copyright (c) 2016-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
@@ -13,12 +13,12 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NativeMethodsTests
 	{
-		private      string _tmpDir;
-		private      string _pathEnvironmentVariable;
-		public const string FullIcuLibraryVersion      = "62.1";
+		private string _tmpDir;
+		private string _pathEnvironmentVariable;
+		public const string FullIcuLibraryVersion = "62.1";
 		public const string FullIcuLibraryVersionMajor = "62";
-		public const string MinIcuLibraryVersion       = "59.1";
-		public const string MinIcuLibraryVersionMajor  = "59";
+		public const string MinIcuLibraryVersion = "59.1";
+		public const string MinIcuLibraryVersionMajor = "59";
 
 		internal static int MaxInstalledIcuLibraryVersion
 		{

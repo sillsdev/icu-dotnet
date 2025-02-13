@@ -1,6 +1,5 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -15,18 +14,18 @@ namespace Icu
 		private class LocalesMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)]string localeId);
+			internal delegate int uloc_getLCIDDelegate([MarshalAs(UnmanagedType.LPStr)] string localeId);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate int uloc_getLocaleForLCIDDelegate(int lcid, IntPtr locale, int localeCapacity, out ErrorCode err);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr uloc_getISO3CountryDelegate(
-				[MarshalAs(UnmanagedType.LPStr)]string locale);
+				[MarshalAs(UnmanagedType.LPStr)] string locale);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal delegate IntPtr uloc_getISO3LanguageDelegate(
-				[MarshalAs(UnmanagedType.LPStr)]string locale);
+				[MarshalAs(UnmanagedType.LPStr)] string locale);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int uloc_countAvailableDelegate();
