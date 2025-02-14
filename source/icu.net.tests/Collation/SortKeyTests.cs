@@ -23,37 +23,37 @@ namespace Icu.Tests.Collation
 		[Test]
 		public void SortKey_KeyDataLengthTooLarge_Throws()
 		{
-			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData = new byte[] { 0xae, 0x1,0x20,0x1};
 			Assert.Throws<ArgumentOutOfRangeException>(() => Collator.CreateSortKey("hello", keyData, keyData.Length + 1));
 		}
 
 		[Test]
 		public void SortKey_KeyDataLengthNegative_Throws()
 		{
-			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
 			Assert.Throws<ArgumentOutOfRangeException>(() => Collator.CreateSortKey("hello", keyData, -1));
 		}
 
 		[Test]
 		public void SortKey_nullOriginalString_Throws()
 		{
-			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
 			Assert.Throws<ArgumentNullException>(() => Collator.CreateSortKey(null, keyData));
 		}
 
 		[Test]
 		public void ConstructSortKey()
 		{
-			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
 			Assert.IsNotNull(Collator.CreateSortKey("iou", keyData));
 		}
 
 		[Test]
 		public void Compare_keyDataChanges_NotAffected()
 		{
-			byte[] keyData = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData = new byte[] { 0xae, 0x1, 0x20,0x1 };
 			SortKey sortKey1 = Collator.CreateSortKey("heo", keyData);
-			keyData = new byte[] { 0xae, 0x1, 0x21, 0x1 };
+			keyData = new byte[] { 0xae, 0x1, 0x21,0x1 };
 			SortKey sortKey2 = Collator.CreateSortKey("heol", keyData);
 			Assert.AreEqual(Precedes, SortKey.Compare(sortKey1, sortKey2));
 		}
@@ -102,7 +102,7 @@ namespace Icu.Tests.Collation
 		[Test]
 		public void Compare_SamePrefixSecondLonger_precedes()
 		{
-			byte[] keyData1 = new byte[] { 0xae, 0x1, 0x20, 0x1 };
+			byte[] keyData1 = new byte[] { 0xae, 0x1, 0x20,0x1 };
 			SortKey sortKey1 = Collator.CreateSortKey("heo", keyData1);
 			byte[] keyData2 = new byte[] { 0xae, 0x1, 0x20, 0x32, 0x1 };
 			SortKey sortKey2 = Collator.CreateSortKey("heol", keyData2);

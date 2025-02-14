@@ -24,7 +24,7 @@ namespace Icu.Tests
 			var result = method?.Invoke(null, null);
 			var icuVersionInfoType = icunetAssembly.GetType("Icu.IcuVersionInfo");
 			var icuVersionFieldInfo = icuVersionInfoType.GetField("IcuVersion");
-			return (int)icuVersionFieldInfo.GetValue(result);
+			return (int) icuVersionFieldInfo.GetValue(result);
 		}
 
 		[SetUp]
