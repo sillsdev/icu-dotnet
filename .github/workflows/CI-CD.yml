@@ -11,7 +11,7 @@ on:
 jobs:
   event_file:
     name: "Event File"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Upload
       uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
@@ -23,7 +23,7 @@ jobs:
     name: "Build and Test"
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-24.04, macos-12, macos-13]
+        os: [windows-latest, ubuntu-22.04, macos-12, macos-13]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -74,11 +74,11 @@ jobs:
         path: |
           output/*.nupkg
           output/*.snupkg
-      if: matrix.os == 'ubuntu-24.04'
+      if: matrix.os == 'ubuntu-22.04'
 
   publish-nuget:
     name: "Publish NuGet package"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     needs: build-and-test
     if: github.event_name == 'push'
     steps:
