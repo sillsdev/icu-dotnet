@@ -19,7 +19,7 @@ namespace Icu
 	/// ResourceBundle that will never throw an exception but always returns an "empty" value
 	/// whenever queried. This will make client code much cleaner to write.
 	/// </summary>
-	public class ResourceBundle : IDisposable
+	public class ResourceBundle: IDisposable
 	{
 		private IntPtr _ResourceBundle { get; set; }
 

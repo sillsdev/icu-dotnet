@@ -9,7 +9,7 @@ namespace Icu.BreakIterators
 	/// <summary>
 	/// Supports iterating over a BreakIterator object and reading its individual text segments.
 	/// </summary>
-	public sealed class BreakEnumerator : IEnumerator<string>
+	public sealed class BreakEnumerator: IEnumerator<string>
 	{
 		private BreakIterator _breakIterator;
 		private int _currentStart;

@@ -46,7 +46,7 @@ namespace Icu
 			/// boundary returned from the break iterator.</returns>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
-				[Out, MarshalAs(UnmanagedType.LPArray)] int[] fillInVector,
+				[Out, MarshalAs(UnmanagedType.LPArray)]int[] fillInVector,
 				int capacity,
 				out ErrorCode status);
 

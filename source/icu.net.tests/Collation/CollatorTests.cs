@@ -100,7 +100,7 @@ namespace Icu.Tests.Collation
 		{
 			Assert.That(() =>
 			{
-				using (Collator.Create("my-MM")) { }
+				using (Collator.Create("my-MM")) {}
 			}, Throws.ArgumentException);
 		}
 
@@ -111,7 +111,7 @@ namespace Icu.Tests.Collation
 		{
 			Assert.That(() =>
 				{
-					using (Collator.Create("my-MM", Collator.Fallback.NoFallback)) { }
+					using (Collator.Create("my-MM", Collator.Fallback.NoFallback)) {}
 				},
 				Throws.ArgumentException);
 		}
@@ -123,7 +123,7 @@ namespace Icu.Tests.Collation
 		{
 			Assert.That(() =>
 				{
-					using (Collator.Create("my-MM", Collator.Fallback.FallbackAllowed)) { }
+					using (Collator.Create("my-MM", Collator.Fallback.FallbackAllowed)) {}
 				},
 				Throws.Nothing);
 		}
@@ -135,7 +135,7 @@ namespace Icu.Tests.Collation
 		{
 			Assert.That(() =>
 				{
-					using (Collator.Create("my")) { }
+					using (Collator.Create("my")) {}
 				},
 				Throws.Nothing);
 		}
@@ -147,7 +147,7 @@ namespace Icu.Tests.Collation
 		{
 			Assert.That(() =>
 				{
-					using (Collator.Create("my", Collator.Fallback.NoFallback)) { }
+					using (Collator.Create("my", Collator.Fallback.NoFallback)) {}
 				},
 				Throws.Nothing);
 		}

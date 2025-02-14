@@ -19,8 +19,8 @@ namespace Icu
 		// ReSharper disable once ClassNeverInstantiated.Global
 		internal sealed class SafeTransliteratorHandle : SafeHandle
 		{
-			public SafeTransliteratorHandle()
-				: base(IntPtr.Zero, true) { }
+			public SafeTransliteratorHandle() :
+				base(IntPtr.Zero, true) {}
 
 			public override bool IsInvalid => handle == IntPtr.Zero;
 

@@ -1,9 +1,8 @@
 // Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
-#if NET40
 using System;
-#endif
 using System.Globalization;
+using Icu;
 using NUnit.Framework;
 
 namespace Icu.Tests

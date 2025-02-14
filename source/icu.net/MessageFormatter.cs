@@ -1,11 +1,12 @@
 // Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+
 using System;
 using System.Text;
 
 namespace Icu
 {
-	public class MessageFormatter : IDisposable
+	public class MessageFormatter: IDisposable
 	{
 		private IntPtr _Formatter;
 

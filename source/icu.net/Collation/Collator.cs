@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-#if NET
 using System.Runtime.InteropServices;
-#endif
 
 namespace Icu.Collation
 {
@@ -22,25 +20,25 @@ namespace Icu.Collation
 		/// Gets or sets the minimum strength that will be used in comparison
 		/// or transformation.
 		/// </summary>
-		public abstract CollationStrength Strength { get; set; }
+		public abstract CollationStrength Strength{ get; set; }
 
 		/// <summary>
 		/// Gets or sets the NormalizationMode
 		/// </summary>
-		public abstract NormalizationMode NormalizationMode { get; set; }
+		public abstract NormalizationMode NormalizationMode{ get; set; }
 
 		/// <summary>
 		/// Gets or sets the FrenchCollation. Attribute for directionCollof
 		/// secondary weights - used in Canadian French.
 		/// </summary>
-		public abstract FrenchCollation FrenchCollation { get; set; }
+		public abstract FrenchCollation FrenchCollation{ get; set; }
 
 		/// <summary>
 		/// Gets or sets the CaseLevel mode. Controls whether an extra case
 		/// level (positioned before the third level) is generated or not.
 		/// </summary>
 		/// <remarks></remarks>
-		public abstract CaseLevel CaseLevel { get; set; }
+		public abstract CaseLevel CaseLevel{ get; set; }
 
 		/// <summary>
 		/// Gets or sets HiraganaQuaternary mode. When turned on, this attribute
@@ -48,23 +46,23 @@ namespace Icu.Collation
 		/// This is a sneaky way to produce JIS sort order.
 		/// </summary>
 		[Obsolete("ICU 50 Implementation detail, cannot be set via API, was removed from implementation.")]
-		public abstract HiraganaQuaternary HiraganaQuaternary { get; set; }
+		public abstract HiraganaQuaternary HiraganaQuaternary{ get; set; }
 
 		/// <summary>
 		/// Gets or sets NumericCollation mode. When turned on, this attribute
 		/// makes substrings of digits sort according to their numeric values.
 		/// </summary>
-		public abstract NumericCollation NumericCollation { get; set; }
+		public abstract NumericCollation NumericCollation{ get; set; }
 
 		/// <summary>
 		/// Controls the ordering of upper and lower case letters.
 		/// </summary>
-		public abstract CaseFirst CaseFirst { get; set; }
+		public abstract CaseFirst CaseFirst{ get; set; }
 
 		/// <summary>
 		/// Gets or sets attribute for handling variable elements.
 		/// </summary>
-		public abstract AlternateHandling AlternateHandling { get; set; }
+		public abstract AlternateHandling AlternateHandling{ get; set; }
 
 		/// <summary>
 		/// Get a sort key for a string from the collator.
@@ -232,7 +230,7 @@ namespace Icu.Collation
 											  originalString);
 		}
 
-		private static void SetInternalFieldForPublicProperty<T, P>(
+		private static void SetInternalFieldForPublicProperty<T,P>(
 			T instance,
 			string propertyName,
 			string frameworkInternalFieldName,

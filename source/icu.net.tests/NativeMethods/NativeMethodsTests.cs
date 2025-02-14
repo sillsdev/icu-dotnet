@@ -13,12 +13,12 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NativeMethodsTests
 	{
-		private string _tmpDir;
-		private string _pathEnvironmentVariable;
-		public const string FullIcuLibraryVersion = "62.1";
+		private      string _tmpDir;
+		private      string _pathEnvironmentVariable;
+		public const string FullIcuLibraryVersion      = "62.1";
 		public const string FullIcuLibraryVersionMajor = "62";
-		public const string MinIcuLibraryVersion = "59.1";
-		public const string MinIcuLibraryVersionMajor = "59";
+		public const string MinIcuLibraryVersion       = "59.1";
+		public const string MinIcuLibraryVersionMajor  = "59";
 
 		internal static int MaxInstalledIcuLibraryVersion
 		{
