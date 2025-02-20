@@ -41,7 +41,6 @@ namespace Icu
 			if (!File.Exists(configFile))
 				return originalLibName;
 
-			var mappedLibName = originalLibName;
 			var root = XElement.Load(configFile);
 			var map =
 				(from el in root.Elements("dllmap")

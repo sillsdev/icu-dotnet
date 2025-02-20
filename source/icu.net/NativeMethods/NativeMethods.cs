@@ -563,7 +563,6 @@ namespace Icu
 					ExceptionFromErrorCode.ThrowIfError(err);
 				if (outLength >= length)
 				{
-					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR or STRING_NOT_TERMINATED_WARNING
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
