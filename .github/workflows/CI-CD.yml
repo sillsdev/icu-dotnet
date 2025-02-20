@@ -23,16 +23,16 @@ jobs:
     name: "Build and Test"
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-22.04, macos-12, macos-13]
+        os: [windows-latest, ubuntu-22.04, macos-13]
     runs-on: ${{ matrix.os }}
 
     steps:
     - name: Install MacPorts
-      if: ${{ matrix.os == 'macos-12' || matrix.os == 'macos-13' }}
+      if: ${{ matrix.os == 'macos-13' }}
       uses: melusina-org/setup-macports@v1
 
     - name: Install icu4c on macOS
-      if: ${{ matrix.os == 'macos-12' || matrix.os == 'macos-13' }}
+      if: ${{ matrix.os == 'macos-13' }}
       run: |
         sudo port -v install icu
         echo "DYLD_FALLBACK_LIBRARY_PATH=$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib" >> $GITHUB_ENV
