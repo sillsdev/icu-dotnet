@@ -1,6 +1,5 @@
-// Copyright (c) 2022 SIL International
+// Copyright (c) 2022-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 #if NET
 using System;
 using System.IO;
@@ -41,7 +40,6 @@ namespace Icu
 			if (!File.Exists(configFile))
 				return originalLibName;
 
-			var mappedLibName = originalLibName;
 			var root = XElement.Load(configFile);
 			var map =
 				(from el in root.Elements("dllmap")

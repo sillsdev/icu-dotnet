@@ -1,4 +1,4 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 
 using System;
@@ -111,7 +111,7 @@ namespace Icu
 		public static string Format(string pattern, string localeId, out ErrorCode status,
 			double arg0, string arg1, string arg2)
 		{
-			using (var formatter = new MessageFormatter(pattern, localeId, out var parseError, 
+			using (var formatter = new MessageFormatter(pattern, localeId, out var parseError,
 				out status))
 			{
 				return status.IsSuccess() ? formatter.Format(arg0, arg1, arg2) : null;

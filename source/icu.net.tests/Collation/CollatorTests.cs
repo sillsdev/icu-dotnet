@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Globalization;
@@ -73,7 +73,7 @@ namespace Icu.Tests.Collation
 		}
 
 		[Test]
-		public void Create_nonexistentFallbackAllowed_fallsbackToUca()
+		public void Create_nonexistentFallbackAllowed_fallsBackToUca()
 		{
 			using (var collator = Collator.Create("non-existent", Collator.Fallback.FallbackAllowed))
 			{

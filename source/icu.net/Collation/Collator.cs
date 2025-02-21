@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -246,8 +246,6 @@ namespace Icu.Collation
 			if (RuntimeInformation.FrameworkDescription != ".NET Framework")
 				fieldName = netInternalFieldName;
 #endif
-
-			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
 
 			var fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 

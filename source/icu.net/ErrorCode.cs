@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.IO;
@@ -72,7 +72,7 @@ namespace Icu
 		UNSUPPORTED_ERROR = 16,
 		/// <summary>an operation is requested over a resource that does not support it</summary>
 		RESOURCE_TYPE_MISMATCH = 17,
-		/// <summary>ISO-2022 illlegal escape sequence</summary>
+		/// <summary>ISO-2022 illegal escape sequence</summary>
 		ILLEGAL_ESCAPE_SEQUENCE = 18,
 		/// <summary>ISO-2022 unsupported escape sequence</summary>
 		UNSUPPORTED_ESCAPE_SEQUENCE = 19,
@@ -86,7 +86,7 @@ namespace Icu
 		STATE_TOO_OLD_ERROR = 23,
 		/// <summary>
 		/// There are too many aliases in the path to the requested resource.
-		/// It is very possible that a circular alias definition has occured
+		/// It is very possible that a circular alias definition has occurred
 		/// </summary>
 		TOO_MANY_ALIASES_ERROR = 24,
 		/// <summary>UEnumeration out of sync with underlying collection</summary>
@@ -160,7 +160,7 @@ namespace Icu
 		INVALID_RBT_SYNTAX,
 		/// <summary>UNUSED as of ICU 2.4</summary>
 		INVALID_PROPERTY_PATTERN,
-		/// <summary>A 'use' pragma is invlalid</summary>
+		/// <summary>A 'use' pragma is invalid</summary>
 		MALFORMED_PRAGMA,
 		/// <summary>A closing ')' is missing</summary>
 		UNCLOSED_SEGMENT,
@@ -180,7 +180,7 @@ namespace Icu
 		INVALID_FUNCTION,
 		/// <summary>The limit for Transliterator errors</summary>
 		PARSE_ERROR_LIMIT,
-		 /*
+		/*
 		 * the error code range 0x10100 0x10200 are reserved for formatting API parsing error
 		 */
 		/// <summary>Syntax error in format pattern</summary>
@@ -219,7 +219,7 @@ namespace Icu
 		DEFAULT_KEYWORD_MISSING,
 		/// <summary>The limit for format library errors</summary>
 		FMT_PARSE_ERROR_LIMIT,
-				/*
+		/*
 		 * the error code range 0x10200 0x102ff are reserved for Break Iterator related error
 		 */
 		/// <summary>An internal error (bug) was detected.</summary>
@@ -228,11 +228,11 @@ namespace Icu
 		BRK_ERROR_START = 0x10200,
 		/// <summary>Hex digits expected as part of a escaped char in a rule.</summary>
 		BRK_HEX_DIGITS_EXPECTED,
-		/// <summary>Missing ';' at the end of a RBBI rule.</summary>
+		/// <summary>Missing ';' at the end of an RBBI rule.</summary>
 		BRK_SEMICOLON_EXPECTED,
 		/// <summary>Syntax error in RBBI rule.</summary>
 		BRK_RULE_SYNTAX,
-		/// <summary>UnicodeSet witing an RBBI rule missing a closing ']'.</summary>
+		/// <summary>UnicodeSet writing an RBBI rule missing a closing ']'.</summary>
 		BRK_UNCLOSED_SET,
 		/// <summary>Syntax error in RBBI rule assignment statement.</summary>
 		BRK_ASSIGN_ERROR,
@@ -254,8 +254,8 @@ namespace Icu
 		BRK_MALFORMED_RULE_TAG,
 		/// <summary>This must always be the last value to indicate the limit for Break Iterator failures</summary>
 		BRK_ERROR_LIMIT,
-				/*
-		 * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errrs
+		/*
+		 * The error codes in the range 0x10300-0x103ff are reserved for regular expression related errors
 		 */
 		/// <summary>An internal error (bug) was detected.</summary>
 		REGEX_INTERNAL_ERROR = 0x10300,
@@ -536,7 +536,7 @@ namespace Icu
 				case ErrorCode.INVALID_RBT_SYNTAX:
 					throw new TransliteratorParseException("Transliterator Parse Error: A '::id' rule was passed to the RuleBasedTransliterator parser " + extraInfo);
 				case ErrorCode.MALFORMED_PRAGMA:
-					throw new TransliteratorParseException("Transliterator Parse Error: A 'use' pragma is invlalid " + extraInfo);
+					throw new TransliteratorParseException("Transliterator Parse Error: A 'use' pragma is invalid " + extraInfo);
 				case ErrorCode.UNCLOSED_SEGMENT:
 					throw new TransliteratorParseException("Transliterator Parse Error: A closing ')' is missing " + extraInfo);
 				case ErrorCode.VARIABLE_RANGE_EXHAUSTED:
@@ -584,11 +584,11 @@ namespace Icu
 				case ErrorCode.BRK_HEX_DIGITS_EXPECTED:
 					throw new BreakException("Break Error: Hex digits expected as part of a escaped char in a rule. " + extraInfo);
 				case ErrorCode.BRK_SEMICOLON_EXPECTED:
-					throw new BreakException("Break Error: Missing ';' at the end of a RBBI rule. " + extraInfo);
+					throw new BreakException("Break Error: Missing ';' at the end of an RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_RULE_SYNTAX:
 					throw new BreakException("Break Error: Syntax error in RBBI rule. " + extraInfo);
 				case ErrorCode.BRK_UNCLOSED_SET:
-					throw new BreakException("Break Error: UnicodeSet witing an RBBI rule missing a closing ']'. " + extraInfo);
+					throw new BreakException("Break Error: UnicodeSet writing an RBBI rule missing a closing ']'. " + extraInfo);
 				case ErrorCode.BRK_ASSIGN_ERROR:
 					throw new BreakException("Break Error: Syntax error in RBBI rule assignment statement. " + extraInfo);
 				case ErrorCode.BRK_VARIABLE_REDFINITION:

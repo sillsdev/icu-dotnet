@@ -1,6 +1,5 @@
-// Copyright (c) 2013-2022 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
-
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -563,7 +562,6 @@ namespace Icu
 					ExceptionFromErrorCode.ThrowIfError(err);
 				if (outLength >= length)
 				{
-					err = ErrorCode.NoErrors; // ignore possible U_BUFFER_OVERFLOW_ERROR or STRING_NOT_TERMINATED_WARNING
 					Marshal.FreeCoTaskMem(resPtr);
 					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
 					resPtr = Marshal.AllocCoTaskMem(length * 2);
