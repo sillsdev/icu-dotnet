@@ -19,20 +19,21 @@ namespace Icu
 		/// <remarks>
 		/// Note: UProperty constants are parsed by preparseucd.py.
 		/// It matches lines like
-		///		UCHAR_<Unicode property name>=<integer>,
+		///		UCHAR_{Unicode property name}={integer},
 		/// </remarks>
 		public enum UProperty
 		{
-			/*  See "Note"!!! */
-
-			/*  Comments of the form "Binary property Dash",
+			/* Comments of the form "Binary property Dash",
 			"Enumerated property Script", "Double property Numeric_Value",
 			and "String property Age" are read by genpname. */
 
-			/*  Note: Place ALPHABETIC before BINARY_START so that
-			debuggers display ALPHABETIC as the symbolic name for 0,
-			rather than BINARY_START.  Likewise for other *_START
-			identifiers. */
+			/* Note!!!
+			Place ALPHABETIC before BINARY_START so that debuggers display
+			ALPHABETIC as the symbolic name for 0, rather than BINARY_START.
+			Likewise for other *_START identifiers. */
+
+			/* Binary Unicode properties (0-999) */
+
 			/// <summary>
 			/// Same as u_isUAlphabetic, different from u_isalpha.
 			/// Lu+Ll+Lt+Lm+Lo+Nl+Other_Alphabetic
@@ -265,6 +266,8 @@ namespace Icu
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			BINARY_LIMIT,
 
+			/* Enumerated/integer Unicode properties (0x1000-1999) */
+
 			/// <summary>Same as u_charDirection, returns UCharDirection values.</summary>
 			BIDI_CLASS = 0x1000,
 			/// <summary>First constant for enumerated/integer Unicode properties.</summary>
@@ -339,6 +342,8 @@ namespace Icu
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			INT_LIMIT = 0x1016,
 
+			/* Bit-mask Unicode properties (0x2000-2999) */
+
 			/// <summary>
 			/// This is the General_Category property returned as a bit mask.
 			/// When used in u_getIntPropertyValue(c), same as
@@ -356,6 +361,8 @@ namespace Icu
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			MASK_LIMIT = 0x2001,
 
+			/* Double Unicode properties (0x3000-3999) */
+
 			/// <summary>Corresponds to u_getNumericValue.</summary>
 			NUMERIC_VALUE = 0x3000,
 			/// <summary>First constant for double Unicode properties.</summary>
@@ -363,6 +370,8 @@ namespace Icu
 			/// <summary>One more than the last constant for double Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			DOUBLE_LIMIT = 0x3001,
+
+			/* String Unicode properties (0x4000-4999) */
 
 			/// <summary>Corresponds to u_charAge.</summary>
 			AGE = 0x4000,
@@ -404,6 +413,8 @@ namespace Icu
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			STRING_LIMIT = 0x400E,
 
+			/* Unicode properties with unusual value types (0x7000-7999) */
+
 			/// <summary>
 			/// Some characters are commonly used in multiple scripts. For more
 			/// information, see UAX #24: http://www.unicode.org/reports/tr24/.
@@ -416,26 +427,33 @@ namespace Icu
 			/// <summary>One more than the last constant for Unicode properties with unusual value types.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			OTHER_PROPERTY_LIMIT = 0x7001,
+
+			/* Nonexistent/invalid property (-1) */
+
 			/// <summary>Represents a nonexistent or invalid property or property value.</summary>
 			INVALID_CODE = -1
 		}
 
-		///<summary>
+		/// <summary>
 		/// enumerated Unicode general category types.
 		/// See http://www.unicode.org/Public/UNIDATA/UnicodeData.html .
 		/// </summary>
 		/// <remarks>
 		/// Note: UCharCategory constants and their API comments are parsed by preparseucd.py.
 		/// It matches pairs of lines like
-		/// 	/ ** <Unicode 2-letter General_Category value> comment... * /
-		/// 	U_<[A-Z_]+> = <integer>,
+		/// 	/ ** {Unicode 2-letter General_Category value} comment... * /
+		/// 	U_{[A-Z_]+} = {integer},
 		/// </remarks>
 		public enum UCharCategory
 		{
+			/* Stable in ICU 2.0 */
+
 			///<summary>Non-category for unassigned and non-character code points.</summary>
 			UNASSIGNED = 0,
-			///<summary>Cn "Other, Not Assigned (no characters in [UnicodeData.txt] have this property)" (same as U_UNASSIGNED!)</summary>
-			GENERAL_OTHER_TYPES = 0,
+			/// <summary>
+			/// Cn "Other, Not Assigned (no characters in [UnicodeData.txt] have this property)"
+			/// </summary>
+			GENERAL_OTHER_TYPES = UNASSIGNED,
 			///<summary>Lu</summary>
 			UPPERCASE_LETTER = 1,
 			///<summary>Ll</summary>
@@ -494,7 +512,7 @@ namespace Icu
 			INITIAL_PUNCTUATION = 28,
 			///<summary>Pf</summary>
 			FINAL_PUNCTUATION = 29,
-			///<summary>One higher than the last enum UCharCategory constant.
+			/// <summary>One higher than the last enum UCharCategory constant.
 			/// This numeric value is stable (will not change), see
 			/// http://www.unicode.org/policies/stability_policy.html#Property_Value</summary>
 			CHAR_CATEGORY_COUNT
@@ -506,11 +524,13 @@ namespace Icu
 		/// <remarks>
 		/// Note: UCharDirection constants and their API comments are parsed by preparseucd.py.
 		/// It matches pairs of lines like
-		/// 	/ ** <Unicode 1..3-letter Bidi_Class value> comment... * /
-		/// 	U_<[A-Z_]+> = <integer>,
+		/// 	/ ** {Unicode 1..3-letter Bidi_Class value} comment... * /
+		/// 	U_{[A-Z_]+} = {integer},
 		/// </remarks>
 		public enum UCharDirection
 		{
+			/* Stable in ICU 2.0 */
+
 			/// <summary>L.</summary>
 			LEFT_TO_RIGHT = 0,
 			/// <summary>R.</summary>
@@ -549,6 +569,9 @@ namespace Icu
 			DIR_NON_SPACING_MARK = 17,
 			/// <summary>BN.</summary>
 			BOUNDARY_NEUTRAL = 18,
+
+			/* Stable in ICU 52 */
+
 			/// <summary>FSI.</summary>
 			FIRST_STRONG_ISOLATE = 19,
 			/// <summary>LRI.</summary>
@@ -557,6 +580,7 @@ namespace Icu
 			RIGHT_TO_LEFT_ISOLATE = 21,
 			/// <summary>PDI.</summary>
 			POP_DIRECTIONAL_ISOLATE = 22,
+
 			/// <summary>One more than the highest UCharDirection value.
 			/// The highest value is available via u_getIntPropertyMaxValue(BIDI_CLASS).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -569,16 +593,19 @@ namespace Icu
 		/// <remarks>
 		/// Note: UBidiPairedBracketType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_BPT_<Unicode Bidi_Paired_Bracket_Type value name>
+		/// 	U_BPT_{Unicode Bidi_Paired_Bracket_Type value name}
 		/// </remarks>
 		public enum UBidiPairedBracketType
 		{
+			/* Stable in ICU 52 */
+
 			/// <summary>Not a paired bracket</summary>
 			NONE,
 			/// <summary>Open paired bracket</summary>
 			OPEN,
 			/// <summary>Close paired bracket</summary>
 			CLOSE,
+
 			/// <summary>One more than the highest normal UBidiPairedBracketType value</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			COUNT
@@ -590,10 +617,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UBlockCode constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	UBLOCK_<Unicode Block value name> = <integer>,
+		/// 	UBLOCK_{Unicode Block value name} = {integer},
 		/// </remarks>
 		public enum UBlockCode
 		{
+			/* Stable in ICU 2.0 */
+
 			/// <summary>[none] Special range indicating No_Block</summary>
 			NO_BLOCK = 0,
 			/// <summary>[0000]</summary>
@@ -610,7 +639,7 @@ namespace Icu
 			SPACING_MODIFIER_LETTERS = 6,
 			/// <summary>[0300]</summary>
 			COMBINING_DIACRITICAL_MARKS = 7,
-			/// <summary>[0370]</summary>
+			/// <summary>[0370] Unicode 3.2 renames this block to "Greek and Coptic".</summary>
 			GREEK = 8,
 			/// <summary>[0400]</summary>
 			CYRILLIC = 9,
@@ -680,7 +709,9 @@ namespace Icu
 			SUPERSCRIPTS_AND_SUBSCRIPTS = 41,
 			/// <summary>[20A0]</summary>
 			CURRENCY_SYMBOLS = 42,
-			/// <summary>[20D0]</summary>
+			/// <summary>
+			/// [20D0] Unicode 3.2 renames this block to "Combining Diacritical Marks for Symbols".
+			/// </summary>
 			COMBINING_MARKS_FOR_SYMBOLS = 43,
 			/// <summary>[2100]</summary>
 			LETTERLIKE_SYMBOLS = 44,
@@ -750,8 +781,14 @@ namespace Icu
 			HIGH_PRIVATE_USE_SURROGATES = 76,
 			/// <summary>[DC00]</summary>
 			LOW_SURROGATES = 77,
-			/// <summary>[E000]</summary>
+			/// <summary>
+			/// [E000] Unicode 3.2 renames the block for the BMP PUA to "Private Use Area"
+			/// and adds separate blocks for the supplementary PUAs.</summary>
 			PRIVATE_USE_AREA = 78,
+			/// <summary>
+			/// Until Unicode 3.1.1, the corresponding block name was "Private Use",
+			/// and multiple code point ranges had this block.
+			/// </summary>
 			PRIVATE_USE = PRIVATE_USE_AREA,
 			/// <summary>[F900]</summary>
 			CJK_COMPATIBILITY_IDEOGRAPHS = 79,
@@ -795,7 +832,10 @@ namespace Icu
 
 			/* New blocks in Unicode 3.2 */
 
-			/// <summary>[0500]</summary>
+			/// <summary>
+			/// [0500]
+			/// Unicode 4.0.1 renames the "Cyrillic Supplementary" block to "Cyrillic Supplement".
+			/// </summary>
 			CYRILLIC_SUPPLEMENT = 97,
 			/// <summary>[1700]</summary>
 			TAGALOG = 98,
@@ -824,7 +864,7 @@ namespace Icu
 			/// <summary>[100000]</summary>
 			SUPPLEMENTARY_PRIVATE_USE_AREA_B = 110,
 
-			/* New blocks in Unicode 4 */
+			/* New blocks in Unicode 4.0 */
 
 			/// <summary>[1900]</summary>
 			LIMBU = 111,
@@ -1348,10 +1388,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UEastAsianWidth constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_EA_<Unicode East_Asian_Width value name>
+		/// 	U_EA_{Unicode East_Asian_Width value name}
 		/// </remarks>
 		public enum UEastAsianWidth
 		{
+			/* Stable in ICU 2.2 */
+
 			/// <summary>[N]</summary>
 			NEUTRAL,
 			/// <summary>[A]</summary>
@@ -1364,6 +1406,7 @@ namespace Icu
 			NARROW,
 			/// <summary>[W]</summary>
 			WIDE,
+
 			/// <summary>One more than the highest normal UEastAsianWidth value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_EAST_ASIAN_WIDTH).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1401,8 +1444,11 @@ namespace Icu
 		/// </summary>
 		public enum UPropertyNameChoice
 		{
+			/* Stable in ICU 2.4 */
+
 			SHORT_PROPERTY_NAME,
 			LONG_PROPERTY_NAME,
+
 			/// <summary>One more than the highest normal UPropertyNameChoice value.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			PROPERTY_NAME_CHOICE_COUNT
@@ -1414,10 +1460,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UDecompositionType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		///		U_DT_<Unicode Decomposition_Type value name>
+		///		U_DT_{Unicode Decomposition_Type value name}
 		/// </remarks>
 		public enum UDecompositionType
 		{
+			/* Stable in ICU 2.2 */
+
 			/// <summary>[none]</summary>
 			NONE,
 			/// <summary>[can]</summary>
@@ -1454,7 +1502,8 @@ namespace Icu
 			VERTICAL,
 			/// <summary>[wide]</summary>
 			WIDE,
-			/// <summary>18</summary>
+
+			/// <summary>One more than the highest normal UDecompositionType value.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			COUNT
 		}
@@ -1465,10 +1514,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UJoiningType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_JT_<Unicode Joining_Type value name>
+		/// 	U_JT_{Unicode Joining_Type value name}
 		/// </remarks>
 		public enum UJoiningType
 		{
+			/* Stable in ICU 2.2 */
+
 			/// <summary>[U]</summary>
 			NON_JOINING,
 			/// <summary>[C]</summary>
@@ -1481,6 +1532,7 @@ namespace Icu
 			RIGHT_JOINING,
 			/// <summary>[T]</summary>
 			TRANSPARENT,
+
 			/// <summary>One more than the highest normal UJoiningType value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_JOINING_TYPE).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1493,10 +1545,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UJoiningGroup constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_JG_<Unicode Joining_Group value name>
+		/// 	U_JG_{Unicode Joining_Group value name}
 		/// </remarks>
 		public enum UJoiningGroup
 		{
+			/* Stable in ICU 2.2 */
+
 			NO_JOINING_GROUP,
 			AIN,
 			ALAPH,
@@ -1511,7 +1565,7 @@ namespace Icu
 			GAF,
 			GAMAL,
 			HAH,
-			TEH_MARBUTA_GOAL,
+			TEH_MARBUTA_GOAL, // Stable in ICU 4.6
 			HAMZA_ON_HEH_GOAL = TEH_MARBUTA_GOAL,
 			HE,
 			HEH,
@@ -1549,13 +1603,28 @@ namespace Icu
 			YUDH,
 			YUDH_HE,
 			ZAIN,
+
+			/* Stable in ICU 2.6 */
+
 			FE,
 			KHAPH,
 			ZHAIN,
+
+			/* Stable in ICU 4.0 */
+
 			BURUSHASKI_YEH_BARREE,
+
+			/* Stable in ICU 4.4 */
+
 			FARSI_YEH,
 			NYA,
+
+			/* Stable in ICU 49 */
+
 			ROHINGYA_YEH,
+
+			/* Stable in ICU 54 */
+
 			MANICHAEAN_ALEPH,
 			MANICHAEAN_AYIN,
 			MANICHAEAN_BETH,
@@ -1584,9 +1653,15 @@ namespace Icu
 			MANICHAEAN_YODH,
 			MANICHAEAN_ZAYIN,
 			STRAIGHT_WAW,
+
+			/* Stable in ICU 58 */
+
 			AFRICAN_FEH,
 			AFRICAN_NOON,
 			AFRICAN_QAF,
+
+			/* Stable in ICU 60 */
+
 			MALAYALAM_BHA,
 			MALAYALAM_JA,
 			MALAYALAM_LLA,
@@ -1598,11 +1673,21 @@ namespace Icu
 			MALAYALAM_RA,
 			MALAYALAM_SSA,
 			MALAYALAM_TTA,
+
+			/* Stable in ICU 62 */
+
 			HANIFI_ROHINGYA_KINNA_YA,
 			HANIFI_ROHINGYA_PA,
+
+			/* Stable in ICU 70 */
+
 			THIN_YEH,
 			VERTICAL_TAIL,
+
+			/* Stable in ICU 76 */
+
 			KASHMIRI_YEH,
+
 			/// <summary>One more than the highest normal UJoiningGroup value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_JOINING_GROUP).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1615,10 +1700,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UGraphemeClusterBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_GCB_<Unicode Grapheme_Cluster_Break value name>
+		/// 	U_GCB_{Unicode Grapheme_Cluster_Break value name}
 		/// </remarks>
 		public enum UGraphemeClusterBreak
 		{
+			/* Stable in ICU 3.4 */
+
 			/// <summary>[XX]</summary>
 			OTHER = 0,
 			/// <summary>[CN]</summary>
@@ -1639,12 +1726,21 @@ namespace Icu
 			T = 8,
 			/// <summary>[V]</summary>
 			V = 9,
+
+			/* New in Unicode 5.1/ICU 4.0 */
+
 			/// <summary>[SM]</summary>
 			SPACING_MARK = 10,
 			/// <summary>[PP]</summary>
 			PREPEND = 11,
+
+			/* New in Unicode 6.2/ICU 50 */
+
 			/// <summary>[RI]</summary>
 			REGIONAL_INDICATOR = 12,
+
+			/* New in Unicode 9.0/ICU 58 */
+
 			/// <summary>[EB]</summary>
 			E_BASE = 13,
 			/// <summary>[EBG]</summary>
@@ -1655,6 +1751,7 @@ namespace Icu
 			GLUE_AFTER_ZWJ = 16,
 			/// <summary>[ZWJ]</summary>
 			ZWJ = 17,
+
 			/// <summary>One more than the highest normal UGraphemeClusterBreak value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_GRAPHEME_CLUSTER_BREAK).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1667,10 +1764,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UWordBreakValues constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_WB_<Unicode Word_Break value name>
+		/// 	U_WB_{Unicode Word_Break value name}
 		/// </remarks>
 		public enum UWordBreakValues
 		{
+			/* Stable in ICU 3.4 */
+
 			/// <summary>[XX]</summary>
 			OTHER = 0,
 			/// <summary>[LE]</summary>
@@ -1688,7 +1787,7 @@ namespace Icu
 			/// <summary>[EX]</summary>
 			EXTENDNUMLET = 7,
 
-			/* new in Unicode 5.1/ICU 4.0 */
+			/* New in Unicode 5.1/ICU 4.0 */
 
 			/// <summary>[CR]</summary>
 			CR = 8,
@@ -1701,12 +1800,12 @@ namespace Icu
 			/// <summary>[NL]</summary>
 			NEWLINE = 12,
 
-			/* new in Unicode 6.2/ICU 50 */
+			/* New in Unicode 6.2/ICU 50 */
 
 			/// <summary>[RI]</summary>
 			REGIONAL_INDICATOR = 13,
 
-			/* new in Unicode 6.3/ICU 52 */
+			/* New in Unicode 6.3/ICU 52 */
 
 			/// <summary>[HL]</summary>
 			HEBREW_LETTER = 14,
@@ -1715,7 +1814,7 @@ namespace Icu
 			/// <summary>[DQ]</summary>
 			DOUBLE_QUOTE = 16,
 
-			/* new in Unicode 9.0/ICU 58 */
+			/* New in Unicode 9.0/ICU 58 */
 
 			/// <summary>[EB]</summary>
 			E_BASE = 17,
@@ -1742,10 +1841,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: USentenceBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_SB_<Unicode Sentence_Break value name>
+		/// 	U_SB_{Unicode Sentence_Break value name}
 		/// </remarks>
 		public enum USentenceBreak
 		{
+			/* Stable in ICU 3.4 */
+
 			/// <summary>[XX]</summary>
 			OTHER = 0,
 			/// <summary>[AT]</summary>
@@ -1769,7 +1870,7 @@ namespace Icu
 			/// <summary>[UP]</summary>
 			UPPER = 10,
 
-			/* new in Unicode 5.1/ICU 4.0 */
+			/* New in Unicode 5.1/ICU 4.0 */
 
 			/// <summary>[CR]</summary>
 			CR = 11,
@@ -1779,6 +1880,7 @@ namespace Icu
 			LF = 13,
 			/// <summary>[SC]</summary>
 			SCONTINUE = 14,
+
 			/// <summary>One more than the highest normal USentenceBreak value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_SENTENCE_BREAK).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1791,7 +1893,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: ULineBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_LB_<Unicode Line_Break value name>
+		/// 	U_LB_{Unicode Line_Break value name}
 		/// </remarks>
 		public enum ULineBreak
 		{
@@ -1856,14 +1958,14 @@ namespace Icu
 			/// <summary>[ZW]</summary>
 			ZWSPACE = 28,
 
-			/* new in Unicode 4.0/ICU 2.6 */
+			/* New in Unicode 4.0/ICU 2.6 */
 
 			/// <summary>[NL]</summary>
 			NEXT_LINE = 29,
 			/// <summary>[WJ]</summary>
 			WORD_JOINER = 30,
 
-			/* new in Unicode 4.1/ICU 3.4 */
+			/* New in Unicode 4.1/ICU 3.4 */
 
 			/// <summary>[H2]</summary>
 			H2 = 31,
@@ -1876,24 +1978,24 @@ namespace Icu
 			/// <summary>[JV]</summary>
 			JV = 35,
 
-			/* new in Unicode 5.2/ICU 4.4 */
+			/* New in Unicode 5.2/ICU 4.4 */
 
 			/// <summary>[CP]</summary>
 			CLOSE_PARENTHESIS = 36,
 
-			/* new in Unicode 6.1/ICU 49 */
+			/* New in Unicode 6.1/ICU 49 */
 
 			/// <summary>[CJ]</summary>
 			CONDITIONAL_JAPANESE_STARTER = 37,
 			/// <summary>[HL]</summary>
 			HEBREW_LETTER = 38,
 
-			/* new in Unicode 6.2/ICU 50 */
+			/* New in Unicode 6.2/ICU 50 */
 
 			/// <summary>[RI]</summary>
 			REGIONAL_INDICATOR = 39,
 
-			/* new in Unicode 9.0/ICU 58 */
+			/* New in Unicode 9.0/ICU 58 */
 
 			/// <summary>[EB]</summary>
 			E_BASE = 40,
@@ -1924,10 +2026,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UNumericType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_NT_<Unicode Numeric_Type value name>
+		/// 	U_NT_{Unicode Numeric_Type value name}
 		/// </remarks>
 		public enum UNumericType
 		{
+			/* Stable in ICU 2.2 */
+
 			/// <summary>[None]</summary>
 			NONE,
 			/// <summary>[de]</summary>
@@ -1936,6 +2040,7 @@ namespace Icu
 			DIGIT,
 			/// <summary>[nu]</summary>
 			NUMERIC,
+
 			/// <summary>One more than the highest normal UNumericType value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_NUMERIC_TYPE).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1948,10 +2053,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UHangulSyllableType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_HST_<Unicode Hangul_Syllable_Type value name>
+		/// 	U_HST_{Unicode Hangul_Syllable_Type value name}
 		/// </remarks>
 		public enum UHangulSyllableType
 		{
+			/* Stable in ICU 2.6 */
+
 			/// <summary>[NA]</summary>
 			NOT_APPLICABLE,
 			/// <summary>[L]</summary>
@@ -1964,6 +2071,7 @@ namespace Icu
 			LV_SYLLABLE,
 			/// <summary>[LVT]</summary>
 			LVT_SYLLABLE,
+
 			/// <summary>One more than the highest normal UHangulSyllableType value.
 			/// The highest value is available via u_getIntPropertyMaxValue(UCHAR_HANGUL_SYLLABLE_TYPE).</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
@@ -1976,10 +2084,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIndicPositionalCategory constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
+		/// 	U_INPC_{Unicode Indic_Positional_Category value name}
 		/// </remarks>
 		public enum UIndicPositionalCategory
 		{
+			/* Stable in ICU 63 */
+
 			NA,
 			BOTTOM,
 			BOTTOM_AND_LEFT,
@@ -1995,6 +2105,9 @@ namespace Icu
 			TOP_AND_LEFT_AND_RIGHT,
 			TOP_AND_RIGHT,
 			VISUAL_ORDER_LEFT,
+
+			/* Stable in ICU 66 */
+
 			TOP_AND_BOTTOM_AND_LEFT
 		}
 
@@ -2004,10 +2117,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIndicPositionalCategory constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
+		/// 	U_INPC_{Unicode Indic_Positional_Category value name}
 		/// </remarks>
 		public enum UIndicSyllabicCategory
 		{
+			/* Stable in ICU 63 */
+
 			OTHER,
 			AVAGRAHA,
 			BINDU,
@@ -2044,7 +2159,28 @@ namespace Icu
 			VOWEL,
 			VOWEL_DEPENDENT,
 			VOWEL_INDEPENDENT,
+
+			/* Stable in ICU 76 */
+
 			REORDERING_KILLER
+		}
+
+		/// <summary>
+		/// Indic Conjunct Break constants. (ICU 76 draft; not stable.)
+		/// </summary>
+		/// <remarks>
+		/// Note: UIndicConjunctBreak constants are parsed by preparseucd.py.
+		/// It matches lines like
+		/// 	U_INCB_{Unicode Indic_Conjunct_Break value name}
+		/// </remarks>
+		public enum UIndicConjunctBreak
+		{
+			/* Draft in ICU 76 */
+
+			NONE,
+			CONSONANT,
+			EXTEND,
+			LINKER
 		}
 
 		/// <summary>
@@ -2053,10 +2189,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UVerticalOrientation constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_VO_<Unicode Vertical_Orientation value name>
+		/// 	U_VO_{Unicode Vertical_Orientation value name}
 		/// </remarks>
 		public enum UVerticalOrientation
 		{
+			/* Stable in ICU 63 */
+
 			ROTATED,
 			TRANSFORMED_ROTATED,
 			TRANSFORMED_UPRIGHT,
@@ -2070,10 +2208,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIdentifierStatus constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_ID_STATUS_<Unicode Identifier_Status value name>
+		/// 	U_ID_STATUS_{Unicode Identifier_Status value name}
 		/// </remarks>
 		public enum UIdentifierStatus
 		{
+			/* Stable in ICU 75 */
+
 			RESTRICTED,
 			ALLOWED
 		}
@@ -2085,10 +2225,12 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIdentifierType constants are parsed by preparseucd.py.
 		/// It matches lines like
-		/// 	U_ID_TYPE_<Unicode Identifier_Type value name>
+		/// 	U_ID_TYPE_{Unicode Identifier_Type value name}
 		/// </remarks>
 		public enum UIdentifierType
 		{
+			/* Stable in ICU 75 */
+
 			NOT_CHARACTER,
 			DEPRECATED,
 			DEFAULT_IGNORABLE,
@@ -2290,10 +2432,10 @@ namespace Icu
 			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]);
 		}
 
-		///<summary>
+		/// <summary>
 		/// Get the general character category value for the given code point.
-		///</summary>
-		///<param name="ch">the code point to be checked</param>
+		/// </summary>
+		/// <param name="ch">the code point to be checked</param>
 		public static UCharCategory GetCharType(int ch)
 		{
 			return (UCharCategory)NativeMethods.u_charType(ch);
