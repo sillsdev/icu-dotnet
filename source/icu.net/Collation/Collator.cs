@@ -247,8 +247,6 @@ namespace Icu.Collation
 				fieldName = netInternalFieldName;
 #endif
 
-			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-
 			var fieldInfo = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 
 			Debug.Assert(fieldInfo != null,
