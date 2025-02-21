@@ -2,7 +2,6 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Icu
 {
@@ -24,7 +23,9 @@ namespace Icu
 		/// </remarks>
 		public enum UProperty
 		{
-			/*  See note !!.  Comments of the form "Binary property Dash",
+			/*  See "Note"!!! */
+
+			/*  Comments of the form "Binary property Dash",
 			"Enumerated property Script", "Double property Numeric_Value",
 			and "String property Age" are read by genpname. */
 
@@ -333,7 +334,7 @@ namespace Icu
 			/// Used in UAX #9: Unicode Bidirectional Algorithm (http://www.unicode.org/reports/tr9/)
 			/// Returns UBidiPairedBracketType values.
 			/// </summary>
-			BIDI_PAIRED_BRACKET_TYPE =0x1015,
+			BIDI_PAIRED_BRACKET_TYPE = 0x1015,
 			/// <summary>One more than the last constant for enumerated/integer Unicode properties.</summary>
 			[Obsolete("ICU 58 The numeric value may change over time, see ICU ticket #12420.")]
 			INT_LIMIT = 0x1016,
@@ -1614,7 +1615,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UGraphemeClusterBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_GCB_<Unicode Grapheme_Cluster_Break value name>
+		/// 	U_GCB_<Unicode Grapheme_Cluster_Break value name>
 		/// </remarks>
 		public enum UGraphemeClusterBreak
 		{
@@ -1666,7 +1667,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UWordBreakValues constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_WB_<Unicode Word_Break value name>
+		/// 	U_WB_<Unicode Word_Break value name>
 		/// </remarks>
 		public enum UWordBreakValues
 		{
@@ -1741,7 +1742,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: USentenceBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_SB_<Unicode Sentence_Break value name>
+		/// 	U_SB_<Unicode Sentence_Break value name>
 		/// </remarks>
 		public enum USentenceBreak
 		{
@@ -1790,7 +1791,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: ULineBreak constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_LB_<Unicode Line_Break value name>
+		/// 	U_LB_<Unicode Line_Break value name>
 		/// </remarks>
 		public enum ULineBreak
 		{
@@ -1923,7 +1924,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UNumericType constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_NT_<Unicode Numeric_Type value name>
+		/// 	U_NT_<Unicode Numeric_Type value name>
 		/// </remarks>
 		public enum UNumericType
 		{
@@ -1947,7 +1948,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UHangulSyllableType constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_HST_<Unicode Hangul_Syllable_Type value name>
+		/// 	U_HST_<Unicode Hangul_Syllable_Type value name>
 		/// </remarks>
 		public enum UHangulSyllableType
 		{
@@ -1975,7 +1976,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIndicPositionalCategory constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
+		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
 		/// </remarks>
 		public enum UIndicPositionalCategory
 		{
@@ -2003,7 +2004,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIndicPositionalCategory constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
+		/// 	U_INPC_<Unicode Indic_Positional_Category value name>
 		/// </remarks>
 		public enum UIndicSyllabicCategory
 		{
@@ -2052,7 +2053,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UVerticalOrientation constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_VO_<Unicode Vertical_Orientation value name>
+		/// 	U_VO_<Unicode Vertical_Orientation value name>
 		/// </remarks>
 		public enum UVerticalOrientation
 		{
@@ -2069,7 +2070,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIdentifierStatus constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_ID_STATUS_<Unicode Identifier_Status value name>
+		/// 	U_ID_STATUS_<Unicode Identifier_Status value name>
 		/// </remarks>
 		public enum UIdentifierStatus
 		{
@@ -2084,7 +2085,7 @@ namespace Icu
 		/// <remarks>
 		/// Note: UIdentifierType constants are parsed by preparseucd.py.
 		/// It matches lines like
- 		/// 	U_ID_TYPE_<Unicode Identifier_Type value name>
+		/// 	U_ID_TYPE_<Unicode Identifier_Type value name>
 		/// </remarks>
 		public enum UIdentifierType
 		{
@@ -2170,6 +2171,7 @@ namespace Icu
 		/// Determines whether the specified character is a letter, i.e. if code point is in the
 		/// category Lu, Ll, Lt, Lm and Lo.
 		/// </summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsLetter(int characterCode)
 		{
 			switch (GetCharType(characterCode))
@@ -2189,6 +2191,7 @@ namespace Icu
 		/// Determines whether the specified character is a mark, i.e. if code point is in the
 		/// category Mn, Me and Mc.
 		/// </summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsMark(int characterCode)
 		{
 			switch (GetCharType(characterCode))
@@ -2206,6 +2209,7 @@ namespace Icu
 		/// Determines whether the specified character is a separator, i.e. if code point is in
 		/// the category Zs, Zl and Zp.
 		/// </summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsSeparator(int characterCode)
 		{
 			switch (GetCharType(characterCode))
@@ -2231,12 +2235,14 @@ namespace Icu
 
 		/// <summary>Determines whether the specified code point is a punctuation character, as
 		/// defined by the ICU NativeMethods.u_ispunct function.</summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsPunct(int characterCode)
 		{
 			return NativeMethods.u_ispunct(characterCode);
 		}
 
 		/// <summary>Determines whether the code point has the Bidi_Mirrored property. </summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsMirrored(int characterCode)
 		{
 			return NativeMethods.u_isMirrored(characterCode);
@@ -2244,6 +2250,7 @@ namespace Icu
 
 		/// <summary>Determines whether the specified code point is a control character, as
 		/// defined by the ICU NativeMethods.u_iscntrl function.</summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsControl(int characterCode)
 		{
 			return NativeMethods.u_iscntrl(characterCode);
@@ -2260,6 +2267,7 @@ namespace Icu
 		///	<item>U_PARAGRAPH_SEPARATOR (Zp)</item>
 		///	</list>
 		/// </summary>
+		/// <param name="chr">The Unicode character to be checked.</param>
 		public static bool IsControl(string chr)
 		{
 			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsControl(chr[0]);
@@ -2267,6 +2275,7 @@ namespace Icu
 
 		/// <summary>Determines whether the specified character is a space character, as
 		/// defined by the ICU NativeMethods.u_isspace function.</summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static bool IsSpace(int characterCode)
 		{
 			return NativeMethods.u_isspace(characterCode);
@@ -2275,6 +2284,7 @@ namespace Icu
 		/// <summary>
 		///	Determines whether the specified character is a space character.
 		/// </summary>
+		/// <param name="chr">The Unicode character to be checked.</param>
 		public static bool IsSpace(string chr)
 		{
 			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]);
@@ -2284,13 +2294,15 @@ namespace Icu
 		/// Get the general character category value for the given code point.
 		///</summary>
 		///<param name="ch">the code point to be checked</param>
-		///<returns></returns>
 		public static UCharCategory GetCharType(int ch)
 		{
 			return (UCharCategory)NativeMethods.u_charType(ch);
 		}
 
-		/// <summary></summary>
+		/// <summary>
+		/// Get the numeric value for a given code point.
+		/// </summary>
+		/// <param name="characterCode">The Unicode code point to be checked.</param>
 		public static double GetNumericValue(int characterCode)
 		{
 			return NativeMethods.u_getNumericValue(characterCode);
@@ -2307,7 +2319,7 @@ namespace Icu
 		/// <para>Same as java.lang.Character.getDirectionality()</para></remarks>
 		public static UCharDirection CharDirection(int code)
 		{
-			return (UCharDirection) NativeMethods.u_charDirection(code);
+			return (UCharDirection)NativeMethods.u_charDirection(code);
 		}
 
 		/// <summary>
@@ -2330,6 +2342,7 @@ namespace Icu
 		/// <summary>
 		/// Gets the ICU display name of the specified character.
 		/// </summary>
+		/// <param name="chr">The Unicode character to be checked.</param>
 		public static string GetPrettyICUCharName(string chr)
 		{
 			if (!string.IsNullOrEmpty(chr) && chr.Length == 1)
@@ -2347,6 +2360,7 @@ namespace Icu
 		/// <summary>
 		/// Gets the raw ICU display name of the specified character code.
 		/// </summary>
+		/// <param name="code">The Unicode code point to be checked.</param>
 		public static string GetCharName(int code)
 		{
 			string name;
