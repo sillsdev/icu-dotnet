@@ -1,6 +1,5 @@
-// Copyright (c) 2022 SIL International
+// Copyright (c) 2022-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System.IO;
 using NUnit.Framework;
 

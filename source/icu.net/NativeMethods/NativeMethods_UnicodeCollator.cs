@@ -1,6 +1,5 @@
-// Copyright (c) 2013-2018 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -43,7 +42,7 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int ucol_getSortKeyDelegate(
 				RuleBasedCollator.SafeRuleBasedCollatorHandle collator,
-				[MarshalAs(UnmanagedType.LPWStr)] string source,int sourceLength,
+				[MarshalAs(UnmanagedType.LPWStr)] string source, int sourceLength,
 				[Out, MarshalAs(UnmanagedType.LPArray)] byte[] result, int resultLength);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -130,7 +129,7 @@ namespace Icu
 		/// <param name="rulesLength">The length of rules, or -1 if null-terminated.</param>
 		/// <param name="normalizationMode">The normalization mode</param>
 		/// <param name="strength">The default collation strength; can be also set in the rules</param>
-		/// <param name="parseError">A pointer to ParseError to recieve information about errors
+		/// <param name="parseError">A pointer to ParseError to receive information about errors
 		/// occurred during parsing. This argument can currently be set
 		/// to NULL, but at users own risk. Please provide a real structure.</param>
 		/// <param name="status">A pointer to an ErrorCode to receive any errors</param>

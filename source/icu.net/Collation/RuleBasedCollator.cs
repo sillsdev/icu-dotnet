@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2019 SIL International
+﻿// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -289,11 +289,11 @@ namespace Icu.Collation
 		public override object Clone()
 		{
 			var copy = new RuleBasedCollator();
-			var buffersize = 512;
+			var bufferSize = 512;
 			copy._collatorHandle = NativeMethods.ucol_safeClone(
 				_collatorHandle,
 				IntPtr.Zero,
-				ref buffersize,
+				ref bufferSize,
 				out var status);
 			try
 			{

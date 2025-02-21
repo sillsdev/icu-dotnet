@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2022 SIL International
+// Copyright (c) 2016-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;

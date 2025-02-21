@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
@@ -12,7 +12,7 @@ namespace Icu
 	public struct ParseError
 	{
 		/// <summary>
-		/// The line on which the error occured.  If the parser uses this
+		/// The line on which the error occurred.  If the parser uses this
 		 /// field, it sets it to the line number of the source text line on
 		 /// which the error appears, which will be be a value &gt;= 1.  If the
 		 /// parse does not support line numbers, the value will be &lt;= 0.
@@ -59,7 +59,7 @@ namespace Icu
 				throw new ArgumentNullException();
 			}
 
-			string result = Environment.NewLine + "At " ;
+			string result = Environment.NewLine + "At ";
 			if (Line > 0)
 			{
 				result += "Line " + Line + ' ';
