@@ -1,6 +1,5 @@
-// Copyright (c) 2018-2021 SIL International
+// Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using Icu.Normalization;
 using NUnit.Framework;
 

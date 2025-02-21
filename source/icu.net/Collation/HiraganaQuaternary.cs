@@ -1,6 +1,5 @@
-﻿// Copyright (c) 2013 SIL International
+﻿// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
-
 using System;
 
 namespace Icu.Collation

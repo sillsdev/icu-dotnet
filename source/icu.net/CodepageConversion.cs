@@ -1,6 +1,5 @@
-// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2025 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -22,7 +21,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Get the standard name for an encoding converter, accoding to some standard.
+		/// Get the standard name for an encoding converter, according to some standard.
 		/// </summary>
 		/// <param name="name">The canonical name of the converter</param>
 		/// <param name="standard">The name of the standard, e.g. "IANA"</param>

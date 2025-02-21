@@ -44,7 +44,7 @@ Global
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.StandardHeader = $1
-		$1.Text = @Copyright (c) ${Year} SIL International\nThis software is licensed under the MIT license (http://opensource.org/licenses/MIT)
+		$1.Text = @Copyright (c) ${Year} SIL Global\nThis software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 		$1.IncludeInNewFiles = True
 		StartupItem = icu.net\icu.net.csproj
 	EndGlobalSection

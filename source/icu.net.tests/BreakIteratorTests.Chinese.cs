@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+﻿// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Linq;
@@ -140,7 +140,7 @@ namespace Icu.Tests
 			new[] { 0, 0, 0, 0 })]
 		[TestCase(BreakIterator.UBreakIteratorType.WORD,
 			"你是中国人么？ 我喜欢你们的国家。",
-			new[] { 0, 2, 5, 6,	7, 8, 9, 11, 13, 14, 16, 17	},
+			new[] { 0, 2, 5, 6, 7, 8, 9, 11, 13, 14, 16, 17 },
 			new[] { 0, 400, 400, 400, 0, 0, 400, 400, 400, 400, 400, 0 })]
 		public void CanIterateForwards(BreakIterator.UBreakIteratorType type, string text, int[] expected, BreakIterator.UWordBreak[] ruleStatus)
 		{

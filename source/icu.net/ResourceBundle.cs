@@ -1,6 +1,5 @@
-// // Copyright (c) 2018 SIL International
-// // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
-
+// Copyright (c) 2018-2025 SIL Global
+// This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -93,7 +92,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Returns a string from a string resource type 
+		/// Returns a string from a string resource type
 		/// </summary>
 		/// <returns>The string that this bundle contained, or <c>string.Empty</c> if this bundle
 		/// was not just a single string. May also throw an Exception in error situations.</returns>
@@ -114,7 +113,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Return the locale ID associated with this ResourceBundle. 
+		/// Return the locale ID associated with this ResourceBundle.
 		/// </summary>
 		/// <returns>A string with the locale ID, or <c>string.Empty</c> if the resource doesn't
 		/// have a locale associated. May also throw an Exception in error situations.</returns>
@@ -171,7 +170,7 @@ namespace Icu
 			if (IsNull)
 				return string.Empty;
 
-			var resultPtr = NativeMethods.ures_getStringByKey(_ResourceBundle, key, 
+			var resultPtr = NativeMethods.ures_getStringByKey(_ResourceBundle, key,
 				out var len, out var status);
 			if (status.IsFailure())
 			{
@@ -198,7 +197,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Checks whether the resource has another element to iterate over. 
+		/// Checks whether the resource has another element to iterate over.
 		/// </summary>
 		/// <returns><c>true></c> if there are more elements, <c>false</c> if there are no more
 		/// elements</returns>
@@ -209,7 +208,7 @@ namespace Icu
 
 		/// <summary>
 		/// Returns the next resource in a given resource or <c>null</c> if there are no more
-		/// resources. 
+		/// resources.
 		/// </summary>
 		/// <returns>The next ResourceBundle, or <c>ResourceBundle.Null</c> if there are no more
 		/// resources.</returns>
@@ -270,7 +269,7 @@ namespace Icu
 
 		/// <summary>
 		/// Get all the strings this resource bundle contains.
-		/// 
+		///
 		/// Any resources inside this bundle that were *not* strings (say, other bundles) will be
 		/// skipped by this function. It will not recurse into "child" bundles, but only provide
 		/// the strings that are direct children of this bundle.
@@ -291,7 +290,7 @@ namespace Icu
 
 		/// <summary>
 		/// Get all the keyed strings this resource bundle contains.
-		/// 
+		///
 		/// Any resources inside this bundle that were *not* strings (say, other bundles) will be
 		/// skipped by this function, and any string contents that do *not* have keys will also be
 		/// skipped. (If the bundle is a "table" -- a dictionary in C# terms -- then this function
@@ -305,7 +304,7 @@ namespace Icu
 		{
 			if (IsNull)
 				yield break;
-			
+
 			ResetIterator();
 			string strValue;
 			while ((strValue = GetNextString(out var key)) != null)

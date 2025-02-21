@@ -1,4 +1,4 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -11,10 +11,10 @@ namespace Icu.Tests
 	[Category("Full ICU")]
 	public class BreakIteratorTests
 	{
-		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER, "abc", ExpectedResult = new[] { "a", "b", "c"})]
-		[TestCase(BreakIterator.UBreakIteratorType.WORD, "Aa Bb. Cc", ExpectedResult = new[] { "Aa", "Bb", "Cc"})]
-		[TestCase(BreakIterator.UBreakIteratorType.LINE, "Aa Bb. Cc", ExpectedResult = new[] { "Aa ", "Bb. ", "Cc"})]
-		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, "Aa bb. Cc 3.5 x? Y?x! Z", ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z"})]
+		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER, "abc", ExpectedResult = new[] { "a", "b", "c" })]
+		[TestCase(BreakIterator.UBreakIteratorType.WORD, "Aa Bb. Cc", ExpectedResult = new[] { "Aa", "Bb", "Cc" })]
+		[TestCase(BreakIterator.UBreakIteratorType.LINE, "Aa Bb. Cc", ExpectedResult = new[] { "Aa ", "Bb. ", "Cc" })]
+		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, "Aa bb. Cc 3.5 x? Y?x! Z", ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z" })]
 		public IEnumerable<string> Split(BreakIterator.UBreakIteratorType type, string text)
 		{
 			return BreakIterator.Split(type, "en-US", text);
@@ -102,7 +102,7 @@ namespace Icu.Tests
 		}
 
 		/// <summary>
-		/// The hypenated text case tests the difference between Word and Line
+		/// The hyphenated text case tests the difference between Word and Line
 		/// breaks described in:
 		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Line-break-Boundary
 		/// </summary>
@@ -128,7 +128,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void CreateChracterInstanceTest()
+		public void CreateCharacterInstanceTest()
 		{
 			var locale = new Locale("de-DE");
 			var text = "Good-bye, dear!";
@@ -647,10 +647,14 @@ namespace Icu.Tests
 			}
 		}
 
-		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER, ExpectedResult = new[] { "A","a"," ","b","b","."," ","C","c"," ","3",".","5"," ","x","?"," ","Y","?","x","!"," ","Z"})]
-		[TestCase(BreakIterator.UBreakIteratorType.WORD, ExpectedResult = new[] { "Aa"," ","bb","."," ","Cc"," ","3.5"," ","x","?"," ","Y","?","x","!"," ","Z"})]
-		[TestCase(BreakIterator.UBreakIteratorType.LINE, ExpectedResult = new[] { "Aa ", "bb. ", "Cc ", "3.5 ", "x? ", "Y?", "x! ", "Z"})]
-		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE, ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z"})]
+		[TestCase(BreakIterator.UBreakIteratorType.CHARACTER,
+			ExpectedResult = new[] { "A", "a", " ", "b", "b", ".", " ", "C", "c", " ", "3", ".", "5", " ", "x", "?", " ", "Y", "?", "x", "!", " ", "Z" })]
+		[TestCase(BreakIterator.UBreakIteratorType.WORD,
+			ExpectedResult = new[] { "Aa", " ", "bb", ".", " ", "Cc", " ", "3.5", " ", "x", "?", " ", "Y", "?", "x", "!", " ", "Z" })]
+		[TestCase(BreakIterator.UBreakIteratorType.LINE,
+			ExpectedResult = new[] { "Aa ", "bb. ", "Cc ", "3.5 ", "x? ", "Y?", "x! ", "Z" })]
+		[TestCase(BreakIterator.UBreakIteratorType.SENTENCE,
+			ExpectedResult = new[] { "Aa bb. ", "Cc 3.5 x? ", "Y?", "x! ", "Z" })]
 		public List<string> GetEnumerator(BreakIterator.UBreakIteratorType type)
 		{
 			using (var breakIterator = new RuleBasedBreakIterator(type, "en-US"))
