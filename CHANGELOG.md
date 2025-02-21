@@ -16,6 +16,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- In Character class, added all enums from Unicode's uchar.h that were missing:
+  UBidiPairedBracketType, UBlockCode, UEastAsianWidth, UPropertyNameChoice, UJoiningType,
+  UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
+  UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
+  UVerticalOrientation, UIdentifierStatus, UIdentifierType.
+
+### Deprecated
+
+- In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
+  UNumericType.COUNT.
+
 ## [3.0.0] - 2024-11-21
 
 ### Added
