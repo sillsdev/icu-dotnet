@@ -49,13 +49,15 @@ namespace Icu.Tests
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
-			if (IsMac)
-			{
-				SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown: macOS detected, skipping Wrapper.Cleanup");
-				NativeMethodsHelper.Reset();
-				return;
-			}
-
+			// Dummy files must be deleted BEFORE calling Wrapper.Cleanup, because Cleanup calls
+			// ResetIcuVersionInfo which re-runs GetIcuVersionInfoForNetCoreOrWindows. If the
+			// dummy libicuuc.90.dylib still existed, that call would set NativeMethods.IcuVersion=90
+			// and _IcuPath=assemblyDir, breaking subsequent ICU loads.
+			//
+			// On macOS, Wrapper.Cleanup is safe: it skips u_cleanup() and NativeLibrary.Free
+			// (both omitted to avoid dyld-destructor crashes), so the library stays in memory.
+			// ResetIcuVersionInfo then re-discovers the real ICU (Homebrew/MacPorts) or leaves
+			// IcuVersion=0 so LocateIcuLibrary runs on the next load.
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown after Wrapper.Cleanup");
