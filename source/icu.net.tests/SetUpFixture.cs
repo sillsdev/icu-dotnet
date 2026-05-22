@@ -63,10 +63,15 @@ namespace Icu.Tests
 			File.WriteAllText(DiagFile, "");  // reset log
 			DiagLog("RunBeforeAnyTests start");
 
-			AppDomain.CurrentDomain.ProcessExit += (_, _) => DiagLog("AppDomain.ProcessExit fired");
-
-			Wrapper.Init();
-			DiagLog("Wrapper.Init complete");
+			if (IsMac)
+			{
+				DiagLog("RunBeforeAnyTests: macOS detected, skipping explicit Wrapper.Init");
+			}
+			else
+			{
+				Wrapper.Init();
+				DiagLog("Wrapper.Init complete");
+			}
 
 			if (IsWindows)
 			{

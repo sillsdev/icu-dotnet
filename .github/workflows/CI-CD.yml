@@ -63,9 +63,25 @@ jobs:
       - name: Test on .NET 8.0
         run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
-      - name: Show crash diagnostics (macOS)
+      - name: Re-run .NET 8.0 with blame-crash (macOS)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-        run: cat "$RUNNER_TEMP/icu-dotnet-diag.txt" || echo "(no diag file)"
+        run: |
+          mkdir -p crash-diagnostics
+          dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults --blame-crash --diag "$RUNNER_TEMP/vstest-diag.log" || true
+          cp "$RUNNER_TEMP/icu-dotnet-diag.txt" crash-diagnostics/icu-dotnet-diag.txt 2>/dev/null || true
+          cp "$RUNNER_TEMP/vstest-diag.log" crash-diagnostics/vstest-diag.log 2>/dev/null || true
+
+      - name: Upload crash diagnostics (macOS)
+        if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        with:
+          name: Crash Diagnostics (${{matrix.os}}-${{ matrix.icu-manager }})
+          retention-days: 1
+          path: |
+            crash-diagnostics/**
+            **/*Sequence*.xml
+            **/*.dmp
+            **/*.dump
 
       - name: Test on .NET Framework 4.6.1 (Windows only)
         if: ${{ matrix.os == 'windows-latest' }}
