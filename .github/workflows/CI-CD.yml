@@ -62,7 +62,7 @@ jobs:
 
       - name: Prepare macOS diagnostics directories
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
-        run: mkdir -p crash-diagnostics/locale crash-diagnostics/collation crash-diagnostics/break crash-diagnostics/bidi crash-diagnostics/character crash-diagnostics/wrapper crash-diagnostics/messageformatter crash-diagnostics/regex crash-diagnostics/remaining crash-diagnostics/focused
+        run: mkdir -p crash-diagnostics/locale crash-diagnostics/collation crash-diagnostics/break crash-diagnostics/bidi crash-diagnostics/character crash-diagnostics/wrapper crash-diagnostics/messageformatter crash-diagnostics/regex crash-diagnostics/transliterator crash-diagnostics/timezone crash-diagnostics/remaining crash-diagnostics/focused
 
       - name: "Test on .NET 8.0 (macOS shard: Locale)"
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
@@ -96,9 +96,17 @@ jobs:
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
         run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.RegexMatcherTests" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/regex/vstest-diag.log" --results-directory "crash-diagnostics/regex/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
 
+      - name: "Test on .NET 8.0 (macOS shard: Transliterator)"
+        if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.TransliteratorTests" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/transliterator/vstest-diag.log" --results-directory "crash-diagnostics/transliterator/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
+
+      - name: "Test on .NET 8.0 (macOS shard: TimeZone)"
+        if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.TimeZoneTests" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/timezone/vstest-diag.log" --results-directory "crash-diagnostics/timezone/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
+
       - name: "Test on .NET 8.0 (macOS shard: Remaining)"
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
-        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName!~Icu.Tests.Locale&FullyQualifiedName!~Icu.Tests.Collation&FullyQualifiedName!~Icu.Tests.Break&FullyQualifiedName!~Icu.Tests.BiDi&FullyQualifiedName!~Icu.Tests.CharacterTests&FullyQualifiedName!~Icu.Tests.DllResolver&FullyQualifiedName!~Icu.Tests.IcuWrapper&FullyQualifiedName!~Icu.Tests.MessageFormatter&FullyQualifiedName!~Icu.Tests.RegexMatcherTests" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/remaining/vstest-diag.log" --results-directory "crash-diagnostics/remaining/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName!~Icu.Tests.Locale&FullyQualifiedName!~Icu.Tests.Collation&FullyQualifiedName!~Icu.Tests.Break&FullyQualifiedName!~Icu.Tests.BiDi&FullyQualifiedName!~Icu.Tests.CharacterTests&FullyQualifiedName!~Icu.Tests.DllResolver&FullyQualifiedName!~Icu.Tests.IcuWrapper&FullyQualifiedName!~Icu.Tests.MessageFormatter&FullyQualifiedName!~Icu.Tests.RegexMatcherTests&FullyQualifiedName!~Icu.Tests.TransliteratorTests&FullyQualifiedName!~Icu.Tests.TimeZoneTests" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/remaining/vstest-diag.log" --results-directory "crash-diagnostics/remaining/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
 
       - name: Focused repro for GetPrettyICUCharName (macOS, on failure)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
