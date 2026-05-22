@@ -459,10 +459,13 @@ namespace Icu
 				ResetIcuVersionInfo();
 
 #if NET6_0_OR_GREATER
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					NativeLibrary.Free(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					NativeLibrary.Free(_IcuI18NLibHandle);
+				if (!IsMac)
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuI18NLibHandle);
+				}
 #else
 				if (IsWindows)
 				{
