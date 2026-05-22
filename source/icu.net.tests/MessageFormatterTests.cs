@@ -4,6 +4,9 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
+	// Excluded on macOS: MessageFormatter.Format calls the variadic C function umsg_format,
+	// which crashes on ARM64 due to ABI mismatch (AAPCS64 varargs vs .NET fixed-slot marshaling).
+	[Platform(Exclude = "MacOsX")]
 	[TestFixture]
 	public class MessageFormatterTests
 	{
