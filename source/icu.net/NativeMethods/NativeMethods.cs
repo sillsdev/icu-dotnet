@@ -431,6 +431,19 @@ namespace Icu
 			Trace.WriteLineIf(Verbose, "icu.net: Cleanup");
 			lock (_lock)
 			{
+				// u_cleanup must be called before resetting method containers and version info.
+				// Resetting IcuVersion to 0 first causes GetMethod to look for "u_cleanup_0",
+				// which doesn't exist, so the call silently fails and NativeLibrary.Free then
+				// crashes when ICU's destructor runs against un-cleaned-up state.
+				try
+				{
+					u_cleanup();
+				}
+				catch
+				{
+					// ignore failures - can happen when running unit tests
+				}
+
 				Methods = new MethodsContainer();
 				BiDiMethods = new BiDiMethodsContainer();
 				BreakIteratorMethods = new BreakIteratorMethodsContainer();
@@ -444,15 +457,6 @@ namespace Icu
 				TransliteratorMethods = new TransliteratorMethodsContainer();
 				UnicodeSetMethods = new UnicodeSetMethodsContainer();
 				ResetIcuVersionInfo();
-
-				try
-				{
-					u_cleanup();
-				}
-				catch
-				{
-					// ignore failures - can happen when running unit tests
-				}
 
 #if NET6_0_OR_GREATER
 				if (_IcuCommonLibHandle != IntPtr.Zero)
