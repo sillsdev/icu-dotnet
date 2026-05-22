@@ -143,10 +143,13 @@ namespace Icu.Tests
 		[TearDown]
 		public void TearDown()
 		{
+			SetUpFixture.DiagLog("NativeMethodsTests.TearDown start");
+			SetUpFixture.DiagLog("NativeMethodsTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
+			SetUpFixture.DiagLog("NativeMethodsTests.TearDown after Wrapper.Cleanup");
 			DeleteDirectory(_tmpDir);
-
 			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
+			SetUpFixture.DiagLog("NativeMethodsTests.TearDown done");
 		}
 
 		internal static void DeleteDirectory(string tmpDir)

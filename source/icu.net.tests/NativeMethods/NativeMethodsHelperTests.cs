@@ -43,17 +43,23 @@ namespace Icu.Tests
 		[TearDown]
 		public void TearDown()
 		{
+			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown start");
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
+			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
+			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown after Wrapper.Cleanup");
 		}
 
 		[Test]
 		public void GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash()
 		{
+			SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before Wrapper.Cleanup");
 			Wrapper.Cleanup();
+			SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before CallGetIcuVersionInfoForNetCoreOrWindows");
 			var result = CallGetIcuVersionInfoForNetCoreOrWindows();
+			SetUpFixture.DiagLog($"GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: result={result}");
 			Assert.That(result, Is.EqualTo(Wrapper.MaxSupportedIcuVersion));
 		}
 	}

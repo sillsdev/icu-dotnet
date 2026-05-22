@@ -38,7 +38,7 @@ namespace Icu.Tests
 			Environment.GetEnvironmentVariable("RUNNER_TEMP") ?? Path.GetTempPath(),
 			"icu-dotnet-diag.txt");
 
-		private static void DiagLog(string message)
+		internal static void DiagLog(string message)
 		{
 			var line = $"[{DateTime.UtcNow:HH:mm:ss.fff}] {message}{Environment.NewLine}";
 			File.AppendAllText(DiagFile, line);
