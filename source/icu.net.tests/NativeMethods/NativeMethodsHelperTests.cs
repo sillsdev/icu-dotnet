@@ -45,7 +45,6 @@ namespace Icu.Tests
 		[TearDown]
 		public void TearDown()
 		{
-			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown start");
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
@@ -61,27 +60,17 @@ namespace Icu.Tests
 			// ResetIcuVersionInfo then re-discovers the real ICU (Homebrew/MacPorts) or leaves
 			// IcuVersion=0 so LocateIcuLibrary runs on the next load.
 			NativeMethodsHelper.Reset();
-			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
-			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown after Wrapper.Cleanup");
 		}
 
 		[Test]
 		public void GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash()
 		{
 			if (!IsMac)
-			{
-				SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before Wrapper.Cleanup");
 				Wrapper.Cleanup();
-			}
 			else
-			{
-				SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: macOS detected, skipping Wrapper.Cleanup");
 				NativeMethodsHelper.Reset();
-			}
-			SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before CallGetIcuVersionInfoForNetCoreOrWindows");
 			var result = CallGetIcuVersionInfoForNetCoreOrWindows();
-			SetUpFixture.DiagLog($"GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: result={result}");
 			Assert.That(result, Is.EqualTo(Wrapper.MaxSupportedIcuVersion));
 		}
 	}
