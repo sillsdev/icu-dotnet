@@ -49,15 +49,18 @@ namespace Icu.Tests
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
-			// Dummy files must be deleted BEFORE calling Wrapper.Cleanup, because Cleanup calls
-			// ResetIcuVersionInfo which re-runs GetIcuVersionInfoForNetCoreOrWindows. If the
-			// dummy libicuuc.90.dylib still existed, that call would set NativeMethods.IcuVersion=90
-			// and _IcuPath=assemblyDir, breaking subsequent ICU loads.
+			// Dummy files must be deleted BEFORE calling NativeMethodsHelper.Reset/Wrapper.Cleanup.
+			// NativeMethodsHelper.Reset() clears the stale v90 cache so that Wrapper.Cleanup's
+			// internal ResetIcuVersionInfo re-discovers the real ICU version instead of returning the
+			// cached version-90/assemblyDir result. Without this, subsequent ICU calls would look for
+			// versioned symbols with the wrong version number (e.g., ucal_setDefaultTimeZone_90 in a
+			// library that only exports _76), which crashes on macOS ARM64.
 			//
 			// On macOS, Wrapper.Cleanup is safe: it skips u_cleanup() and NativeLibrary.Free
 			// (both omitted to avoid dyld-destructor crashes), so the library stays in memory.
 			// ResetIcuVersionInfo then re-discovers the real ICU (Homebrew/MacPorts) or leaves
 			// IcuVersion=0 so LocateIcuLibrary runs on the next load.
+			NativeMethodsHelper.Reset();
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown after Wrapper.Cleanup");
