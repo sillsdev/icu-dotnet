@@ -33,6 +33,19 @@ namespace Icu.Tests
 			}
 		}
 
+		private static bool IsMac
+		{
+			get
+			{
+#if NETFRAMEWORK
+				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
+				return (int)Environment.OSVersion.Platform == 6;
+#else
+				return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#endif
+			}
+		}
+
 		// Use RUNNER_TEMP (set by GitHub Actions) when available so the CI step can find it.
 		private static readonly string DiagFile = Path.Combine(
 			Environment.GetEnvironmentVariable("RUNNER_TEMP") ?? Path.GetTempPath(),
@@ -70,6 +83,12 @@ namespace Icu.Tests
 			DiagLog("RunAfterAnyTests: before GC.Collect");
 			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
 			GC.WaitForPendingFinalizers();
+			if (IsMac)
+			{
+				DiagLog("RunAfterAnyTests: macOS detected, skipping Wrapper.Cleanup");
+				return;
+			}
+
 			DiagLog("RunAfterAnyTests: after GC, before Wrapper.Cleanup");
 			Wrapper.Cleanup();
 			DiagLog("RunAfterAnyTests: after Wrapper.Cleanup");

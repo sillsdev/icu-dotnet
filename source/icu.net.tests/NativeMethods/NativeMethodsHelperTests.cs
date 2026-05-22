@@ -11,6 +11,8 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NativeMethodsHelperTests
 	{
+		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
+
 		private string _filenameWindows;
 		private string _filenameLinux;
 		private string _filenameMac;
@@ -47,6 +49,13 @@ namespace Icu.Tests
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
+			if (IsMac)
+			{
+				SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown: macOS detected, skipping Wrapper.Cleanup");
+				NativeMethodsHelper.Reset();
+				return;
+			}
+
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown before Wrapper.Cleanup");
 			Wrapper.Cleanup();
 			SetUpFixture.DiagLog("NativeMethodsHelperTests.TearDown after Wrapper.Cleanup");
@@ -55,8 +64,16 @@ namespace Icu.Tests
 		[Test]
 		public void GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash()
 		{
-			SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before Wrapper.Cleanup");
-			Wrapper.Cleanup();
+			if (!IsMac)
+			{
+				SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before Wrapper.Cleanup");
+				Wrapper.Cleanup();
+			}
+			else
+			{
+				SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: macOS detected, skipping Wrapper.Cleanup");
+				NativeMethodsHelper.Reset();
+			}
 			SetUpFixture.DiagLog("GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: before CallGetIcuVersionInfoForNetCoreOrWindows");
 			var result = CallGetIcuVersionInfoForNetCoreOrWindows();
 			SetUpFixture.DiagLog($"GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash: result={result}");
