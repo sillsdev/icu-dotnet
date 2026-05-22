@@ -1,6 +1,7 @@
 // Copyright (c) 2017-2025 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
@@ -32,16 +33,27 @@ namespace Icu.Tests
 			}
 		}
 
+		// Use RUNNER_TEMP (set by GitHub Actions) when available so the CI step can find it.
+		private static readonly string DiagFile = Path.Combine(
+			Environment.GetEnvironmentVariable("RUNNER_TEMP") ?? Path.GetTempPath(),
+			"icu-dotnet-diag.txt");
+
+		private static void DiagLog(string message)
+		{
+			var line = $"[{DateTime.UtcNow:HH:mm:ss.fff}] {message}{Environment.NewLine}";
+			File.AppendAllText(DiagFile, line);
+		}
+
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
-			AppDomain.CurrentDomain.ProcessExit += (_, _) =>
-			{
-				Console.Error.WriteLine("[icu.net diag] AppDomain.ProcessExit fired");
-				Console.Error.Flush();
-			};
+			File.WriteAllText(DiagFile, "");  // reset log
+			DiagLog("RunBeforeAnyTests start");
+
+			AppDomain.CurrentDomain.ProcessExit += (_, _) => DiagLog("AppDomain.ProcessExit fired");
 
 			Wrapper.Init();
+			DiagLog("Wrapper.Init complete");
 
 			if (IsWindows)
 			{
@@ -55,15 +67,12 @@ namespace Icu.Tests
 		[OneTimeTearDown]
 		public void RunAfterAnyTests()
 		{
-			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: before GC.Collect");
-			Console.Error.Flush();
+			DiagLog("RunAfterAnyTests: before GC.Collect");
 			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
 			GC.WaitForPendingFinalizers();
-			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: after GC, before Wrapper.Cleanup");
-			Console.Error.Flush();
+			DiagLog("RunAfterAnyTests: after GC, before Wrapper.Cleanup");
 			Wrapper.Cleanup();
-			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: after Wrapper.Cleanup");
-			Console.Error.Flush();
+			DiagLog("RunAfterAnyTests: after Wrapper.Cleanup");
 		}
 	}
 }
