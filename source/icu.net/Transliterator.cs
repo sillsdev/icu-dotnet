@@ -245,43 +245,12 @@ namespace Icu
 						localizedTarget = target;
 				}
 
-				// Avoid MessageFormatter.Format here: umsg_format is variadic and crashes on macOS ARM64
-				// due to ABI mismatch (AAPCS64 varargs vs .NET's fixed-slot marshaling).
-				var displayName = FormatTransliteratorName(pattern, 2.0, localizedSource, localizedTarget);
-				if (!string.IsNullOrEmpty(displayName))
+				var displayName = MessageFormatter.Format(pattern, localeName, out var status,
+					2.0, localizedSource, localizedTarget);
+				if (status.IsSuccess())
 					return displayName + variant; // Variant is either empty string or starts with "/"
 				return transId; // If formatting fails, the transliterator's ID is still our final fallback
 			}
-		}
-
-		/// <summary>
-		/// Formats an ICU TransliteratorNamePattern without calling the variadic umsg_format.
-		/// The pattern is either a simple string with {1} and {2} placeholders, or a choice-format
-		/// string like "{0,choice,0#|1#{1}|2#{1} to {2}}" where {0} is a numeric discriminant.
-		/// </summary>
-		private static string FormatTransliteratorName(string pattern, double arg0, string arg1, string arg2)
-		{
-			const string choicePrefix = "{0,choice,";
-			if (pattern.StartsWith(choicePrefix, StringComparison.Ordinal) && pattern.EndsWith("}"))
-			{
-				var inner = pattern.Substring(choicePrefix.Length, pattern.Length - choicePrefix.Length - 1);
-				var cases = inner.Split('|');
-				var selected = string.Empty;
-				foreach (var c in cases)
-				{
-					var hash = c.IndexOf('#');
-					if (hash < 0) continue;
-					if (double.TryParse(c.Substring(0, hash).Trim(),
-						System.Globalization.NumberStyles.Any,
-						System.Globalization.CultureInfo.InvariantCulture,
-						out var limit) && limit <= arg0)
-					{
-						selected = c.Substring(hash + 1);
-					}
-				}
-				pattern = selected;
-			}
-			return pattern.Replace("{1}", arg1).Replace("{2}", arg2);
 		}
 		#endregion
 

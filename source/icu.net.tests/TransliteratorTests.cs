@@ -46,6 +46,9 @@ namespace Icu.Tests
 			Assert.That(Transliterator.GetAvailableIds(), Does.Contain("Any-Accents"));
 		}
 
+		// Excluded on macOS: GetDisplayName calls MessageFormatter.Format which invokes the
+		// variadic C function umsg_format; crashes on ARM64 due to ABI mismatch.
+		[Platform(Exclude = "MacOsX")]
 		[Test]
 		public void GetDisplayName()
 		{

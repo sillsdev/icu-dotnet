@@ -74,12 +74,16 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string.
 		/// </summary>
 		/// <returns>The user-readable string</returns>
-		/// <remarks>This method with these args is probably only useful in the context of transliterators</remarks>
+		/// <remarks>
+		/// This overload delegates to the native variadic function <c>umsg_format</c>.
+		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
+		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
+		/// Callers on macOS ARM64 must avoid this method until a non-variadic shim is available.
+		/// </remarks>
 		public string Format(double arg0, string arg1, string arg2)
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				// TODO: Route through a non-variadic native shim instead of direct umsg_format varargs.
 				length = NativeMethods.umsg_format(_Formatter, ptr, length, out var err, arg0, arg1, arg2);
 				return new Tuple<ErrorCode, int>(err, length);
 			});
@@ -89,9 +93,14 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string using the given pattern and
 		/// locale.
 		/// </summary>
-		/// <param name="pattern">Pattern used to construct object. </param>
-		/// <param name="localeId">The locale to use for formatting dates and numbers. </param>
+		/// <param name="pattern">Pattern used to construct object.</param>
+		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <returns>The user-readable string</returns>
+		/// <remarks>
+		/// Delegates to the native variadic function <c>umsg_format</c>.
+		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
+		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
+		/// </remarks>
 		public static string Format(string pattern, string localeId,
 			double arg0, string arg1, string arg2)
 		{
@@ -105,10 +114,15 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string using the given pattern and
 		/// locale.
 		/// </summary>
-		/// <param name="pattern">Pattern used to construct object. </param>
+		/// <param name="pattern">Pattern used to construct object.</param>
 		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <param name="status">If the pattern cannot be parsed, set to failure code.</param>
 		/// <returns>The user-readable string, or <c>null</c> if pattern cannot be parsed.</returns>
+		/// <remarks>
+		/// Delegates to the native variadic function <c>umsg_format</c>.
+		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
+		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
+		/// </remarks>
 		public static string Format(string pattern, string localeId, out ErrorCode status,
 			double arg0, string arg1, string arg2)
 		{
