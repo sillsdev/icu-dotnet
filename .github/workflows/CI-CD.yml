@@ -26,15 +26,19 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-22.04]
         include:
-          # MacPorts: tests the bundled-dylib path (csproj copies /opt/local/lib dylibs to output)
-          - os: macos-15
-            icu-manager: macports
           # Homebrew: tests runtime discovery via LocateIcuLibrary (no bundled dylibs)
           - os: macos-15
             icu-manager: homebrew
+          # MacPorts: tests the bundled-dylib path (csproj copies /opt/local/lib dylibs to output)
+          - os: macos-15
+            icu-manager: macports
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Install icu4c via Homebrew
+      if: ${{ matrix.icu-manager == 'homebrew' }}
+      run: brew install icu4c
+
     - name: Install MacPorts
       if: ${{ matrix.icu-manager == 'macports' }}
       uses: melusina-org/setup-macports@103eded5f10979e927bffcd6d0b86cbbdb2c3bb3 # v1.1.6
@@ -42,10 +46,6 @@ jobs:
     - name: Install icu4c via MacPorts
       if: ${{ matrix.icu-manager == 'macports' }}
       run: sudo port -v install icu
-
-    - name: Install icu4c via Homebrew
-      if: ${{ matrix.icu-manager == 'homebrew' }}
-      run: brew install icu4c
 
     - name: Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -61,11 +61,11 @@ jobs:
       run: dotnet build --configuration Release source/icu.net.sln
 
     - name: Test on .NET 8.0 (macOS)
-      if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
+      if: ${{ matrix.icu-manager == 'homebrew' || matrix.icu-manager == 'macports' }}
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
 
     - name: Test on .NET 8.0 (non-macOS)
-      if: ${{ matrix.icu-manager != 'macports' && matrix.icu-manager != 'homebrew' }}
+      if: ${{ matrix.icu-manager != 'homebrew' && matrix.icu-manager != 'macports' }}
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
     - name: Test on .NET Framework 4.6.1 (Windows only)
