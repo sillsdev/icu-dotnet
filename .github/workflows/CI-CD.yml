@@ -60,13 +60,13 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release source/icu.net.sln
 
-      - name: Test on .NET 8.0
-        run: |
-          if [[ "${{ matrix.icu-manager }}" == "macports" || "${{ matrix.icu-manager }}" == "homebrew" ]]; then
-            dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
-          else
-            dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
-          fi
+      - name: Test on .NET 8.0 (macOS)
+        if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
+
+      - name: Test on .NET 8.0 (non-macOS)
+        if: ${{ matrix.icu-manager != 'macports' && matrix.icu-manager != 'homebrew' }}
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
       - name: Re-run .NET 8.0 with blame-crash (macOS)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
