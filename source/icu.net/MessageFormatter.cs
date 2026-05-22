@@ -79,6 +79,7 @@ namespace Icu
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
+				// TODO: Route through a non-variadic native shim instead of direct umsg_format varargs.
 				length = NativeMethods.umsg_format(_Formatter, ptr, length, out var err, arg0, arg1, arg2);
 				return new Tuple<ErrorCode, int>(err, length);
 			});

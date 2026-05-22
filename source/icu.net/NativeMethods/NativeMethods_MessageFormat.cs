@@ -17,7 +17,7 @@ namespace Icu
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr umsg_openDelegate(string pattern, int patternLen,
-				string locale, out ParseError parseError, out ErrorCode status);
+				[MarshalAs(UnmanagedType.LPStr)] string locale, out ParseError parseError, out ErrorCode status);
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -27,6 +27,9 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int umsg_formatDelegate(IntPtr format, IntPtr result,
 				int resultLen, out ErrorCode status, double arg0, string arg1, string arg2);
+			// TODO: umsg_format is a variadic C API. This delegate currently relies on runtime marshaling
+			// of mixed managed arguments into varargs, which is fragile on arm64. Replace this path with
+			// a non-variadic native bridge/shim to avoid ABI-dependent crashes.
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int umsg_toPatternDelegate(IntPtr format, IntPtr result,
