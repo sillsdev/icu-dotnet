@@ -61,15 +61,19 @@ jobs:
         run: dotnet build --configuration Release source/icu.net.sln
 
       - name: Test on .NET 8.0
-        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
+        run: |
+          if [[ "${{ matrix.icu-manager }}" == "macports" || "${{ matrix.icu-manager }}" == "homebrew" ]]; then
+            dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
+          else
+            dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
+          fi
 
       - name: Re-run .NET 8.0 with blame-crash (macOS)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         run: |
           mkdir -p crash-diagnostics
-          dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults --blame-crash --diag "$RUNNER_TEMP/vstest-diag.log" || true
+          dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/vstest-diag.log" --results-directory "crash-diagnostics/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 || true
           cp "$RUNNER_TEMP/icu-dotnet-diag.txt" crash-diagnostics/icu-dotnet-diag.txt 2>/dev/null || true
-          cp "$RUNNER_TEMP/vstest-diag.log" crash-diagnostics/vstest-diag.log 2>/dev/null || true
 
       - name: Upload crash diagnostics (macOS)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
