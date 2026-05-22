@@ -35,6 +35,12 @@ namespace Icu.Tests
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
+			AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+			{
+				Console.Error.WriteLine("[icu.net diag] AppDomain.ProcessExit fired");
+				Console.Error.Flush();
+			};
+
 			Wrapper.Init();
 
 			if (IsWindows)
@@ -49,7 +55,15 @@ namespace Icu.Tests
 		[OneTimeTearDown]
 		public void RunAfterAnyTests()
 		{
+			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: before GC.Collect");
+			Console.Error.Flush();
+			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
+			GC.WaitForPendingFinalizers();
+			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: after GC, before Wrapper.Cleanup");
+			Console.Error.Flush();
 			Wrapper.Cleanup();
+			Console.Error.WriteLine("[icu.net diag] RunAfterAnyTests: after Wrapper.Cleanup");
+			Console.Error.Flush();
 		}
 	}
 }

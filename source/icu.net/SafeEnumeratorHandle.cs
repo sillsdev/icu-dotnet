@@ -25,7 +25,15 @@ namespace Icu
 #endif
 		protected override bool ReleaseHandle()
 		{
-			NativeMethods.uenum_close(handle);
+			try
+			{
+				NativeMethods.uenum_close(handle);
+			}
+			catch (Exception)
+			{
+				// Silently ignore: finalizers may run during .NET shutdown when ICU
+				// is no longer accessible.
+			}
 			handle = IntPtr.Zero;
 			return true;
 		}

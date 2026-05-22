@@ -26,7 +26,15 @@ namespace Icu
 
 			protected override bool ReleaseHandle()
 			{
-				NativeMethods.utrans_close(handle);
+				try
+				{
+					NativeMethods.utrans_close(handle);
+				}
+				catch (Exception)
+				{
+					// Silently ignore: finalizers may run during .NET shutdown when ICU
+					// is no longer accessible.
+				}
 				return true;
 			}
 		}
