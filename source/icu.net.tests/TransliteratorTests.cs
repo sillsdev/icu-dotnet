@@ -34,6 +34,9 @@ namespace Icu.Tests
 			_trans = null;
 		}
 
+		// Excluded on macOS: GetIdsAndNames calls GetDisplayName for every ID, which calls
+		// MessageFormatter.Format → umsg_format; crashes on ARM64 due to ABI mismatch.
+		[Platform(Exclude = "MacOsX")]
 		[Test]
 		public void GetIdsAndNames()
 		{

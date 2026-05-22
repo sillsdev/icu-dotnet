@@ -90,6 +90,11 @@ namespace Icu
 		/// Get the IDs and display names of all transliterators registered with ICU.
 		/// Display names will be in the locale specified by the displayLocale parameter; omit it or pass in null to use the default locale.
 		/// </summary>
+		/// <remarks>
+		/// Calls <see cref="GetDisplayName"/> for every ID, which delegates to
+		/// <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>.
+		/// On macOS ARM64 this causes a process crash — see that method for details.
+		/// </remarks>
 		public static IEnumerable<(string id, string name)> GetIdsAndNames(string displayLocale = null)
 		{
 			using (var icuEnumerator = GetEnumerator())
@@ -182,6 +187,11 @@ namespace Icu
 		/// name.</param>
 		/// <returns>A name suitable for displaying to the user in the given locale, or in English
 		/// if no translated text is present in the given locale.</returns>
+		/// <remarks>
+		/// Delegates to <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>,
+		/// which calls the variadic C function <c>umsg_format</c>.
+		/// On macOS ARM64 this causes a process crash — see that method for details.
+		/// </remarks>
 		public static string GetDisplayName(string transId, string localeName)
 		{
 			const string translitDisplayNameRBKeyPrefix = "%Translit%%";  // See RB_DISPLAY_NAME_PREFIX in translit.cpp in ICU source code
