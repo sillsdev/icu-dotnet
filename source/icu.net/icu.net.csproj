@@ -16,14 +16,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
 
-  <!-- ICU must be installed using MacPorts before this will work -->
+  <!-- Copy ICU dylibs from MacPorts when building on macOS, so tests can find them -->
   <ItemGroup>
-    <Content Include="/opt/local/lib/*.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <Content Include="/opt/local/lib/libicu*.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <!-- Also add the following to .zprofile file. It is already included in the GitHub build. -->
-  <!-- export DYLD_FALLBACK_LIBRARY_PATH="$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib" -->
 
   <ItemGroup>
     <None Include="App.config" Pack="true" PackagePath="contentFiles\any\any\$(AssemblyTitle).dll.config" />

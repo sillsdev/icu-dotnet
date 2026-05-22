@@ -198,15 +198,23 @@ namespace Icu
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
-			// Only perform this for Linux because we are using LoadLibraryEx
-			// to ensure that a library's dependencies is loaded starting from
-			// where that library is located.
 			if (IsWindows)
 				return;
 
-			var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-			Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
-			Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
+			if (IsMac)
+			{
+				var dyldLibPath = Environment.GetEnvironmentVariable("DYLD_LIBRARY_PATH");
+				Environment.SetEnvironmentVariable("DYLD_LIBRARY_PATH", $"{directory}:{dyldLibPath}");
+				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to DYLD_LIBRARY_PATH '{dyldLibPath}'");
+			}
+			else
+			{
+				// Use LD_LIBRARY_PATH on Linux to ensure library dependencies are loaded
+				// from the same location as the library itself.
+				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
+				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
+			}
 		}
 
 		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
@@ -301,6 +309,20 @@ namespace Icu
 				libraryName))
 				return true;
 
+			// On macOS, check common package manager installation directories
+			if (IsMac)
+			{
+				// Homebrew on Apple Silicon (ARM64)
+				if (CheckDirectoryForIcuBinaries("/opt/homebrew/opt/icu4c/lib", libraryName))
+					return true;
+				// Homebrew on Intel
+				if (CheckDirectoryForIcuBinaries("/usr/local/opt/icu4c/lib", libraryName))
+					return true;
+				// MacPorts
+				if (CheckDirectoryForIcuBinaries("/opt/local/lib", libraryName))
+					return true;
+			}
+
 			// Otherwise check the current directory
 			// If we don't find it here we rely on it being in the PATH somewhere...
 			return CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
@@ -390,7 +412,7 @@ namespace Icu
 					exceptionErrorMessage = $" ({exceptionErrorMessage})";
 				var errorMsg = IsWindows
 					? $"{new Win32Exception(lastError).Message}{exceptionErrorMessage}"
-					: $"{lastError}({exceptionErrorMessage})";
+					: $"{lastError}{exceptionErrorMessage}";
 #else
 				var errorMsg = IsWindows
 					? new Win32Exception(lastError).Message
