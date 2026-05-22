@@ -21,6 +21,7 @@ namespace Icu
 		// ReSharper disable once InconsistentNaming
 		// ReSharper disable once UnusedMember.Local
 		private const string Icu4c = nameof(Icu4c);
+		// \. matches a literal dot; bare . would match any character and could produce false positives.
 		private const string IcuRegexLinux = @"libicu\w+\.so\.(?<version>[0-9]{2,})(\.[0-9])*";
 		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9])*\.dll";
 		private const string IcuRegexMac = @"libicu\w+\.(?<version>[0-9]{2,})(\.[0-9])*\.dylib";

@@ -24,6 +24,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 
+### Fixed
+
+- Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
+  skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state.
+- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now searches Homebrew
+  (`/opt/homebrew/opt/icu4c/lib` on Apple Silicon, `/usr/local/opt/icu4c/lib` on Intel) and
+  MacPorts (`/opt/local/lib`) before falling back to `PATH`.
+- Fixed `DYLD_LIBRARY_PATH` not being updated on macOS when setting the ICU search directory
+  (was only updating `LD_LIBRARY_PATH`, which is ignored by macOS's dynamic linker).
+- Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS
+  (`libicu*.dylib`): unescaped `.` matched any character instead of a literal dot.
+- Fixed `umsg_open` `locale` parameter marshaling from Unicode to ANSI, correcting ICU message
+  formatting on macOS where the locale string was being passed as wide characters.
+- Fixed `SafeEnumeratorHandle` and `Transliterator.SafeTransliteratorHandle` finalizers to
+  silently swallow exceptions during .NET shutdown, when ICU may no longer be accessible.
+- Fixed `NativeMethodsHelperTests` teardown leaving a stale ICU version (from a temporary dummy
+  file) in `NativeMethods`, causing all subsequent tests in the same process to fail with
+  "Can't load ICU library (version 90)" on macOS.
+
 ### Deprecated
 
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
