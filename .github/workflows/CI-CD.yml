@@ -62,7 +62,7 @@ jobs:
 
       - name: Prepare macOS diagnostics directories
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
-        run: mkdir -p crash-diagnostics/locale crash-diagnostics/collation crash-diagnostics/break crash-diagnostics/bidi crash-diagnostics/character crash-diagnostics/wrapper crash-diagnostics/remaining crash-diagnostics/focused
+        run: mkdir -p crash-diagnostics/locale crash-diagnostics/collation crash-diagnostics/break crash-diagnostics/bidi crash-diagnostics/character crash-diagnostics/wrapper crash-diagnostics/messageformatter crash-diagnostics/remaining crash-diagnostics/focused
 
       - name: "Test on .NET 8.0 (macOS shard: Locale)"
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
@@ -88,9 +88,13 @@ jobs:
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
         run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.DllResolver|FullyQualifiedName~Icu.Tests.IcuWrapper" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/wrapper/vstest-diag.log" --results-directory "crash-diagnostics/wrapper/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
 
+      - name: "Test on .NET 8.0 (macOS shard: MessageFormatter)"
+        if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.MessageFormatter" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/messageformatter/vstest-diag.log" --results-directory "crash-diagnostics/messageformatter/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
+
       - name: "Test on .NET 8.0 (macOS shard: Remaining)"
         if: ${{ matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew' }}
-        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName!~Icu.Tests.Locale&FullyQualifiedName!~Icu.Tests.Collation&FullyQualifiedName!~Icu.Tests.Break&FullyQualifiedName!~Icu.Tests.BiDi&FullyQualifiedName!~Icu.Tests.CharacterTests&FullyQualifiedName!~Icu.Tests.DllResolver&FullyQualifiedName!~Icu.Tests.IcuWrapper" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/remaining/vstest-diag.log" --results-directory "crash-diagnostics/remaining/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
+        run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName!~Icu.Tests.Locale&FullyQualifiedName!~Icu.Tests.Collation&FullyQualifiedName!~Icu.Tests.Break&FullyQualifiedName!~Icu.Tests.BiDi&FullyQualifiedName!~Icu.Tests.CharacterTests&FullyQualifiedName!~Icu.Tests.DllResolver&FullyQualifiedName!~Icu.Tests.IcuWrapper&FullyQualifiedName!~Icu.Tests.MessageFormatter" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/remaining/vstest-diag.log" --results-directory "crash-diagnostics/remaining/test-results" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242
 
       - name: Focused repro for GetPrettyICUCharName (macOS, on failure)
         if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
@@ -104,6 +108,13 @@ jobs:
         run: |
           for i in $(seq 1 20); do
             dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.IcuWrapperTests.ConfineVersions_LoadFromDifferentDirectory_HigherVersion" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/focused/confineversions-${i}.diag.log" --results-directory "crash-diagnostics/focused/confineversions-test-results-${i}" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242 || break
+          done
+
+      - name: Focused repro for MessageFormatterTests.Format (macOS, on failure)
+        if: ${{ failure() && (matrix.icu-manager == 'macports' || matrix.icu-manager == 'homebrew') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        run: |
+          for i in $(seq 1 20); do
+            dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln --filter "FullyQualifiedName~Icu.Tests.MessageFormatterTests.Format" --blame --blame-crash --blame-crash-collect-always --blame-crash-dump-type mini --diag "crash-diagnostics/focused/messageformatter-format-${i}.diag.log" --results-directory "crash-diagnostics/focused/messageformatter-format-test-results-${i}" -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1 NUnit.RandomSeed=424242 || break
           done
 
       - name: Test on .NET 8.0 (non-macOS)
