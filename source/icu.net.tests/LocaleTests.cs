@@ -248,6 +248,7 @@ namespace Icu.Tests
 
 		[Test]
 		[Category("Full ICU")]
+		[Platform(Exclude = "MacOsX", Reason = "Native ICU crash on macOS CI while resolving display language")]
 		public void GetDisplayLanguage()
 		{
 			Locale locale = new Locale("en-US");
