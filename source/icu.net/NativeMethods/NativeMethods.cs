@@ -435,6 +435,28 @@ namespace Icu
 				// Resetting IcuVersion to 0 first causes GetMethod to look for "u_cleanup_0",
 				// which doesn't exist, so the call silently fails and NativeLibrary.Free then
 				// crashes when ICU's destructor runs against un-cleaned-up state.
+				//
+				// On macOS (NET6+): skip u_cleanup(). We never call NativeLibrary.Free on
+				// macOS either, so the library stays loaded. If u_cleanup() is called without
+				// subsequently freeing the library, macOS's dyld fires ICU's destructor at
+				// process exit against already-cleaned state → crash. Skipping u_cleanup()
+				// lets ICU's destructor run cleanly at exit. This matches pre-NET6 behavior
+				// where macOS method resolution always returned IntPtr.Zero, so u_cleanup()
+				// silently threw and was a no-op.
+#if NET6_0_OR_GREATER
+				if (!IsMac)
+				{
+					try
+					{
+						u_cleanup();
+					}
+					catch
+					{
+						// ignore failures - can happen when running unit tests
+					}
+				}
+				IsInitialized = false;
+#else
 				try
 				{
 					u_cleanup();
@@ -443,6 +465,7 @@ namespace Icu
 				{
 					// ignore failures - can happen when running unit tests
 				}
+#endif
 
 				Methods = new MethodsContainer();
 				BiDiMethods = new BiDiMethodsContainer();
