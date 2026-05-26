@@ -63,10 +63,7 @@ namespace Icu.Tests
 			Assert.GreaterOrEqual(timezones.Count(), 3);
 		}
 
-		// Excluded on macOS: System.TimeZoneInfo.Local.Id can return a POSIX-style ID
-		// (e.g. "EST5EDT" or "UTC") while ICU returns the IANA name ("America/New_York" /
-		// "Etc/GMT"), so the string comparison fails even when both represent the same zone.
-		[Platform(Exclude = "MacOsX")]
+		[Platform(Exclude = "MacOsX", Reason = "The timezone ID for UTC can come in as Universal")]
 		[Test]
 		public void GetDefaultTimeZoneTest()
 		{
