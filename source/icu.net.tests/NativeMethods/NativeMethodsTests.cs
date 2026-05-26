@@ -145,6 +145,7 @@ namespace Icu.Tests
 		{
 			Wrapper.Cleanup();
 			DeleteDirectory(_tmpDir);
+
 			Environment.SetEnvironmentVariable("PATH", _pathEnvironmentVariable);
 		}
 

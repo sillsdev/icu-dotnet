@@ -66,10 +66,7 @@ namespace Icu.Tests
 		[TearDown]
 		public void TearDown()
 		{
-			if (Platform.OperatingSystem != OperatingSystemType.MacOSX)
-			{
-				Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion, Wrapper.MaxSupportedIcuVersion);
-			}
+			Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion, Wrapper.MaxSupportedIcuVersion);
 			NativeMethodsTests.DeleteDirectory(_tmpDir);
 			_tmpDir = null;
 			Wrapper.SetPreferredIcu4cDirectory(null);

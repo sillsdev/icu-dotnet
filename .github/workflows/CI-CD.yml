@@ -61,11 +61,11 @@ jobs:
       run: dotnet build --configuration Release source/icu.net.sln
 
     - name: Test on .NET 8.0 (macOS)
-      if: ${{ matrix.icu-manager == 'homebrew' || matrix.icu-manager == 'macports' }}
+      if: ${{ matrix.os == 'macos-15' }}
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
 
     - name: Test on .NET 8.0 (non-macOS)
-      if: ${{ matrix.icu-manager != 'homebrew' && matrix.icu-manager != 'macports' }}
+      if: ${{ matrix.os != 'macos-15' }}
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
     - name: Test on .NET Framework 4.6.1 (Windows only)

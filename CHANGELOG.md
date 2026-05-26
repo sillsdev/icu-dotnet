@@ -42,9 +42,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `NativeMethodsHelperTests` teardown leaving a stale ICU version (from a temporary dummy
   file) in `NativeMethods`, causing all subsequent tests in the same process to fail with
   "Can't load ICU library (version 90)" on macOS.
-- Fixed `Transliterator.GetDisplayName` crash on macOS ARM64: replaced `MessageFormatter.Format`
-  (which calls the variadic `umsg_format` C function, crashing under AAPCS64 ABI) with a C#
-  implementation of ICU's `TransliteratorNamePattern` formatting logic.
+- Documented `MessageFormatter.Format` and `Transliterator.GetDisplayName`/`GetIdsAndNames` as
+  unsafe on macOS ARM64: all three delegate to the variadic C function `umsg_format`, which
+  crashes under AAPCS64 ABI. The affected NUnit tests are excluded on macOS pending a
+  non-variadic native shim.
 
 ### Deprecated
 
