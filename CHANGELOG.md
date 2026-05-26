@@ -28,10 +28,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state.
-- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now scans Homebrew opt directories
-  (`/opt/homebrew/opt` on Apple Silicon, `/usr/local/opt` on Intel) for any `icu4c*` folder,
-  covering both the unversioned symlink (`icu4c`) and versioned formulas (`icu4c@76`,
-  `icu4c@78`, …), then falls back to MacPorts (`/opt/local/lib`).
+- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now searches Homebrew
+  (`/opt/homebrew/opt/icu4c/lib` on Apple Silicon, `/usr/local/opt/icu4c/lib` on Intel) and
+  MacPorts (`/opt/local/lib`) before falling back to `PATH`.
 - Fixed `DYLD_LIBRARY_PATH` not being updated on macOS when setting the ICU search directory
   (was only updating `LD_LIBRARY_PATH`, which is ignored by macOS's dynamic linker).
 - Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS

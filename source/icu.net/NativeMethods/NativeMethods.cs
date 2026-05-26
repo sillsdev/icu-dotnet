@@ -312,21 +312,12 @@ namespace Icu
 			// On macOS, check common package manager installation directories
 			if (IsMac)
 			{
-				// Homebrew: check both the unversioned symlink (icu4c) and versioned formulas
-				// (icu4c@76, icu4c@78, …) because `brew install icu4c` installs a versioned
-				// formula and may not create an unversioned symlink.
-				foreach (var homebrewOpt in new[] { "/opt/homebrew/opt", "/usr/local/opt" })
-				{
-					if (!Directory.Exists(homebrewOpt))
-						continue;
-					var icuDirs = Directory.GetDirectories(homebrewOpt, "icu4c*")
-						.OrderByDescending(d => d);
-					foreach (var dir in icuDirs)
-					{
-						if (CheckDirectoryForIcuBinaries(Path.Combine(dir, "lib"), libraryName))
-							return true;
-					}
-				}
+				// Homebrew on Apple Silicon (ARM64)
+				if (CheckDirectoryForIcuBinaries("/opt/homebrew/opt/icu4c/lib", libraryName))
+					return true;
+				// Homebrew on Intel
+				if (CheckDirectoryForIcuBinaries("/usr/local/opt/icu4c/lib", libraryName))
+					return true;
 				// MacPorts
 				if (CheckDirectoryForIcuBinaries("/opt/local/lib", libraryName))
 					return true;
