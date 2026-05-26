@@ -25,10 +25,8 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-22.04]
         include:
-          # Homebrew: tests runtime discovery via LocateIcuLibrary (no bundled dylibs)
           - os: macos-15
             icu-manager: homebrew
-          # MacPorts: tests the bundled-dylib path (csproj copies /opt/local/lib dylibs to output)
           - os: macos-15
             icu-manager: macports
     runs-on: ${{ matrix.os }}

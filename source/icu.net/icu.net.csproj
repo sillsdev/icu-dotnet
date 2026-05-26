@@ -16,13 +16,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
 
-  <!-- Copy ICU dylibs from MacPorts when building on macOS, so tests can find them -->
-  <ItemGroup>
-    <Content Include="/opt/local/lib/libicu*.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
   <ItemGroup>
     <None Include="App.config" Pack="true" PackagePath="contentFiles\any\any\$(AssemblyTitle).dll.config" />
     <None Include="../../README.md" Pack="true" PackagePath="/">
