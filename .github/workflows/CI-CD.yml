@@ -22,7 +22,6 @@ jobs:
   build-and-test:
     name: "Build and Test"
     strategy:
-      fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-22.04]
         include:
