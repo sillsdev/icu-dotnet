@@ -455,7 +455,6 @@ namespace Icu
 						// ignore failures - can happen when running unit tests
 					}
 				}
-				IsInitialized = false;
 #else
 				try
 				{
@@ -466,6 +465,7 @@ namespace Icu
 					// ignore failures - can happen when running unit tests
 				}
 #endif
+				IsInitialized = false;
 
 				Methods = new MethodsContainer();
 				BiDiMethods = new BiDiMethodsContainer();
@@ -866,7 +866,6 @@ namespace Icu
 			if (Methods.u_cleanup == null)
 				Methods.u_cleanup = GetMethod<MethodsContainer.u_cleanupDelegate>(IcuCommonLibHandle, "u_cleanup");
 			Methods.u_cleanup();
-			IsInitialized = false;
 		}
 
 		/// <summary>Return the ICU data directory</summary>

@@ -62,6 +62,8 @@ jobs:
 
     - name: Test on .NET 8.0 (macOS)
       if: ${{ matrix.os == 'macos-15' }}
+      # Single worker: NativeMethods holds process-wide ICU state; parallel test workers
+      # can corrupt it (e.g. concurrent version resets mid-test).
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults NUnit.NumberOfTestWorkers=1
 
     - name: Test on .NET 8.0 (non-macOS)

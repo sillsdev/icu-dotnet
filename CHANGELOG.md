@@ -42,6 +42,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `NativeMethodsHelperTests` teardown leaving a stale ICU version (from a temporary dummy
   file) in `NativeMethods`, causing all subsequent tests in the same process to fail with
   "Can't load ICU library (version 90)" on macOS.
+- Fixed `IsInitialized` not being reset on the .NET Framework path of `Cleanup()`: it was
+  previously a side effect of `u_cleanup()` rather than an explicit step, so any code path that
+  skipped `u_cleanup()` would leave `IsInitialized = true` after cleanup. `IsInitialized = false`
+  is now set unconditionally in `Cleanup()` and removed from `u_cleanup()`.
 - Documented `MessageFormatter.Format` and `Transliterator.GetDisplayName`/`GetIdsAndNames` as
   unsafe on macOS ARM64: all three delegate to the variadic C function `umsg_format`, which
   crashes under AAPCS64 ABI. The affected NUnit tests are excluded on macOS pending a
