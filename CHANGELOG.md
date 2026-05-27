@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 
+### Fixed
+
+- Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS
+  (`libicu*.dylib`): unescaped `.` matched any character instead of a literal dot.
+
 ### Deprecated
 
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and

@@ -21,9 +21,9 @@ namespace Icu
 		// ReSharper disable once InconsistentNaming
 		// ReSharper disable once UnusedMember.Local
 		private const string Icu4c = nameof(Icu4c);
-		private const string IcuRegexLinux = @"libicu\w+.so\.(?<version>[0-9]{2,})(\.[0-9])*";
+		private const string IcuRegexLinux = @"libicu\w+\.so\.(?<version>[0-9]{2,})(\.[0-9])*";
 		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9])*\.dll";
-		private const string IcuRegexMac = @"libicu\w+.(?<version>[0-9]{2,})(\.[0-9])*.dylib";
+		private const string IcuRegexMac = @"libicu\w+\.(?<version>[0-9]{2,})(\.[0-9])*\.dylib";
 
 		private static readonly Regex IcuBinaryRegex = new ($"{IcuRegexWindows}|{IcuRegexLinux}|{IcuRegexMac}$", RegexOptions.Compiled);
 		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : Platform.OperatingSystem == OperatingSystemType.MacOSX ? "libicu*.*.dylib" : "libicu*.so.*";
