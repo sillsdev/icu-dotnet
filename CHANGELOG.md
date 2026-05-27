@@ -28,6 +28,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS
   (`libicu*.dylib`): unescaped `.` matched any character instead of a literal dot.
+- Fixed `NativeMethodsHelper` combined regex: `$` end-anchor now applies to all three
+  platform alternatives, not only the macOS branch.
+- Fixed `NativeMethodsHelper` regex patch-version segments: `(\.[0-9])*` changed to
+  `(\.[0-9]+)*` to allow multi-digit patch components.
+- Fixed `TimeZoneTests.GetTZVersionTest`: version pattern is now anchored (`^[0-9]{4}[a-z]$`)
+  so it validates the full string rather than a substring.
 
 ### Deprecated
 
