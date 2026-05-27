@@ -102,7 +102,7 @@ namespace Icu.Tests
 		{
 			var version = TimeZone.GetTZDataVersion();
 
-			Assert.True(Regex.IsMatch(version, "[0-9]{4}[a-z]"));
+			Assert.True(Regex.IsMatch(version, "^[0-9]{4}[a-z]$"));
 		}
 
 		[Test]
