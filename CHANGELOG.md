@@ -33,8 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   MacPorts (`/opt/local/lib`) before falling back to `PATH`.
 - Fixed `DYLD_LIBRARY_PATH` not being updated on macOS when setting the ICU search directory
   (was only updating `LD_LIBRARY_PATH`, which is ignored by macOS's dynamic linker).
-- Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS
-  (`libicu*.dylib`): unescaped `.` matched any character instead of a literal dot.
 - Fixed `umsg_open` `locale` parameter marshaling from Unicode to ANSI, correcting ICU message
   formatting on macOS where the locale string was being passed as wide characters.
 - Fixed `SafeEnumeratorHandle` and `Transliterator.SafeTransliteratorHandle` finalizers to
