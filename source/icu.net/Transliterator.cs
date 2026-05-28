@@ -168,12 +168,16 @@ namespace Icu
 		/// the root locale. However, the root locale's strings for transliterator display names
 		/// are ugly and not suitable for displaying to the user. Therefore, if we have to
 		/// fallback, we fallback to the "en" locale instead of the root locale.
+		/// Note that on ICU 74+, the <c>TransliteratorNamePattern</c> resource uses a deprecated
+		/// <c>choice</c> format that <c>umsg_format</c> silently ignores, so the connector word
+		/// (e.g. "to" in English) will always be in English regardless of locale.
 		/// </summary>
 		/// <param name="transId">The translator's system ID in ICU.</param>
 		/// <param name="localeName">The ICU name of the locale in which to calculate the display
 		/// name.</param>
 		/// <returns>A name suitable for displaying to the user in the given locale, or in English
-		/// if no translated text is present in the given locale.</returns>
+		/// if no translated text is present in the given locale. On ICU 74+, the connector word
+		/// between source and target script names is always the English "to".</returns>
 		public static string GetDisplayName(string transId, string localeName)
 		{
 			const string translitDisplayNameRBKeyPrefix = "%Translit%%";  // See RB_DISPLAY_NAME_PREFIX in translit.cpp in ICU source code
@@ -239,12 +243,10 @@ namespace Icu
 
 				var displayName = MessageFormatter.Format(pattern, localeName, out var status,
 					2.0, localizedSource, localizedTarget);
-				// In ICU 74+, the TransliteratorNamePattern uses a deprecated {0,choice,...} format
-				// that umsg_format silently returns empty for. Fall back to a direct construction.
 				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
 					return displayName + variant; // Variant is either empty string or starts with "/"
-				// In ICU 74+, the TransliteratorNamePattern uses a deprecated {0,choice,...} format
-				// that umsg_format silently returns empty for. Fall back to a direct construction.
+				// On ICU 74+, TransliteratorNamePattern uses a deprecated {0,choice,...} format
+				// that umsg_format silently returns empty for rather than an error.
 				return localizedSource + " to " + localizedTarget + variant;
 			}
 		}
