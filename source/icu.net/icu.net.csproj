@@ -41,7 +41,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="StoreVersion" AfterTargets="Build">
+  <Target Name="StoreVersion" AfterTargets="Build" Condition="'$(IsCrossTargetingBuild)' == 'true'">
     <MakeDir Directories="$(MSBuildThisFileDirectory)/../../output/$(Configuration)" />
     <WriteLinesToFile File="$(MSBuildThisFileDirectory)/../../output/$(Configuration)/version.txt" Lines="$(GitVersion_FullSemVer)" Overwrite="True" Condition="'$(GitVersion_FullSemVer)' != ''" />
   </Target>
