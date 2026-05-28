@@ -239,9 +239,13 @@ namespace Icu
 
 				var displayName = MessageFormatter.Format(pattern, localeName, out var status,
 					2.0, localizedSource, localizedTarget);
-				if (status.IsSuccess())
+				// In ICU 74+, the TransliteratorNamePattern uses a deprecated {0,choice,...} format
+				// that umsg_format silently returns empty for. Fall back to a direct construction.
+				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
 					return displayName + variant; // Variant is either empty string or starts with "/"
-				return transId; // If formatting fails, the transliterator's ID is still our final fallback
+				if (!string.IsNullOrEmpty(localizedSource) && !string.IsNullOrEmpty(localizedTarget))
+					return localizedSource + " to " + localizedTarget + variant;
+				return transId; // Final fallback
 			}
 		}
 		#endregion
