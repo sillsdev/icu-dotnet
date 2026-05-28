@@ -24,8 +24,8 @@ namespace Icu.Tests
 		private static void SkipIfUnreliableOnThisPlatform()
 		{
 #if !NETFRAMEWORK
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
-				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
+			var majorVersion = int.Parse(Wrapper.IcuVersion.Split('.')[0]);
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && majorVersion >= 74)
 				Assert.Ignore("umsg_format not reliable on this platform/ICU version");
 #endif
 		}
