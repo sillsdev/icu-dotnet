@@ -8,30 +8,45 @@ namespace Icu.Tests
 	[TestFixture]
 	public class MessageFormatterTests
 	{
-		private const string MessageText = "The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
+		// Choice-format pattern. Works on ICU < 74; on ICU 74+ umsg_format
+		// silently returns empty rather than an error (choice format was deprecated).
+		private const string ChoiceMessageText =
+			"The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
+
+		// Plural-format pattern. umsg_open/umsg_toPattern work on all ICU versions;
+		// umsg_format is affected by the Linux ICU 74+ varargs ABI issue.
+		private const string PluralMessageText =
+			"The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
+
+		// Skip when umsg_format produces wrong results due to the Linux ICU 74+ double-varargs
+		// ABI mismatch, or when umsg_open silently mangles the choice format (also ICU 74+).
+		// net461 only runs on Windows, so the check is unnecessary there.
+		private static void SkipIfUnreliableOnThisPlatform()
+		{
+#if !NETFRAMEWORK
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
+				Assert.Ignore("umsg_format not reliable on this platform/ICU version");
+#endif
+		}
+
+		#region choice format tests
 
 		[Test]
 		public void ToPattern()
 		{
-			using (var formatter = new MessageFormatter(MessageText, "en_US"))
+			SkipIfUnreliableOnThisPlatform();
+			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
-				Assert.That(formatter.Pattern, Is.EqualTo(MessageText));
+				Assert.That(formatter.Pattern, Is.EqualTo(ChoiceMessageText));
 			}
 		}
 
 		[Test]
 		public void Format()
 		{
-			// umsg_format double varargs are broken on Linux with ICU 74+ (wrong value read)
-			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases.
-			// net461 only runs on Windows so this check is unnecessary there.
-#if !NETFRAMEWORK
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
-				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
-				Assert.Ignore("umsg_format double varargs not reliable on this platform/ICU version");
-#endif
-
-			using (var formatter = new MessageFormatter(MessageText, "en_US"))
+			SkipIfUnreliableOnThisPlatform();
+			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
 				Assert.That(formatter.Format(2, "disk", "MyDisk"),
 					Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
@@ -41,17 +56,43 @@ namespace Icu.Tests
 		[Test]
 		public void StaticFormat()
 		{
-			// umsg_format double varargs are broken on Linux with ICU 74+ (wrong value read)
-			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases.
-			// net461 only runs on Windows so this check is unnecessary there.
-#if !NETFRAMEWORK
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
-				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
-				Assert.Ignore("umsg_format double varargs not reliable on this platform/ICU version");
-#endif
-
-			Assert.That(MessageFormatter.Format(MessageText, "en_US", 1, "disk", "MyDisk"),
+			SkipIfUnreliableOnThisPlatform();
+			Assert.That(MessageFormatter.Format(ChoiceMessageText, "en_US", 1, "disk", "MyDisk"),
 				Is.EqualTo("The disk \"MyDisk\" contains one file."));
 		}
+
+		#endregion
+
+		#region plural format tests
+
+		[Test]
+		public void PluralFormat_ToPattern()
+		{
+			using (var formatter = new MessageFormatter(PluralMessageText, "en_US"))
+			{
+				Assert.That(formatter.Pattern, Is.EqualTo(PluralMessageText));
+			}
+		}
+
+		[Test]
+		public void PluralFormat_Format()
+		{
+			SkipIfUnreliableOnThisPlatform();
+			using (var formatter = new MessageFormatter(PluralMessageText, "en_US"))
+			{
+				Assert.That(formatter.Format(2, "disk", "MyDisk"),
+					Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
+			}
+		}
+
+		[Test]
+		public void PluralFormat_StaticFormat()
+		{
+			SkipIfUnreliableOnThisPlatform();
+			Assert.That(MessageFormatter.Format(PluralMessageText, "en_US", 1, "disk", "MyDisk"),
+				Is.EqualTo("The disk \"MyDisk\" contains one file."));
+		}
+
+		#endregion
 	}
 }
