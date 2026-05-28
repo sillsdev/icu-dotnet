@@ -7,7 +7,7 @@ namespace Icu.Tests
 	[TestFixture]
 	public class MessageFormatterTests
 	{
-		private const string MessageText = "The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
+		private const string MessageText = "The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
 
 		[Test]
 		public void ToPattern()
