@@ -243,9 +243,9 @@ namespace Icu
 				// that umsg_format silently returns empty for. Fall back to a direct construction.
 				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
 					return displayName + variant; // Variant is either empty string or starts with "/"
-				if (!string.IsNullOrEmpty(localizedSource) && !string.IsNullOrEmpty(localizedTarget))
-					return localizedSource + " to " + localizedTarget + variant;
-				return transId; // Final fallback
+				// In ICU 74+, the TransliteratorNamePattern uses a deprecated {0,choice,...} format
+				// that umsg_format silently returns empty for. Fall back to a direct construction.
+				return localizedSource + " to " + localizedTarget + variant;
 			}
 		}
 		#endregion
