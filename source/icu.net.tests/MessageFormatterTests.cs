@@ -23,10 +23,13 @@ namespace Icu.Tests
 		public void Format()
 		{
 			// umsg_format double varargs are broken on Linux with ICU 74+ (wrong value read)
-			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases
+			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases.
+			// net461 only runs on Windows so this check is unnecessary there.
+#if !NETFRAMEWORK
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
 				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
 				Assert.Ignore("umsg_format double varargs not reliable on this platform/ICU version");
+#endif
 
 			using (var formatter = new MessageFormatter(MessageText, "en_US"))
 			{
@@ -39,10 +42,13 @@ namespace Icu.Tests
 		public void StaticFormat()
 		{
 			// umsg_format double varargs are broken on Linux with ICU 74+ (wrong value read)
-			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases
+			// and crash on macOS ARM64 (ABI mismatch) — skip in both cases.
+			// net461 only runs on Windows so this check is unnecessary there.
+#if !NETFRAMEWORK
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
 				string.CompareOrdinal(Wrapper.IcuVersion, "74") >= 0)
 				Assert.Ignore("umsg_format double varargs not reliable on this platform/ICU version");
+#endif
 
 			Assert.That(MessageFormatter.Format(MessageText, "en_US", 1, "disk", "MyDisk"),
 				Is.EqualTo("The disk \"MyDisk\" contains 1 items."));
