@@ -8,32 +8,39 @@ namespace Icu.Tests
 	[TestFixture]
 	public class MessageFormatterTests
 	{
-		// Choice-format pattern. Works on ICU < 74; on ICU 74+ umsg_format
-		// silently returns empty rather than an error (choice format was deprecated).
+		// Choice-format pattern. Deprecated in ICU 49.
+		// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/deprecated.html#_deprecated000322
+		// On Linux ICU 74+ umsg_format silently returns empty rather than an error.
 		private const string ChoiceMessageText =
 			"The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
 
 		// Plural-format pattern. umsg_open/umsg_toPattern work on all ICU versions;
 		// umsg_format is affected by the Linux ICU 74+ varargs ABI issue.
+		// https://github.com/dotnet/runtime/issues/48752
 		private const string PluralMessageText =
 			"The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
 
 		// Skip when umsg_format produces wrong results due to the Linux ICU 74+ double-varargs
-		// ABI mismatch, or when umsg_open silently mangles the choice format (also ICU 74+).
+		// ABI mismatch (https://github.com/dotnet/runtime/issues/48752), or when umsg_open
+		// silently mangles the choice format (also ICU 74+).
 		// net461 only runs on Windows, so the check is unnecessary there.
 		private static void SkipIfUnreliableOnThisPlatform()
 		{
 #if !NETFRAMEWORK
-			var majorVersion = int.Parse(Wrapper.IcuVersion.Split('.')[0]);
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && majorVersion >= 74)
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && IcuMajorVersionAtLeast(74))
 				Assert.Ignore("umsg_format not reliable on this platform/ICU version");
 #endif
 		}
 
+#if !NETFRAMEWORK
+		private static bool IcuMajorVersionAtLeast(int n) =>
+			int.Parse(Wrapper.IcuVersion.Split('.')[0]) >= n;
+#endif
+
 		#region choice format tests
 
 		[Test]
-		public void ToPattern()
+		public void ChoiceFormat_ToPattern()
 		{
 			SkipIfUnreliableOnThisPlatform();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
@@ -43,7 +50,7 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void Format()
+		public void ChoiceFormat_Format()
 		{
 			SkipIfUnreliableOnThisPlatform();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
@@ -54,7 +61,21 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void StaticFormat()
+		[Platform(Include = "Linux")]
+		public void ChoiceFormat_Format_EmptyOnLinuxIcu74Plus()
+		{
+#if !NETFRAMEWORK
+			if (!IcuMajorVersionAtLeast(74))
+				Assert.Ignore("Behavior only occurs on Linux ICU 74+");
+			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
+			{
+				Assert.That(formatter.Format(2, "disk", "MyDisk"), Is.Null.Or.Empty);
+			}
+#endif
+		}
+
+		[Test]
+		public void ChoiceFormat_StaticFormat()
 		{
 			SkipIfUnreliableOnThisPlatform();
 			Assert.That(MessageFormatter.Format(ChoiceMessageText, "en_US", 1, "disk", "MyDisk"),
