@@ -45,13 +45,18 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          8.0.x
+          10.0.x
 
     - name: Build
       run: dotnet build --configuration Release source/icu.net.sln
 
     - name: Test on .NET 8.0
       run: dotnet test -p:TargetFramework=net8.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
+
+    - name: Test on .NET 10.0
+      run: dotnet test -p:TargetFramework=net10.0 --configuration Release --no-build source/icu.net.sln -- NUnit.TestOutputXml=TestResults
 
     - name: Test on .NET Framework 4.6.1 (Windows only)
       if: ${{ matrix.os == 'windows-latest' }}

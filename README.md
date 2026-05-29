@@ -24,7 +24,7 @@ Similarly, it might be beneficial to call `Icu.Wrapper.Cleanup()` before exiting
 
 Sample code:
 
-``` csharp
+```csharp
     static class Program
     {
         public static void Main(string[] args)
@@ -40,7 +40,7 @@ Sample code:
 
 ## Building
 
-To build the current version of icu-dotnet you'll need .NET 8.0 installed.
+To build the current version of icu-dotnet you'll need .NET 8.0 or .NET 10.0 installed.
 
 icu-dotnet can be built from the command line as well as Visual Studio or JetBrains Rider.
 
@@ -97,7 +97,7 @@ RUN apt-get update \
 ### Linux
 
 icu-dotnet links with any installed version of ICU shared objects. It is
-recommended to install the version provided by the distribution.  As of 2016,
+recommended to install the version provided by the distribution. As of 2016,
 Ubuntu Trusty uses version ICU 52 and Ubuntu Xenial 55.
 
 If the version provided by the Linux distribution doesn't match your needs,
