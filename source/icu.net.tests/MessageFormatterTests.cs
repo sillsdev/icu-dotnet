@@ -14,6 +14,11 @@ namespace Icu.Tests
 		private const string ChoiceMessageText =
 			"The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
 
+		// The actual TransliteratorNamePattern stored in ICUDATA-translit. Its 0# branch is
+		// empty, so when the double arg is read as 0 on Linux ICU 74+, umsg_format returns "".
+		// This is why Transliterator.GetDisplayName needs the IsNullOrEmpty fallback.
+		private const string TransliteratorNamePattern = "{0,choice,0#|1#{1}|2#{1} to {2}}";
+
 		// Plural-format pattern. umsg_open/umsg_toPattern work on all ICU versions;
 		// umsg_format is affected by the Linux ICU 74+ varargs ABI issue.
 		// https://github.com/dotnet/runtime/issues/48752
@@ -72,6 +77,22 @@ namespace Icu.Tests
 				// Double arg is read as 0 due to varargs ABI mismatch; choice format picks "0#no files".
 				Assert.That(formatter.Format(2, "disk", "MyDisk"),
 					Is.EqualTo("The disk \"MyDisk\" contains no files."));
+			}
+#endif
+		}
+
+		[Test]
+		[Platform(Include = "Linux")]
+		public void ChoiceFormat_Format_TransliteratorPatternEmptyOnLinuxIcu74Plus()
+		{
+#if !NETFRAMEWORK
+			if (!IcuMajorVersionAtLeast(74))
+				Assert.Ignore("Behavior only occurs on Linux ICU 74+");
+			using (var formatter = new MessageFormatter(TransliteratorNamePattern, "en_US"))
+			{
+				// Double arg is read as 0; the 0# branch is empty, so the result is "".
+				// This is why Transliterator.GetDisplayName uses the IsNullOrEmpty fallback.
+				Assert.That(formatter.Format(2, "Armenian", "Latin"), Is.Empty);
 			}
 #endif
 		}

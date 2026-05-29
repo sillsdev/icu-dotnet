@@ -245,8 +245,9 @@ namespace Icu
 					2.0, localizedSource, localizedTarget);
 				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
 					return displayName + variant; // Variant is either empty string or starts with "/"
-				// On ICU 74+, TransliteratorNamePattern uses a deprecated {0,choice,...} format
-				// that umsg_format silently returns empty for rather than an error.
+				// On Linux ICU 74+, a varargs ABI mismatch causes umsg_format to read the double
+				// arg as 0, which produces empty output for this pattern. The IsNullOrEmpty check
+				// above catches that; the fallback constructs the name directly.
 				return localizedSource + " to " + localizedTarget + variant;
 			}
 		}
