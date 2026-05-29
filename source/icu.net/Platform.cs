@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2025 SIL Global
+// Copyright (c) 2013-2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 #if NET || NETSTANDARD
