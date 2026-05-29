@@ -10,7 +10,7 @@ namespace Icu.Tests
 	{
 		// Choice-format pattern. Deprecated in ICU 49.
 		// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/deprecated.html#_deprecated000322
-		// On Linux ICU 74+ umsg_format silently returns empty rather than an error.
+		// On Linux ICU 74+ the double argument is read as 0 (varargs ABI mismatch), producing wrong output.
 		private const string ChoiceMessageText =
 			"The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
 
@@ -62,14 +62,16 @@ namespace Icu.Tests
 
 		[Test]
 		[Platform(Include = "Linux")]
-		public void ChoiceFormat_Format_EmptyOnLinuxIcu74Plus()
+		public void ChoiceFormat_Format_WrongOutputOnLinuxIcu74Plus()
 		{
 #if !NETFRAMEWORK
 			if (!IcuMajorVersionAtLeast(74))
 				Assert.Ignore("Behavior only occurs on Linux ICU 74+");
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
-				Assert.That(formatter.Format(2, "disk", "MyDisk"), Is.Null.Or.Empty);
+				// Double arg is read as 0 due to varargs ABI mismatch; choice format picks "0#no files".
+				Assert.That(formatter.Format(2, "disk", "MyDisk"),
+					Is.EqualTo("The disk \"MyDisk\" contains no files."));
 			}
 #endif
 		}
