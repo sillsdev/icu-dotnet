@@ -317,8 +317,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Assembly marked as CLSCompliant (#33)
-- additionally look in lib/x86 and lib/x64 as well as lib/win-_
-  and lib/linux-_ for ICU binaries (#51)
+- additionally look in lib/x86 and lib/x64 as well as lib/win-\*
+  and lib/linux-\* for ICU binaries (#51)
 - Add minimal support of regular expressions (#32, MURATA Makoto)
 
 ## [2.1.0] - 2017-03-17
