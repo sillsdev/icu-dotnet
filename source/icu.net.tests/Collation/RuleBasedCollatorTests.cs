@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2025 SIL Global
+﻿// Copyright (c) 2013-2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace Icu.Tests.Collation
 		public void Clone()
 		{
 			using (var danishCollator = new RuleBasedCollator(DanishRules))
-			using (var danishCollator2 = (RuleBasedCollator) danishCollator.Clone())
+			using (var danishCollator2 = (RuleBasedCollator)danishCollator.Clone())
 			{
 				Assert.That(danishCollator2.Compare("wa", "vb"), Is.EqualTo(-1));
 			}

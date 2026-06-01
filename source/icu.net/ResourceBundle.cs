@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2025 SIL Global
+// Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Icu
 	/// ResourceBundle that will never throw an exception but always returns an "empty" value
 	/// whenever queried. This will make client code much cleaner to write.
 	/// </summary>
-	public class ResourceBundle: IDisposable
+	public class ResourceBundle : IDisposable
 	{
 		private IntPtr _ResourceBundle { get; set; }
 
