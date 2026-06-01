@@ -301,7 +301,11 @@ namespace Icu
 				libraryName))
 				return true;
 
-			// On macOS, check common package manager installation directories
+			// Check the current directory; bundled ICU takes priority over system installs
+			if (CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName))
+				return true;
+
+			// On macOS, fall back to common package manager installation directories
 			if (IsMac)
 			{
 				// Homebrew on Apple Silicon (ARM64)
@@ -315,9 +319,7 @@ namespace Icu
 					return true;
 			}
 
-			// Otherwise check the current directory
-			// If we don't find it here we rely on it being in the PATH somewhere...
-			return CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
+			return false;
 		}
 
 		private static IntPtr LoadIcuLibrary(string libraryName)

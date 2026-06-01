@@ -28,9 +28,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state.
-- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now searches Homebrew
+- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now falls back to Homebrew
   (`/opt/homebrew/opt/icu4c/lib` on Apple Silicon, `/usr/local/opt/icu4c/lib` on Intel) and
-  MacPorts (`/opt/local/lib`) before falling back to `PATH`.
+  MacPorts (`/opt/local/lib`) when no bundled ICU is found. Bundled ICU (in the assembly
+  directory or `runtimes/` subdirectories) is always preferred over system installations.
 - Removed no-op `LD_LIBRARY_PATH` manipulation on macOS. (Changing it to the mac-specific
   `DYLD_LIBRARY_PATH` would also be a no-op, because SIP strips all `DYLD_*` variables from
   protected processes at launch, so setting it at runtime has no effect.)
