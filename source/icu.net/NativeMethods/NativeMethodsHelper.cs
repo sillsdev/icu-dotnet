@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2025 SIL Global
+// Copyright (c) 2013-2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Diagnostics;
@@ -25,7 +25,7 @@ namespace Icu
 		private const string IcuRegexWindows = @"icu\w+(?<version>[0-9]{2,})(\.[0-9]+)*\.dll";
 		private const string IcuRegexMac = @"libicu\w+\.(?<version>[0-9]{2,})(\.[0-9]+)*\.dylib";
 
-		private static readonly Regex IcuBinaryRegex = new ($"(?:{IcuRegexWindows}|{IcuRegexLinux}|{IcuRegexMac})$", RegexOptions.Compiled);
+		private static readonly Regex IcuBinaryRegex = new($"(?:{IcuRegexWindows}|{IcuRegexLinux}|{IcuRegexMac})$", RegexOptions.Compiled);
 		private static readonly string IcuSearchPattern = Platform.OperatingSystem == OperatingSystemType.Windows ? "icu*.dll" : Platform.OperatingSystem == OperatingSystemType.MacOSX ? "libicu*.*.dylib" : "libicu*.so.*";
 		private static readonly string NugetPackageDirectory = GetDefaultPackageDirectory(Platform.OperatingSystem);
 
