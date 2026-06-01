@@ -82,12 +82,14 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		[Platform(Include = "Linux")]
-		public void ChoiceFormat_Format_WrongOutputOnLinuxIcu74Plus()
+		[Platform(Include = "Linux,MacOsX")]
+		public void ChoiceFormat_Format_WrongOutputOnUnixIcu74Plus()
 		{
 #if !NETFRAMEWORK
+			if (IsArm64)
+				Assert.Ignore("ARM64 throws PlatformNotSupportedException instead of wrong output");
 			if (!IcuMajorVersionAtLeast(74))
-				Assert.Ignore("Behavior only occurs on Linux ICU 74+");
+				Assert.Ignore("Behavior only occurs on Unix ICU 74+");
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
 				// Double arg is read as 0 due to varargs ABI mismatch; choice format picks "0#no files".
@@ -98,12 +100,14 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		[Platform(Include = "Linux")]
-		public void ChoiceFormat_Format_TransliteratorPatternEmptyOnLinuxIcu74Plus()
+		[Platform(Include = "Linux,MacOsX")]
+		public void ChoiceFormat_Format_TransliteratorPatternEmptyOnUnixIcu74Plus()
 		{
 #if !NETFRAMEWORK
+			if (IsArm64)
+				Assert.Ignore("ARM64 throws PlatformNotSupportedException instead of wrong output");
 			if (!IcuMajorVersionAtLeast(74))
-				Assert.Ignore("Behavior only occurs on Linux ICU 74+");
+				Assert.Ignore("Behavior only occurs on Unix ICU 74+");
 			using (var formatter = new MessageFormatter(TransliteratorNamePattern, "en_US"))
 			{
 				// Double arg is read as 0; the 0# branch is empty, so the result is "".
