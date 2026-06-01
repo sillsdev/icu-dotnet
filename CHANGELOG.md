@@ -38,9 +38,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   formatting on macOS where the locale string was being passed as wide characters.
 - Fixed `SafeEnumeratorHandle` and `Transliterator.SafeTransliteratorHandle` finalizers to
   silently swallow exceptions during .NET shutdown, when ICU may no longer be accessible.
-- Fixed `NativeMethodsHelperTests` teardown leaving a stale ICU version (from a temporary dummy
-  file) in `NativeMethods`, causing all subsequent tests in the same process to fail with
-  "Can't load ICU library (version 90)".
+- Fixed test teardown instability on macOS: `NativeMethodsHelperTests` now deletes dummy ICU
+  files before resetting version state (preventing "Can't load ICU library (version 90)" failures
+  in subsequent tests); `IcuWrapperTests` now skips `ConfineIcuVersions` on macOS, where
+  `NativeLibrary.Free` is omitted so the library stays resident and version constraints must not
+  be reset against it.
 - Fixed `IsInitialized` not being reset on the .NET Framework path of `Cleanup()`: it was
   previously a side effect of `u_cleanup()` rather than an explicit step, so any code path that
   skipped `u_cleanup()` would leave `IsInitialized = true` after cleanup. `IsInitialized = false`
