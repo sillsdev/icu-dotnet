@@ -31,8 +31,11 @@ namespace Icu.Tests
 		[OneTimeTearDown]
 		public void RunAfterAnyTests()
 		{
+			// Flush SafeHandle finalizers before Cleanup unloads ICU, so ReleaseHandle
+			// calls don't fire against an already-unloaded library.
 			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
 			GC.WaitForPendingFinalizers();
+
 			if (!IsMac)
 			{
 				Wrapper.Cleanup();

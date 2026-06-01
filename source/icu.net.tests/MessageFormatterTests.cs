@@ -27,11 +27,13 @@ namespace Icu.Tests
 		private const string PluralMessageText =
 			"The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
 
-		// Skip when umsg_format produces wrong results due to the non-ARM64 Unix ICU 74+
-		// double-varargs ABI mismatch (https://github.com/dotnet/runtime/issues/48752), or when
-		// umsg_open silently mangles the choice format (also ICU 74+).
+		// Skip when umsg_format produces wrong results due to the Unix ICU 74+ double-varargs
+		// ABI mismatch (https://github.com/dotnet/runtime/issues/48752), or when umsg_open
+		// silently mangles the choice format (also ICU 74+).
+		// ARM64 is not skipped: it throws an exception rather than wrong output, and is handled
+		// separately in each test.
 		// net461 only runs on Windows, so the check is unnecessary there.
-		private static void SkipIfIcu74PlusOnNonArm64Unix()
+		private static void SkipIfUnreliableOnThisPlatform()
 		{
 #if !NETFRAMEWORK
 			if (IcuMajorVersionAtLeast(74) && !IsArm64 &&
@@ -56,7 +58,7 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_ToPattern()
 		{
-			SkipIfIcu74PlusOnNonArm64Unix();
+			SkipIfUnreliableOnThisPlatform();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
 				Assert.That(formatter.Pattern, Is.EqualTo(ChoiceMessageText));
@@ -66,7 +68,7 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_Format()
 		{
-			SkipIfIcu74PlusOnNonArm64Unix();
+			SkipIfUnreliableOnThisPlatform();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
 #if !NETFRAMEWORK
@@ -114,7 +116,7 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_StaticFormat()
 		{
-			SkipIfIcu74PlusOnNonArm64Unix();
+			SkipIfUnreliableOnThisPlatform();
 #if !NETFRAMEWORK
 			if (IsArm64)
 				Assert.Throws<PlatformNotSupportedException>(() =>
@@ -141,7 +143,7 @@ namespace Icu.Tests
 		[Test]
 		public void PluralFormat_Format()
 		{
-			SkipIfIcu74PlusOnNonArm64Unix();
+			SkipIfUnreliableOnThisPlatform();
 			using (var formatter = new MessageFormatter(PluralMessageText, "en_US"))
 			{
 #if !NETFRAMEWORK
@@ -157,7 +159,7 @@ namespace Icu.Tests
 		[Test]
 		public void PluralFormat_StaticFormat()
 		{
-			SkipIfIcu74PlusOnNonArm64Unix();
+			SkipIfUnreliableOnThisPlatform();
 #if !NETFRAMEWORK
 			if (IsArm64)
 				Assert.Throws<PlatformNotSupportedException>(() =>
