@@ -198,23 +198,15 @@ namespace Icu
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
-			if (IsWindows)
+			if (IsWindows || IsMac)
 				return;
 
-			if (IsMac)
-			{
-				var dyldLibPath = Environment.GetEnvironmentVariable("DYLD_LIBRARY_PATH");
-				Environment.SetEnvironmentVariable("DYLD_LIBRARY_PATH", $"{directory}:{dyldLibPath}");
-				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to DYLD_LIBRARY_PATH '{dyldLibPath}'");
-			}
-			else
-			{
-				// Use LD_LIBRARY_PATH on Linux to ensure library dependencies are loaded
-				// from the same location as the library itself.
-				var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
-				Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
-				Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
-			}
+			// ld.so re-reads LD_LIBRARY_PATH from the live environment at each dlopen call,
+			// so setting it here before NativeLibrary.Load is effective on Linux. This ensures
+			// transitive dependencies are found in the same directory as the primary library.
+			var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
+			Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
+			Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
 		}
 
 		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
