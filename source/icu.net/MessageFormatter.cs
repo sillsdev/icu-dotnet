@@ -74,12 +74,8 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string.
 		/// </summary>
 		/// <returns>The user-readable string</returns>
-		/// <remarks>
-		/// This overload delegates to the native variadic function <c>umsg_format</c>.
-		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
-		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
-		/// Callers on macOS ARM64 must avoid this method until a non-variadic shim is available.
-		/// </remarks>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64 due to ABI mismatch
+		/// between .NET's fixed-slot P/Invoke marshaling and the variadic C calling convention.</exception>
 		public string Format(double arg0, string arg1, string arg2)
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
@@ -96,11 +92,8 @@ namespace Icu
 		/// <param name="pattern">Pattern used to construct object.</param>
 		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <returns>The user-readable string</returns>
-		/// <remarks>
-		/// Delegates to the native variadic function <c>umsg_format</c>.
-		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
-		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
-		/// </remarks>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64 due to ABI mismatch
+		/// between .NET's fixed-slot P/Invoke marshaling and the variadic C calling convention.</exception>
 		public static string Format(string pattern, string localeId,
 			double arg0, string arg1, string arg2)
 		{
@@ -118,11 +111,8 @@ namespace Icu
 		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <param name="status">If the pattern cannot be parsed, set to failure code.</param>
 		/// <returns>The user-readable string, or <c>null</c> if pattern cannot be parsed.</returns>
-		/// <remarks>
-		/// Delegates to the native variadic function <c>umsg_format</c>.
-		/// On macOS ARM64 this causes a process crash due to ABI mismatch between .NET's
-		/// fixed-slot P/Invoke marshaling and the AAPCS64 variadic calling convention.
-		/// </remarks>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64 due to ABI mismatch
+		/// between .NET's fixed-slot P/Invoke marshaling and the variadic C calling convention.</exception>
 		public static string Format(string pattern, string localeId, out ErrorCode status,
 			double arg0, string arg1, string arg2)
 		{

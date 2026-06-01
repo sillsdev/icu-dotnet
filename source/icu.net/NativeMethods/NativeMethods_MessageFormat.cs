@@ -65,6 +65,8 @@ namespace Icu
 		/// <summary/>
 		public static int umsg_format(IntPtr format, IntPtr result, int resultLen, out ErrorCode status, double arg0, string arg1, string arg2)
 		{
+			if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+				throw new PlatformNotSupportedException("umsg_format is not supported on ARM64 due to ABI mismatch with the variadic C calling convention.");
 			if (MessageFormatMethods.umsg_format == null)
 				MessageFormatMethods.umsg_format = GetMethod<MessageFormatMethodsContainer.umsg_formatDelegate>(IcuI18NLibHandle, nameof(umsg_format), true);
 			return MessageFormatMethods.umsg_format(format, result, resultLen, out status, arg0, arg1, arg2);

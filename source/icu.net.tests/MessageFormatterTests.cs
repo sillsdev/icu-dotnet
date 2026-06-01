@@ -1,44 +1,50 @@
 // Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+using System;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace Icu.Tests
 {
-	// Excluded on macOS: MessageFormatter.Format calls the variadic C function umsg_format,
-	// which crashes on ARM64 due to ABI mismatch (AAPCS64 varargs vs .NET fixed-slot marshaling).
-	[Platform(Exclude = "MacOsX")]
 	[TestFixture]
 	public class MessageFormatterTests
 	{
 		// Choice-format pattern. Deprecated in ICU 49.
 		// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/deprecated.html#_deprecated000322
-		// On Linux ICU 74+ the double argument is read as 0 (varargs ABI mismatch), producing wrong output.
+		// On non-ARM64 Unix ICU 74+ the double argument is read as 0 (varargs ABI mismatch),
+		// producing wrong output.
 		private const string ChoiceMessageText =
 			"The {1} \"{2}\" contains {0,choice,0#no files|1#one file|1<{0,number} files}.";
 
 		// The actual TransliteratorNamePattern stored in ICUDATA-translit. Its 0# branch is
-		// empty, so when the double arg is read as 0 on Linux ICU 74+, umsg_format returns "".
-		// This is why Transliterator.GetDisplayName needs the IsNullOrEmpty fallback.
+		// empty, so when the double arg is read as 0 on non-ARM64 Unix ICU 74+, umsg_format
+		// returns "". Thus Transliterator.GetDisplayName needs the IsNullOrEmpty fallback.
 		private const string TransliteratorNamePattern = "{0,choice,0#|1#{1}|2#{1} to {2}}";
 
 		// Plural-format pattern. umsg_open/umsg_toPattern work on all ICU versions;
-		// umsg_format is affected by the Linux ICU 74+ varargs ABI issue.
+		// umsg_format is affected by the non-ARM64 Unix ICU 74+ varargs ABI issue.
 		// https://github.com/dotnet/runtime/issues/48752
 		private const string PluralMessageText =
 			"The {1} \"{2}\" contains {0,plural,=0{no files}=1{one file}other{{0,number} files}}.";
 
-		// Skip when umsg_format produces wrong results due to the Linux ICU 74+ double-varargs
-		// ABI mismatch (https://github.com/dotnet/runtime/issues/48752), or when umsg_open
-		// silently mangles the choice format (also ICU 74+).
+		// Skip when umsg_format produces wrong results due to the non-ARM64 Unix ICU 74+
+		// double-varargs ABI mismatch (https://github.com/dotnet/runtime/issues/48752), or when
+		// umsg_open silently mangles the choice format (also ICU 74+).
 		// net461 only runs on Windows, so the check is unnecessary there.
-		private static void SkipIfUnreliableOnThisPlatform()
+		private static void SkipIfIcu74PlusOnNonArm64Unix()
 		{
 #if !NETFRAMEWORK
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && IcuMajorVersionAtLeast(74))
+			if (IcuMajorVersionAtLeast(74) && !IsArm64 &&
+				(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+					RuntimeInformation.IsOSPlatform(OSPlatform.OSX)))
 				Assert.Ignore("umsg_format not reliable on this platform/ICU version");
 #endif
 		}
+
+#if !NETFRAMEWORK
+		private static bool IsArm64 =>
+			RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+#endif
 
 #if !NETFRAMEWORK
 		private static bool IcuMajorVersionAtLeast(int n) =>
@@ -50,7 +56,7 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_ToPattern()
 		{
-			SkipIfUnreliableOnThisPlatform();
+			SkipIfIcu74PlusOnNonArm64Unix();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
 				Assert.That(formatter.Pattern, Is.EqualTo(ChoiceMessageText));
@@ -60,11 +66,16 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_Format()
 		{
-			SkipIfUnreliableOnThisPlatform();
+			SkipIfIcu74PlusOnNonArm64Unix();
 			using (var formatter = new MessageFormatter(ChoiceMessageText, "en_US"))
 			{
-				Assert.That(formatter.Format(2, "disk", "MyDisk"),
-					Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
+#if !NETFRAMEWORK
+				if (IsArm64)
+					Assert.Throws<PlatformNotSupportedException>(() => formatter.Format(2, "disk", "MyDisk"));
+				else
+#endif
+					Assert.That(formatter.Format(2, "disk", "MyDisk"),
+						Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
 			}
 		}
 
@@ -103,9 +114,15 @@ namespace Icu.Tests
 		[Test]
 		public void ChoiceFormat_StaticFormat()
 		{
-			SkipIfUnreliableOnThisPlatform();
-			Assert.That(MessageFormatter.Format(ChoiceMessageText, "en_US", 1, "disk", "MyDisk"),
-				Is.EqualTo("The disk \"MyDisk\" contains one file."));
+			SkipIfIcu74PlusOnNonArm64Unix();
+#if !NETFRAMEWORK
+			if (IsArm64)
+				Assert.Throws<PlatformNotSupportedException>(() =>
+					MessageFormatter.Format(ChoiceMessageText, "en_US", 1, "disk", "MyDisk"));
+			else
+#endif
+				Assert.That(MessageFormatter.Format(ChoiceMessageText, "en_US", 1, "disk", "MyDisk"),
+					Is.EqualTo("The disk \"MyDisk\" contains one file."));
 		}
 
 		#endregion
@@ -124,20 +141,31 @@ namespace Icu.Tests
 		[Test]
 		public void PluralFormat_Format()
 		{
-			SkipIfUnreliableOnThisPlatform();
+			SkipIfIcu74PlusOnNonArm64Unix();
 			using (var formatter = new MessageFormatter(PluralMessageText, "en_US"))
 			{
-				Assert.That(formatter.Format(2, "disk", "MyDisk"),
-					Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
+#if !NETFRAMEWORK
+				if (IsArm64)
+					Assert.Throws<PlatformNotSupportedException>(() => formatter.Format(2, "disk", "MyDisk"));
+				else
+#endif
+					Assert.That(formatter.Format(2, "disk", "MyDisk"),
+						Is.EqualTo("The disk \"MyDisk\" contains 2 files."));
 			}
 		}
 
 		[Test]
 		public void PluralFormat_StaticFormat()
 		{
-			SkipIfUnreliableOnThisPlatform();
-			Assert.That(MessageFormatter.Format(PluralMessageText, "en_US", 1, "disk", "MyDisk"),
-				Is.EqualTo("The disk \"MyDisk\" contains one file."));
+			SkipIfIcu74PlusOnNonArm64Unix();
+#if !NETFRAMEWORK
+			if (IsArm64)
+				Assert.Throws<PlatformNotSupportedException>(() =>
+					MessageFormatter.Format(PluralMessageText, "en_US", 1, "disk", "MyDisk"));
+			else
+#endif
+				Assert.That(MessageFormatter.Format(PluralMessageText, "en_US", 1, "disk", "MyDisk"),
+					Is.EqualTo("The disk \"MyDisk\" contains one file."));
 		}
 
 		#endregion

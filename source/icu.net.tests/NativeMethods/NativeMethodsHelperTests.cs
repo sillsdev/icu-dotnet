@@ -53,7 +53,7 @@ namespace Icu.Tests
 			// internal ResetIcuVersionInfo re-discovers the real ICU version instead of returning the
 			// cached version-90/assemblyDir result. Without this, subsequent ICU calls would look for
 			// versioned symbols with the wrong version number (e.g., ucal_setDefaultTimeZone_90 in a
-			// library that only exports _76), which crashes on macOS ARM64.
+			// library that only exports _76), which crashes on Unix.
 			//
 			// On macOS, Wrapper.Cleanup is safe: it skips u_cleanup() and NativeLibrary.Free
 			// (both omitted to avoid dyld-destructor crashes), so the library stays in memory.

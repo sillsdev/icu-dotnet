@@ -31,23 +31,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed ICU library discovery on macOS: `LocateIcuLibrary` now searches Homebrew
   (`/opt/homebrew/opt/icu4c/lib` on Apple Silicon, `/usr/local/opt/icu4c/lib` on Intel) and
   MacPorts (`/opt/local/lib`) before falling back to `PATH`.
-- Fixed `DYLD_LIBRARY_PATH` not being updated on macOS when setting the ICU search directory
-  (was only updating `LD_LIBRARY_PATH`, which is ignored by macOS's dynamic linker).
+- Removed no-op `LD_LIBRARY_PATH` manipulation on macOS. (Changing it to the mac-specific
+  `DYLD_LIBRARY_PATH` would also be a no-op, because SIP strips all `DYLD_*` variables from
+  protected processes at launch, so setting it at runtime has no effect.)
 - Fixed `umsg_open` `locale` parameter marshaling from Unicode to ANSI, correcting ICU message
   formatting on macOS where the locale string was being passed as wide characters.
 - Fixed `SafeEnumeratorHandle` and `Transliterator.SafeTransliteratorHandle` finalizers to
   silently swallow exceptions during .NET shutdown, when ICU may no longer be accessible.
 - Fixed `NativeMethodsHelperTests` teardown leaving a stale ICU version (from a temporary dummy
   file) in `NativeMethods`, causing all subsequent tests in the same process to fail with
-  "Can't load ICU library (version 90)" on macOS.
+  "Can't load ICU library (version 90)".
 - Fixed `IsInitialized` not being reset on the .NET Framework path of `Cleanup()`: it was
   previously a side effect of `u_cleanup()` rather than an explicit step, so any code path that
   skipped `u_cleanup()` would leave `IsInitialized = true` after cleanup. `IsInitialized = false`
   is now set unconditionally in `Cleanup()` and removed from `u_cleanup()`.
-- Documented `MessageFormatter.Format` and `Transliterator.GetDisplayName`/`GetIdsAndNames` as
-  unsafe on macOS ARM64: all three delegate to the variadic C function `umsg_format`, which
-  crashes under AAPCS64 ABI. The affected NUnit tests are excluded on macOS pending a
-  non-variadic native shim.
+- Fixed `MessageFormatter.Format` crashing on ARM64: it now throws
+  `PlatformNotSupportedException` instead. The AAPCS64 calling convention passes variadic
+  float arguments through integer registers, incompatible with .NET's fixed-slot P/Invoke
+  marshaling of the variadic C function `umsg_format`.
+- Fixed `Transliterator.GetDisplayName` and `GetIdsAndNames` on ARM64: both now catch the
+  `PlatformNotSupportedException` from `umsg_format` and fall back to the English
+  "source to target" display name form.
 - Fixed `Transliterator.GetDisplayName` returning empty display names on Linux ICU 74+.
   `umsg_format` is a variadic C function; on Linux ICU 74+ a calling-convention mismatch
   causes the `double` argument to be read as 0, producing empty output from the
