@@ -198,6 +198,9 @@ namespace Icu
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
+			// Windows uses LoadLibraryEx with a path, so LD_LIBRARY_PATH is irrelevant.
+			// macOS SIP strips all DYLD_* variables from protected processes at launch, so
+			// setting them at runtime has no effect; skip on macOS too.
 			if (IsWindows || IsMac)
 				return;
 
@@ -430,8 +433,8 @@ namespace Icu
 			{
 				// u_cleanup must be called before resetting method containers and version info.
 				// Resetting IcuVersion to 0 first causes GetMethod to look for "u_cleanup_0",
-				// which doesn't exist, so the call silently fails and NativeLibrary.Free then
-				// crashes when ICU's destructor runs against un-cleaned-up state.
+				// which doesn't exist, so the call silently fails; then ICU's destructor fires
+				// against un-cleaned-up state when the library is unloaded → crash.
 				//
 				// On macOS (NET6+): skip u_cleanup(). We never call NativeLibrary.Free on
 				// macOS either, so the library stays loaded. If u_cleanup() is called without

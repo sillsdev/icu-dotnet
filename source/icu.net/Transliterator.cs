@@ -33,8 +33,8 @@ namespace Icu
 				}
 				catch (Exception)
 				{
-					// Silently ignore: finalizers may run during .NET shutdown when ICU
-					// is no longer accessible.
+					// Silently ignore: finalizers may run after Wrapper.Cleanup() has reset
+					// the method delegates to null, or after the native library has been freed.
 				}
 				return true;
 			}
@@ -192,7 +192,8 @@ namespace Icu
 		/// if no translated text is present in the given locale. On ICU 74+, the connector word
 		/// between source and target script names is always the English "to".</returns>
 		/// <remarks>
-		/// Delegates to <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>.
+		/// Delegates to
+		/// <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>.
 		/// On ARM64 that method throws <see cref="PlatformNotSupportedException"/>, which is
 		/// caught here; the English fallback "<c>source to target</c>" is returned instead.
 		/// </remarks>

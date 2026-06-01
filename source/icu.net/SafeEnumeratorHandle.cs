@@ -31,8 +31,8 @@ namespace Icu
 			}
 			catch (Exception)
 			{
-				// Silently ignore: finalizers may run during .NET shutdown when ICU
-				// is no longer accessible.
+				// Silently ignore: finalizers may run after Wrapper.Cleanup() has reset
+				// the method delegates to null, or after the native library has been freed.
 			}
 			handle = IntPtr.Zero;
 			return true;

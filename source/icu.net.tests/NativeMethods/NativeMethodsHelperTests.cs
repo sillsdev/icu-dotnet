@@ -48,17 +48,14 @@ namespace Icu.Tests
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
-			// Dummy files must be deleted BEFORE calling NativeMethodsHelper.Reset/Wrapper.Cleanup.
-			// NativeMethodsHelper.Reset() clears the stale v90 cache so that Wrapper.Cleanup's
-			// internal ResetIcuVersionInfo re-discovers the real ICU version instead of returning the
-			// cached version-90/assemblyDir result. Without this, subsequent ICU calls would look for
-			// versioned symbols with the wrong version number (e.g., ucal_setDefaultTimeZone_90 in a
-			// library that only exports _76), which crashes on Unix.
+			// Dummy files must be deleted BEFORE NativeMethodsHelper.Reset() and Wrapper.Cleanup().
+			// Reset() clears the stale v90 version cache. If the dummy files are still present when
+			// the cache is cleared, re-discovery would pick them up again, causing subsequent ICU
+			// calls to look for versioned symbols like ucal_setDefaultTimeZone_90 in a library that
+			// only exports _76. This crashes on Unix.
 			//
-			// On macOS, Wrapper.Cleanup is safe: it skips u_cleanup() and NativeLibrary.Free
-			// (both omitted to avoid dyld-destructor crashes), so the library stays in memory.
-			// ResetIcuVersionInfo then re-discovers the real ICU (Homebrew/MacPorts) or leaves
-			// IcuVersion=0 so LocateIcuLibrary runs on the next load.
+			// On macOS, Wrapper.Cleanup skips u_cleanup() and NativeLibrary.Free (both omitted to
+			// avoid dyld-destructor crashes), so the library stays resident.
 			NativeMethodsHelper.Reset();
 			Wrapper.Cleanup();
 		}

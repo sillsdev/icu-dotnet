@@ -47,9 +47,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   in subsequent tests); `IcuWrapperTests` now skips `ConfineIcuVersions` on macOS, where
   `NativeLibrary.Free` is omitted so the library stays resident and version constraints must not
   be reset against it.
-- Fixed `IsInitialized` not being reset on cleanup paths that skip `u_cleanup()`: it was
-  previously a side effect of `u_cleanup()` rather than an explicit step, so any code path that
-  skipped `u_cleanup()` (e.g. macOS on .NET 6+) would leave `IsInitialized = true` after cleanup.
+- Fixed `IsInitialized` not being reset on cleanup paths that skip `u_cleanup()`: it was a side
+  effect of `u_cleanup()` rather than an explicit step, so any code path that skipped
+  `u_cleanup()` (e.g. macOS on .NET 6+) would leave `IsInitialized = true` after cleanup.
   `IsInitialized = false` is now set unconditionally in `Cleanup()` and removed from `u_cleanup()`.
 - Fixed `MessageFormatter.Format` crashing on ARM64 (.NET only): it now throws
   `PlatformNotSupportedException` instead. The AAPCS64 calling convention passes variadic

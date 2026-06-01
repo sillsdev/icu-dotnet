@@ -14,6 +14,8 @@ namespace Icu.Tests
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
+			// On macOS the library is never explicitly loaded or unloaded (NativeLibrary.Free
+			// is skipped to avoid dyld-destructor crashes); ICU loads lazily on first use.
 			if (!IsMac)
 			{
 				Wrapper.Init();
@@ -36,6 +38,7 @@ namespace Icu.Tests
 			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
 			GC.WaitForPendingFinalizers();
 
+			// On macOS the library stays resident (see Init comment above); skip Cleanup().
 			if (!IsMac)
 			{
 				Wrapper.Cleanup();
