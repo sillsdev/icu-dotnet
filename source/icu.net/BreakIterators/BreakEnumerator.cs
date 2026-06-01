@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2025 SIL Global
+// Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace Icu.BreakIterators
 	/// <summary>
 	/// Supports iterating over a BreakIterator object and reading its individual text segments.
 	/// </summary>
-	public sealed class BreakEnumerator: IEnumerator<string>
+	public sealed class BreakEnumerator : IEnumerator<string>
 	{
 		private BreakIterator _breakIterator;
 		private int _currentStart;
