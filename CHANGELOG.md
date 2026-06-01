@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   previously a side effect of `u_cleanup()` rather than an explicit step, so any code path that
   skipped `u_cleanup()` would leave `IsInitialized = true` after cleanup. `IsInitialized = false`
   is now set unconditionally in `Cleanup()` and removed from `u_cleanup()`.
-- Fixed `MessageFormatter.Format` crashing on ARM64: it now throws
+- Fixed `MessageFormatter.Format` crashing on ARM64 (.NET only): it now throws
   `PlatformNotSupportedException` instead. The AAPCS64 calling convention passes variadic
   float arguments through integer registers, incompatible with .NET's fixed-slot P/Invoke
   marshaling of the variadic C function `umsg_format`.
