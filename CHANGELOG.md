@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   unsafe on macOS ARM64: all three delegate to the variadic C function `umsg_format`, which
   crashes under AAPCS64 ABI. The affected NUnit tests are excluded on macOS pending a
   non-variadic native shim.
+- Fixed `Transliterator.GetDisplayName` returning empty display names on Linux ICU 74+.
+  `umsg_format` is a variadic C function; on Linux ICU 74+ a calling-convention mismatch
+  causes the `double` argument to be read as 0, producing empty output from the
+  `TransliteratorNamePattern` choice format. The method now falls back to constructing
+  the display name directly from the localized source and target script names.
 - Fixed regex patterns in `NativeMethodsHelper` for Linux (`libicu*.so.*`) and macOS
   (`libicu*.dylib`): unescaped `.` matched any character instead of a literal dot.
 - Fixed `NativeMethodsHelper` combined regex: `$` end-anchor now applies to all three
@@ -306,8 +311,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Assembly marked as CLSCompliant (#33)
-- additionally look in lib/x86 and lib/x64 as well as lib/win-*
-  and lib/linux-* for ICU binaries (#51)
+- additionally look in lib/x86 and lib/x64 as well as lib/win-_
+  and lib/linux-_ for ICU binaries (#51)
 - Add minimal support of regular expressions (#32, MURATA Makoto)
 
 ## [2.1.0] - 2017-03-17
@@ -355,7 +360,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
 
 [Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.10.0...master
-
 [2.10.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.0...v2.8.1

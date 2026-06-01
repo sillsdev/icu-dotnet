@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2025 SIL Global
+// Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.IO;
@@ -26,7 +26,7 @@ namespace Icu.Tests
 			var result = method?.Invoke(null, null);
 			var icuVersionInfoType = icunetAssembly.GetType("Icu.IcuVersionInfo");
 			var icuVersionFieldInfo = icuVersionInfoType.GetField("IcuVersion");
-			return (int) icuVersionFieldInfo.GetValue(result);
+			return (int)icuVersionFieldInfo.GetValue(result);
 		}
 
 		[SetUp]

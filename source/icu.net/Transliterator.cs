@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2025 SIL Global
+// Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,8 @@ namespace Icu
 		internal sealed class SafeTransliteratorHandle : SafeHandle
 		{
 			public SafeTransliteratorHandle() :
-				base(IntPtr.Zero, true) {}
+				base(IntPtr.Zero, true)
+			{ }
 
 			public override bool IsInvalid => handle == IntPtr.Zero;
 
@@ -181,12 +182,16 @@ namespace Icu
 		/// the root locale. However, the root locale's strings for transliterator display names
 		/// are ugly and not suitable for displaying to the user. Therefore, if we have to
 		/// fallback, we fallback to the "en" locale instead of the root locale.
+		/// Note that on ICU 74+, the <c>TransliteratorNamePattern</c> resource uses a deprecated
+		/// <c>choice</c> format that <c>umsg_format</c> silently ignores, so the connector word
+		/// (e.g. "to" in English) will always be in English regardless of locale.
 		/// </summary>
 		/// <param name="transId">The translator's system ID in ICU.</param>
 		/// <param name="localeName">The ICU name of the locale in which to calculate the display
 		/// name.</param>
 		/// <returns>A name suitable for displaying to the user in the given locale, or in English
-		/// if no translated text is present in the given locale.</returns>
+		/// if no translated text is present in the given locale. On ICU 74+, the connector word
+		/// between source and target script names is always the English "to".</returns>
 		/// <remarks>
 		/// Delegates to <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>,
 		/// which calls the variadic C function <c>umsg_format</c>.
@@ -257,9 +262,12 @@ namespace Icu
 
 				var displayName = MessageFormatter.Format(pattern, localeName, out var status,
 					2.0, localizedSource, localizedTarget);
-				if (status.IsSuccess())
+				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
 					return displayName + variant; // Variant is either empty string or starts with "/"
-				return transId; // If formatting fails, the transliterator's ID is still our final fallback
+												  // On Linux ICU 74+, a varargs ABI mismatch causes umsg_format to read the double
+												  // arg as 0, which produces empty output for this pattern. The IsNullOrEmpty check
+												  // above catches that; the fallback constructs the name directly.
+				return localizedSource + " to " + localizedTarget + variant;
 			}
 		}
 		#endregion

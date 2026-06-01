@@ -23,7 +23,7 @@ jobs:
     name: "Build and Test"
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        os: [windows-latest, ubuntu-latest]
         include:
           - os: macos-15
             icu-manager: homebrew
@@ -88,7 +88,7 @@ jobs:
         path: |
           output/*.nupkg
           output/*.snupkg
-      if: matrix.os == 'ubuntu-22.04'
+      if: matrix.os == 'ubuntu-latest'
 
   publish-nuget:
     name: "Publish NuGet package"

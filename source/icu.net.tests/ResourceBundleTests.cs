@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2025 SIL Global
+// Copyright (c) 2018-2026 SIL Global
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Icu.Tests
 			using (var resourceBundle = new ResourceBundle("ICUDATA-translit", "en_US"))
 			{
 				Assert.That(resourceBundle.GetStringContents(),
-					Is.EquivalentTo(new [] { "Hex Escape", "Unicode Character", "Unicode Name", "{0,choice,0#|1#{1}|2#{1} to {2}}" }));
+					Is.EquivalentTo(new[] { "Hex Escape", "Unicode Character", "Unicode Name", "{0,choice,0#|1#{1}|2#{1} to {2}}" }));
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace Icu.Tests
 		{
 			using (var resourceBundle = new ResourceBundle("ICUDATA-translit", "en_US"))
 			{
-				Assert.That(resourceBundle.GetStringContentsWithKeys(), Is.EquivalentTo(new [] {
+				Assert.That(resourceBundle.GetStringContentsWithKeys(), Is.EquivalentTo(new[] {
 					("%Translit%Hex", "Hex Escape"),
 					("%Translit%UnicodeChar", "Unicode Character"),
 					("%Translit%UnicodeName", "Unicode Name"),
