@@ -20,13 +20,22 @@ namespace Icu
 		internal sealed class SafeTransliteratorHandle : SafeHandle
 		{
 			public SafeTransliteratorHandle() :
-				base(IntPtr.Zero, true) {}
+				base(IntPtr.Zero, true)
+			{ }
 
 			public override bool IsInvalid => handle == IntPtr.Zero;
 
 			protected override bool ReleaseHandle()
 			{
-				NativeMethods.utrans_close(handle);
+				try
+				{
+					NativeMethods.utrans_close(handle);
+				}
+				catch (Exception)
+				{
+					// Silently ignore: finalizers may run after Wrapper.Cleanup() has reset
+					// the method delegates to null, or after the native library has been freed.
+				}
 				return true;
 			}
 		}
@@ -82,6 +91,10 @@ namespace Icu
 		/// Get the IDs and display names of all transliterators registered with ICU.
 		/// Display names will be in the locale specified by the displayLocale parameter; omit it or pass in null to use the default locale.
 		/// </summary>
+		/// <remarks>
+		/// Calls <see cref="GetDisplayName"/> for every ID. On ARM64,
+		/// <see cref="GetDisplayName"/> falls back to the English "source to target" form.
+		/// </remarks>
 		public static IEnumerable<(string id, string name)> GetIdsAndNames(string displayLocale = null)
 		{
 			using (var icuEnumerator = GetEnumerator())
@@ -178,6 +191,12 @@ namespace Icu
 		/// <returns>A name suitable for displaying to the user in the given locale, or in English
 		/// if no translated text is present in the given locale. On ICU 74+, the connector word
 		/// between source and target script names is always the English "to".</returns>
+		/// <remarks>
+		/// Delegates to
+		/// <see cref="MessageFormatter.Format(string,string,out ErrorCode,double,string,string)"/>.
+		/// On ARM64 that method throws <see cref="PlatformNotSupportedException"/>, which is
+		/// caught here; the English fallback "<c>source to target</c>" is returned instead.
+		/// </remarks>
 		public static string GetDisplayName(string transId, string localeName)
 		{
 			const string translitDisplayNameRBKeyPrefix = "%Translit%%";  // See RB_DISPLAY_NAME_PREFIX in translit.cpp in ICU source code
@@ -241,13 +260,19 @@ namespace Icu
 						localizedTarget = target;
 				}
 
-				var displayName = MessageFormatter.Format(pattern, localeName, out var status,
-					2.0, localizedSource, localizedTarget);
-				if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
-					return displayName + variant; // Variant is either empty string or starts with "/"
-				// On Linux ICU 74+, a varargs ABI mismatch causes umsg_format to read the double
-				// arg as 0, which produces empty output for this pattern. The IsNullOrEmpty check
-				// above catches that; the fallback constructs the name directly.
+				try
+				{
+					var displayName = MessageFormatter.Format(pattern, localeName, out var status,
+						2.0, localizedSource, localizedTarget);
+					// On non-ARM64 Unix ICU 74+, a varargs ABI mismatch causes umsg_format to read
+					// the double arg as 0, producing empty output. The IsNullOrEmpty check catches that.
+					if (status.IsSuccess() && !string.IsNullOrEmpty(displayName))
+						return displayName + variant; // Variant is either empty string or starts with "/"
+				}
+				catch (PlatformNotSupportedException)
+				{
+					// ARM64: fall through to English fallback below
+				}
 				return localizedSource + " to " + localizedTarget + variant;
 			}
 		}

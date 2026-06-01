@@ -17,7 +17,8 @@ namespace Icu
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate IntPtr umsg_openDelegate(string pattern, int patternLen,
-				string locale, out ParseError parseError, out ErrorCode status);
+				[MarshalAs(UnmanagedType.LPStr)] string locale, out ParseError parseError,
+				out ErrorCode status);
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -27,6 +28,10 @@ namespace Icu
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int umsg_formatDelegate(IntPtr format, IntPtr result,
 				int resultLen, out ErrorCode status, double arg0, string arg1, string arg2);
+			// TODO: umsg_format is a variadic C API. This delegate relies on runtime marshaling
+			// of managed arguments into varargs, which is ABI-fragile. ARM64 is guarded with a
+			// PlatformNotSupportedException; on non-ARM64 Unix with ICU 74+, callers must handle
+			// wrong output. A non-variadic native shim would be more robust.
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			internal delegate int umsg_toPatternDelegate(IntPtr format, IntPtr result,
@@ -62,6 +67,11 @@ namespace Icu
 		/// <summary/>
 		public static int umsg_format(IntPtr format, IntPtr result, int resultLen, out ErrorCode status, double arg0, string arg1, string arg2)
 		{
+#if NET
+			if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+				throw new PlatformNotSupportedException(
+					"umsg_format is not supported on ARM64: AAPCS64 passes variadic arguments differently from named parameters, incompatible with .NET P/Invoke marshaling.");
+#endif
 			if (MessageFormatMethods.umsg_format == null)
 				MessageFormatMethods.umsg_format = GetMethod<MessageFormatMethodsContainer.umsg_formatDelegate>(IcuI18NLibHandle, nameof(umsg_format), true);
 			return MessageFormatMethods.umsg_format(format, result, resultLen, out status, arg0, arg1, arg2);

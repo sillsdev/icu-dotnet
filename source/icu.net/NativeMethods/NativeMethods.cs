@@ -198,12 +198,15 @@ namespace Icu
 
 		private static void AddDirectoryToSearchPath(string directory)
 		{
-			// Only perform this for Linux because we are using LoadLibraryEx
-			// to ensure that a library's dependencies is loaded starting from
-			// where that library is located.
-			if (IsWindows)
+			// Windows uses LoadLibraryEx with a path, so LD_LIBRARY_PATH is irrelevant.
+			// macOS SIP strips all DYLD_* variables from protected processes at launch, so
+			// setting them at runtime has no effect; skip on macOS too.
+			if (IsWindows || IsMac)
 				return;
 
+			// ld.so re-reads LD_LIBRARY_PATH from the live environment at each dlopen call,
+			// so setting it here before NativeLibrary.Load is effective on Linux. This ensures
+			// transitive dependencies are found in the same directory as the primary library.
 			var ldLibPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH");
 			Environment.SetEnvironmentVariable("LD_LIBRARY_PATH", $"{directory}:{ldLibPath}");
 			Trace.WriteLineIf(Verbose, $"icu.net: adding directory '{directory}' to LD_LIBRARY_PATH '{ldLibPath}'");
@@ -230,6 +233,9 @@ namespace Icu
 				// Do a reverse sort so that we use the highest version
 				files.Sort((x, y) => string.CompareOrdinal(y, x));
 				var filePath = files[0];
+				// Only files[0] is tried; if it isn't parseable (e.g. patch-versioned "76.1"),
+				// the whole directory is skipped. In practice there will be a major-version
+				// symlink (e.g., "76") that sorts ahead of patch files.
 				var libNameLen = libraryName.Length;
 				var version = IsWindows
 					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
@@ -301,9 +307,25 @@ namespace Icu
 				libraryName))
 				return true;
 
-			// Otherwise check the current directory
-			// If we don't find it here we rely on it being in the PATH somewhere...
-			return CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName);
+			// Check the current directory; bundled ICU takes priority over system installs
+			if (CheckDirectoryForIcuBinaries(DirectoryOfThisAssembly, libraryName))
+				return true;
+
+			// On macOS, fall back to common package manager installation directories
+			if (IsMac)
+			{
+				// Homebrew on Apple Silicon (ARM64)
+				if (CheckDirectoryForIcuBinaries("/opt/homebrew/opt/icu4c/lib", libraryName))
+					return true;
+				// Homebrew on Intel
+				if (CheckDirectoryForIcuBinaries("/usr/local/opt/icu4c/lib", libraryName))
+					return true;
+				// MacPorts
+				if (CheckDirectoryForIcuBinaries("/opt/local/lib", libraryName))
+					return true;
+			}
+
+			return false;
 		}
 
 		private static IntPtr LoadIcuLibrary(string libraryName)
@@ -390,7 +412,7 @@ namespace Icu
 					exceptionErrorMessage = $" ({exceptionErrorMessage})";
 				var errorMsg = IsWindows
 					? $"{new Win32Exception(lastError).Message}{exceptionErrorMessage}"
-					: $"{lastError}({exceptionErrorMessage})";
+					: $"{lastError}{exceptionErrorMessage}";
 #else
 				var errorMsg = IsWindows
 					? new Win32Exception(lastError).Message
@@ -409,6 +431,42 @@ namespace Icu
 			Trace.WriteLineIf(Verbose, "icu.net: Cleanup");
 			lock (_lock)
 			{
+				// u_cleanup must be called before resetting method containers and version info.
+				// Resetting IcuVersion to 0 first causes GetMethod to look for "u_cleanup_0",
+				// which doesn't exist, so the call silently fails; then ICU's destructor fires
+				// against un-cleaned-up state when the library is unloaded → crash.
+				//
+				// On macOS (NET6+): skip u_cleanup(). We never call NativeLibrary.Free on
+				// macOS either, so the library stays loaded. If u_cleanup() is called without
+				// subsequently freeing the library, macOS's dyld fires ICU's destructor at
+				// process exit against already-cleaned state → crash. Skipping u_cleanup()
+				// lets ICU's destructor run cleanly at exit. This matches pre-NET6 behavior
+				// where macOS method resolution always returned IntPtr.Zero, so u_cleanup()
+				// silently threw and was a no-op.
+#if NET6_0_OR_GREATER
+				if (!IsMac)
+				{
+					try
+					{
+						u_cleanup();
+					}
+					catch
+					{
+						// ignore failures - can happen when running unit tests
+					}
+				}
+#else
+				try
+				{
+					u_cleanup();
+				}
+				catch
+				{
+					// ignore failures - can happen when running unit tests
+				}
+#endif
+				IsInitialized = false;
+
 				Methods = new MethodsContainer();
 				BiDiMethods = new BiDiMethodsContainer();
 				BreakIteratorMethods = new BreakIteratorMethodsContainer();
@@ -423,20 +481,14 @@ namespace Icu
 				UnicodeSetMethods = new UnicodeSetMethodsContainer();
 				ResetIcuVersionInfo();
 
-				try
-				{
-					u_cleanup();
-				}
-				catch
-				{
-					// ignore failures - can happen when running unit tests
-				}
-
 #if NET6_0_OR_GREATER
-				if (_IcuCommonLibHandle != IntPtr.Zero)
-					NativeLibrary.Free(_IcuCommonLibHandle);
-				if (_IcuI18NLibHandle != IntPtr.Zero)
-					NativeLibrary.Free(_IcuI18NLibHandle);
+				if (!IsMac)
+				{
+					if (_IcuCommonLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuCommonLibHandle);
+					if (_IcuI18NLibHandle != IntPtr.Zero)
+						NativeLibrary.Free(_IcuI18NLibHandle);
+				}
 #else
 				if (IsWindows)
 				{
@@ -814,7 +866,6 @@ namespace Icu
 			if (Methods.u_cleanup == null)
 				Methods.u_cleanup = GetMethod<MethodsContainer.u_cleanupDelegate>(IcuCommonLibHandle, "u_cleanup");
 			Methods.u_cleanup();
-			IsInitialized = false;
 		}
 
 		/// <summary>Return the ICU data directory</summary>

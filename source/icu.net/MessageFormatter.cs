@@ -74,7 +74,8 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string.
 		/// </summary>
 		/// <returns>The user-readable string</returns>
-		/// <remarks>This method with these args is probably only useful in the context of transliterators</remarks>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64: ABI mismatch between
+		/// .NET P/Invoke marshaling and the variadic C calling convention.</exception>
 		public string Format(double arg0, string arg1, string arg2)
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
@@ -88,9 +89,11 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string using the given pattern and
 		/// locale.
 		/// </summary>
-		/// <param name="pattern">Pattern used to construct object. </param>
-		/// <param name="localeId">The locale to use for formatting dates and numbers. </param>
+		/// <param name="pattern">Pattern used to construct object.</param>
+		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <returns>The user-readable string</returns>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64: ABI mismatch between
+		/// .NET P/Invoke marshaling and the variadic C calling convention.</exception>
 		public static string Format(string pattern, string localeId,
 			double arg0, string arg1, string arg2)
 		{
@@ -104,10 +107,12 @@ namespace Icu
 		/// Formats the given arguments into a user-readable string using the given pattern and
 		/// locale.
 		/// </summary>
-		/// <param name="pattern">Pattern used to construct object. </param>
+		/// <param name="pattern">Pattern used to construct object.</param>
 		/// <param name="localeId">The locale to use for formatting dates and numbers.</param>
 		/// <param name="status">If the pattern cannot be parsed, set to failure code.</param>
 		/// <returns>The user-readable string, or <c>null</c> if pattern cannot be parsed.</returns>
+		/// <exception cref="PlatformNotSupportedException">Thrown on ARM64: ABI mismatch between
+		/// .NET P/Invoke marshaling and the variadic C calling convention.</exception>
 		public static string Format(string pattern, string localeId, out ErrorCode status,
 			double arg0, string arg1, string arg2)
 		{
