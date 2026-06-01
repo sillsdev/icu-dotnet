@@ -230,6 +230,9 @@ namespace Icu
 				// Do a reverse sort so that we use the highest version
 				files.Sort((x, y) => string.CompareOrdinal(y, x));
 				var filePath = files[0];
+				// Only files[0] is tried; if it isn't parseable (e.g. patch-versioned "76.1"),
+				// the whole directory is skipped. In practice there will be a major-version
+				// symlink (e.g., "76") that sorts ahead of patch files.
 				var libNameLen = libraryName.Length;
 				var version = IsWindows
 					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
