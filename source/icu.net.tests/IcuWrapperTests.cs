@@ -66,7 +66,14 @@ namespace Icu.Tests
 		[TearDown]
 		public void TearDown()
 		{
-			Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion, Wrapper.MaxSupportedIcuVersion);
+			// Skip on macOS: the ICU library is never unloaded (NativeLibrary.Free is omitted to
+			// avoid dyld-destructor crashes), so resetting version constraints here would cause
+			// subsequent tests to look up versioned symbols against the still-resident library
+			// with the wrong version range.
+			if (Platform.OperatingSystem != OperatingSystemType.MacOSX)
+			{
+				Wrapper.ConfineIcuVersions(Wrapper.MinSupportedIcuVersion, Wrapper.MaxSupportedIcuVersion);
+			}
 			NativeMethodsTests.DeleteDirectory(_tmpDir);
 			_tmpDir = null;
 			Wrapper.SetPreferredIcu4cDirectory(null);

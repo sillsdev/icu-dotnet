@@ -27,6 +27,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
+  skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state. Also
+  fixed an independent ordering bug on all platforms: `u_cleanup()` was previously called after
+  `ResetIcuVersionInfo()`, causing the runtime to look up the nonexistent symbol `u_cleanup_0`
+  and silently skip the call.
+- Fixed ICU library discovery on macOS: `LocateIcuLibrary` now falls back to Homebrew
+  (`/opt/homebrew/opt/icu4c/lib` on Apple Silicon, `/usr/local/opt/icu4c/lib` on Intel) and
+  MacPorts (`/opt/local/lib`) when no bundled ICU is found. Bundled ICU (in the assembly
+  directory or `runtimes/` subdirectories) is always preferred over system installations.
+- Removed no-op `LD_LIBRARY_PATH` manipulation on macOS. (Changing it to the mac-specific
+  `DYLD_LIBRARY_PATH` would also be a no-op, because SIP strips all `DYLD_*` variables from
+  protected processes at launch, so setting it at runtime has no effect.)
+- Fixed `umsg_open` `locale` parameter marshaling from Unicode to ANSI, correcting ICU message
+  formatting on macOS where the locale string was being passed as wide characters.
+- Fixed `SafeEnumeratorHandle` and `Transliterator.SafeTransliteratorHandle` finalizers to
+  silently swallow exceptions during .NET shutdown, when ICU may no longer be accessible.
+- Fixed test teardown instability on macOS: `NativeMethodsHelperTests` now deletes dummy ICU
+  files before resetting version state (preventing "Can't load ICU library (version 90)" failures
+  in subsequent tests); `IcuWrapperTests` now skips `ConfineIcuVersions` on macOS, where
+  `NativeLibrary.Free` is omitted so the library stays resident and version constraints must not
+  be reset against it.
+- Fixed `IsInitialized` not being reset on cleanup paths that skip `u_cleanup()`: it was a side
+  effect of `u_cleanup()` rather than an explicit step, so any code path that skipped
+  `u_cleanup()` (e.g. macOS on .NET 6+) would leave `IsInitialized = true` after cleanup.
+  `IsInitialized = false` is now set unconditionally in `Cleanup()` and removed from `u_cleanup()`.
+- Fixed `MessageFormatter.Format` crashing on ARM64 (.NET only): it now throws
+  `PlatformNotSupportedException` instead. The AAPCS64 calling convention passes variadic
+  float arguments through integer registers, incompatible with .NET's fixed-slot P/Invoke
+  marshaling of the variadic C function `umsg_format`.
+- Fixed `Transliterator.GetDisplayName` and `GetIdsAndNames` on ARM64: both now catch the
+  `PlatformNotSupportedException` from `umsg_format` and fall back to the English
+  "source to target" display name form. On non-ARM64 Unix with ICU 74+, where a calling-convention
+  mismatch produces empty output rather than a crash, the existing `IsNullOrEmpty` fallback now
+  covers macOS in addition to Linux.
 - Fixed `Transliterator.GetDisplayName` returning empty display names on Linux ICU 74+.
   `umsg_format` is a variadic C function; on Linux ICU 74+ a calling-convention mismatch
   causes the `double` argument to be read as 0, producing empty output from the

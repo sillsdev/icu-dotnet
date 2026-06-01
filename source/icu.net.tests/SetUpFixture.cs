@@ -1,7 +1,6 @@
 // Copyright (c) 2017-2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace Icu.Tests
@@ -9,33 +8,18 @@ namespace Icu.Tests
 	[SetUpFixture]
 	public class SetUpFixture
 	{
-		private static bool IsWindows
-		{
-			get
-			{
-				// See Icu.Platform. Unfortunately that's internal, so we can't use it.
-
-#if NETFRAMEWORK
-				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
-				switch ((int)Environment.OSVersion.Platform)
-				{
-					case 4:
-					case 128:
-					case 6:
-						return false;
-					default:
-						return true;
-				}
-#else
-				return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#endif
-			}
-		}
+		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
+		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
 
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
-			Wrapper.Init();
+			// On macOS the library is never explicitly loaded or unloaded (NativeLibrary.Free
+			// is skipped to avoid dyld-destructor crashes); ICU loads lazily on first use.
+			if (!IsMac)
+			{
+				Wrapper.Init();
+			}
 
 			if (IsWindows)
 			{
@@ -49,7 +33,16 @@ namespace Icu.Tests
 		[OneTimeTearDown]
 		public void RunAfterAnyTests()
 		{
-			Wrapper.Cleanup();
+			// Flush SafeHandle finalizers before Cleanup unloads ICU, so ReleaseHandle
+			// calls don't fire against an already-unloaded library.
+			GC.Collect(2, GCCollectionMode.Forced, blocking: true);
+			GC.WaitForPendingFinalizers();
+
+			// On macOS the library stays resident (see Init comment above); skip Cleanup().
+			if (!IsMac)
+			{
+				Wrapper.Cleanup();
+			}
 		}
 	}
 }

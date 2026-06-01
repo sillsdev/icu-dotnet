@@ -11,6 +11,8 @@ namespace Icu.Tests
 	[TestFixture]
 	public class NativeMethodsHelperTests
 	{
+		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
+
 		private string _filenameWindows;
 		private string _filenameLinux;
 		private string _filenameMac;
@@ -46,13 +48,25 @@ namespace Icu.Tests
 			File.Delete(_filenameWindows);
 			File.Delete(_filenameLinux);
 			File.Delete(_filenameMac);
+			// Dummy files must be deleted BEFORE NativeMethodsHelper.Reset() and Wrapper.Cleanup().
+			// Reset() clears the stale v90 version cache. If the dummy files are still present when
+			// the cache is cleared, re-discovery would pick them up again, causing subsequent ICU
+			// calls to look for versioned symbols like ucal_setDefaultTimeZone_90 in a library that
+			// only exports _76. This crashes on Unix.
+			//
+			// On macOS, Wrapper.Cleanup skips u_cleanup() and NativeLibrary.Free (both omitted to
+			// avoid dyld-destructor crashes), so the library stays resident.
+			NativeMethodsHelper.Reset();
 			Wrapper.Cleanup();
 		}
 
 		[Test]
 		public void GetIcuVersionInfoForNetCoreOrWindows_DoesNotCrash()
 		{
-			Wrapper.Cleanup();
+			if (!IsMac)
+				Wrapper.Cleanup();
+			else
+				NativeMethodsHelper.Reset();
 			var result = CallGetIcuVersionInfoForNetCoreOrWindows();
 			Assert.That(result, Is.EqualTo(Wrapper.MaxSupportedIcuVersion));
 		}

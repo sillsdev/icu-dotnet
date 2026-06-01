@@ -23,19 +23,26 @@ jobs:
     name: "Build and Test"
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-13]
+        os: [windows-latest, ubuntu-latest]
+        include:
+          - os: macos-15
+            icu-manager: homebrew
+          - os: macos-15
+            icu-manager: macports
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Install MacPorts
-      if: ${{ matrix.os == 'macos-13' }}
-      uses: melusina-org/setup-macports@v1
+    - name: Install icu4c via Homebrew
+      if: ${{ matrix.icu-manager == 'homebrew' }}
+      run: brew install icu4c
 
-    - name: Install icu4c on macOS
-      if: ${{ matrix.os == 'macos-13' }}
-      run: |
-        sudo port -v install icu
-        echo "DYLD_FALLBACK_LIBRARY_PATH=$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib" >> $GITHUB_ENV
+    - name: Install MacPorts
+      if: ${{ matrix.icu-manager == 'macports' }}
+      uses: melusina-org/setup-macports@103eded5f10979e927bffcd6d0b86cbbdb2c3bb3 # v1.1.6
+
+    - name: Install icu4c via MacPorts
+      if: ${{ matrix.icu-manager == 'macports' }}
+      run: sudo port -v install icu
 
     - name: Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -66,7 +73,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
       with:
-        name: Test Results (${{matrix.os}})
+        name: Test Results (${{matrix.os}}${{ matrix.icu-manager && format('-{0}', matrix.icu-manager) || '' }})
         path: "**/TestResults/*.xml"
 
     - name: Pack

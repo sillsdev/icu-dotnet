@@ -128,20 +128,20 @@ Microsoft also makes the full version available as
 ### macOS
 
 macOS doesn't come preinstalled with all the normal icu4c libraries. They must be
-installed separately. One option is to use [MacPorts](https://www.macports.org/).
-The [icu package on MacPorts](https://ports.macports.org/port/icu/) has the icu4c
-libraries needed for icu.net to run properly.
-
-If the icu4c libraries are not installed in a directory that is in the system path
-or your application directory, you will need to set an environment variable for
-the OS to find them. For example:
+installed separately via a package manager such as
+[Homebrew](https://brew.sh/) or [MacPorts](https://www.macports.org/).
 
 ```bash
-export DYLD_FALLBACK_LIBRARY_PATH="$HOME/lib:/usr/local/lib:/usr/lib:/opt/local/lib"
+# Homebrew (more common)
+brew install icu4c
+
+# MacPorts
+sudo port install icu
 ```
 
-If you need to set environment variables like the above, consider adding them to
-your `.zprofile` so you don't have to remember to do it manually.
+icu.net automatically searches the standard Homebrew and MacPorts installation
+directories, so no extra configuration is needed after installing via either
+package manager.
 
 ## Troubleshooting
 
