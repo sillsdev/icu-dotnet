@@ -241,21 +241,29 @@ namespace Icu
 						? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
 						: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
 					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
-					if (int.TryParse(version, out var icuVersion) &&
-						icuVersion >= MinIcuVersion && icuVersion <= MaxIcuVersion)
+					if (!int.TryParse(version, out var icuVersion))
 					{
-						Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
-							icuVersion, directory);
-						IcuVersion = icuVersion;
-						_IcuPath = directory;
-
-						AddDirectoryToSearchPath(directory);
-						return true;
+						Trace.WriteLineIf(Verbose,
+							$"icu.net: version '{version}' from '{filePath}' is not parseable. Skipping.");
+						continue;
 					}
-					Trace.WriteLineIf(Verbose, $"icu.net: version '{version}' from '{filePath}' is not parseable or outside [{MinIcuVersion}, {MaxIcuVersion}]. Skipping.");
+					if (icuVersion < MinIcuVersion || icuVersion > MaxIcuVersion)
+					{
+						Trace.WriteLineIf(Verbose,
+							$"icu.net: version {icuVersion} from '{filePath}' is outside [{MinIcuVersion}, {MaxIcuVersion}]. Skipping.");
+						continue;
+					}
+					Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
+						icuVersion, directory);
+					IcuVersion = icuVersion;
+					_IcuPath = directory;
+
+					AddDirectoryToSearchPath(directory);
+					return true;
 				}
 			}
-			Trace.WriteLineIf(Verbose && files.Count <= 0, "icu.net: No files matching pattern. Returning false.");
+			Trace.WriteLineIf(Verbose && files.Count <= 0,
+				"icu.net: No files matching pattern. Returning false.");
 			return false;
 		}
 
