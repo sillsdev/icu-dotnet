@@ -4,6 +4,7 @@
     <AssemblyName>icu.net</AssemblyName>
     <Description>icu.net is a C# Wrapper around ICU4C</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.xml</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="6.0.5" PrivateAssets="all" />
