@@ -101,10 +101,10 @@ namespace Icu.Tests
 		public void Transliterate_Overflow()
 		{
 			const string source = @"김, 국삼";
+			const string target = @"gim, gugsam";
 
 			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			var result = _trans.Transliterate(source, 1);
-			Assert.That(result, Is.Not.Null.And.Not.Empty);
+			Assert.That(_trans.Transliterate(source, 1), Is.EqualTo(target));
 		}
 
 		[Test]
@@ -114,6 +114,22 @@ namespace Icu.Tests
 			_trans = Transliterator.CreateInstance("Any-Latn");
 			var result = _trans.Transliterate("ﷺ");
 			Assert.That(result, Is.Not.Null.And.Not.Empty);
+		}
+
+		[Test]
+		public void Transliterate_MultipleHighExpansionChars_SmallMultiplier()
+		{
+			// Each U+FDFA expands to ~29 Latin chars; multiplier=1 forces the retry path
+			_trans = Transliterator.CreateInstance("Any-Latn");
+			var result = _trans.Transliterate("ﷺﷺ", 1);
+			Assert.That(result, Is.Not.Null.And.Not.Empty);
+		}
+
+		[Test]
+		public void Transliterate_EmptyString()
+		{
+			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+			Assert.That(_trans.Transliterate(string.Empty), Is.EqualTo(string.Empty));
 		}
 	}
 }
