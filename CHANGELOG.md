@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Transliterator.Transliterate` throwing `OverflowException` for characters that expand
+  greatly during transliteration (e.g. U+FDFA ﷺ): the method now retries with a larger buffer
+  on `BUFFER_OVERFLOW_ERROR` instead of immediately throwing.
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state. Also
   fixed an independent ordering bug on all platforms: `u_cleanup()` was previously called after
