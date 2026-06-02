@@ -292,7 +292,7 @@ namespace Icu
 		/// <<param name="textCapacityMultiplier">The capacity for the buffer that holds the
 		/// transliterated text, expressed as a multiplier of the text length.</param>
 		/// <returns>
-		/// The transliterated text, truncated to a maximum of `text.Length * textCapacityMultiplier` characters.
+		/// The transliterated text. If the initial buffer overflows, the method retries with a doubled buffer.
 		/// </returns>
 		public string Transliterate(string text, int textCapacityMultiplier = 3)
 		{
@@ -300,28 +300,45 @@ namespace Icu
 				throw new ArgumentException(nameof(textCapacityMultiplier));
 
 			var unicodeBytes = Encoding.Unicode.GetBytes(text);
-
-			var textLength = text.Length;
-			var textCapacity = textLength * textCapacityMultiplier;
-			var start = 0;
-			var limit = textLength;
 			const int charSize = sizeof(char);
-
-			Debug.Assert(textCapacity * charSize >= unicodeBytes.Length);
+			var start = 0;
 
 			// it's tempting to use Marshal.SystemDefaultCharSize instead of sizeof(char).
 			// However, on Linux for whatever reason that returns 1 instead of the expected 2.
+			var textCapacity = text.Length * textCapacityMultiplier;
+			Debug.Assert(textCapacity * charSize >= unicodeBytes.Length);
+
 			var textPtr = Marshal.AllocHGlobal(textCapacity * charSize);
-			Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
+			try
+			{
+				Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
 
-			NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
-				textCapacity, start, ref limit, out var status);
-			ExceptionFromErrorCode.ThrowIfError(status);
+				var textLength = text.Length;
+				var limit = textLength;
+				NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
+					textCapacity, start, ref limit, out var status);
 
-			var result = Marshal.PtrToStringUni(textPtr, textLength);
-			Marshal.FreeHGlobal(textPtr);
+				if (status == ErrorCode.BUFFER_OVERFLOW_ERROR)
+				{
+					textCapacity *= 2;
+					var newPtr = Marshal.AllocHGlobal(textCapacity * charSize);
+					Marshal.FreeHGlobal(textPtr);
+					textPtr = newPtr;
+					Marshal.Copy(unicodeBytes, 0, textPtr, unicodeBytes.Length);
 
-			return result;
+					textLength = text.Length;
+					limit = textLength;
+					NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
+						textCapacity, start, ref limit, out status);
+				}
+
+				ExceptionFromErrorCode.ThrowIfError(status);
+				return Marshal.PtrToStringUni(textPtr, textLength);
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(textPtr);
+			}
 		}
 
 		#region Disposable pattern
