@@ -320,7 +320,9 @@ namespace Icu
 
 				if (status == ErrorCode.BUFFER_OVERFLOW_ERROR)
 				{
-					textCapacity = textLength; // ICU reports the required size on overflow
+					// Use the ICU-reported required size, but never less than double the
+					// current capacity in case ICU reports a partial output length.
+					textCapacity = Math.Max(textLength, textCapacity * 2);
 					var newPtr = Marshal.AllocHGlobal(textCapacity * charSize);
 					Marshal.FreeHGlobal(textPtr);
 					textPtr = newPtr;

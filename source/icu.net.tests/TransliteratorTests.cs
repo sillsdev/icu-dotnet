@@ -103,7 +103,8 @@ namespace Icu.Tests
 			const string source = @"김, 국삼";
 
 			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			Assert.That(() => _trans.Transliterate(source, 1), Throws.InstanceOf<OverflowException>());
+			var result = _trans.Transliterate(source, 1);
+			Assert.That(result, Is.Not.Null.And.Not.Empty);
 		}
 	}
 }
