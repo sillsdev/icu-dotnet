@@ -2,9 +2,8 @@ assembly-versioning-scheme: MajorMinor
 assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{env:GITVERSION_BUILD_NUMBER ?? 0}'
 mode: ContinuousDeployment
 branches:
-  master:
+  main:
     label: beta
-    regex: (origin/)?master
   hotfix:
     label: beta
     regex: (origin/)?hotfix[/-]
