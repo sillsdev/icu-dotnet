@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Wrapper.ConfineIcuVersions` being ignored during library discovery: `CheckDirectoryForIcuBinaries`
+  now filters candidates to the confined version range before selecting the highest match.
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state. Also
   fixed an independent ordering bug on all platforms: `u_cleanup()` was previously called after
