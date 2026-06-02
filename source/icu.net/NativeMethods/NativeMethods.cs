@@ -221,25 +221,21 @@ namespace Icu
 				return false;
 			}
 
-			var filePattern = IsWindows
-				? libraryName + "*.dll"
-				: IsMac
-				? "lib" + libraryName + ".*.dylib"
-				: "lib" + libraryName + ".so.*";
+			var filePattern = GetLibraryFilePattern(libraryName);
 			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
 			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
 			{
-				// Do a reverse sort so that we use the highest version
-				files.Sort((x, y) => string.CompareOrdinal(y, x));
 				var libNameLen = libraryName.Length;
+				files.Sort((x, y) =>
+				{
+					var vx = int.TryParse(ExtractVersionString(x, libNameLen), out var nx) ? nx : -1;
+					var vy = int.TryParse(ExtractVersionString(y, libNameLen), out var ny) ? ny : -1;
+					return vy.CompareTo(vx);
+				});
 				foreach (var filePath in files)
 				{
-					var version = IsWindows
-						? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
-						: IsMac
-						? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
-						: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
+					var version = ExtractVersionString(filePath, libNameLen);
 					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
 					if (!int.TryParse(version, out var icuVersion))
 					{
@@ -265,6 +261,24 @@ namespace Icu
 			Trace.WriteLineIf(Verbose && files.Count <= 0,
 				"icu.net: No files matching pattern. Returning false.");
 			return false;
+		}
+
+		private static string GetLibraryFilePattern(string libraryName)
+		{
+			return IsWindows
+				? libraryName + "*.dll"
+				: IsMac
+				? "lib" + libraryName + ".*.dylib"
+				: "lib" + libraryName + ".so.*";
+		}
+
+		private static string ExtractVersionString(string filePath, int libNameLen)
+		{
+			return IsWindows
+				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen)         // strip icuuc
+				: IsMac
+				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4)     // strip libicuuc.
+				: Path.GetFileName(filePath).Substring(libNameLen + 7);                    // strip libicuuc.so.
 		}
 
 		private static bool LocateIcuLibrary(string libraryName)
