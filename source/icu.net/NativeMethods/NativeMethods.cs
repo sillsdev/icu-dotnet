@@ -232,28 +232,28 @@ namespace Icu
 			{
 				// Do a reverse sort so that we use the highest version
 				files.Sort((x, y) => string.CompareOrdinal(y, x));
-				var filePath = files[0];
-				// Only files[0] is tried; if it isn't parseable (e.g. patch-versioned "76.1"),
-				// the whole directory is skipped. In practice there will be a major-version
-				// symlink (e.g., "76") that sorts ahead of patch files.
 				var libNameLen = libraryName.Length;
-				var version = IsWindows
-					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
-					: IsMac
-					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
-					: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
-				Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
-				if (int.TryParse(version, out var icuVersion))
+				foreach (var filePath in files)
 				{
-					Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
-						icuVersion, directory);
-					IcuVersion = icuVersion;
-					_IcuPath = directory;
+					var version = IsWindows
+						? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
+						: IsMac
+						? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
+						: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
+					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
+					if (int.TryParse(version, out var icuVersion) &&
+						icuVersion >= MinIcuVersion && icuVersion <= MaxIcuVersion)
+					{
+						Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
+							icuVersion, directory);
+						IcuVersion = icuVersion;
+						_IcuPath = directory;
 
-					AddDirectoryToSearchPath(directory);
-					return true;
+						AddDirectoryToSearchPath(directory);
+						return true;
+					}
+					Trace.WriteLineIf(Verbose, $"icu.net: version '{version}' from '{filePath}' is not parseable or outside [{MinIcuVersion}, {MaxIcuVersion}]. Skipping.");
 				}
-				Trace.WriteLineIf(Verbose, $"icu.net: couldn't parse '{version}' as an int. Returning false.");
 			}
 			Trace.WriteLineIf(Verbose && files.Count <= 0, "icu.net: No files matching pattern. Returning false.");
 			return false;
