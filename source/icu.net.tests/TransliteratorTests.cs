@@ -106,5 +106,14 @@ namespace Icu.Tests
 			var result = _trans.Transliterate(source, 1);
 			Assert.That(result, Is.Not.Null.And.Not.Empty);
 		}
+
+		[Test]
+		public void Transliterate_HighExpansionChar_DefaultMultiplier()
+		{
+			// U+FDFA expands to ~29 Latin chars; a multiplier of 3 gives only 3 UChars
+			_trans = Transliterator.CreateInstance("Any-Latn");
+			var result = _trans.Transliterate("ﷺ");
+			Assert.That(result, Is.Not.Null.And.Not.Empty);
+		}
 	}
 }
