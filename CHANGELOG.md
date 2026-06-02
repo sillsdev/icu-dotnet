@@ -79,6 +79,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
   UNumericType.COUNT.
 
+## [3.0.1] - 2025-02-21
+
+### Fixed
+
+- Update CI to use supported Ubuntu and macOS runner versions
+
 ## [3.0.0] - 2024-11-21
 
 ### Added
@@ -371,7 +377,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
 
-[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.0...master
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.10.0...v3.0.0
 [2.10.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.1...v2.9.0
