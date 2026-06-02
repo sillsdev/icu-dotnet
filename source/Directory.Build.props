@@ -19,7 +19,6 @@ See full changelog at https://github.com/sillsdev/icu-dotnet/blob/master/CHANGEL
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <LangVersion>default</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/icu.net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
