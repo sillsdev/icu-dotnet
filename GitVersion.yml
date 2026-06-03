@@ -4,6 +4,7 @@ mode: ContinuousDeployment
 branches:
   main:
     label: beta
+    mode: ContinuousDelivery
   hotfix:
     label: beta
     regex: (origin/)?hotfix[/-]
