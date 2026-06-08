@@ -23,12 +23,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
+- Added net10.0 target framework.
 
 ### Fixed
 
 - Fixed `Transliterator.Transliterate` throwing `OverflowException` for characters that expand
   greatly during transliteration (e.g. U+FDFA ﷺ): the method now retries with a larger buffer
   on `BUFFER_OVERFLOW_ERROR` instead of immediately throwing.
+- Fixed `Wrapper.ConfineIcuVersions` being ignored during library discovery: `CheckDirectoryForIcuBinaries`
+  now filters candidates to the confined version range before selecting the highest match.
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state. Also
   fixed an independent ordering bug on all platforms: `u_cleanup()` was previously called after
@@ -81,6 +84,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
   UNumericType.COUNT.
+
+## [3.0.1] - 2025-02-21
+
+### Fixed
+
+- Update CI to use supported Ubuntu and macOS runner versions
 
 ## [3.0.0] - 2024-11-21
 
@@ -374,7 +383,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
 
-[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v2.10.0...master
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.10.0...v3.0.0
 [2.10.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.1...v2.9.0
 [2.8.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.8.0...v2.8.1
@@ -396,3 +407,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [2.2.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/sillsdev/icu-dotnet/compare/40ff102..v2.0.0
