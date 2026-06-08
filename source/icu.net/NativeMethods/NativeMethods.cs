@@ -221,30 +221,34 @@ namespace Icu
 				return false;
 			}
 
-			var filePattern = IsWindows
-				? libraryName + "*.dll"
-				: IsMac
-				? "lib" + libraryName + ".*.dylib"
-				: "lib" + libraryName + ".so.*";
+			var filePattern = GetLibraryFilePattern(libraryName);
 			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
 			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
 			{
-				// Do a reverse sort so that we use the highest version
-				files.Sort((x, y) => string.CompareOrdinal(y, x));
-				var filePath = files[0];
-				// Only files[0] is tried; if it isn't parseable (e.g. patch-versioned "76.1"),
-				// the whole directory is skipped. In practice there will be a major-version
-				// symlink (e.g., "76") that sorts ahead of patch files.
 				var libNameLen = libraryName.Length;
-				var version = IsWindows
-					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen) // strip icuuc
-					: IsMac
-					? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4) // strip libicuuc.
-					: Path.GetFileName(filePath).Substring(libNameLen + 7); // strip libicuuc.so.
-				Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
-				if (int.TryParse(version, out var icuVersion))
+				files.Sort((x, y) =>
 				{
+					var vx = int.TryParse(ExtractVersionString(x, libNameLen), out var nx) ? nx : -1;
+					var vy = int.TryParse(ExtractVersionString(y, libNameLen), out var ny) ? ny : -1;
+					return vy.CompareTo(vx);
+				});
+				foreach (var filePath in files)
+				{
+					var version = ExtractVersionString(filePath, libNameLen);
+					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
+					if (!int.TryParse(version, out var icuVersion))
+					{
+						Trace.WriteLineIf(Verbose,
+							$"icu.net: version '{version}' from '{filePath}' is not parseable. Skipping.");
+						continue;
+					}
+					if (icuVersion < MinIcuVersion || icuVersion > MaxIcuVersion)
+					{
+						Trace.WriteLineIf(Verbose,
+							$"icu.net: version {icuVersion} from '{filePath}' is outside [{MinIcuVersion}, {MaxIcuVersion}]. Skipping.");
+						continue;
+					}
 					Trace.TraceInformation("Setting IcuVersion to {0} (found in {1})",
 						icuVersion, directory);
 					IcuVersion = icuVersion;
@@ -253,10 +257,28 @@ namespace Icu
 					AddDirectoryToSearchPath(directory);
 					return true;
 				}
-				Trace.WriteLineIf(Verbose, $"icu.net: couldn't parse '{version}' as an int. Returning false.");
 			}
-			Trace.WriteLineIf(Verbose && files.Count <= 0, "icu.net: No files matching pattern. Returning false.");
+			Trace.WriteLineIf(Verbose && files.Count <= 0,
+				"icu.net: No files matching pattern. Returning false.");
 			return false;
+		}
+
+		private static string GetLibraryFilePattern(string libraryName)
+		{
+			return IsWindows
+				? libraryName + "*.dll"
+				: IsMac
+				? "lib" + libraryName + ".*.dylib"
+				: "lib" + libraryName + ".so.*";
+		}
+
+		private static string ExtractVersionString(string filePath, int libNameLen)
+		{
+			return IsWindows
+				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen)         // strip icuuc
+				: IsMac
+				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4)     // strip libicuuc.
+				: Path.GetFileName(filePath).Substring(libNameLen + 7);                    // strip libicuuc.so.
 		}
 
 		private static bool LocateIcuLibrary(string libraryName)
