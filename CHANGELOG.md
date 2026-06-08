@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
+- Added net10.0 target framework.
 
 ### Fixed
 

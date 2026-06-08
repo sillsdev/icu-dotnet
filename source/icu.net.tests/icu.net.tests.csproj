@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!--
-      If you only want to test on a particular target framework, run "dotnet test -p:TargetFramework=XXX"
-      For example, on macOS you probably want to run "dotnet test -p:TargetFramework=net8.0" since 4.6.1 isn't supported
+      If you only want to test on a particular target framework, run
+      `dotnet test -p:TargetFramework=XXX`. For example, on macOS you want to run with
+      `-p:TargetFramework=net8.0` or `-p:TargetFramework=net10.0` since 4.6.1 isn't supported
      -->
-    <TargetFrameworks>net461;net8.0</TargetFrameworks>
+    <TargetFrameworks>net461;net8.0;net10.0</TargetFrameworks>
     <RootNamespace>Icu.Tests</RootNamespace>
     <AssemblyTitle>icu.net.tests</AssemblyTitle>
     <IsPackable>false</IsPackable>
@@ -15,10 +16,11 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <!--
-      Only version 4.3.2 of NUnit3TestAdapter is able to run tests for both .NET 8.0 and .NET Framework 4.6.1.
+      Only version 4.3.2 of NUnit3TestAdapter is able to run tests for both .NET 8.0+ and .NET
+      Framework 4.6.1.
       https://docs.nunit.org/articles/vs-test-adapter/Supported-Frameworks.html
 
-      Going forward we're going to have to drop 4.6.1 support to be able to support newer .NET versions.
+      Going forward we'll have to drop 4.6.1 support to be able to update NUnit3TestAdapter.
      -->
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.2" />
     <PackageReference Include="NUnit.Console" Version="3.18.3" />
