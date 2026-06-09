@@ -300,13 +300,12 @@ namespace Icu
 				throw new ArgumentException(nameof(textCapacityMultiplier));
 
 			var unicodeBytes = Encoding.Unicode.GetBytes(text);
+			// It's tempting to use Marshal.SystemDefaultCharSize instead of sizeof(char).
+			// However, on Linux (for whatever reason) that returns 1 instead of the expected 2.
 			const int charSize = sizeof(char);
-			var start = 0;
-
-			// it's tempting to use Marshal.SystemDefaultCharSize instead of sizeof(char).
-			// However, on Linux for whatever reason that returns 1 instead of the expected 2.
 			var textCapacity = text.Length * textCapacityMultiplier;
 			Debug.Assert(textCapacity * charSize >= unicodeBytes.Length);
+			var start = 0;
 
 			var textPtr = Marshal.AllocHGlobal(textCapacity * charSize);
 			try

@@ -110,19 +110,22 @@ namespace Icu.Tests
 		[Test]
 		public void Transliterate_HighExpansionChar_DefaultMultiplier()
 		{
-			// U+FDFA expands to ~29 Latin chars; a multiplier of 3 gives only 3 UChars
+			// U+FDFA (ﷺ) expands to many Latin chars (e.g., "ṣly̱ ạllh ʿlyh wslm", 19 chars in
+			// ICU 62.1). A multiplier of 3 gives only 3 UChars, so the retry path must kick in.
+			// Exact output is ICU-version-specific.
 			_trans = Transliterator.CreateInstance("Any-Latn");
 			var result = _trans.Transliterate("ﷺ");
-			Assert.That(result, Is.Not.Null.And.Not.Empty);
+			Assert.That(result.Length, Is.GreaterThan(15));
 		}
 
 		[Test]
 		public void Transliterate_MultipleHighExpansionChars_SmallMultiplier()
 		{
-			// Each U+FDFA expands to ~29 Latin chars; multiplier=1 forces the retry path
+			// "ﷺﷺ" = U+FDFA U+FDFA; each expands to many Latin chars (see above test comment).
+			// Setting multiplier=1 forces the retry path.
 			_trans = Transliterator.CreateInstance("Any-Latn");
 			var result = _trans.Transliterate("ﷺﷺ", 1);
-			Assert.That(result, Is.Not.Null.And.Not.Empty);
+			Assert.That(result.Length, Is.GreaterThan(30));
 		}
 
 		[Test]
