@@ -97,8 +97,15 @@ RUN apt-get update \
 ### Linux
 
 icu-dotnet links with any installed version of ICU shared objects. It is
-recommended to install the version provided by the distribution. As of 2016,
-Ubuntu Trusty uses version ICU 52 and Ubuntu Xenial 55.
+recommended to install the version provided by the distribution. For example:
+
+| OS                      | ICU |
+| ----------------------- | --- |
+| Ubuntu 22.04 (Jammy)    | 70  |
+| Ubuntu 24.04 (Noble)    | 74  |
+| Ubuntu 26.04 (Resolute) | 78  |
+| Debian 12 (Bookworm)    | 72  |
+| Debian 13 (Trixie)      | 76  |
 
 If the version provided by the Linux distribution doesn't match your needs,
 [Microsoft's ICU package](https://www.nuget.org/packages/Microsoft.ICU.ICU4C.Runtime/)
