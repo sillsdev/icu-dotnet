@@ -6,6 +6,7 @@
     <PackageOutputPath>$(MSBuildThisFileDirectory)\..\output</PackageOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>$(NoWarn);CS1573</NoWarn>
     <Company>SIL Global</Company>
     <Authors>SIL Global</Authors>
     <Copyright>Copyright © 2007-2026 SIL Global</Copyright>
