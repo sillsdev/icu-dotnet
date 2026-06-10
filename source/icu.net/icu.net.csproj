@@ -12,8 +12,11 @@
     <PackageReference Include="SIL.ReleaseTasks" Version="3.0.0" PrivateAssets="all" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
