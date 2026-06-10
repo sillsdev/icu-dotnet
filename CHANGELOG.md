@@ -91,7 +91,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 and
   `System.Text.Json` 8.0.0 (both with a high severity vulnerability). The `net451`
   target retains `Microsoft.Extensions.DependencyModel` 2.1.0 (the newest version with net451
-  support), which still depends on `Newtonsoft.Json`.
+  support) and pins a newer version of `Newtonsoft.Json`.
 
 ## [3.0.1] - 2025-02-21
 
