@@ -101,9 +101,38 @@ namespace Icu.Tests
 		public void Transliterate_Overflow()
 		{
 			const string source = @"김, 국삼";
+			const string target = @"gim, gugsam";
 
 			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
-			Assert.That(() => _trans.Transliterate(source, 1), Throws.InstanceOf<OverflowException>());
+			Assert.That(_trans.Transliterate(source, 1), Is.EqualTo(target));
+		}
+
+		[Test]
+		public void Transliterate_HighExpansionChar_DefaultMultiplier()
+		{
+			// U+FDFA (ﷺ) expands to many Latin chars (e.g., "ṣly̱ ạllh ʿlyh wslm", 19 chars in
+			// ICU 62.1). The default multiplier of 3 gives only 3 UChars, so the retry pat
+			// must kick in. Exact output is ICU-version-specific.
+			_trans = Transliterator.CreateInstance("Any-Latn");
+			var result = _trans.Transliterate("\ufdfa");
+			Assert.That(result.Length, Is.GreaterThan(15));
+		}
+
+		[Test]
+		public void Transliterate_MultipleHighExpansionChars_SmallMultiplier()
+		{
+			// U+FDFA U+FDFA (ﷺﷺ); each expands to many Latin chars (see above test comment).
+			// Setting multiplier=1 forces the retry path.
+			_trans = Transliterator.CreateInstance("Any-Latn");
+			var result = _trans.Transliterate("\ufdfa\ufdfa", 1);
+			Assert.That(result.Length, Is.GreaterThan(30));
+		}
+
+		[Test]
+		public void Transliterate_EmptyString()
+		{
+			_trans = Transliterator.CreateInstance("Any-Latin; Latin-ASCII");
+			Assert.That(_trans.Transliterate(string.Empty), Is.EqualTo(string.Empty));
 		}
 	}
 }
