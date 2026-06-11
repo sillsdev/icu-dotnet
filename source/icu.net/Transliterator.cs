@@ -289,7 +289,7 @@ namespace Icu
 		/// Transliterate <paramref name="text"/>.
 		/// </summary>
 		/// <param name="text">The text to transliterate</param>
-		/// <<param name="textCapacityMultiplier">The capacity for the buffer that holds the
+		/// <param name="textCapacityMultiplier">The capacity for the buffer that holds the
 		/// transliterated text, expressed as a multiplier of the text length.</param>
 		/// <returns>
 		/// The transliterated text. If the initial buffer overflows, the method retries with a doubled buffer.
