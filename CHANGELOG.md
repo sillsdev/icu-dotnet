@@ -85,6 +85,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
   UNumericType.COUNT.
 
+### Security
+
+- Upgraded `Microsoft.Extensions.DependencyModel` from 2.0.4 to 10.0.9 on non-.NET-Framework
+  targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 (high severity
+  vulnerability). The `net451` target retains `Microsoft.Extensions.DependencyModel` 2.1.0 (the
+  newest version with net451 support) and pins the latest `Newtonsoft.Json`.
+
 ## [3.0.1] - 2025-02-21
 
 ### Fixed
