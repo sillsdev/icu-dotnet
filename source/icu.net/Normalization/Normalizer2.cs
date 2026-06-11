@@ -141,7 +141,7 @@ namespace Icu.Normalization
 		/// characters. In other words, a string containing this character can be normalized by
 		/// processing portions up to this character and after this character independently. This
 		/// is used for iterative normalization. Note that this operation may be significantly
-		/// slower than <see cref="hasBoundaryBefore"/>.
+		/// slower than <see cref="HasBoundaryBefore"/>.
 		/// </summary>
 		/// <param name="codePoint">character to test</param>
 		/// <returns><c>true</c> if c has a normalization boundary after it</returns>
