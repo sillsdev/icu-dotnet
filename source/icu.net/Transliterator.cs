@@ -361,7 +361,7 @@ namespace Icu
 		}
 
 		#region Disposable pattern
-		/// <summary>Releases the resources used by this instance.</summary>
+		/// <summary>Releases the resources used by Transliterator.</summary>
 		/// <param name="disposing"><c>true</c> if called from <see cref="Dispose()"/>; <c>false</c> if called during finalization.</param>
 		protected virtual void Dispose(bool disposing)
 		{

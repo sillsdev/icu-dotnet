@@ -50,7 +50,7 @@ namespace Icu
 			Dispose(true);
 		}
 
-		/// <summary>Releases the unmanaged resources used by this instance.</summary>
+		/// <summary>Releases the resources used by MessageFormatter.</summary>
 		/// <param name="disposing"><c>true</c> if called from <see cref="Dispose()"/>; <c>false</c> if called from the finalizer.</param>
 		protected void Dispose(bool disposing)
 		{

@@ -154,7 +154,7 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Releases the resources used by BreakIterator.
+		/// Releases the resources used by RegexMatcher.
 		/// </summary>
 		/// <param name="disposing">true to release managed and unmanaged
 		/// resources; false to release only unmanaged resources.</param>
