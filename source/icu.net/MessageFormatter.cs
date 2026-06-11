@@ -6,6 +6,10 @@ using System.Text;
 
 namespace Icu
 {
+	/// <summary>
+	/// Wraps ICU's MessageFormat, which provides locale-sensitive formatting of messages
+	/// containing dates, times, numbers, and other values.
+	/// </summary>
 	public class MessageFormatter : IDisposable
 	{
 		private IntPtr _Formatter;
@@ -46,6 +50,8 @@ namespace Icu
 			Dispose(true);
 		}
 
+		/// <summary>Releases the unmanaged resources used by this instance.</summary>
+		/// <param name="disposing"><c>true</c> if called from <see cref="Dispose()"/>; <c>false</c> if called from the finalizer.</param>
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -59,6 +65,7 @@ namespace Icu
 		}
 		#endregion
 
+		/// <summary>Gets the pattern string of this message formatter.</summary>
 		public string Pattern
 		{
 			get

@@ -16,7 +16,9 @@ namespace Icu
 	/// </summary>
 	public static class Wrapper
 	{
+		/// <summary>The minimum ICU version supported by this library.</summary>
 		public const int MinSupportedIcuVersion = 44;
+		/// <summary>The maximum ICU version supported by this library.</summary>
 		public const int MaxSupportedIcuVersion = 90;
 
 		#region Public Properties
