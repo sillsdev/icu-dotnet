@@ -64,7 +64,7 @@ namespace Icu
 			/// If set, \b uses the Unicode TR 29 definition of word boundaries.
 			/// Warning: Unicode word boundaries are quite different from
 			/// traditional regular expression word boundaries.  See
-			/// http://unicode.org/reports/tr29/#Word_Boundaries
+			/// https://unicode.org/reports/tr29/#Word_Boundaries
 			/// </summary>
 			UWORD = 256,
 

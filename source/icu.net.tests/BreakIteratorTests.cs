@@ -104,7 +104,7 @@ namespace Icu.Tests
 		/// <summary>
 		/// The hyphenated text case tests the difference between Word and Line
 		/// breaks described in:
-		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Line-break-Boundary
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/#line-break-boundary
 		/// </summary>
 		[Test]
 		public void GetWordAndLineBoundariesWithHyphenatedText()

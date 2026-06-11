@@ -370,7 +370,7 @@ namespace Icu
 		/// </summary>
 		/// <remarks>
 		/// For more information, see
-		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 		/// </remarks>
 		public override int GetRuleStatus()
 		{
@@ -393,7 +393,7 @@ namespace Icu
 		/// </summary>
 		/// <remarks>
 		/// For more information, see
-		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 		/// </remarks>
 		public override int[] GetRuleStatusVector()
 		{
@@ -625,7 +625,8 @@ namespace Icu
 			/// <remarks>
 			/// If there are more than one rule that determined the boundary,
 			/// returns the numerically largest value from <see cref="RuleStatusVector"/>.
-			/// More information: http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+			/// More information:
+			/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 			/// </remarks>
 			public readonly int RuleStatus;
 			/// <summary>
@@ -650,7 +651,7 @@ namespace Icu
 				// ubrk_getRuleStatus() will return the numerically largest
 				// from the vector.  We are saving a PInvoke by finding the max
 				// value.
-				// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+				// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 				//int status = NativeMethods.ubrk_getRuleStatus(_breakIterator);
 				RuleStatus = ruleStatusVector.Max();
 			}

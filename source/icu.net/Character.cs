@@ -14,7 +14,7 @@ namespace Icu
 	{
 		/// <summary>
 		/// Defined in ICU uchar.h
-		/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+		/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 		/// </summary>
 		/// <remarks>
 		/// Note: UProperty constants are parsed by preparseucd.py.
@@ -143,14 +143,14 @@ namespace Icu
 			/// mapping. Not the same as the general category Cased_Letter.
 			/// </summary>
 			CASE_SENSITIVE = 34,
-			/// <summary>Sentence Terminal. Used in UAX #29: Text Boundaries (http://www.unicode.org/reports/tr29/)</summary>
+			/// <summary>Sentence Terminal. Used in UAX #29: Text Boundaries (https://www.unicode.org/reports/tr29/)</summary>
 			S_TERM = 35,
 			/// <summary>
 			/// ICU-specific property for characters that are inert under NFD,
 			/// i.e., they do not interact with adjacent characters. See the
 			/// documentation for the Normalizer2 class and the
 			/// Normalizer2::isInert() method.
-			/// http://www.icu-project.org/apiref/icu4c/classicu_1_1Normalizer2.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1Normalizer2.html
 			/// </summary>
 			VARIATION_SELECTOR = 36,
 			/// <summary>
@@ -158,7 +158,7 @@ namespace Icu
 			/// i.e., they do not interact with adjacent characters. See the
 			/// documentation for the Normalizer2 class and the
 			/// Normalizer2::isInert() method.
-			/// http://www.icu-project.org/apiref/icu4c/classicu_1_1Normalizer2.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1Normalizer2.html
 			/// </summary>
 			NFD_INERT = 37,
 			/// <summary>
@@ -166,7 +166,7 @@ namespace Icu
 			/// i.e., they do not interact with adjacent characters. See the
 			/// documentation for the Normalizer2 class and the
 			/// Normalizer2::isInert() method.
-			/// http://www.icu-project.org/apiref/icu4c/classicu_1_1Normalizer2.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1Normalizer2.html
 			/// </summary>
 			NFKD_INERT = 38,
 			/// <summary>
@@ -174,7 +174,7 @@ namespace Icu
 			/// i.e., they do not interact with adjacent characters. See the
 			/// documentation for the Normalizer2 class and the
 			/// Normalizer2::isInert() method.
-			/// http://www.icu-project.org/apiref/icu4c/classicu_1_1Normalizer2.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1Normalizer2.html
 			/// </summary>
 			NFC_INERT = 39,
 			/// <summary>
@@ -182,7 +182,7 @@ namespace Icu
 			/// i.e., they do not interact with adjacent characters. See the
 			/// documentation for the Normalizer2 class and the
 			/// Normalizer2::isInert() method.
-			/// http://www.icu-project.org/apiref/icu4c/classicu_1_1Normalizer2.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1Normalizer2.html
 			/// </summary>
 			NFKC_INERT = 40,
 			/// <summary>
@@ -196,38 +196,38 @@ namespace Icu
 			/// collation tailoring rules.
 			/// </summary>
 			SEGMENT_STARTER = 41,
-			/// <summary>See UAX #31 Identifier and Pattern Syntax (http://www.unicode.org/reports/tr31/)</summary>
+			/// <summary>See UAX #31 Identifier and Pattern Syntax (https://www.unicode.org/reports/tr31/)</summary>
 			PATTERN_SYNTAX = 42,
-			/// <summary>See UAX #31 Identifier and Pattern Syntax (http://www.unicode.org/reports/tr31/)</summary>
+			/// <summary>See UAX #31 Identifier and Pattern Syntax (https://www.unicode.org/reports/tr31/)</summary>
 			PATTERN_WHITE_SPACE = 43,
 			/// <summary>
 			/// Implemented according to the UTS #18 Annex C Standard
 			/// Recommendation. See the uchar.h file documentation.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 			/// </summary>
 			POSIX_ALNUM = 44,
 			/// <summary>
 			/// Implemented according to the UTS #18 Annex C Standard
 			/// Recommendation. See the uchar.h file documentation.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 			/// </summary>
 			POSIX_BLANK = 45,
 			/// <summary>
 			/// Implemented according to the UTS #18 Annex C Standard
 			/// Recommendation. See the uchar.h file documentation.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 			/// </summary>
 			POSIX_GRAPH = 46,
 			/// <summary>
 			/// Implemented according to the UTS #18 Annex C Standard
 			/// Recommendation. See the uchar.h file documentation.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 			/// </summary>
 			POSIX_PRINT = 47,
 			/// <summary>
 			/// Implemented according to the UTS #18 Annex C Standard
 			/// Recommendation. See the uchar.h file documentation.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html
 			/// </summary>
 			POSIX_XDIGIT = 48,
 			/// <summary>For Lowercase, Uppercase and Titlecase characters.</summary>
@@ -278,7 +278,7 @@ namespace Icu
 			CANONICAL_COMBINING_CLASS = 0x1002,
 			/// <summary>Returns UDecompositionType values.</summary>
 			DECOMPOSITION_TYPE = 0x1003,
-			/// <summary>See http://www.unicode.org/reports/tr11/ Returns UEastAsianWidth values.</summary>
+			/// <summary>See https://www.unicode.org/reports/tr11/ Returns UEastAsianWidth values.</summary>
 			EAST_ASIAN_WIDTH = 0x1004,
 			/// <summary>Same as u_charType, returns UCharCategory values.</summary>
 			GENERAL_CATEGORY = 0x1005,
@@ -306,7 +306,7 @@ namespace Icu
 			/// ICU-specific property for the ccc of the first code point of the
 			/// decomposition, or lccc(c)=ccc(NFD(c)[0]). Useful for checking
 			/// for canonically ordered text; see UNORM_FCD and
-			/// http://www.unicode.org/notes/tn5/#FCD . Returns 8-bit numeric
+			/// https://www.unicode.org/notes/tn5/#FCD . Returns 8-bit numeric
 			/// values like UCHAR_CANONICAL_COMBINING_CLASS.
 			/// </summary>
 			LEAD_CANONICAL_COMBINING_CLASS = 0x1010,
@@ -314,27 +314,27 @@ namespace Icu
 			/// ICU-specific property for the ccc of the last code point of the
 			/// decomposition, or tccc(c)=ccc(NFD(c)[last]). Useful for checking
 			/// for canonically ordered text; see UNORM_FCD and
-			/// http://www.unicode.org/notes/tn5/#FCD . Returns 8-bit numeric
+			/// https://www.unicode.org/notes/tn5/#FCD . Returns 8-bit numeric
 			/// values like UCHAR_CANONICAL_COMBINING_CLASS.
 			/// </summary>
 			TRAIL_CANONICAL_COMBINING_CLASS = 0x1011,
 			/// <summary>
-			/// Used in UAX #29: Text Boundaries (http://www.unicode.org/reports/tr29/)
+			/// Used in UAX #29: Text Boundaries (https://www.unicode.org/reports/tr29/)
 			/// Returns UGraphemeClusterBreak values.
 			/// </summary>
 			GRAPHEME_CLUSTER_BREAK = 0x1012,
 			/// <summary>
-			/// Used in UAX #29: Text Boundaries (http://www.unicode.org/reports/tr29/)
+			/// Used in UAX #29: Text Boundaries (https://www.unicode.org/reports/tr29/)
 			/// Returns USentenceBreak values
 			/// </summary>
 			SENTENCE_BREAK = 0x1013,
 			/// <summary>
-			/// Used in UAX #29: Text Boundaries (http://www.unicode.org/reports/tr29/)
+			/// Used in UAX #29: Text Boundaries (https://www.unicode.org/reports/tr29/)
 			/// Returns UWordBreakValues values.
 			/// </summary>
 			WORD_BREAK = 0x1014,
 			/// <summary>
-			/// Used in UAX #9: Unicode Bidirectional Algorithm (http://www.unicode.org/reports/tr9/)
+			/// Used in UAX #9: Unicode Bidirectional Algorithm (https://www.unicode.org/reports/tr9/)
 			/// Returns UBidiPairedBracketType values.
 			/// </summary>
 			BIDI_PAIRED_BRACKET_TYPE = 0x1015,
@@ -352,7 +352,7 @@ namespace Icu
 			/// u_getPropertyValueName() and u_getPropertyValueEnum(), a
 			/// multi-bit mask is used for sets of categories like "Letters".
 			/// Mask values should be cast to uint32_t.
-			/// http://icu-project.org/apiref/icu4c/uchar_8h.html#a3f694e48867909fbe555586f2b3565be
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html#a3f694e48867909fbe555586f2b3565be
 			/// </summary>
 			GENERAL_CATEGORY_MASK = 0x2000,
 			/// <summary>First constant for bit-mask Unicode properties.</summary>
@@ -379,12 +379,18 @@ namespace Icu
 			STRING_START = AGE,
 			/// <summary>Corresponds to u_charMirror.</summary>
 			BIDI_MIRRORING_GLYPH = 0x4001,
-			/// <summary>Corresponds to u_strFoldCase in ustring.h (http://icu-project.org/apiref/icu4c/ustring_8h.html).</summary>
+			/// <summary>
+			/// Corresponds to u_strFoldCase in ustring.h.
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ustring_8h.html#ae514cad63c76897567f1d7535e857852
+			/// </summary>
 			CASE_FOLDING = 0x4002,
 			/// <summary>Corresponds to u_getISOComment.</summary>
 			[Obsolete("ICU 49")]
 			ISO_COMMENT = 0x4003,
-			/// <summary>Corresponds to u_strToLower in ustring.h (http://icu-project.org/apiref/icu4c/ustring_8h.html).</summary>
+			/// <summary>
+			/// Corresponds to u_strToLower in ustring.h.
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ustring_8h.html#a1b516af424a82c73421754e63306b4b6
+			/// </summary>
 			LOWERCASE_MAPPING = 0x4004,
 			/// <summary>Corresponds to u_charName.</summary>
 			NAME = 0x4005,
@@ -396,7 +402,10 @@ namespace Icu
 			SIMPLE_TITLECASE_MAPPING = 0x4008,
 			/// <summary> Corresponds to u_toupper.</summary>
 			SIMPLE_UPPERCASE_MAPPING = 0x4009,
-			/// <summary>Corresponds to u_strToTitle in ustring.h  (http://icu-project.org/apiref/icu4c/ustring_8h.html).</summary>
+			/// <summary>
+			/// Corresponds to u_strToTitle in ustring.h.
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ustring_8h.html
+			/// </summary>
 			TITLECASE_MAPPING = 0x400A,
 			/// <summary>
 			/// This property is of little practical value. Beginning with
@@ -405,7 +414,10 @@ namespace Icu
 			/// </summary>
 			[Obsolete("ICU 49")]
 			UNICODE_1_NAME = 0x400B,
-			/// <summary>Corresponds to u_strToUpper in ustring.h (http://icu-project.org/apiref/icu4c/ustring_8h.html).</summary>
+			/// <summary>
+			/// Corresponds to u_strToUpper in ustring.h.
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ustring_8h.html
+			/// </summary>
 			UPPERCASE_MAPPING = 0x400C,
 			/// <summary>Corresponds to u_getBidiPairedBracket.</summary>
 			BIDI_PAIRED_BRACKET = 0x400D,
@@ -417,9 +429,10 @@ namespace Icu
 
 			/// <summary>
 			/// Some characters are commonly used in multiple scripts. For more
-			/// information, see UAX #24: http://www.unicode.org/reports/tr24/.
+			/// information, see UAX #24: https://www.unicode.org/reports/tr24/.
 			/// Corresponds to uscript_hasScript and uscript_getScriptExtensions
-			/// in uscript.h. http://icu-project.org/apiref/icu4c/uscript_8h.html
+			/// in uscript.h.
+			/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uscript_8h.html
 			/// </summary>
 			SCRIPT_EXTENSIONS = 0x7000,
 			/// <summary>First constant for Unicode properties with unusual value types</summary>
@@ -436,7 +449,7 @@ namespace Icu
 
 		/// <summary>
 		/// enumerated Unicode general category types.
-		/// See http://www.unicode.org/Public/UNIDATA/UnicodeData.html .
+		/// See https://www.unicode.org/reports/tr44/ .
 		/// </summary>
 		/// <remarks>
 		/// Note: UCharCategory constants and their API comments are parsed by preparseucd.py.
@@ -514,7 +527,7 @@ namespace Icu
 			FINAL_PUNCTUATION = 29,
 			/// <summary>One higher than the last enum UCharCategory constant.
 			/// This numeric value is stable (will not change), see
-			/// http://www.unicode.org/policies/stability_policy.html#Property_Value</summary>
+			/// https://www.unicode.org/policies/stability_policy.html#Property_Value</summary>
 			CHAR_CATEGORY_COUNT
 		}
 
@@ -2452,7 +2465,7 @@ namespace Icu
 
 		/// <summary>
 		/// Returns the bidirectional category value for the code point, which is used in the
-		/// Unicode bidirectional algorithm (UAX #9 http://www.unicode.org/reports/tr9/).
+		/// Unicode bidirectional algorithm (UAX #9 https://www.unicode.org/reports/tr9/).
 		/// </summary>
 		/// <param name="code">the code point to be tested </param>
 		/// <returns>the bidirectional category (UCharDirection) value</returns>
@@ -2536,8 +2549,8 @@ namespace Icu
 		/// in UnicodeData.txt.
 		/// The properties APIs are intended to reflect Unicode properties as defined in the
 		/// Unicode Character Database (UCD) and Unicode Technical Reports (UTR). For details
-		/// about the properties <see href="http: //www.unicode.org/"/> . For names of Unicode
-		/// properties see the UCD file <see cref="PropertyAliases.txt"/>.
+		/// about the properties <see href="https://www.unicode.org/reports/tr44/"/>. For names of
+		/// Unicode properties, see the UCD file PropertyAliases.txt.
 		/// </remarks>
 		public static int GetIntPropertyValue(int codePoint, UProperty which)
 		{
@@ -2554,7 +2567,7 @@ namespace Icu
 		/// and can map to a result string with a different length as appropriate. Full case
 		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
 		/// See also the User Guide chapter on C/POSIX migration:
-		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// <seealso href="https://unicode-org.github.io/icu/userguide/icu/posix.html#case-mappings"/>
 		/// </summary>
 		/// <param name="codePoint">the code point to be mapped </param>
 		/// <returns>the Simple_Lowercase_Mapping of the code point, if any; otherwise the code
@@ -2574,7 +2587,7 @@ namespace Icu
 		/// and can map to a result string with a different length as appropriate. Full case
 		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
 		/// See also the User Guide chapter on C/POSIX migration:
-		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// <seealso href="https://unicode-org.github.io/icu/userguide/icu/posix.html#case-mappings"/>
 		/// </summary>
 		/// <param name="codePoint">the code point to be mapped </param>
 		/// <returns>the Simple_Titlecase_Mapping of the code point, if any; otherwise the code
@@ -2594,7 +2607,7 @@ namespace Icu
 		/// and can map to a result string with a different length as appropriate. Full case
 		/// mappings are applied by the string case mapping functions, <see cref="UnicodeString"/>
 		/// See also the User Guide chapter on C/POSIX migration:
-		/// <seealso href="http: //icu-project.org/userguide/posix.html#case_mappings"/>
+		/// <seealso href="https://unicode-org.github.io/icu/userguide/icu/posix.html#case-mappings"/>
 		/// </summary>
 		/// <param name="codePoint">the code point to be mapped </param>
 		/// <returns>the Simple_Uppercase_Mapping of the code point, if any; otherwise the code

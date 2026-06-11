@@ -867,7 +867,7 @@ namespace Icu.Tests.Collation
 
 		/// <summary>
 		/// Tailored rules were obtained from:
-		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/sr.txt
+		/// https://github.com/unicode-org/icu/blob/release-56-1/icu4c/source/data/coll/sr.txt
 		/// </summary>
 		[Test]
 		[Category("Full ICU")]
@@ -893,7 +893,7 @@ namespace Icu.Tests.Collation
 		/// ErrorCode.USING_DEFAULT_WARNING which is not a failure.
 		///
 		/// Double-check this to make sure the rules are correct.
-		/// http://source.icu-project.org/repos/icu/icu/tags/release-56-1/source/data/coll/en.txt
+		/// https://github.com/unicode-org/icu/blob/release-56-1/icu4c/source/data/coll/en.txt
 		/// </summary>
 		[Test]
 		[Category("Full ICU")]

@@ -11,7 +11,7 @@ namespace Icu
 	/// The BreakIterator implements methods for finding the location of
 	/// boundaries in text.
 	/// When using BreakIterator class, it will iterate over the boundaries
-	/// as described here: http://userguide.icu-project.org/boundaryanalysis
+	/// as described here: https://unicode-org.github.io/icu/userguide/boundaryanalysis
 	/// for all UBreakIteratorTypes (including UBreakIteratorType.Word).
 	/// </summary>
 	public abstract class BreakIterator : IDisposable, IEnumerable<string>
@@ -230,7 +230,7 @@ namespace Icu
 		/// </summary>
 		/// <remarks>
 		/// For more information, see
-		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 		/// </remarks>
 		public abstract int GetRuleStatus();
 
@@ -247,7 +247,7 @@ namespace Icu
 		/// </summary>
 		/// <remarks>
 		/// For more information, see
-		/// http://userguide.icu-project.org/boundaryanalysis#TOC-Rule-Status-Values
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/break-rules.html#rule-status-values
 		/// </remarks>
 		public abstract int[] GetRuleStatusVector();
 
@@ -293,7 +293,7 @@ namespace Icu
 		/// <summary>
 		/// Creates a BreakIterator that splits on words for the given locale.
 		/// It iterates over boundaries as described in the "Word Boundary"
-		/// section http://userguide.icu-project.org/boundaryanalysis.
+		/// section https://unicode-org.github.io/icu/userguide/boundaryanalysis.
 		/// If you want to ignore spaces and punctuation, consider using:
 		/// <see cref="BreakIterator.Split(UBreakIteratorType, Icu.Locale, string)"/>
 		/// or <see cref="BreakIterator.GetWordBoundaries(Icu.Locale, string, bool)"/>,
@@ -332,7 +332,7 @@ namespace Icu
 		/// <returns>The tokens.</returns>
 		/// <remarks>
 		/// If you want to get tokens for spaces and punctuations (as described
-		/// in http://userguide.icu-project.org/boundaryanalysis), consider using
+		/// in https://unicode-org.github.io/icu/userguide/boundaryanalysis), consider using
 		/// <see cref="BreakIterator.GetEnumerator()"/>.
 		/// </remarks>
 		public static IEnumerable<string> Split(UBreakIteratorType type, string locale, string text)
@@ -350,7 +350,7 @@ namespace Icu
 		/// <returns>The tokens.</returns>
 		/// <remarks>
 		/// If you want to get tokens for spaces and punctuations (as described
-		/// in http://userguide.icu-project.org/boundaryanalysis), consider using
+		/// in https://unicode-org.github.io/icu/userguide/boundaryanalysis), consider using
 		/// <see cref="BreakIterator.GetEnumerator()"/>.
 		/// </remarks>
 		public static IEnumerable<string> Split(UBreakIteratorType type, Locale locale, string text)
@@ -373,7 +373,8 @@ namespace Icu
 		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
 		/// punctuation as boundaries for words. Set parameter to true if all
 		/// boundaries are desired; false otherwise.
-		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
+		/// For more information:
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/#check-for-whole-words
 		/// </param>
 		public static IEnumerable<Boundary> GetWordBoundaries(string locale, string text, bool includeSpacesAndPunctuation)
 		{
@@ -389,7 +390,8 @@ namespace Icu
 		/// ICU's UBreakIteratorType.WORD analysis considers spaces and
 		/// punctuation as boundaries for words. Set parameter to true if all
 		/// boundaries are desired; false otherwise.
-		/// For more information: http://userguide.icu-project.org/boundaryanalysis#TOC-Count-the-words-in-a-document-C-only-:
+		/// For more information:
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis/#check-for-whole-words
 		/// </param>
 		public static IEnumerable<Boundary> GetWordBoundaries(Locale locale, string text, bool includeSpacesAndPunctuation)
 		{
@@ -472,7 +474,7 @@ namespace Icu
 		/// Retrieves an object that can iterate through the individual segments of
 		/// the text of this BreakIterator.
 		/// It iterates over boundaries as described in
-		/// http://userguide.icu-project.org/boundaryanalysis.
+		/// https://unicode-org.github.io/icu/userguide/boundaryanalysis.
 		/// If you want to ignore spaces and punctuation, consider using:
 		/// <see cref="BreakIterator.Split(UBreakIteratorType, Icu.Locale, string)"/>
 		/// or <see cref="BreakIterator.GetWordBoundaries(Icu.Locale, string, bool)"/>,

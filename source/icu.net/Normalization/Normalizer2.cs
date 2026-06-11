@@ -16,7 +16,7 @@ namespace Icu.Normalization
 		/// <remarks>
 		/// For details about standard Unicode normalization forms and about the algorithms which
 		/// are also used with custom mapping tables
-		/// <see href="http: //www.unicode.org/unicode/reports/tr15/"/>
+		/// <see href="https://www.unicode.org/reports/tr15/"/>
 		/// </remarks>
 		public enum Mode
 		{

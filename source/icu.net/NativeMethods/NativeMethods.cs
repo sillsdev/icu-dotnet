@@ -1013,7 +1013,7 @@ namespace Icu
 		///      U_NO_NUMERIC_VALUE
 		///  Stable:
 		///      ICU 2.2
-		/// http://oss.software.ibm.com/icu/apiref/uchar_8h.html#a477
+		/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/uchar_8h.html#a38648684dcca7932451efdde1f917876
 		/// </remarks>
 		///<param name="characterCode">Code point to get the numeric value for</param>
 		///<returns>Numeric value of c, or U_NO_NUMERIC_VALUE if none is defined.</returns>

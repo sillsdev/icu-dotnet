@@ -45,7 +45,7 @@ namespace Icu
 				else
 					throw new NotSupportedException("Cannot get OperatingSystemType from: " + RuntimeInformation.OSDescription);
 #else
-				// See http://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
+				// See https://www.mono-project.com/docs/faq/technical/#how-to-detect-the-execution-platform
 				switch ((int)Environment.OSVersion.Platform)
 				{
 					case 4:
