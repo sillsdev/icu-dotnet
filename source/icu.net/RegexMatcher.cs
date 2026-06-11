@@ -1,16 +1,13 @@
 ﻿// Copyright (c) 2017 JEPA
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Icu
 {
 	/// <summary>
 	/// Regular Expression Matcher
 	/// </summary>
-	public class RegexMatcher: IDisposable
+	public class RegexMatcher : IDisposable
 	{
 		/// <summary>
 		/// Constants for Regular Expression Match Modes.
@@ -149,9 +146,7 @@ namespace Icu
 			return Matches(-1);
 		}
 
-		/// <summary>
-		/// Dispose of managed/unmanaged resources.
-		/// </summary>
+		/// <inheritdoc/>
 		public void Dispose()
 		{
 			Dispose(true);

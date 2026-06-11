@@ -230,7 +230,7 @@ namespace Icu.Collation
 											  originalString);
 		}
 
-		private static void SetInternalFieldForPublicProperty<T,P>(
+		private static void SetInternalFieldForPublicProperty<T, P>(
 			T instance,
 			string propertyName,
 			string frameworkInternalFieldName,
@@ -366,10 +366,7 @@ namespace Icu.Collation
 
 		#region IDisposable Support
 
-		/// <summary>
-		/// Dispose of managed/unmanaged resources.
-		/// Allow any inheriting classes to dispose of manage
-		/// </summary>
+		/// <inheritdoc/>
 		public void Dispose()
 		{
 			Dispose(true);

@@ -8,11 +8,29 @@ using System.Text;
 
 namespace Icu
 {
+	/// <summary>
+	/// Wraps ICU's transliteration engine, which converts text from one script or encoding to another.
+	/// </summary>
 	public class Transliterator : IDisposable
 	{
+		/// <summary>
+		/// Direction constant indicating the direction in a transliterator, e.g., the forward or
+		/// reverse rules of a RuleBasedTransliterator.
+		/// </summary>
+		/// <seealso href="https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/utrans_8h.html#a04f480e9e8e40f0d8067521668dc06ec"/>
 		public enum UTransDirection
 		{
+			/// <summary>
+			/// Transliterates from &lt;source&gt; to &lt;target&gt; for a transliterator with ID
+			/// &lt;source&gt;-&lt;target&gt;. For a transliterator opened using a rule, means
+			/// forward direction rules, e.g., <c>A &gt; B</c>.
+			/// </summary>
 			Forward,
+			/// <summary>
+			/// Transliterates from &lt;target&gt; to &lt;source&gt; for a transliterator with ID
+			/// &lt;source&gt;-&lt;target&gt;. For a transliterator opened using a rule, means
+			/// reverse direction rules, e.g., <c>A &lt; B</c>.
+			/// </summary>
 			Reverse
 		}
 
@@ -343,6 +361,8 @@ namespace Icu
 		}
 
 		#region Disposable pattern
+		/// <summary>Releases the resources used by this instance.</summary>
+		/// <param name="disposing"><c>true</c> if called from <see cref="Dispose()"/>; <c>false</c> if called during finalization.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -351,6 +371,7 @@ namespace Icu
 			}
 		}
 
+		/// <inheritdoc/>
 		public void Dispose()
 		{
 			Dispose(true);
