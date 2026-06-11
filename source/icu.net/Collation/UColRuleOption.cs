@@ -17,7 +17,7 @@ namespace Icu.Collation
 		/// The "UCA rules" are an approximation of the root collator's sort
 		/// order. They are almost never used or useful at runtime and can be
 		/// removed from the data.
-		/// See http://userguide.icu-project.org/collation/customization#TOC-Building-on-Existing-Locales
+		/// See https://unicode-org.github.io/icu/userguide/collation/customization#building-on-existing-locales
 		/// </summary>
 		UCOL_FULL_RULES
 	}

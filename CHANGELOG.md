@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
 <!-- Available types of changes:
 ### Added
@@ -388,7 +388,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Cross-platform nuget package that is known to work on Windows and Linux
 - ICU binaries moved to separate nuget packages (`Icu4C.Win.*`)
 - Change versioning scheme. Previously the versions for the nuget package included
-  the ICU version. Now we follow [Semantic Versioning](http://semver.org/).
+  the ICU version. Now we follow [Semantic Versioning](https://semver.org/).
 
 [Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.1...HEAD
 [3.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.0...v3.0.1

@@ -102,7 +102,7 @@ namespace Icu
 		/// Initialize ICU. In multi-threaded applications this should be the first ICU method
 		/// that gets called, preferably before starting multiple threads.
 		/// </summary>
-		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
+		/// <seealso href="https://unicode-org.github.io/icu/userguide/icu/design.html#icu4c-initialization-and-termination"/>
 		/// ------------------------------------------------------------------------------------
 		[PublicAPI]
 		public static ErrorCode Init()
@@ -118,7 +118,7 @@ namespace Icu
 		/// </summary>
 		/// <remarks>This method is not thread-safe! All other threads should stop using ICU
 		/// before calling this function. </remarks>
-		/// <seealso href="http://userguide.icu-project.org/design#TOC-ICU-Initialization-and-Termination"/>
+		/// <seealso href="https://unicode-org.github.io/icu/userguide/icu/design.html#icu4c-initialization-and-termination"/>
 		/// ------------------------------------------------------------------------------------
 		[PublicAPI]
 		public static void Cleanup()

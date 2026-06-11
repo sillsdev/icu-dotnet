@@ -12,7 +12,7 @@ namespace Icu
 	/// </summary>
 	/// <remarks>
 	/// This is an implementation of the Unicode Bidirectional Algorithm.The algorithm is defined in the
-	/// <a href="http://www.unicode.org/unicode/reports/tr9/">Unicode Standard Annex #9</a>.
+	/// <a href="https://www.unicode.org/reports/tr9/">Unicode Standard Annex #9</a>.
 	/// </remarks>
 	public sealed class BiDi : IDisposable
 	{
@@ -291,13 +291,13 @@ namespace Icu
 		/// <remarks>
 		/// This function takes a piece of plain text containing one or more paragraphs, with or without externally specified embedding levels from styled
 		/// text and computes the left-right-directionality of each character.
-		/// 
+		///
 		/// If the entire text is all of the same directionality, then the function may not perform all the steps described by the algorithm, i.e.,
 		/// some levels may not be the same as if all steps were performed.This is not relevant for unidirectional text.
-		/// 
+		///
 		/// For example, in pure LTR text with numbers the numbers would get a resolved level of 2 higher than the surrounding text according to the
 		/// algorithm.This implementation may set all resolved levels to the same value in such a case.
-		/// 
+		///
 		/// The text can be composed of multiple paragraphs. Occurrence of a block separator in the text terminates a paragraph, and whatever comes
 		/// next starts a new paragraph.The exception to this rule is when a Carriage Return (CR) is followed by a Line Feed (LF). Both CR and LF are
 		/// block separators, but in that case, the pair of characters is considered as terminating the preceding paragraph, and a new paragraph will

@@ -345,7 +345,7 @@ namespace Icu
 	{
 		/// <summary>
 		/// Determines whether the operation was successful or not.
-		/// http://icu-project.org/apiref/icu4c/utypes_8h_source.html#l00709
+		/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/utypes_8h_source.html (line 810)
 		/// </summary>
 		public static bool IsSuccess(this ErrorCode errorCode)
 		{
@@ -354,7 +354,7 @@ namespace Icu
 
 		/// <summary>
 		/// Determines whether the operation resulted in an error.
-		/// http://icu-project.org/apiref/icu4c/utypes_8h_source.html#l00714
+		/// https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/utypes_8h_source.html (line 816)
 		/// </summary>
 		public static bool IsFailure(this ErrorCode errorCode)
 		{

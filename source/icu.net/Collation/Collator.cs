@@ -87,7 +87,7 @@ namespace Icu.Collation
 
 		/// <summary>
 		/// Specifies whether locale fallback is allowed.
-		/// For more information, see: http://userguide.icu-project.org/locale#TOC-Fallback
+		/// For more information, see: https://unicode-org.github.io/icu/userguide/locale#fallback
 		/// </summary>
 		public enum Fallback
 		{

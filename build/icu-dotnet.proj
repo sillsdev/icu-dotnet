@@ -22,7 +22,7 @@
 		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
 	</PropertyGroup>
 
-	<!-- NOTE: this project uses GitVersion (http://gitversion.readthedocs.io) to set the version number. -->
+	<!-- NOTE: this project uses GitVersion (https://gitversion.net/docs/) to set the version number. -->
 	<!-- To increment the version number create and push a new tag in git -->
 
 	<UsingTask TaskName="NUnitTeamCity"
