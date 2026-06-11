@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// Represents an ICU time zone and provides utilities for querying and converting time zone information.
+	/// </summary>
 	public class TimeZone
 	{
 		private readonly string zoneId;
