@@ -3,6 +3,7 @@
 using System;
 using System.Globalization;
 
+#pragma warning disable CS1591
 namespace Icu
 {
 	/// <summary>
@@ -2619,3 +2620,4 @@ namespace Icu
 
 	}
 }
+#pragma warning restore CS1591

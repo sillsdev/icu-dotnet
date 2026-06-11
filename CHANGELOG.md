@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- NuGet package now includes the XML documentation file, enabling IntelliSense summaries in Visual Studio.
 - In Character class, added all enums from Unicode's uchar.h that were missing:
   UBidiPairedBracketType, UBlockCode, UEastAsianWidth, UPropertyNameChoice, UJoiningType,
   UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
