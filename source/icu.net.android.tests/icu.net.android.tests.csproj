@@ -19,6 +19,7 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<EmbedAssembliesIntoApk Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">false</EmbedAssembliesIntoApk>
 
 		<!-- The MAUI app defines its own entry point via DeviceRunners -->
 		<GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
@@ -27,6 +28,10 @@
 	<ItemGroup>
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\icu.net\icu.net.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
