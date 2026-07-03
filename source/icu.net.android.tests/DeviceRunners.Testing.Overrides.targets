@@ -12,7 +12,7 @@
           AfterTargets="_DeviceRunnersExecTests"
           BeforeTargets="_DeviceRunnersReportResults"
           DependsOnTargets="_DeviceRunnersPrepareArgs"
-          Condition="'$(_DeviceRunnersIsSupportedPlatform)' == 'true'">
+          Condition="'$(_DeviceRunnersIsSupportedPlatform)' == 'true' And '$(_DeviceRunnersResultsDir)' != '' And '$(_DeviceRunnersTrxFile)' != ''">
     <Exec Command="$(DeviceRunnersTrxRebuildCommand)" />
   </Target>
 </Project>

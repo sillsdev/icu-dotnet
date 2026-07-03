@@ -19,6 +19,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+if ([string]::IsNullOrWhiteSpace($ResultsDir) -or [string]::IsNullOrWhiteSpace($TrxFile)) {
+    exit 0
+}
+
 function Test-ValidXmlChar([int]$codePoint) {
     return ($codePoint -eq 0x9) -or ($codePoint -eq 0xA) -or ($codePoint -eq 0xD) -or
         (($codePoint -ge 0x20) -and ($codePoint -le 0xD7FF)) -or

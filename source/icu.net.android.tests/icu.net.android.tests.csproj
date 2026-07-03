@@ -30,6 +30,7 @@
 
 		<!-- DeviceRunners forwards this to its CLI; without it no TRX is written and dotnet test has no summary. -->
 		<VSTestLogger Condition="'$(VSTestLogger)' == ''">trx;LogFileName=test-results.trx</VSTestLogger>
+		<TestResultsDirectory>$(MSBuildProjectDirectory)/test-results/</TestResultsDirectory>
 	</PropertyGroup>
 
 	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\icudt72l.dat')">
