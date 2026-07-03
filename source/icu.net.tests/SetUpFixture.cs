@@ -16,17 +16,10 @@ namespace Icu.Tests
 		{
 			// On macOS the library is never explicitly loaded or unloaded (NativeLibrary.Free
 			// is skipped to avoid dyld-destructor crashes); ICU loads lazily on first use.
-#if __ANDROID__
-			if (Wrapper.AndroidTestConfigure != null)
-				Wrapper.AndroidTestConfigure();
-			else if (!IsMac)
-				Wrapper.Init();
-#else
 			if (!IsMac)
 			{
 				Wrapper.Init();
 			}
-#endif
 
 			if (IsWindows)
 			{

@@ -1,6 +1,5 @@
 ﻿using DeviceRunners.VisualRunners;
 using DeviceRunners.VisualRunners.NUnit;
-using Icu;
 using Icu.Tests;
 using Microsoft.Extensions.Logging;
 
@@ -10,8 +9,6 @@ public static class MauiProgram
 {
 	public static MauiApp CreateMauiApp()
 	{
-		Wrapper.AndroidTestConfigure = AndroidIcuSetup.Configure;
-
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseVisualTestRunner(conf => conf

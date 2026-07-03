@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<!-- Override Directory.Build.props multi-targeting; Android device tests only -->
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
+		<IcuDotNetIncludeAndroid>true</IcuDotNetIncludeAndroid>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>icu.net.android.tests</RootNamespace>
 		<UseMaui>true</UseMaui>

@@ -35,9 +35,7 @@ public class IcuLoadDiagnostics
 		log.AppendLine("Not running on Android (__ANDROID__ not defined).");
 #endif
 
-		AndroidIcuSetup.Prepare();
 		Wrapper.Verbose = true;
-		AndroidIcuSetup.ApplyDataDirectory();
 
 		var initResult = Wrapper.Init();
 		log.AppendLine($"Wrapper.Init(): {initResult}");
