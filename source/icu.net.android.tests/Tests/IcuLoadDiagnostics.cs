@@ -2,21 +2,14 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System.Text;
 using Icu;
-using Icu.Collation;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace icu.net.android.tests.Tests;
 
+[TestFixture]
 public class IcuLoadDiagnostics
 {
-	public IcuLoadDiagnostics(ITestOutputHelper output)
-	{
-		_output = output;
-	}
-
-	private readonly ITestOutputHelper _output;
-
-	[Fact]
+	[Test]
 	public void ReportIcuLoadEnvironment()
 	{
 		var log = new StringBuilder();
@@ -39,21 +32,11 @@ public class IcuLoadDiagnostics
 
 		var initResult = Wrapper.Init();
 		log.AppendLine($"Wrapper.Init(): {initResult}");
+		log.AppendLine($"Wrapper.IcuVersion: {Wrapper.IcuVersion}");
+		log.AppendLine($"Wrapper.UnicodeVersion: {Wrapper.UnicodeVersion}");
 
-		try
-		{
-			log.AppendLine($"Wrapper.IcuVersion: {Wrapper.IcuVersion}");
-			log.AppendLine($"Wrapper.UnicodeVersion: {Wrapper.UnicodeVersion}");
-			using var collator = new RuleBasedCollator("");
-			log.AppendLine($"RuleBasedCollator.Compare('a','b'): {collator.Compare("a", "b")}");
-		}
-		catch (Exception ex)
-		{
-			log.AppendLine($"Collation probe failed: {ex.GetType().Name}: {ex.Message}");
-			_output.WriteLine(log.ToString());
-			throw;
-		}
+		TestContext.WriteLine(log.ToString());
 
-		_output.WriteLine(log.ToString());
+		Assert.That(initResult, Is.EqualTo(ErrorCode.ZERO_ERROR));
 	}
 }

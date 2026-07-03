@@ -15,7 +15,6 @@ public static class MauiProgram
 				.AddCliConfiguration()
 				.AddConsoleResultChannel()
 				.AddTestAssembly(typeof(MauiProgram).Assembly)
-				.AddXunit()
 				.AddTestAssembly(typeof(SetUpFixture).Assembly)
 				.AddNUnit());
 
