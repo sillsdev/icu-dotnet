@@ -10,11 +10,9 @@
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory)]
-    [string] $ResultsDir,
+    [string] $ResultsDir = '',
 
-    [Parameter(Mandatory)]
-    [string] $TrxFile
+    [string] $TrxFile = ''
 )
 
 $ErrorActionPreference = 'Stop'
