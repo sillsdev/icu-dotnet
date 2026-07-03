@@ -95,6 +95,35 @@ namespace Icu
 			NativeMethods.PreferredDirectory = directory;
 		}
 
+		/// <summary>
+		/// Android APKs require ICU native libraries to be named libicuuc.so (without a version suffix).
+		/// Call this before <see cref="Init"/> with the major ICU version that was bundled.
+		/// </summary>
+		[PublicAPI]
+		public static void SetAndroidBundledIcuMajorVersion(int majorVersion)
+		{
+			NativeMethods.AndroidBundledIcuMajorVersion = majorVersion;
+		}
+
+		/// <summary>
+		/// Android hosts native libraries inside APK splits where dlopen needs a zip path.
+		/// Provide a loader that returns a dlopen handle for a file name such as libicuuc.so.
+		/// </summary>
+		[PublicAPI]
+		public static void SetAndroidNativeLibraryLoader(Func<string, IntPtr> loader)
+		{
+			NativeMethods.AndroidLoadNativeLibrary = loader;
+		}
+
+		/// <summary>
+		/// Mono Android FastDev cannot resolve libc P/Invokes; provide dlsym lookup for ICU entry points.
+		/// </summary>
+		[PublicAPI]
+		public static void SetAndroidSymbolResolver(Func<string, IntPtr> resolver)
+		{
+			NativeMethods.AndroidResolveSymbol = resolver;
+		}
+
 		#region Public wrappers around the ICU methods
 
 		/// ------------------------------------------------------------------------------------

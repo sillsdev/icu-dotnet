@@ -138,9 +138,25 @@ namespace Icu
 		private static string _IcuPath;
 		private static IntPtr _IcuCommonLibHandle;
 		private static IntPtr _IcuI18NLibHandle;
+		private static bool _androidUsesUnversionedNativeLibs;
+		private static bool _androidDependenciesLoaded;
+
+		/// <summary>
+		/// When Android APKs bundle ICU as libicuuc.so (no version suffix), set the major ICU version here before Init().
+		/// </summary>
+		internal static int? AndroidBundledIcuMajorVersion { get; set; }
+
+		internal static Func<string, IntPtr> AndroidLoadNativeLibrary { get; set; }
+
+		internal static Func<string, IntPtr> AndroidResolveSymbol { get; set; }
 
 		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
 		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
+#if NET5_0_OR_GREATER
+		private static bool IsAndroid => System.OperatingSystem.IsAndroid();
+#else
+		private static bool IsAndroid => false;
+#endif
 
 		private static IntPtr IcuCommonLibHandle
 		{
@@ -221,28 +237,63 @@ namespace Icu
 				return false;
 			}
 
+			// Android loads native libs from the APK without materializing them as regular files,
+			// so File.Exists/EnumerateFiles on NativeLibraryDir often returns nothing.
+			if (IsAndroid &&
+			    AndroidBundledIcuMajorVersion is int bundledVersion &&
+			    !string.IsNullOrEmpty(PreferredDirectory) &&
+			    string.Equals(directory, PreferredDirectory, StringComparison.Ordinal) &&
+			    libraryName == "icuuc")
+			{
+				Trace.WriteLineIf(Verbose,
+					$"icu.net: using Android bundled ICU {bundledVersion} from '{directory}'");
+				_androidUsesUnversionedNativeLibs = true;
+				IcuVersion = bundledVersion;
+				_IcuPath = directory;
+				AddDirectoryToSearchPath(directory);
+				return true;
+			}
+
 			var filePattern = GetLibraryFilePattern(libraryName);
 			var files = Directory.EnumerateFiles(directory, filePattern).ToList();
+			if (IsAndroid)
+			{
+				var unversioned = Path.Combine(directory, $"lib{libraryName}.so");
+				if (File.Exists(unversioned) && !files.Contains(unversioned))
+					files.Insert(0, unversioned);
+			}
 			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
 			{
-				var libNameLen = libraryName.Length;
 				files.Sort((x, y) =>
 				{
-					var vx = int.TryParse(ExtractVersionString(x, libNameLen), out var nx) ? nx : -1;
-					var vy = int.TryParse(ExtractVersionString(y, libNameLen), out var ny) ? ny : -1;
-					return vy.CompareTo(vx);
+					var vx = TryParseIcuLibraryMajorVersion(x, libraryName, out var nx) ? nx : -1;
+					var vy = TryParseIcuLibraryMajorVersion(y, libraryName, out var ny) ? ny : -1;
+					var cmp = vy.CompareTo(vx);
+					if (cmp != 0)
+						return cmp;
+					// Prefer libicuuc.so.72.1 over libicuuc.so.72 when major versions tie.
+					return string.Compare(Path.GetFileName(y), Path.GetFileName(x), StringComparison.Ordinal);
 				});
 				foreach (var filePath in files)
 				{
-					var version = ExtractVersionString(filePath, libNameLen);
-					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
-					if (!int.TryParse(version, out var icuVersion))
+					if (!TryParseIcuLibraryMajorVersion(filePath, libraryName, out var icuVersion))
 					{
-						Trace.WriteLineIf(Verbose,
-							$"icu.net: version '{version}' from '{filePath}' is not parseable. Skipping.");
-						continue;
+						if (IsAndroid &&
+						    Path.GetFileName(filePath) == $"lib{libraryName}.so" &&
+						    AndroidBundledIcuMajorVersion is int androidVersion)
+						{
+							icuVersion = androidVersion;
+							_androidUsesUnversionedNativeLibs = true;
+						}
+						else
+						{
+							Trace.WriteLineIf(Verbose,
+								$"icu.net: could not parse ICU version from '{filePath}'. Skipping.");
+							continue;
+						}
 					}
+					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{icuVersion}' from '{filePath}'");
 					if (icuVersion < MinIcuVersion || icuVersion > MaxIcuVersion)
 					{
 						Trace.WriteLineIf(Verbose,
@@ -274,11 +325,36 @@ namespace Icu
 
 		private static string ExtractVersionString(string filePath, int libNameLen)
 		{
-			return IsWindows
-				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen)         // strip icuuc
-				: IsMac
-				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4)     // strip libicuuc.
-				: Path.GetFileName(filePath).Substring(libNameLen + 7);                    // strip libicuuc.so.
+			if (IsWindows)
+			{
+				var name = Path.GetFileNameWithoutExtension(filePath);
+				return name.Length > libNameLen ? name.Substring(libNameLen) : string.Empty;
+			}
+
+			if (IsMac)
+			{
+				var name = Path.GetFileNameWithoutExtension(filePath);
+				var prefixLen = libNameLen + 4;
+				return name.Length > prefixLen ? name.Substring(prefixLen) : string.Empty;
+			}
+
+			var fileName = Path.GetFileName(filePath);
+			var linuxPrefixLen = libNameLen + 7;
+			return fileName.Length > linuxPrefixLen ? fileName.Substring(linuxPrefixLen) : string.Empty;
+		}
+
+		private static bool TryParseIcuLibraryMajorVersion(string filePath, string libraryName, out int majorVersion)
+		{
+			majorVersion = -1;
+			var versionString = ExtractVersionString(filePath, libraryName.Length);
+			if (string.IsNullOrEmpty(versionString))
+				return false;
+
+			var dot = versionString.IndexOf('.');
+			if (dot >= 0)
+				versionString = versionString.Substring(0, dot);
+
+			return int.TryParse(versionString, out majorVersion);
 		}
 
 		private static bool LocateIcuLibrary(string libraryName)
@@ -291,13 +367,32 @@ namespace Icu
 			}
 
 			var arch = IsRunning64Bit ? "x64" : "x86";
-			var platform = IsWindows ? "win" : IsMac ? "osx" : "linux";
+			var androidArch = IsRunning64Bit ? "x86_64" : "x86";
+			var platform = IsWindows ? "win" : IsMac ? "osx" : IsAndroid ? "android" : "linux";
 
-			// Look for ICU binaries in lib/{win,osx,linux}-{x86,x64} subdirectory first
+			// Look for ICU binaries in lib/{win,osx,linux,android}-{x86,x64} subdirectory first
 			if (CheckDirectoryForIcuBinaries(
 				Path.Combine(DirectoryOfThisAssembly, "lib", $"{platform}-{arch}"),
 				libraryName))
 				return true;
+
+			if (IsAndroid)
+			{
+				if (CheckDirectoryForIcuBinaries(
+					Path.Combine(DirectoryOfThisAssembly, "lib", $"android-{androidArch}"),
+					libraryName))
+					return true;
+
+				if (CheckDirectoryForIcuBinaries(
+					Path.Combine(DirectoryOfThisAssembly, "runtimes", $"android-{androidArch}", "native"),
+					libraryName))
+					return true;
+
+				if (CheckDirectoryForIcuBinaries(
+					Path.Combine(DirectoryOfThisAssembly, "runtimes", "android", "native"),
+					libraryName))
+					return true;
+			}
 
 			// Next look in lib/{x86,x64} subdirectory
 			if (CheckDirectoryForIcuBinaries(
@@ -360,6 +455,8 @@ namespace Icu
 				if (IcuVersion <= 0)
 					LocateIcuLibrary(libraryName);
 
+				EnsureAndroidDependenciesLoaded();
+
 				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : MaxIcuVersion);
 				if (handle == IntPtr.Zero)
 				{
@@ -368,6 +465,40 @@ namespace Icu
 				}
 				return handle;
 			}
+		}
+
+		private static void EnsureAndroidDependenciesLoaded()
+		{
+#if NET6_0_OR_GREATER
+			if (!IsAndroid || _androidDependenciesLoaded || string.IsNullOrEmpty(_IcuPath))
+				return;
+
+			foreach (var lib in new[] { "libc++_shared.so", "libicudata.so", "libicuuc.so", "libicui18n.so" })
+			{
+				if (IsAndroid && AndroidLoadNativeLibrary != null)
+				{
+					var depHandle = AndroidLoadNativeLibrary(lib);
+					if (depHandle != IntPtr.Zero)
+						Trace.WriteLineIf(Verbose, $"icu.net: preloaded {lib}");
+					else
+						Trace.TraceWarning($"icu.net: failed to preload {lib}");
+					continue;
+				}
+
+				var path = Path.Combine(_IcuPath, lib);
+				try
+				{
+					NativeLibrary.Load(path);
+					Trace.WriteLineIf(Verbose, $"icu.net: preloaded {lib}");
+				}
+				catch (DllNotFoundException ex)
+				{
+					Trace.TraceWarning($"icu.net: failed to preload {lib}: {ex.Message}");
+				}
+			}
+
+			_androidDependenciesLoaded = true;
+#endif
 		}
 
 		private static IntPtr GetIcuLibHandle(string basename, int icuVersion)
@@ -386,20 +517,30 @@ namespace Icu
 					? $"{basename}{icuVersion}.dll"
 					: IsMac
 					? $"lib{basename}.{icuVersion}.dylib"
+					: IsAndroid && _androidUsesUnversionedNativeLibs
+					? $"lib{basename}.so"
 					: $"lib{basename}.so.{icuVersion}";
 				var libPath = string.IsNullOrEmpty(_IcuPath) ? libName : Path.Combine(_IcuPath, libName);
 
 #if NET6_0_OR_GREATER
 				string exceptionErrorMessage = null;
-				loadMethod = "NativeLibrary.Load";
-				try
+				if (IsAndroid && AndroidLoadNativeLibrary != null)
 				{
-					handle = NativeLibrary.Load(libPath);
+					loadMethod = "AndroidLoadNativeLibrary";
+					handle = AndroidLoadNativeLibrary(libName);
 				}
-				catch (DllNotFoundException ex)
+				else
 				{
-					handle = IntPtr.Zero;
-					exceptionErrorMessage = ex.Message;
+					loadMethod = "NativeLibrary.Load";
+					try
+					{
+						handle = NativeLibrary.Load(libPath);
+					}
+					catch (DllNotFoundException ex)
+					{
+						handle = IntPtr.Zero;
+						exceptionErrorMessage = ex.Message;
+					}
 				}
 #else
 				if (IsWindows)
@@ -444,6 +585,8 @@ namespace Icu
 #endif
 				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {errorMsg}");
 				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {errorMsg}");
+				if (IsAndroid && _androidUsesUnversionedNativeLibs)
+					return IntPtr.Zero;
 				icuVersion -= 1;
 			}
 		}
@@ -550,6 +693,75 @@ namespace Icu
 #endif
 		}
 
+#if NET6_0_OR_GREATER
+		private static IntPtr AndroidSystemLibc;
+
+		private static IntPtr EnsureAndroidSystemLibc()
+		{
+			if (AndroidSystemLibc != IntPtr.Zero)
+				return AndroidSystemLibc;
+
+			if (!IsAndroid)
+				return IntPtr.Zero;
+
+			try
+			{
+				var libcPath = File.Exists("/system/lib64/libc.so") ? "/system/lib64/libc.so" : "/system/lib/libc.so";
+				AndroidSystemLibc = NativeLibrary.Load(libcPath);
+			}
+			catch (DllNotFoundException)
+			{
+				AndroidSystemLibc = IntPtr.Zero;
+			}
+
+			return AndroidSystemLibc;
+		}
+
+		private static IntPtr AndroidDlsymFromLib(IntPtr libcHandle, IntPtr libraryHandle, string symbol)
+		{
+			if (!NativeLibrary.TryGetExport(libcHandle, "dlsym", out var dlsymPtr))
+				return IntPtr.Zero;
+
+			var dlsym = Marshal.GetDelegateForFunctionPointer<DlsymDelegate>(dlsymPtr);
+			return dlsym(libraryHandle, symbol);
+		}
+
+		private static IntPtr AndroidDlsym(IntPtr handle, string symbol)
+		{
+			if (!IsAndroid)
+				return IntPtr.Zero;
+
+			if (AndroidResolveSymbol != null)
+			{
+				var ptr = AndroidResolveSymbol(symbol);
+				if (ptr != IntPtr.Zero)
+					return ptr;
+			}
+
+			if (handle == (IntPtr)1)
+				handle = IntPtr.Zero;
+
+			var libc = EnsureAndroidSystemLibc();
+			if (libc != IntPtr.Zero)
+			{
+				var ptr = AndroidDlsymFromLib(libc, handle, symbol);
+				if (ptr != IntPtr.Zero)
+					return ptr;
+				if (handle != IntPtr.Zero)
+				{
+					ptr = AndroidDlsymFromLib(libc, IntPtr.Zero, symbol);
+					if (ptr != IntPtr.Zero)
+						return ptr;
+				}
+			}
+
+			return IntPtr.Zero;
+		}
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate IntPtr DlsymDelegate(IntPtr handle, string symbol);
+#endif
+
 		// This method is thread-safe and idempotent
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : class
 		{
@@ -557,13 +769,22 @@ namespace Icu
 
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
 #if NET6_0_OR_GREATER
-			try
+			if (IsAndroid)
 			{
-				NativeLibrary.TryGetExport(handle, versionedMethodName, out methodPointer);
+				methodPointer = AndroidDlsym(handle, versionedMethodName);
+				if (methodPointer == IntPtr.Zero)
+					methodPointer = AndroidDlsym(IntPtr.Zero, versionedMethodName);
 			}
-			catch (DllNotFoundException)
+			else
 			{
-				methodPointer = IntPtr.Zero;
+				try
+				{
+					NativeLibrary.TryGetExport(handle, versionedMethodName, out methodPointer);
+				}
+				catch (DllNotFoundException)
+				{
+					methodPointer = IntPtr.Zero;
+				}
 			}
 #else
 			methodPointer = IsWindows
@@ -577,11 +798,20 @@ namespace Icu
 			if (methodPointer == IntPtr.Zero)
 			{
 #if NET6_0_OR_GREATER
-				try
+				if (IsAndroid)
 				{
-					NativeLibrary.TryGetExport(handle, methodName, out methodPointer);
+					methodPointer = AndroidDlsym(handle, methodName);
+					if (methodPointer == IntPtr.Zero)
+						methodPointer = AndroidDlsym(IntPtr.Zero, methodName);
 				}
-				catch (DllNotFoundException) {};
+				else
+				{
+					try
+					{
+						NativeLibrary.TryGetExport(handle, methodName, out methodPointer);
+					}
+					catch (DllNotFoundException) {};
+				}
 #else
 				methodPointer = IsWindows
 					? GetProcAddress(handle, methodName)
@@ -876,8 +1106,11 @@ namespace Icu
 		internal static void u_init(out ErrorCode errorCode)
 		{
 			IsInitialized = true;
+			var handle = IcuCommonLibHandle;
 			if (Methods.u_init == null)
-				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(IcuCommonLibHandle, "u_init");
+				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(handle, "u_init");
+			if (Methods.u_init == null)
+				throw new MissingMethodException($"ICU entry point u_init_{IcuVersion} was not found.");
 			Methods.u_init(out errorCode);
 		}
 

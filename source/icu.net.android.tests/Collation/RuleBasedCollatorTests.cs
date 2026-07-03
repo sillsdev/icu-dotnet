@@ -11,7 +11,7 @@ public class RuleBasedCollatorTests
 
 	static RuleBasedCollatorTests()
 	{
-		Wrapper.Init();
+		AndroidIcuSetup.Configure();
 	}
 
 	[Theory]
