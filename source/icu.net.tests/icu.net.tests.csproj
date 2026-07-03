@@ -5,12 +5,15 @@
       `dotnet test -p:TargetFramework=XXX`. For example, on macOS you want to run with
       `-p:TargetFramework=net8.0` or `-p:TargetFramework=net10.0` since 4.6.1 isn't supported
      -->
-    <TargetFrameworks>net461;net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net461;net8.0;net10.0;net10.0-android</TargetFrameworks>
     <RootNamespace>Icu.Tests</RootNamespace>
     <AssemblyTitle>icu.net.tests</AssemblyTitle>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0-android'">
     <PackageReference Include="Icu4c.Win.Full.Lib" Version="62.1.4-beta" />
     <PackageReference Include="Icu4c.Win.Min" Version="59.1.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
@@ -27,8 +30,13 @@
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+    <PackageReference Include="NUnit" Version="4.5.1" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\icu.net\icu.net.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0-android'">
     <ProjectReference Include="..\TestHelper\TestHelper.csproj" />
   </ItemGroup>
 </Project>

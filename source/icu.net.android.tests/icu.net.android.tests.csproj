@@ -65,11 +65,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\icu.net\icu.net.csproj" />
+		<ProjectReference Include="..\icu.net.tests\icu.net.tests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.12" />
 		<PackageReference Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.12" />
+		<PackageReference Include="DeviceRunners.VisualRunners.NUnit" Version="0.1.0-preview.12" />
 		<PackageReference Include="DeviceRunners.VisualRunners.Xunit" Version="0.1.0-preview.12" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
@@ -81,6 +83,7 @@
 	<!-- Prevent the Android linker from stripping test classes discovered via reflection -->
 	<ItemGroup>
 		<TrimmerRootAssembly Include="icu.net.android.tests" RootMode="all" />
+		<TrimmerRootAssembly Include="icu.net.tests" RootMode="all" />
 	</ItemGroup>
 
 </Project>

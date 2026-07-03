@@ -124,6 +124,12 @@ namespace Icu
 			NativeMethods.AndroidResolveSymbol = resolver;
 		}
 
+		/// <summary>
+		/// Optional hook for Android device test hosts to configure bundled ICU before NUnit runs.
+		/// </summary>
+		[PublicAPI]
+		public static Action AndroidTestConfigure { get; set; }
+
 		#region Public wrappers around the ICU methods
 
 		/// ------------------------------------------------------------------------------------

@@ -3,6 +3,9 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+#if __ANDROID__
+using NUnit.Framework.Legacy;
+#endif
 
 namespace Icu.Tests
 {
