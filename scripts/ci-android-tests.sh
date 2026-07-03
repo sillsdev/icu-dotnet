@@ -17,4 +17,5 @@ dotnet restore "$PROJECT" -p:IcuDotNetIncludeAndroid=true
 dotnet test "$PROJECT" -f net10.0-android -c Release \
   -p:IcuDotNetIncludeAndroid=true \
   --no-restore \
+  --filter "FullyQualifiedName~icu.net.android.tests.Tests" \
   --logger "trx;LogFileName=test-results.trx"
