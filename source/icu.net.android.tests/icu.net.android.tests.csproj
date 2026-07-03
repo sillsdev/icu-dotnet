@@ -26,6 +26,9 @@
 
 		<!-- Gitignored ICU build output from scripts/build-icu-android.ps1 -->
 		<AndroidIcuLibDir>$(MSBuildThisFileDirectory)..\..\output\android-icu</AndroidIcuLibDir>
+
+		<!-- DeviceRunners forwards this to its CLI; without it no TRX is written and dotnet test has no summary. -->
+		<VSTestLogger Condition="'$(VSTestLogger)' == ''">trx;LogFileName=test-results.trx</VSTestLogger>
 	</PropertyGroup>
 
 	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\icudt72l.dat')">

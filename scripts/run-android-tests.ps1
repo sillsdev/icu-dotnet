@@ -54,5 +54,5 @@ Write-Host "Connected devices:"
 $devices | ForEach-Object { Write-Host "  $_" }
 
 Write-Host "Running Android device tests ($Configuration)..."
-dotnet test $project -f net10.0-android -c $Configuration
+dotnet test $project -f net10.0-android -c $Configuration --logger "trx;LogFileName=test-results.trx"
 exit $LASTEXITCODE
