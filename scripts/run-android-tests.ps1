@@ -53,8 +53,15 @@ Write-Host "Using adb: $adb"
 Write-Host "Connected devices:"
 $devices | ForEach-Object { Write-Host "  $_" }
 
+# Android support is limited to collation for now. Only collation tests and Android-specific
+# smoke/diagnostic tests are run; other icu.net.tests are intentionally excluded.
+$androidTestFilter = 'FullyQualifiedName~Icu.Tests.Collation|FullyQualifiedName~icu.net.android.tests.Tests'
+
 Write-Host "Running Android device tests ($Configuration)..."
+Write-Host "NOTE: Only collation tests and Android-specific tests are run."
+Write-Host "      Other icu.net.tests are excluded; only these subsets are expected to pass."
+Write-Host "      Filter: $androidTestFilter"
 $env:IcuDotNetIncludeAndroid = 'true'
 dotnet restore $project -p:IcuDotNetIncludeAndroid=true
-dotnet test $project -f net10.0-android -c $Configuration -p:IcuDotNetIncludeAndroid=true --no-restore --logger "trx;LogFileName=test-results.trx"
+dotnet test $project -f net10.0-android -c $Configuration -p:IcuDotNetIncludeAndroid=true --no-restore --filter $androidTestFilter --logger "trx;LogFileName=test-results.trx"
 exit $LASTEXITCODE

@@ -58,6 +58,38 @@ or, if wanting to run tests on just one specific .net version (v8.0 in this exam
 dotnet test source/icu.net.sln -p:TargetFramework=net8.0
 ```
 
+### Android
+
+> [!CAUTION]
+> **Android support is limited.** Only **collation** APIs are supported for now. Other ICU
+> functionality (normalization, break iteration, locale handling, and so on) is not yet
+> available on Android. The Android test project references the full `icu.net.tests` suite,
+> but CI and the helper scripts intentionally run only collation tests plus Android-specific
+> smoke/diagnostic tests.
+
+Prerequisites:
+
+- .NET 10 SDK with the MAUI Android workload: `dotnet workload install maui-android`
+- Android SDK (`ANDROID_HOME` set) with an emulator running or a USB device attached
+- Android NDK (for building bundled ICU native libraries)
+
+Build ICU for Android (outputs to `output/android-icu/`):
+
+```bash
+bash scripts/build-icu-android.sh --arch=x86_64
+```
+
+On Windows, use `scripts/build-icu-android.ps1` instead.
+
+Run the filtered Android device test suite (collation + Android-specific tests only):
+
+```bash
+bash scripts/ci-android-tests.sh
+```
+
+On Windows, use `scripts/run-android-tests.ps1` instead. Both scripts apply the same test
+filter as CI and print a reminder that only the filtered subset is expected to pass.
+
 ### Linux and macOS
 
 It is important for `icu.net.dll.config` to be bundled with your application when not
