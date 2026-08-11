@@ -129,4 +129,4 @@ Write-Host ""
 Write-Host "--- Notes ---" -ForegroundColor Yellow
 Write-Host "icu.net expects versioned libicuuc.so.N and libicui18n.so.N in the app native lib directory."
 Write-Host "Since API 24, apps generally cannot dlopen platform libicuuc.so / libicui18n.so."
-Write-Host "Bundled ICU (see scripts/build-icu-android.ps1) is the supported path for icu.net on Android."
+Write-Host "Bundled ICU via the Icu4c.Android.Fw.Lib NuGet package is the supported path for icu.net on Android."

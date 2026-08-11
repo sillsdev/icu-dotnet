@@ -21,7 +21,7 @@ namespace Icu
 
 		internal static Func<string, IntPtr> AndroidLoadNativeLibrary { get; set; }
 
-		private static IntPtr AndroidSystemLibc;
+		private static IntPtr AndroidLibdl;
 
 		private static bool TryCheckAndroidDirectoryForIcuBinaries(string directory, string libraryName)
 		{
@@ -203,27 +203,41 @@ namespace Icu
 			return IntPtr.Zero;
 		}
 
-		private static IntPtr EnsureAndroidSystemLibc()
+		private static IntPtr EnsureAndroidLibdl()
 		{
-			if (AndroidSystemLibc != IntPtr.Zero)
-				return AndroidSystemLibc;
+			if (AndroidLibdl != IntPtr.Zero)
+				return AndroidLibdl;
 
-			try
+			// dlsym/dlopen live in libdl on modern Android; libc may not re-export them.
+			foreach (var path in new[]
+			         {
+				         "/system/lib64/libdl.so",
+				         "/system/lib/libdl.so",
+				         "libdl.so",
+				         "/system/lib64/libc.so",
+				         "/system/lib/libc.so"
+			         })
 			{
-				var libcPath = File.Exists("/system/lib64/libc.so") ? "/system/lib64/libc.so" : "/system/lib/libc.so";
-				AndroidSystemLibc = NativeLibrary.Load(libcPath);
-			}
-			catch (DllNotFoundException)
-			{
-				AndroidSystemLibc = IntPtr.Zero;
+				try
+				{
+					var handle = NativeLibrary.Load(path);
+					if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, "dlsym", out _))
+					{
+						AndroidLibdl = handle;
+						return AndroidLibdl;
+					}
+				}
+				catch (DllNotFoundException)
+				{
+				}
 			}
 
-			return AndroidSystemLibc;
+			return IntPtr.Zero;
 		}
 
-		private static IntPtr AndroidDlsymFromLib(IntPtr libcHandle, IntPtr libraryHandle, string symbol)
+		private static IntPtr AndroidDlsymFromLib(IntPtr libdlHandle, IntPtr libraryHandle, string symbol)
 		{
-			if (!NativeLibrary.TryGetExport(libcHandle, "dlsym", out var dlsymPtr))
+			if (!NativeLibrary.TryGetExport(libdlHandle, "dlsym", out var dlsymPtr) || dlsymPtr == IntPtr.Zero)
 				return IntPtr.Zero;
 
 			var dlsym = Marshal.GetDelegateForFunctionPointer<DlsymDelegate>(dlsymPtr);
@@ -236,28 +250,52 @@ namespace Icu
 			if (handle == (IntPtr)1)
 				handle = IntPtr.Zero;
 
-			var libc = EnsureAndroidSystemLibc();
-			if (libc == IntPtr.Zero)
+			var libdl = EnsureAndroidLibdl();
+			if (libdl == IntPtr.Zero)
 				return IntPtr.Zero;
 
-			var ptr = AndroidDlsymFromLib(libc, handle, symbol);
+			var ptr = AndroidDlsymFromLib(libdl, handle, symbol);
 			if (ptr != IntPtr.Zero)
 				return ptr;
 			if (handle != IntPtr.Zero)
-				return AndroidDlsymFromLib(libc, IntPtr.Zero, symbol);
+				return AndroidDlsymFromLib(libdl, IntPtr.Zero, symbol);
 
 			return IntPtr.Zero;
+		}
+
+		private static bool TryGetAndroidExport(IntPtr handle, string symbol, out IntPtr methodPointer)
+		{
+			methodPointer = IntPtr.Zero;
+			if (handle == IntPtr.Zero || handle == (IntPtr)1)
+				return false;
+
+			try
+			{
+				return NativeLibrary.TryGetExport(handle, symbol, out methodPointer) && methodPointer != IntPtr.Zero;
+			}
+			catch (ArgumentException)
+			{
+				// Handle came from raw dlopen rather than NativeLibrary.Load.
+				return false;
+			}
 		}
 
 		private static T GetAndroidMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false)
 			where T : class
 		{
+			var versionedMethodName = $"{methodName}_{IcuVersion}";
 			IntPtr methodPointer;
 
-			var versionedMethodName = $"{methodName}_{IcuVersion}";
-			methodPointer = AndroidDlsym(handle, versionedMethodName);
+			// Prefer NativeLibrary.TryGetExport — does not depend on libdl exporting dlsym.
+			if (!TryGetAndroidExport(handle, versionedMethodName, out methodPointer))
+				TryGetAndroidExport(handle, methodName, out methodPointer);
+
 			if (methodPointer == IntPtr.Zero)
-				methodPointer = AndroidDlsym(IntPtr.Zero, versionedMethodName);
+			{
+				methodPointer = AndroidDlsym(handle, versionedMethodName);
+				if (methodPointer == IntPtr.Zero)
+					methodPointer = AndroidDlsym(IntPtr.Zero, versionedMethodName);
+			}
 
 			if (methodPointer == IntPtr.Zero)
 			{

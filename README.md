@@ -71,24 +71,19 @@ Prerequisites:
 
 - .NET 10 SDK with the MAUI Android workload: `dotnet workload install maui-android`
 - Android SDK (`ANDROID_HOME` set) with an emulator running or a USB device attached
-- Android NDK (for building bundled ICU native libraries)
-
-Build ICU for Android (outputs to `output/android-icu/`):
-
-```bash
-bash scripts/build-icu-android.sh --arch=x86_64
-```
-
-On Windows, use `scripts/build-icu-android.ps1` instead.
+- The `Icu4c.Android.Fw.Lib` NuGet package (FieldWorks ICU natives + data). Until it is
+  published to nuget.org, copy the `.nupkg` into `local-packages/` (see that folder’s README).
+  The repo `NuGet.config` registers that folder as a package source.
 
 Run the filtered Android device test suite (collation + Android-specific tests only):
 
-```bash
-bash scripts/ci-android-tests.sh
+```powershell
+.\scripts\run-android-tests.ps1
 ```
 
-On Windows, use `scripts/run-android-tests.ps1` instead. Both scripts apply the same test
-filter as CI and print a reminder that only the filtered subset is expected to pass.
+On Linux/macOS (or CI), use `bash scripts/ci-android-tests.sh` instead. Both scripts apply
+the same test filter as CI and print a reminder that only the filtered subset is expected
+to pass.
 
 ### Linux and macOS
 

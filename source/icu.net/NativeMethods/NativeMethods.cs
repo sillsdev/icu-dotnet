@@ -954,6 +954,8 @@ namespace Icu
 		{
 			if (Methods.u_getDataDirectory == null)
 				Methods.u_getDataDirectory = GetMethod<MethodsContainer.u_getDataDirectoryDelegate>(IcuCommonLibHandle, "u_getDataDirectory");
+			if (Methods.u_getDataDirectory == null)
+				throw new MissingMethodException($"ICU entry point u_getDataDirectory_{IcuVersion} was not found.");
 			return Methods.u_getDataDirectory();
 		}
 
@@ -963,6 +965,8 @@ namespace Icu
 		{
 			if (Methods.u_setDataDirectory == null)
 				Methods.u_setDataDirectory = GetMethod<MethodsContainer.u_setDataDirectoryDelegate>(IcuCommonLibHandle, "u_setDataDirectory");
+			if (Methods.u_setDataDirectory == null)
+				throw new MissingMethodException($"ICU entry point u_setDataDirectory_{IcuVersion} was not found.");
 			Methods.u_setDataDirectory(directory);
 		}
 

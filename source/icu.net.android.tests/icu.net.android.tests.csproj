@@ -25,43 +25,10 @@
 		<!-- The MAUI app defines its own entry point via DeviceRunners -->
 		<GenerateTestingPlatformEntryPoint>false</GenerateTestingPlatformEntryPoint>
 
-		<!-- Gitignored ICU build output from scripts/build-icu-android.ps1 -->
-		<AndroidIcuLibDir>$(MSBuildThisFileDirectory)..\..\output\android-icu</AndroidIcuLibDir>
-
 		<!-- DeviceRunners forwards this to its CLI; without it no TRX is written and dotnet test has no summary. -->
 		<VSTestLogger Condition="'$(VSTestLogger)' == ''">trx;LogFileName=test-results.trx</VSTestLogger>
 		<TestResultsDirectory>$(MSBuildProjectDirectory)/test-results/</TestResultsDirectory>
 	</PropertyGroup>
-
-	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\icudt72l.dat')">
-		<AndroidAsset Include="$(AndroidIcuLibDir)\icudt72l.dat" LogicalName="icudt72l.dat" />
-	</ItemGroup>
-
-	<!-- Android APKs require native libs to end in .so (not .so.72). See scripts/build-icu-android.sh install_android_apk_libs. -->
-	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\x86_64\libicuuc.so')">
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86_64\libc++_shared.so" Condition="Exists('$(AndroidIcuLibDir)\x86_64\libc++_shared.so')" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86_64\libicuuc.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86_64\libicui18n.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86_64\libicudata.so" />
-	</ItemGroup>
-	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\arm64-v8a\libicuuc.so')">
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\arm64-v8a\libc++_shared.so" Condition="Exists('$(AndroidIcuLibDir)\arm64-v8a\libc++_shared.so')" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\arm64-v8a\libicuuc.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\arm64-v8a\libicui18n.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\arm64-v8a\libicudata.so" />
-	</ItemGroup>
-	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\armeabi-v7a\libicuuc.so')">
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\armeabi-v7a\libc++_shared.so" Condition="Exists('$(AndroidIcuLibDir)\armeabi-v7a\libc++_shared.so')" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\armeabi-v7a\libicuuc.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\armeabi-v7a\libicui18n.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\armeabi-v7a\libicudata.so" />
-	</ItemGroup>
-	<ItemGroup Condition="Exists('$(AndroidIcuLibDir)\x86\libicuuc.so')">
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86\libc++_shared.so" Condition="Exists('$(AndroidIcuLibDir)\x86\libc++_shared.so')" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86\libicuuc.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86\libicui18n.so" />
-		<AndroidNativeLibrary Include="$(AndroidIcuLibDir)\x86\libicudata.so" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -74,6 +41,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- FieldWorks ICU natives + data for Android; major must match AndroidIcuBootstrap. -->
+		<PackageReference Include="Icu4c.Android.Fw.Lib" Version="70.1.177" />
 		<PackageReference Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.12" />
 		<PackageReference Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.12" />
 		<PackageReference Include="DeviceRunners.VisualRunners.NUnit" Version="0.1.0-preview.12" />

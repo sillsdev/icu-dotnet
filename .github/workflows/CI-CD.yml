@@ -118,26 +118,6 @@ jobs:
     - name: Install MAUI Android workload
       run: dotnet workload install maui-android
 
-    - name: Install Android NDK
-      run: |
-        SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-        echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
-        echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
-        yes | "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses || true
-        "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.0.12077973"
-        echo "ANDROID_NDK_HOME=$SDK_ROOT/ndk/$(ls "$SDK_ROOT/ndk" | sort -V | tail -1)" >> "$GITHUB_ENV"
-
-    - name: Cache ICU Android build
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: output/android-icu
-        key: android-icu-${{ runner.os }}-72.1-x86_64-${{ hashFiles('scripts/build-icu-android.sh') }}
-        restore-keys: |
-          android-icu-${{ runner.os }}-72.1-x86_64-
-
-    - name: Build ICU for Android
-      run: bash scripts/build-icu-android.sh --arch=x86_64
-
     - name: Build Android test project
       run: |
         export IcuDotNetIncludeAndroid=true
