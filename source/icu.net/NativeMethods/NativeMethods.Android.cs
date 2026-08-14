@@ -28,6 +28,7 @@ namespace Icu
 			// Android loads native libs from the APK without materializing them as regular files,
 			// so File.Exists/EnumerateFiles on NativeLibraryDir often returns nothing.
 			if (AndroidBundledIcuMajorVersion is int bundledVersion &&
+			    bundledVersion >= MinIcuVersion && bundledVersion <= MaxIcuVersion &&
 			    !string.IsNullOrEmpty(PreferredDirectory) &&
 			    string.Equals(directory, PreferredDirectory, StringComparison.Ordinal) &&
 			    libraryName == "icuuc")

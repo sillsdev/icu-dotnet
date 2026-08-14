@@ -312,6 +312,36 @@ namespace Icu
 			return int.TryParse(versionString, out majorVersion);
 		}
 
+		/// <summary>
+		/// Parse an ICU data file name such as <c>icudt70l.dat</c> or <c>icudt72b.dat</c>.
+		/// </summary>
+		internal static bool TryParseIcuDataFileName(string fileName, out int majorVersion)
+		{
+			majorVersion = -1;
+			if (string.IsNullOrEmpty(fileName))
+				return false;
+
+			fileName = Path.GetFileName(fileName);
+			const string prefix = "icudt";
+			const string suffix = ".dat";
+			if (fileName.Length <= prefix.Length + suffix.Length ||
+			    !fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ||
+			    !fileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
+			}
+
+			var mid = fileName.Substring(prefix.Length, fileName.Length - prefix.Length - suffix.Length);
+			if (mid.Length == 0)
+				return false;
+
+			var last = mid[mid.Length - 1];
+			if (last == 'l' || last == 'L' || last == 'b' || last == 'B')
+				mid = mid.Substring(0, mid.Length - 1);
+
+			return int.TryParse(mid, out majorVersion) && majorVersion > 0;
+		}
+
 		private static bool LocateIcuLibrary(string libraryName)
 		{
 			Trace.WriteLineIf(Verbose, $"icu.net: Locating ICU library '{libraryName}'");

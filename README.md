@@ -73,6 +73,10 @@ Prerequisites:
 - Android SDK (`ANDROID_HOME` set) with an emulator running or a USB device attached
 - The [`Icu4c.Android.Fw.Lib`](https://www.nuget.org/packages/Icu4c.Android.Fw.Lib/) NuGet
   package (FieldWorks ICU natives + data). The Android test project already references it.
+  icu.net reads the ICU major version from the bundled `icudtNl.dat` asset at runtime, so
+  bumping that native package does not require rebuilding icu.net. Optionally call
+  `Icu.Wrapper.ConfineIcuVersions(70)` before `Init()` to pin a version, as on other
+  platforms.
 
 Run the filtered Android device test suite (collation + Android-specific tests only):
 

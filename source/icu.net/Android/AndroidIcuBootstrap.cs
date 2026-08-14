@@ -12,7 +12,6 @@ namespace Icu
 {
 	internal static class AndroidIcuBootstrap
 	{
-		private const int IcuMajorVersion = 70;
 		private const int RTLD_NOW = 2;
 		private const int RTLD_GLOBAL = 0x00100;
 		private const int RTLD_NOLOAD = 0x4;
@@ -20,6 +19,7 @@ namespace Icu
 		// JavaSystem.LoadLibrary succeeds without a real dlopen handle; NativeMethods.AndroidDlsym recognizes this sentinel.
 		private static readonly IntPtr JavaLoadedLibrary = (IntPtr)1;
 		private static string? _writableNativeLibDir;
+		private static int _icuMajorVersion;
 		private static bool _configured;
 
 		internal static void EnsureConfigured()
@@ -32,9 +32,10 @@ namespace Icu
 			if (string.IsNullOrEmpty(nativeDir) || context == null)
 				return;
 
+			_icuMajorVersion = DetectBundledIcuMajorVersion(context);
 			var loadDir = EnsureWritableNativeLibs(nativeDir, context);
 			NativeMethods.PreferredDirectory = loadDir;
-			NativeMethods.AndroidBundledIcuMajorVersion = IcuMajorVersion;
+			NativeMethods.AndroidBundledIcuMajorVersion = _icuMajorVersion;
 			NativeMethods.AndroidLoadNativeLibrary = LoadBundledNativeLibrary;
 			EnsureIcuDataFile(context);
 			Wrapper.DataDirectory = GetIcuDataDirectory(context);
@@ -44,9 +45,107 @@ namespace Icu
 		private static string GetIcuDataDirectory(Context context) =>
 			Path.Combine(context.FilesDir!.AbsolutePath, "icu");
 
+		/// <summary>
+		/// Discover the bundled ICU major version from <c>icudtNl.dat</c> in app assets,
+		/// honoring <see cref="Wrapper.ConfineIcuVersions"/> when the app called it first.
+		/// </summary>
+		private static int DetectBundledIcuMajorVersion(Context context)
+		{
+			var found = new HashSet<int>();
+
+			try
+			{
+				var listed = context.Assets?.List(string.Empty);
+				if (listed != null)
+				{
+					foreach (var name in listed)
+						TryAddIcuDataVersion(name, found);
+				}
+			}
+			catch (IOException)
+			{
+			}
+
+			if (found.Count == 0)
+				AddIcuVersionsFromApkAssets(found);
+
+			if (found.Count == 0)
+			{
+				for (var version = NativeMethods.MaxIcuVersion; version >= NativeMethods.MinIcuVersion; version--)
+				{
+					if (AssetExists(context, $"icudt{version}l.dat"))
+						found.Add(version);
+				}
+			}
+
+			if (found.Count == 0)
+			{
+				throw new InvalidOperationException(
+					"No ICU data file (icudtNl.dat) was found in the Android app assets within " +
+					$"versions {NativeMethods.MinIcuVersion}-{NativeMethods.MaxIcuVersion}. " +
+					"Reference a native package such as Icu4c.Android.Fw.Lib, or call " +
+					$"{nameof(Wrapper)}.{nameof(Wrapper.ConfineIcuVersions)} before " +
+					$"{nameof(Wrapper)}.{nameof(Wrapper.Init)} to select a bundled version.");
+			}
+
+			return found.Max();
+		}
+
+		private static void TryAddIcuDataVersion(string fileName, HashSet<int> found)
+		{
+			if (!NativeMethods.TryParseIcuDataFileName(fileName, out var major))
+				return;
+			if (major >= NativeMethods.MinIcuVersion && major <= NativeMethods.MaxIcuVersion)
+				found.Add(major);
+		}
+
+		private static void AddIcuVersionsFromApkAssets(HashSet<int> found)
+		{
+			foreach (var apkPath in GetApkPaths())
+			{
+				if (string.IsNullOrEmpty(apkPath) || !File.Exists(apkPath))
+					continue;
+
+				try
+				{
+					using var zip = ZipFile.OpenRead(apkPath);
+					foreach (var entry in zip.Entries)
+					{
+						var name = entry.FullName.Replace('\\', '/');
+						if (name.IndexOf("assets/", StringComparison.OrdinalIgnoreCase) < 0)
+							continue;
+						TryAddIcuDataVersion(Path.GetFileName(name), found);
+					}
+				}
+				catch (InvalidDataException)
+				{
+				}
+				catch (IOException)
+				{
+				}
+			}
+		}
+
+		private static bool AssetExists(Context context, string name)
+		{
+			try
+			{
+				using var stream = context.Assets!.Open(name);
+				return stream != null;
+			}
+			catch (Java.IO.FileNotFoundException)
+			{
+				return false;
+			}
+			catch (IOException)
+			{
+				return false;
+			}
+		}
+
 		private static void EnsureIcuDataFile(Context context)
 		{
-			var datName = $"icudt{IcuMajorVersion}l.dat";
+			var datName = $"icudt{_icuMajorVersion}l.dat";
 			var dataDir = GetIcuDataDirectory(context);
 
 			lock (DataSetupLock)
@@ -135,17 +234,19 @@ namespace Icu
 		{
 			yield return libraryFileName;
 
-			// APK libs are renamed to libicu*.so but ELF NEEDED entries use libicu*.so.70.
-			if (libraryFileName.EndsWith($".so.{IcuMajorVersion}", StringComparison.Ordinal))
+			// APK libs are renamed to libicu*.so but ELF NEEDED entries use libicu*.so.N.
+			if (_icuMajorVersion > 0 &&
+			    libraryFileName.EndsWith($".so.{_icuMajorVersion}", StringComparison.Ordinal))
 			{
-				var unversioned = libraryFileName[..^($".{IcuMajorVersion}".Length)];
+				var unversioned = libraryFileName[..^($".{_icuMajorVersion}".Length)];
 				if (!string.Equals(unversioned, libraryFileName, StringComparison.Ordinal))
 					yield return unversioned;
 			}
-			else if (libraryFileName.EndsWith(".so", StringComparison.Ordinal) &&
+			else if (_icuMajorVersion > 0 &&
+			         libraryFileName.EndsWith(".so", StringComparison.Ordinal) &&
 			         libraryFileName.StartsWith("libicu", StringComparison.Ordinal))
 			{
-				yield return $"{libraryFileName}.{IcuMajorVersion}";
+				yield return $"{libraryFileName}.{_icuMajorVersion}";
 			}
 		}
 
@@ -166,7 +267,8 @@ namespace Icu
 				foreach (var lib in new[] { "icudata", "icuuc", "icui18n" })
 				{
 					libs.Add($"lib{lib}.so");
-					libs.Add($"lib{lib}.so.{IcuMajorVersion}");
+					if (_icuMajorVersion > 0)
+						libs.Add($"lib{lib}.so.{_icuMajorVersion}");
 				}
 
 				foreach (var lib in libs.Distinct())
@@ -190,7 +292,7 @@ namespace Icu
 				foreach (var lib in new[] { "icudata", "icuuc", "icui18n" })
 				{
 					var unversioned = Path.Combine(destDir, $"lib{lib}.so");
-					var versioned = Path.Combine(destDir, $"lib{lib}.so.{IcuMajorVersion}");
+					var versioned = Path.Combine(destDir, $"lib{lib}.so.{_icuMajorVersion}");
 					if (!File.Exists(unversioned) || File.Exists(versioned))
 						continue;
 

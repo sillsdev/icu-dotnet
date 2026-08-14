@@ -41,7 +41,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- FieldWorks ICU natives + data for Android; major must match AndroidIcuBootstrap. -->
+		<!-- FieldWorks ICU natives + data for Android. icu.net discovers the major version from icudtNl.dat. -->
 		<PackageReference Include="Icu4c.Android.Fw.Lib" Version="70.1.182" />
 		<PackageReference Include="DeviceRunners.Testing.Targets" Version="0.1.0-preview.12" />
 		<PackageReference Include="DeviceRunners.VisualRunners.Maui" Version="0.1.0-preview.12" />
