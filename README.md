@@ -71,9 +71,8 @@ Prerequisites:
 
 - .NET 10 SDK with the MAUI Android workload: `dotnet workload install maui-android`
 - Android SDK (`ANDROID_HOME` set) with an emulator running or a USB device attached
-- The `Icu4c.Android.Fw.Lib` NuGet package (FieldWorks ICU natives + data). Until it is
-  published to nuget.org, copy the `.nupkg` into `local-packages/` (see that folder’s README).
-  The repo `NuGet.config` registers that folder as a package source.
+- The [`Icu4c.Android.Fw.Lib`](https://www.nuget.org/packages/Icu4c.Android.Fw.Lib/) NuGet
+  package (FieldWorks ICU natives + data). The Android test project already references it.
 
 Run the filtered Android device test suite (collation + Android-specific tests only):
 
