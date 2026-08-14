@@ -321,7 +321,7 @@ namespace Icu
 			if (string.IsNullOrEmpty(fileName))
 				return false;
 
-			fileName = Path.GetFileName(fileName);
+			fileName = Path.GetFileName(fileName.Replace('\\', '/'));
 			const string prefix = "icudt";
 			const string suffix = ".dat";
 			if (fileName.Length <= prefix.Length + suffix.Length ||

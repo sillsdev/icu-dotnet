@@ -13,6 +13,7 @@ namespace Icu.Tests
 		[TestCase("ICUDT70L.DAT", 70)]
 		[TestCase(@"assets\icudt70l.dat", 70)]
 		[TestCase("assets/icudt90l.dat", 90)]
+		[TestCase("foo/bar/icudt70l.dat", 70)]
 		public void TryParseIcuDataFileName_ParsesMajorVersion(string fileName, int expected)
 		{
 			Assert.That(NativeMethods.TryParseIcuDataFileName(fileName, out var major), Is.True);
