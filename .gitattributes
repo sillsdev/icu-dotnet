@@ -24,5 +24,6 @@
 *.xml -whitespace
 *.yml -whitespace
 *.json -whitespace
+*.sh text eol=lf
 changelog -whitespace
 GitVersion.yml -whitespace

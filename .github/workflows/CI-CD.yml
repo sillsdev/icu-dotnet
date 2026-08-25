@@ -88,6 +88,68 @@ jobs:
           output/*.snupkg
       if: matrix.os == 'ubuntu-latest'
 
+  # Android support is limited to collation for now. This job runs only collation tests and
+  # Android-specific smoke/diagnostic tests; other icu.net.tests are excluded and only the
+  # filtered subset is expected to pass.
+  android-build-and-test:
+    name: "Android Build and Test (collation only)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      with:
+        fetch-depth: '0'
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
+
+    - name: Install Java
+      uses: actions/setup-java@5896cecc08fd8a1fbdfaf517e29b571164b031f7 # v4.2.0
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Install MAUI Android workload
+      run: dotnet workload install maui-android
+
+    - name: Build Android test project
+      run: |
+        export IcuDotNetIncludeAndroid=true
+        dotnet build --configuration Release source/icu.net.android.tests/icu.net.android.tests.csproj \
+          -f net10.0-android -p:IcuDotNetIncludeAndroid=true
+
+    - name: Enable KVM
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Run Android device tests (collation + Android-specific only; see ci-android-tests.sh)
+      uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a # v2.35.0
+      with:
+        api-level: 30
+        arch: x86_64
+        target: google_apis
+        profile: pixel_6
+        disable-animations: true
+        script: bash scripts/ci-android-tests.sh
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+      with:
+        name: Test Results (android)
+        path: |
+          source/icu.net.android.tests/test-results/**
+          **/TestResults/*.xml
+        if-no-files-found: warn
+
   publish-nuget:
     name: "Publish NuGet package"
     runs-on: ubuntu-22.04

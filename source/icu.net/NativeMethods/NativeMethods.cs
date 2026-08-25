@@ -215,6 +215,9 @@ namespace Icu
 		private static bool CheckDirectoryForIcuBinaries(string directory, string libraryName)
 		{
 			Trace.WriteLineIf(Verbose, $"icu.net: checking '{directory}' for ICU binaries");
+#if __ANDROID__
+			return TryCheckAndroidDirectoryForIcuBinaries(directory, libraryName);
+#else
 			if (!Directory.Exists(directory))
 			{
 				Trace.WriteLineIf(Verbose, $"icu.net: directory '{directory}' doesn't exist");
@@ -226,23 +229,25 @@ namespace Icu
 			Trace.WriteLineIf(Verbose, $"icu.net: {files.Count} files in '{directory}' match the pattern '{filePattern}'");
 			if (files.Count > 0)
 			{
-				var libNameLen = libraryName.Length;
 				files.Sort((x, y) =>
 				{
-					var vx = int.TryParse(ExtractVersionString(x, libNameLen), out var nx) ? nx : -1;
-					var vy = int.TryParse(ExtractVersionString(y, libNameLen), out var ny) ? ny : -1;
-					return vy.CompareTo(vx);
+					var vx = TryParseIcuLibraryMajorVersion(x, libraryName, out var nx) ? nx : -1;
+					var vy = TryParseIcuLibraryMajorVersion(y, libraryName, out var ny) ? ny : -1;
+					var cmp = vy.CompareTo(vx);
+					if (cmp != 0)
+						return cmp;
+					// Prefer libicuuc.so.72.1 over libicuuc.so.72 when major versions tie.
+					return string.Compare(Path.GetFileName(y), Path.GetFileName(x), StringComparison.Ordinal);
 				});
 				foreach (var filePath in files)
 				{
-					var version = ExtractVersionString(filePath, libNameLen);
-					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{version}' from '{filePath}'");
-					if (!int.TryParse(version, out var icuVersion))
+					if (!TryParseIcuLibraryMajorVersion(filePath, libraryName, out var icuVersion))
 					{
 						Trace.WriteLineIf(Verbose,
-							$"icu.net: version '{version}' from '{filePath}' is not parseable. Skipping.");
+							$"icu.net: could not parse ICU version from '{filePath}'. Skipping.");
 						continue;
 					}
+					Trace.WriteLineIf(Verbose, $"icu.net: Extracted version '{icuVersion}' from '{filePath}'");
 					if (icuVersion < MinIcuVersion || icuVersion > MaxIcuVersion)
 					{
 						Trace.WriteLineIf(Verbose,
@@ -261,6 +266,7 @@ namespace Icu
 			Trace.WriteLineIf(Verbose && files.Count <= 0,
 				"icu.net: No files matching pattern. Returning false.");
 			return false;
+#endif
 		}
 
 		private static string GetLibraryFilePattern(string libraryName)
@@ -274,11 +280,66 @@ namespace Icu
 
 		private static string ExtractVersionString(string filePath, int libNameLen)
 		{
-			return IsWindows
-				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen)         // strip icuuc
-				: IsMac
-				? Path.GetFileNameWithoutExtension(filePath).Substring(libNameLen + 4)     // strip libicuuc.
-				: Path.GetFileName(filePath).Substring(libNameLen + 7);                    // strip libicuuc.so.
+			if (IsWindows)
+			{
+				var name = Path.GetFileNameWithoutExtension(filePath);
+				return name.Length > libNameLen ? name.Substring(libNameLen) : string.Empty;
+			}
+
+			if (IsMac)
+			{
+				var name = Path.GetFileNameWithoutExtension(filePath);
+				var prefixLen = libNameLen + 4;
+				return name.Length > prefixLen ? name.Substring(prefixLen) : string.Empty;
+			}
+
+			var fileName = Path.GetFileName(filePath);
+			var linuxPrefixLen = libNameLen + 7;
+			return fileName.Length > linuxPrefixLen ? fileName.Substring(linuxPrefixLen) : string.Empty;
+		}
+
+		private static bool TryParseIcuLibraryMajorVersion(string filePath, string libraryName, out int majorVersion)
+		{
+			majorVersion = -1;
+			var versionString = ExtractVersionString(filePath, libraryName.Length);
+			if (string.IsNullOrEmpty(versionString))
+				return false;
+
+			var dot = versionString.IndexOf('.');
+			if (dot >= 0)
+				versionString = versionString.Substring(0, dot);
+
+			return int.TryParse(versionString, out majorVersion);
+		}
+
+		/// <summary>
+		/// Parse an ICU data file name such as <c>icudt70l.dat</c> or <c>icudt72b.dat</c>.
+		/// </summary>
+		internal static bool TryParseIcuDataFileName(string fileName, out int majorVersion)
+		{
+			majorVersion = -1;
+			if (string.IsNullOrEmpty(fileName))
+				return false;
+
+			fileName = Path.GetFileName(fileName.Replace('\\', '/'));
+			const string prefix = "icudt";
+			const string suffix = ".dat";
+			if (fileName.Length <= prefix.Length + suffix.Length ||
+			    !fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ||
+			    !fileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
+			}
+
+			var mid = fileName.Substring(prefix.Length, fileName.Length - prefix.Length - suffix.Length);
+			if (mid.Length == 0)
+				return false;
+
+			var last = mid[mid.Length - 1];
+			if (last == 'l' || last == 'L' || last == 'b' || last == 'B')
+				mid = mid.Substring(0, mid.Length - 1);
+
+			return int.TryParse(mid, out majorVersion) && majorVersion > 0;
 		}
 
 		private static bool LocateIcuLibrary(string libraryName)
@@ -298,6 +359,11 @@ namespace Icu
 				Path.Combine(DirectoryOfThisAssembly, "lib", $"{platform}-{arch}"),
 				libraryName))
 				return true;
+
+#if __ANDROID__
+			if (TryLocateAndroidIcuLibrary(libraryName))
+				return true;
+#endif
 
 			// Next look in lib/{x86,x64} subdirectory
 			if (CheckDirectoryForIcuBinaries(
@@ -360,6 +426,10 @@ namespace Icu
 				if (IcuVersion <= 0)
 					LocateIcuLibrary(libraryName);
 
+#if __ANDROID__
+				EnsureAndroidDependenciesLoaded();
+#endif
+
 				var handle = GetIcuLibHandle(libraryName, IcuVersion > 0 ? IcuVersion : MaxIcuVersion);
 				if (handle == IntPtr.Zero)
 				{
@@ -374,6 +444,17 @@ namespace Icu
 		{
 			while (true)
 			{
+#if __ANDROID__
+				if (icuVersion < MinIcuVersion)
+					return IntPtr.Zero;
+
+				var androidHandle = GetAndroidIcuLibHandle(basename, icuVersion);
+				if (androidHandle != IntPtr.Zero)
+					return androidHandle;
+				if (_androidUsesUnversionedNativeLibs)
+					return IntPtr.Zero;
+				icuVersion -= 1;
+#else
 				Trace.WriteLineIf(Verbose, $"icu.net: Get ICU Lib handle for {basename}, version {icuVersion}");
 				if (icuVersion < MinIcuVersion)
 					return IntPtr.Zero;
@@ -445,6 +526,7 @@ namespace Icu
 				Trace.WriteLineIf(lastError != 0, $"Unable to load [{libPath}]. Error: {errorMsg}");
 				Trace.TraceWarning($"{loadMethod} of {libPath} failed with error {errorMsg}");
 				icuVersion -= 1;
+#endif
 			}
 		}
 
@@ -553,6 +635,9 @@ namespace Icu
 		// This method is thread-safe and idempotent
 		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : class
 		{
+#if __ANDROID__
+			return GetAndroidMethod<T>(handle, methodName, missingInMinimal);
+#else
 			IntPtr methodPointer;
 
 			var versionedMethodName = $"{methodName}_{IcuVersion}";
@@ -608,6 +693,7 @@ namespace Icu
 					$"The method '{methodName}' is not included in the minimal version of ICU.");
 			}
 			return default(T);
+#endif
 		}
 
 		#endregion
@@ -876,8 +962,11 @@ namespace Icu
 		internal static void u_init(out ErrorCode errorCode)
 		{
 			IsInitialized = true;
+			var handle = IcuCommonLibHandle;
 			if (Methods.u_init == null)
-				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(IcuCommonLibHandle, "u_init");
+				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(handle, "u_init");
+			if (Methods.u_init == null)
+				throw new MissingMethodException($"ICU entry point u_init_{IcuVersion} was not found.");
 			Methods.u_init(out errorCode);
 		}
 
@@ -895,6 +984,8 @@ namespace Icu
 		{
 			if (Methods.u_getDataDirectory == null)
 				Methods.u_getDataDirectory = GetMethod<MethodsContainer.u_getDataDirectoryDelegate>(IcuCommonLibHandle, "u_getDataDirectory");
+			if (Methods.u_getDataDirectory == null)
+				throw new MissingMethodException($"ICU entry point u_getDataDirectory_{IcuVersion} was not found.");
 			return Methods.u_getDataDirectory();
 		}
 
@@ -904,6 +995,8 @@ namespace Icu
 		{
 			if (Methods.u_setDataDirectory == null)
 				Methods.u_setDataDirectory = GetMethod<MethodsContainer.u_setDataDirectoryDelegate>(IcuCommonLibHandle, "u_setDataDirectory");
+			if (Methods.u_setDataDirectory == null)
+				throw new MissingMethodException($"ICU entry point u_setDataDirectory_{IcuVersion} was not found.");
 			Methods.u_setDataDirectory(directory);
 		}
 
