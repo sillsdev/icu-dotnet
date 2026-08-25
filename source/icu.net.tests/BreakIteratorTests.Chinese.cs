@@ -3,9 +3,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-#if __ANDROID__
-using NUnit.Framework.Legacy;
-#endif
 
 namespace Icu.Tests
 {
@@ -84,9 +81,9 @@ namespace Icu.Tests
 			{
 				bi.SetText(text);
 
-				Assert.AreEqual(text, bi.Text);
-				Assert.AreEqual(locale, bi.Locale);
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+				Assert.That(bi.Text, Is.EqualTo(text));
+				Assert.That(bi.Locale, Is.EqualTo(locale));
+				Assert.That(bi.Boundaries, Is.EqualTo(expected));
 
 				// Verify each boundary and rule status.
 				for (int i = 0; i < expected.Length; i++)
@@ -94,28 +91,28 @@ namespace Icu.Tests
 					int current = bi.Current;
 					int status = bi.GetRuleStatus();
 
-					Assert.AreEqual(expected[i], current);
-					Assert.AreEqual(ruleStatus[i], status);
+					Assert.That(current, Is.EqualTo(expected[i]));
+					Assert.That(status, Is.EqualTo(ruleStatus[i]));
 
 					int moveNext = bi.MoveNext();
 					int next = i + 1;
 
 					if (next < expected.Length)
 					{
-						Assert.AreEqual(expected[next], moveNext);
+						Assert.That(moveNext, Is.EqualTo(expected[next]));
 					}
 					else
 					{
 						// Verify that the BreakIterator is exhausted because we've
 						// moved past every item.
-						Assert.AreEqual(BreakIterator.DONE, moveNext);
+						Assert.That(moveNext, Is.EqualTo(BreakIterator.DONE));
 					}
 				}
 
 				// Verify that the BreakIterator is exhausted because we've
 				// moved past every item, so current should be the last offset.
 				int lastIndex = expected.Length - 1;
-				Assert.AreEqual(expected[lastIndex], bi.Current);
+				Assert.That(bi.Current, Is.EqualTo(expected[lastIndex]));
 			}
 		}
 
@@ -130,9 +127,9 @@ namespace Icu.Tests
 			{
 				bi.SetText(text);
 
-				Assert.AreEqual(locale, bi.Locale);
-				Assert.AreEqual(text, bi.Text);
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+				Assert.That(bi.Locale, Is.EqualTo(locale));
+				Assert.That(bi.Text, Is.EqualTo(text));
+				Assert.That(bi.Boundaries, Is.EqualTo(expected));
 			}
 		}
 
@@ -167,7 +164,7 @@ namespace Icu.Tests
 
 				bi.SetText(text);
 
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+				Assert.That(bi.Boundaries, Is.EqualTo(expected));
 
 				// Verify each boundary for the sentences
 				for (int i = 0; i < expected.Length; i++)
@@ -177,35 +174,35 @@ namespace Icu.Tests
 
 					int expectedStatus = (int)ruleStatus[i];
 
-					Assert.AreEqual(expected[i], current);
-					Assert.AreEqual(expectedStatus, status);
-					CollectionAssert.AreEqual(new[] { expectedStatus }, bi.GetRuleStatusVector());
+					Assert.That(current, Is.EqualTo(expected[i]));
+					Assert.That(status, Is.EqualTo(expectedStatus));
+					Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { expectedStatus }));
 
 					int moveNext = bi.MoveNext();
 					int next = i + 1;
 
 					if (next < expected.Length)
 					{
-						Assert.AreEqual(expected[next], moveNext);
+						Assert.That(moveNext, Is.EqualTo(expected[next]));
 					}
 					else
 					{
 						// Verify that the BreakIterator is exhausted because we've
 						// moved past every item.
-						Assert.AreEqual(BreakIterator.DONE, moveNext);
+						Assert.That(moveNext, Is.EqualTo(BreakIterator.DONE));
 					}
 				}
 
 				int lastIndex = expected.Length - 1;
-				Assert.AreEqual(expected[lastIndex], bi.Current);
+				Assert.That(bi.Current, Is.EqualTo(expected[lastIndex]));
 
 				// We've moved past the last word, it should return the last offset.
-				Assert.AreEqual(BreakIterator.DONE, bi.MoveNext());
-				Assert.AreEqual(expected[lastIndex], bi.Current);
+				Assert.That(bi.MoveNext(), Is.EqualTo(BreakIterator.DONE));
+				Assert.That(bi.Current, Is.EqualTo(expected[lastIndex]));
 
 				// Verify that the first element is correct now that we've moved to the end.
-				Assert.AreEqual(expected[0], bi.MoveFirst());
-				Assert.AreEqual(expected[0], bi.Current);
+				Assert.That(bi.MoveFirst(), Is.EqualTo(expected[0]));
+				Assert.That(bi.Current, Is.EqualTo(expected[0]));
 			}
 			finally
 			{
@@ -257,8 +254,9 @@ namespace Icu.Tests
 				{
 					var isBoundary = bi.IsBoundary(offsetsToTest[i]);
 
-					Assert.AreEqual(expectedIsBoundary[i], isBoundary, "Expected IsBoundary was not equal at i: {0}, offset: {1}", i, offsetsToTest[i]);
-					Assert.AreEqual(expectedOffsets[i], bi.Current);
+					Assert.That(isBoundary, Is.EqualTo(expectedIsBoundary[i]),
+						"Expected IsBoundary was not equal at i: {0}, offset: {1}", i, offsetsToTest[i]);
+					Assert.That(bi.Current, Is.EqualTo(expectedOffsets[i]));
 				}
 
 			}
@@ -294,63 +292,63 @@ namespace Icu.Tests
 			{
 				bi.SetText(text);
 
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+				Assert.That(bi.Boundaries, Is.EqualTo(expected));
 
 				int current = 0;
 				var currentBoundary = expected[current];
 				var currentStatus = ruleStatus[current];
-				Assert.AreEqual(currentBoundary, bi.Current);
-				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
+				Assert.That(bi.Current, Is.EqualTo(currentBoundary));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(currentStatus));
 				// For these, we only expect one rule to be applied in order to find the text boundary.
-				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { currentStatus }));
 
 				// Increment the index and verify that the next Boundary is correct.
 				current++;
 				currentBoundary = expected[current];
 				currentStatus = ruleStatus[current];
-				Assert.AreEqual(currentBoundary, bi.MoveNext());
-				Assert.AreEqual(currentBoundary, bi.Current);
-				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
-				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.MoveNext(), Is.EqualTo(currentBoundary));
+				Assert.That(bi.Current, Is.EqualTo(currentBoundary));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(currentStatus));
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { currentStatus }));
 
 				current++;
 				currentBoundary = expected[current];
 				currentStatus = ruleStatus[current];
-				Assert.AreEqual(currentBoundary, bi.MoveNext());
-				Assert.AreEqual(currentBoundary, bi.Current);
-				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
-				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.MoveNext(), Is.EqualTo(currentBoundary));
+				Assert.That(bi.Current, Is.EqualTo(currentBoundary));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(currentStatus));
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { currentStatus }));
 
 				current--;
 				currentBoundary = expected[current];
 				currentStatus = ruleStatus[current];
-				Assert.AreEqual(currentBoundary, bi.MovePrevious());
-				Assert.AreEqual(currentBoundary, bi.Current);
-				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
-				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.MovePrevious(), Is.EqualTo(currentBoundary));
+				Assert.That(bi.Current, Is.EqualTo(currentBoundary));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(currentStatus));
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { currentStatus }));
 
 				current--;
 				currentBoundary = expected[current];
 				currentStatus = ruleStatus[current];
-				Assert.AreEqual(currentBoundary, bi.MovePrevious());
-				Assert.AreEqual(currentBoundary, bi.Current);
-				Assert.AreEqual(currentStatus, bi.GetRuleStatus());
-				CollectionAssert.AreEqual(new[] { currentStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.MovePrevious(), Is.EqualTo(currentBoundary));
+				Assert.That(bi.Current, Is.EqualTo(currentBoundary));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(currentStatus));
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { currentStatus }));
 
 				// We've moved past the first word, it should return 0.
-				Assert.AreEqual(BreakIterator.DONE, bi.MovePrevious());
-				Assert.AreEqual(0, bi.Current);
-				Assert.AreEqual(0, bi.GetRuleStatus()); // this by default returns 0.
-				CollectionAssert.AreEqual(new[] { 0 }, bi.GetRuleStatusVector()); // default returns 0 in the status vector
+				Assert.That(bi.MovePrevious(), Is.EqualTo(BreakIterator.DONE));
+				Assert.That(bi.Current, Is.EqualTo(0));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(0)); // this by default returns 0.
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { 0 })); // default returns 0 in the status vector
 
 				// Verify that the element is correct now that we've moved to the end.
 				var last = expected.Last();
 				var lastStatus = ruleStatus.Last();
 
-				Assert.AreEqual(last, bi.MoveLast());
-				Assert.AreEqual(last, bi.Current);
-				Assert.AreEqual(lastStatus, bi.GetRuleStatus());
-				CollectionAssert.AreEqual(new[] { lastStatus }, bi.GetRuleStatusVector());
+				Assert.That(bi.MoveLast(), Is.EqualTo(last));
+				Assert.That(bi.Current, Is.EqualTo(last));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo(lastStatus));
+				Assert.That(bi.GetRuleStatusVector(), Is.EqualTo(new[] { lastStatus }));
 			}
 		}
 
@@ -368,23 +366,23 @@ namespace Icu.Tests
 			{
 				bi.SetText(text);
 
-				Assert.AreEqual(text, bi.Text);
-				CollectionAssert.AreEqual(expected, bi.Boundaries);
+				Assert.That(bi.Text, Is.EqualTo(text));
+				Assert.That(bi.Boundaries, Is.EqualTo(expected));
 
 				// Move the iterator to the next boundary
-				Assert.AreEqual(expected[1], bi.MoveNext());
-				Assert.AreEqual(expected[1], bi.Current);
-				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				Assert.That(bi.MoveNext(), Is.EqualTo(expected[1]));
+				Assert.That(bi.Current, Is.EqualTo(expected[1]));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo((int)BreakIterator.UWordBreak.NONE));
 
 				bi.SetText(secondText);
-				Assert.AreEqual(secondText, bi.Text);
+				Assert.That(bi.Text, Is.EqualTo(secondText));
 
 				// Assert that the iterator was reset back to the first element
 				// when we set new text.
-				Assert.AreEqual(secondExpected[0], bi.Current);
-				Assert.AreEqual((int)BreakIterator.UWordBreak.NONE, bi.GetRuleStatus());
+				Assert.That(bi.Current, Is.EqualTo(secondExpected[0]));
+				Assert.That(bi.GetRuleStatus(), Is.EqualTo((int)BreakIterator.UWordBreak.NONE));
 
-				CollectionAssert.AreEqual(secondExpected, bi.Boundaries);
+				Assert.That(bi.Boundaries, Is.EqualTo(secondExpected));
 			}
 		}
 	}
