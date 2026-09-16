@@ -255,7 +255,7 @@ namespace Icu.Tests
 					var isBoundary = bi.IsBoundary(offsetsToTest[i]);
 
 					Assert.That(isBoundary, Is.EqualTo(expectedIsBoundary[i]),
-						"Expected IsBoundary was not equal at i: {0}, offset: {1}", i, offsetsToTest[i]);
+						$"Expected IsBoundary was not equal at i: {i}, offset: {offsetsToTest[i]}");
 					Assert.That(bi.Current, Is.EqualTo(expectedOffsets[i]));
 				}
 
