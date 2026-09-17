@@ -66,7 +66,8 @@ namespace Icu
 		/// Limits the ICU versions that are considered when trying to dynamically load ICU.
 		/// </summary>
 		/// <remarks>This method allows an application to select a specific ICU version. Otherwise
-		/// the highest found supported ICU libraries will be used.</remarks>
+		/// the highest found supported ICU libraries will be used. On Android, call this before
+		/// <see cref="Init"/> so bootstrap can match a bundled <c>icudtNl.dat</c> asset.</remarks>
 		/// <param name="minIcuVersion">Minimum ICU version. Needs to be greater or equal to the
 		/// minimum supported ICU version (currently 44).</param>
 		/// <param name="maxIcuVersion">Maximum ICU version. Needs to be less or equal to the
@@ -107,6 +108,9 @@ namespace Icu
 		[PublicAPI]
 		public static ErrorCode Init()
 		{
+#if __ANDROID__
+			AndroidIcuBootstrap.EnsureConfigured();
+#endif
 			NativeMethods.u_init(out var errorCode);
 			return errorCode;
 		}

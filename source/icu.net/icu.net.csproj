@@ -4,7 +4,25 @@
     <AssemblyName>icu.net</AssemblyName>
     <Description>icu.net is a C# Wrapper around ICU4C</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Inherits net40;net451;netstandard2.0;net8.0;net10.0 from Directory.Build.props -->
+    <TargetFrameworks Condition="'$(IcuDotNetIncludeAndroid)' == 'true'">
+      $(TargetFrameworks);net10.0-android
+    </TargetFrameworks>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Android\**\*.cs" />
+    <Compile Remove="NativeMethods\NativeMethods.Android.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+    <Compile Include="Android\AndroidIcuBootstrap.cs" />
+    <Compile Include="NativeMethods\NativeMethods.Android.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="6.0.5" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="all" />
