@@ -302,7 +302,7 @@ namespace Icu
 			}
 
 			if (methodPointer != IntPtr.Zero)
-				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer);
+				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer) ?? throw MissingMethod(methodName);
 
 			if (missingInMinimal)
 			{
@@ -310,7 +310,7 @@ namespace Icu
 					"Do you have the full version of ICU installed? " +
 					$"The method '{methodName}' is not included in the minimal version of ICU.");
 			}
-			return default(T);
+			throw MissingMethod(methodName);
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]

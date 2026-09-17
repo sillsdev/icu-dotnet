@@ -142,7 +142,7 @@ namespace Icu
 		private static bool IsWindows => Platform.OperatingSystem == OperatingSystemType.Windows;
 		private static bool IsMac => Platform.OperatingSystem == OperatingSystemType.MacOSX;
 
-		private static IntPtr IcuCommonLibHandle
+		internal static IntPtr IcuCommonLibHandle
 		{
 			get
 			{
@@ -153,7 +153,7 @@ namespace Icu
 			}
 		}
 
-		private static IntPtr IcuI18NLibHandle
+		internal static IntPtr IcuI18NLibHandle
 		{
 			get
 			{
@@ -632,8 +632,13 @@ namespace Icu
 #endif
 		}
 
+		private static MissingMethodException MissingMethod(string methodName)
+		{
+			return new MissingMethodException($"ICU entry point {methodName}_{IcuVersion} was not found.");
+		}
+
 		// This method is thread-safe and idempotent
-		private static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : class
+		internal static T GetMethod<T>(IntPtr handle, string methodName, bool missingInMinimal = false) where T : Delegate
 		{
 #if __ANDROID__
 			return GetAndroidMethod<T>(handle, methodName, missingInMinimal);
@@ -681,9 +686,9 @@ namespace Icu
 				// NOTE: Starting in .NET 4.5.1, Marshal.GetDelegateForFunctionPointer(IntPtr, Type) is obsolete.
 #if NET40
 				return Marshal.GetDelegateForFunctionPointer(
-					methodPointer, typeof(T)) as T;
+					methodPointer, typeof(T)) as T ?? throw MissingMethod(methodName);
 #else
-				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer);
+				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer) ?? throw MissingMethod(methodName);
 #endif
 			}
 			if (missingInMinimal)
@@ -692,7 +697,7 @@ namespace Icu
 					"Do you have the full version of ICU installed? " +
 					$"The method '{methodName}' is not included in the minimal version of ICU.");
 			}
-			return default(T);
+			throw MissingMethod(methodName);
 #endif
 		}
 
@@ -965,8 +970,6 @@ namespace Icu
 			var handle = IcuCommonLibHandle;
 			if (Methods.u_init == null)
 				Methods.u_init = GetMethod<MethodsContainer.u_initDelegate>(handle, "u_init");
-			if (Methods.u_init == null)
-				throw new MissingMethodException($"ICU entry point u_init_{IcuVersion} was not found.");
 			Methods.u_init(out errorCode);
 		}
 
@@ -984,8 +987,6 @@ namespace Icu
 		{
 			if (Methods.u_getDataDirectory == null)
 				Methods.u_getDataDirectory = GetMethod<MethodsContainer.u_getDataDirectoryDelegate>(IcuCommonLibHandle, "u_getDataDirectory");
-			if (Methods.u_getDataDirectory == null)
-				throw new MissingMethodException($"ICU entry point u_getDataDirectory_{IcuVersion} was not found.");
 			return Methods.u_getDataDirectory();
 		}
 
@@ -995,8 +996,6 @@ namespace Icu
 		{
 			if (Methods.u_setDataDirectory == null)
 				Methods.u_setDataDirectory = GetMethod<MethodsContainer.u_setDataDirectoryDelegate>(IcuCommonLibHandle, "u_setDataDirectory");
-			if (Methods.u_setDataDirectory == null)
-				throw new MissingMethodException($"ICU entry point u_setDataDirectory_{IcuVersion} was not found.");
 			Methods.u_setDataDirectory(directory);
 		}
 

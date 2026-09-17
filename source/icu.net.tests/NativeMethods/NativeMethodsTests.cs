@@ -239,5 +239,18 @@ namespace Icu.Tests
 			Assert.That(RunTestHelper(subdir, subdir), Is.EqualTo(MinIcuLibraryVersion));
 		}
 
+		[Test]
+		public void GetMethod_NonExistentMethod_ThrowsMissingMethodException()
+		{
+			Wrapper.Init();
+
+			var ex = Assert.Throws<MissingMethodException>(() =>
+				NativeMethods.GetMethod<Action>(NativeMethods.IcuCommonLibHandle, "non_existent_method_xyz"));
+
+			Assert.That(ex.Message, Does.Contain("non_existent_method_xyz"));
+			var icuMajorVersion = Wrapper.IcuVersion.Substring(0, Wrapper.IcuVersion.IndexOf(".", StringComparison.Ordinal));
+			Assert.That(ex.Message, Does.Contain(icuMajorVersion));
+		}
+
 	}
 }
