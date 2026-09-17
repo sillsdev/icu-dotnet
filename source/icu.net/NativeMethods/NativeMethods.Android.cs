@@ -294,15 +294,11 @@ namespace Icu
 			if (methodPointer == IntPtr.Zero)
 			{
 				methodPointer = AndroidDlsym(handle, versionedMethodName);
-				if (methodPointer == IntPtr.Zero)
-					methodPointer = AndroidDlsym(IntPtr.Zero, versionedMethodName);
 			}
 
 			if (methodPointer == IntPtr.Zero)
 			{
 				methodPointer = AndroidDlsym(handle, methodName);
-				if (methodPointer == IntPtr.Zero)
-					methodPointer = AndroidDlsym(IntPtr.Zero, methodName);
 			}
 
 			if (methodPointer != IntPtr.Zero)
