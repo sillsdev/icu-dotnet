@@ -50,6 +50,8 @@ namespace Icu
 			Dispose(true);
 		}
 
+		/// <summary>Releases the resources used by ResourceBundle.</summary>
+		/// <param name="disposing"><c>true</c> if called from <see cref="Dispose()"/>; <c>false</c> if called from the finalizer.</param>
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)

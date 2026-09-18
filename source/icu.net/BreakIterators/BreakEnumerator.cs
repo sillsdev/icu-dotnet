@@ -34,6 +34,7 @@ namespace Icu.BreakIterators
 			_breakIterator = null;
 		}
 
+		/// <summary>Finalizer. Logs a debug warning if <see cref="Dispose()"/> was not called.</summary>
 		~BreakEnumerator()
 		{
 			Debug.WriteLineIf(_breakIterator != null, $"Missing Dispose() for {GetType()}");

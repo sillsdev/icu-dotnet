@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 
 namespace Icu
 {
+	/// <summary>
+	/// Provides utilities for working with ICU codepage/encoding converters.
+	/// </summary>
 	public static class CodepageConversion
 	{
 		/// <summary>
