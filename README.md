@@ -96,17 +96,11 @@ RUN apt-get update \
 
 ### Collation
 
-Collation is the area most sensitive to the ICU version in use. ICU 53 rewrote the
-collation implementation; older versions can crash the process (an access violation
-inside `ucol_strcoll` or `ucol_getSortKey`) on input that the collation rules don't
-cover, particularly decomposed sequences. **Use ICU 53 or newer for collation.**
-
-With the default normalization mode, ICU only guarantees a correct result for input
-in FCD form. If your input might not be, set `Collator.NormalizationMode` to
-`NormalizationMode.On` and ICU will check and normalize it for you. That check is
-incremental and native: in our measurements sorting 30,000 strings cost about the
-same with it on as off, whereas normalizing each string before calling `Compare`
-cost around 12 times as much. See
+Use ICU 53 or newer: older versions can crash on input that the collation rules
+don't cover. With the default normalization mode ICU only guarantees a correct
+result for input in FCD form, so if yours might not be, set
+`Collator.NormalizationMode` to `NormalizationMode.On` rather than normalizing each
+string yourself - ICU's check is incremental and native, and costs far less. See
 [issue 130](https://github.com/sillsdev/icu-dotnet/issues/130).
 
 ### Linux

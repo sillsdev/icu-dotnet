@@ -909,18 +909,14 @@ namespace Icu.Tests.Collation
 			Assert.IsNotEmpty(collationRules);
 		}
 
-		#region Input normalization (https://github.com/sillsdev/icu-dotnet/issues/130)
-
-		// "a" with the acute and ogonek marks in non-canonical order, and the canonically
-		// equivalent precomposed form.
+		// "a" with acute and ogonek in non-canonical order, and the canonically equivalent
+		// precomposed form (https://github.com/sillsdev/icu-dotnet/issues/130).
 		private const string OutOfOrderMarks = "a\u0301\u0328";
 		private const string Composed = "\u0105\u0301";
 
 		[Test]
 		public void Compare_NormalizationModeOff_DoesNotNormalizeInput()
 		{
-			// Off is the default for most collators: ICU only guarantees a correct result for
-			// input in FCD form, so canonically equivalent strings can compare unequal.
 			using (var collator = new RuleBasedCollator(string.Empty))
 			{
 				Assert.That(collator.NormalizationMode, Is.EqualTo(NormalizationMode.Off));
@@ -929,26 +925,15 @@ namespace Icu.Tests.Collation
 		}
 
 		[Test]
-		public void Compare_NormalizationModeOn_CanonicallyEquivalentStringsAreEqual()
+		public void NormalizationModeOn_CanonicallyEquivalentStringsAreEqual()
 		{
 			using (var collator = new RuleBasedCollator(string.Empty, NormalizationMode.On,
 				CollationStrength.Default))
 			{
 				Assert.That(collator.Compare(OutOfOrderMarks, Composed), Is.EqualTo(0));
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizationModeOn_CanonicallyEquivalentStringsGiveSameKey()
-		{
-			using (var collator = new RuleBasedCollator(string.Empty, NormalizationMode.On,
-				CollationStrength.Default))
-			{
 				Assert.That(SortKey.Compare(collator.GetSortKey(OutOfOrderMarks),
 					collator.GetSortKey(Composed)), Is.EqualTo(0));
 			}
 		}
-
-		#endregion
 	}
 }

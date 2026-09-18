@@ -25,8 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 - Added net10.0 target framework.
-- icu.net now writes a one-time warning to the debug output when collating with an ICU
-  older than 53, which is the release that rewrote collation. Older versions can crash on
+- Debug builds now warn once when collating with an ICU older than 53, which can crash on
   input that the collation rules don't cover.
 
 ### Fixed
