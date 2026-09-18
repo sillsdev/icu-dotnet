@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Removed the `System.IO.FileSystem` / `System.IO.FileSystem.Primitives` 4.3.0 references from
   the test project: netstandard1.x-era facades, both deprecated on nuget.org, no longer needed
   now that the lowest test target is `net462`.
+- Replaced the legacy TeamCity-oriented `build/icu-dotnet.proj` MSBuild file with plain `dotnet`
+  CLI scripts (`build/TestBuild.sh`, `build/TestPack.sh`), matching what CI already runs. This
+  build path had not been used by CI for a long time (CI now calls `dotnet build`/`test`/`pack`
+  directly) and TeamCity itself was decommissioned for this project a while back.
 
 ### Fixed
 
@@ -115,6 +119,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `NativeMethods.cs`, `NativeMethodsHelper.cs`, `NativeMethodsTests.cs`, `NativeMethodsHelperTests.cs`,
   `CharacterTests.cs`, and `LocaleTests.cs`, now that `net40` is no longer a target framework.
   Also updated remaining `net461`/`4.5.1`-specific comments to reflect the `net462` retarget.
+- Removed `build/icu-dotnet.proj`, `build/NuGet.targets`, and `build/TestInstallerBuild.bat`
+  (the latter was unrelated leftover cruft for building a different repository), along with the
+  `SIL.BuildTasks` and `NUnit.Console` dependencies that only existed to support that build path.
 
 ### Security
 
