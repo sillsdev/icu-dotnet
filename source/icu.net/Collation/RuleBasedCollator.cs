@@ -209,8 +209,6 @@ namespace Icu.Collation
 		/// Get a sort key for the argument string.
 		/// Sort keys may be compared using SortKey.Compare
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
 		/// <remarks>See <see cref="Compare"/> about normalization of the input.</remarks>
 		public override SortKey GetSortKey(string source)
 		{
@@ -409,7 +407,6 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="string1">The first string to compare</param>
 		/// <param name="string2">The second string to compare</param>
-		/// <returns></returns>
 		/// <remarks>Comparing a null reference is allowed and does not generate an exception.
 		/// A null reference is considered to be less than any reference that is not null.
 		/// <para>With <see cref="NormalizationMode"/> off (the default for most collators)
