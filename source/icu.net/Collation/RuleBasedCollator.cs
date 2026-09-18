@@ -2,9 +2,11 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
+using System.Threading;
 
 
 namespace Icu.Collation
@@ -55,8 +57,66 @@ namespace Icu.Collation
 			public override bool IsInvalid => handle == IntPtr.Zero || handle == new IntPtr(-1) || IsClosed;
 		}
 
+		/// <summary>
+		/// ICU versions older than this have collation bugs that can crash the process on
+		/// input that the collation rules don't cover (see
+		/// https://github.com/sillsdev/icu-dotnet/issues/130). ICU 53 is the release that
+		/// introduced the rewritten collation implementation; it is a conservative estimate
+		/// rather than a known fix version.
+		/// </summary>
+		private const int RecommendedMinIcuVersionForCollation = 53;
+
+		private static int _icuVersionWarningIssued;
+
 		private bool _disposingValue; // To detect redundant calls
 		private SafeRuleBasedCollatorHandle _collatorHandle;
+
+		/// <summary>
+		/// Writes a one-time warning to the debug output if the ICU version that got loaded is
+		/// older than <see cref="RecommendedMinIcuVersionForCollation"/>.
+		/// </summary>
+		[Conditional("DEBUG")]
+		private static void WarnIfIcuVersionIsOldForCollation()
+		{
+			if (Interlocked.Exchange(ref _icuVersionWarningIssued, 1) != 0)
+				return;
+
+			int majorVersion;
+			try
+			{
+				var version = Wrapper.IcuVersion;
+				var separator = version.IndexOf('.');
+				if (!int.TryParse(separator < 0 ? version : version.Substring(0, separator),
+						out majorVersion))
+					return;
+			}
+			catch (Exception)
+			{
+				// Not being able to determine the version isn't worth failing over.
+				return;
+			}
+
+			if (majorVersion > 0 && majorVersion < RecommendedMinIcuVersionForCollation)
+			{
+				Debug.WriteLine(
+					$"icu.net: collating with ICU {majorVersion}. ICU " +
+					$"{RecommendedMinIcuVersionForCollation} or newer is recommended; older " +
+					"versions can crash on input that the collation rules don't cover.");
+			}
+		}
+
+		/// <summary>
+		/// Normalizes <paramref name="source"/> to NFC, unless the collator normalizes its
+		/// input itself (<see cref="Icu.Collation.NormalizationMode.On"/>), in which case the
+		/// string is returned unchanged.
+		/// </summary>
+		private string NormalizeIfNeeded(string source)
+		{
+			if (string.IsNullOrEmpty(source) || NormalizationMode == NormalizationMode.On)
+				return source;
+
+			return Normalizer.Normalize(source, Normalizer.UNormalizationMode.UNORM_NFC);
+		}
 
 		private RuleBasedCollator() {}
 
@@ -88,6 +148,7 @@ namespace Icu.Collation
 								 NormalizationMode normalizationMode,
 								 CollationStrength collationStrength)
 		{
+			WarnIfIcuVersionIsOldForCollation();
 			var parseError = new ParseError();
 			_collatorHandle = NativeMethods.ucol_openRules(rules,
 				rules.Length,
@@ -213,14 +274,30 @@ namespace Icu.Collation
 		/// <returns></returns>
 		public override SortKey GetSortKey(string source)
 		{
+			return GetSortKey(source, false);
+		}
+
+		/// <summary>
+		/// Get a sort key for the argument string.
+		/// Sort keys may be compared using SortKey.Compare
+		/// </summary>
+		/// <param name="source">The string to get a sort key for</param>
+		/// <param name="normalizeInput"><c>true</c> to normalize <paramref name="source"/> to
+		/// NFC before passing it to ICU (unless the collator normalizes its input itself).
+		/// This works around crashes in older ICU versions on input that the collation rules
+		/// don't cover (https://github.com/sillsdev/icu-dotnet/issues/130). The returned
+		/// <see cref="SortKey.OriginalString"/> is the string that was passed in.</param>
+		public SortKey GetSortKey(string source, bool normalizeInput)
+		{
 			if(source == null)
 			{
 				throw new ArgumentNullException();
 			}
+			var text = normalizeInput ? NormalizeIfNeeded(source) : source;
 			int actualLength;
 			for (;;)
 			{
-				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, source, source.Length,
+				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, text, text.Length,
 					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
@@ -330,6 +407,8 @@ namespace Icu.Collation
 			// format that ICU expects.
 			var locale = new Locale(localeId);
 
+			WarnIfIcuVersionIsOldForCollation();
+
 			var instance = new RuleBasedCollator {
 				_collatorHandle = NativeMethods.ucol_open(locale.Id, out var status)
 			};
@@ -413,6 +492,23 @@ namespace Icu.Collation
 		/// A null reference is considered to be less than any reference that is not null.</remarks>
 		public override int Compare(string string1, string string2)
 		{
+			return Compare(string1, string2, false);
+		}
+
+		/// <summary>
+		/// Compares two strings based on the rules of this RuleBasedCollator
+		/// </summary>
+		/// <param name="string1">The first string to compare</param>
+		/// <param name="string2">The second string to compare</param>
+		/// <param name="normalizeInput"><c>true</c> to normalize both strings to NFC before
+		/// passing them to ICU (unless the collator normalizes its input itself). This works
+		/// around crashes in older ICU versions on input that the collation rules don't cover
+		/// (https://github.com/sillsdev/icu-dotnet/issues/130).</param>
+		/// <returns></returns>
+		/// <remarks>Comparing a null reference is allowed and does not generate an exception.
+		/// A null reference is considered to be less than any reference that is not null.</remarks>
+		public int Compare(string string1, string string2, bool normalizeInput)
+		{
 			if(string1 == null)
 			{
 				if(string2 == null)
@@ -424,6 +520,11 @@ namespace Icu.Collation
 			if(string2 == null)
 			{
 				return 1;
+			}
+			if (normalizeInput)
+			{
+				string1 = NormalizeIfNeeded(string1);
+				string2 = NormalizeIfNeeded(string2);
 			}
 			return (int) NativeMethods.ucol_strcoll(_collatorHandle,
 													string1,

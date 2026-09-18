@@ -94,6 +94,18 @@ RUN apt-get update \
 
 ## ICU versions
 
+### Collation
+
+Collation is the area most sensitive to the ICU version in use. ICU 53 rewrote the
+collation implementation; older versions can crash the process (an access violation
+inside `ucol_strcoll` or `ucol_getSortKey`) on input that the collation rules don't
+cover, particularly decomposed sequences. **Use ICU 53 or newer for collation.**
+
+If you are stuck on an older ICU, `RuleBasedCollator.Compare` and
+`RuleBasedCollator.GetSortKey` have overloads taking `normalizeInput: true`, which
+normalize the input to NFC before handing it to ICU. See
+[issue 130](https://github.com/sillsdev/icu-dotnet/issues/130).
+
 ### Linux
 
 icu-dotnet links with any installed version of ICU shared objects. It is
