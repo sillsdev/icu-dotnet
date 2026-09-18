@@ -105,19 +105,6 @@ namespace Icu.Collation
 			}
 		}
 
-		/// <summary>
-		/// Normalizes <paramref name="source"/> to NFC, unless the collator normalizes its
-		/// input itself (<see cref="Icu.Collation.NormalizationMode.On"/>), in which case the
-		/// string is returned unchanged.
-		/// </summary>
-		private string NormalizeIfNeeded(string source)
-		{
-			if (string.IsNullOrEmpty(source) || NormalizationMode == NormalizationMode.On)
-				return source;
-
-			return Normalizer.Normalize(source, Normalizer.UNormalizationMode.UNORM_NFC);
-		}
-
 		private RuleBasedCollator() {}
 
 		/// <summary>
@@ -272,32 +259,24 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
+		/// <remarks>With <see cref="NormalizationMode"/> off - the default for most collators -
+		/// ICU only guarantees a correct result for input in FCD form, and older ICU versions
+		/// can crash on input that the collation rules don't cover
+		/// (https://github.com/sillsdev/icu-dotnet/issues/130). Set
+		/// <see cref="NormalizationMode"/> to <see cref="Icu.Collation.NormalizationMode.On"/>
+		/// to have ICU check and normalize the input itself; it does that incrementally and
+		/// natively, which is considerably cheaper than normalizing every string before calling
+		/// this method.</remarks>
 		public override SortKey GetSortKey(string source)
-		{
-			return GetSortKey(source, false);
-		}
-
-		/// <summary>
-		/// Get a sort key for the argument string.
-		/// Sort keys may be compared using SortKey.Compare
-		/// </summary>
-		/// <param name="source">The string to get a sort key for</param>
-		/// <param name="normalizeInput"><c>true</c> to normalize <paramref name="source"/> to
-		/// NFC before passing it to ICU (unless the collator normalizes its input itself).
-		/// This works around crashes in older ICU versions on input that the collation rules
-		/// don't cover (https://github.com/sillsdev/icu-dotnet/issues/130). The returned
-		/// <see cref="SortKey.OriginalString"/> is the string that was passed in.</param>
-		public SortKey GetSortKey(string source, bool normalizeInput)
 		{
 			if(source == null)
 			{
 				throw new ArgumentNullException();
 			}
-			var text = normalizeInput ? NormalizeIfNeeded(source) : source;
 			int actualLength;
 			for (;;)
 			{
-				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, text, text.Length,
+				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, source, source.Length,
 					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
@@ -489,25 +468,16 @@ namespace Icu.Collation
 		/// <param name="string2">The second string to compare</param>
 		/// <returns></returns>
 		/// <remarks>Comparing a null reference is allowed and does not generate an exception.
-		/// A null reference is considered to be less than any reference that is not null.</remarks>
+		/// A null reference is considered to be less than any reference that is not null.
+		/// <para>With <see cref="NormalizationMode"/> off - the default for most collators -
+		/// ICU only guarantees a correct result for input in FCD form, and older ICU versions
+		/// can crash on input that the collation rules don't cover
+		/// (https://github.com/sillsdev/icu-dotnet/issues/130). Set
+		/// <see cref="NormalizationMode"/> to <see cref="Icu.Collation.NormalizationMode.On"/>
+		/// to have ICU check and normalize the input itself; it does that incrementally and
+		/// natively, which is considerably cheaper than normalizing every string before calling
+		/// this method.</para></remarks>
 		public override int Compare(string string1, string string2)
-		{
-			return Compare(string1, string2, false);
-		}
-
-		/// <summary>
-		/// Compares two strings based on the rules of this RuleBasedCollator
-		/// </summary>
-		/// <param name="string1">The first string to compare</param>
-		/// <param name="string2">The second string to compare</param>
-		/// <param name="normalizeInput"><c>true</c> to normalize both strings to NFC before
-		/// passing them to ICU (unless the collator normalizes its input itself). This works
-		/// around crashes in older ICU versions on input that the collation rules don't cover
-		/// (https://github.com/sillsdev/icu-dotnet/issues/130).</param>
-		/// <returns></returns>
-		/// <remarks>Comparing a null reference is allowed and does not generate an exception.
-		/// A null reference is considered to be less than any reference that is not null.</remarks>
-		public int Compare(string string1, string string2, bool normalizeInput)
 		{
 			if(string1 == null)
 			{
@@ -520,11 +490,6 @@ namespace Icu.Collation
 			if(string2 == null)
 			{
 				return 1;
-			}
-			if (normalizeInput)
-			{
-				string1 = NormalizeIfNeeded(string1);
-				string2 = NormalizeIfNeeded(string2);
 			}
 			return (int) NativeMethods.ucol_strcoll(_collatorHandle,
 													string1,

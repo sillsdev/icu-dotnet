@@ -25,12 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 - Added net10.0 target framework.
-- Added `RuleBasedCollator.Compare(string, string, bool normalizeInput)` and
-  `RuleBasedCollator.GetSortKey(string, bool normalizeInput)` overloads that normalize the
-  input to NFC (unless the collator's `NormalizationMode` is `On`) before passing it to ICU.
-  This works around crashes in ICU versions older than 53 on input that the collation rules
-  don't cover. The existing overloads are unchanged. icu.net now also writes a one-time
-  warning to the debug output when collating with an ICU older than 53.
+- icu.net now writes a one-time warning to the debug output when collating with an ICU
+  older than 53, which is the release that rewrote collation. Older versions can crash on
+  input that the collation rules don't cover.
 
 ### Fixed
 

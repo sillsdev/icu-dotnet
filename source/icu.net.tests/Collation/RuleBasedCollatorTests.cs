@@ -909,109 +909,43 @@ namespace Icu.Tests.Collation
 			Assert.IsNotEmpty(collationRules);
 		}
 
-		#region Opt-in input normalization (https://github.com/sillsdev/icu-dotnet/issues/130)
+		#region Input normalization (https://github.com/sillsdev/icu-dotnet/issues/130)
 
-		// "i" followed by a combining acute accent, which the tailoring below doesn't
-		// mention, and its canonically equivalent precomposed form.
-		private const string DecomposedIAcute = "i\u0301";
-		private const string ComposedIAcute = "\u00ED";
-		// The rules from the bug report: a tailoring that covers i-tilde but not i-acute.
-		private const string YurutiRules = "& i < \u0129 <<< \u0128 << \u0129\u0301 <<< \u0128\u0301";
+		// "a" with the acute and ogonek marks in non-canonical order, and the canonically
+		// equivalent precomposed form.
+		private const string OutOfOrderMarks = "a\u0301\u0328";
+		private const string Composed = "\u0105\u0301";
 
 		[Test]
-		public void Compare_NormalizeInput_CanonicallyEquivalentStringsAreEqual()
+		public void Compare_NormalizationModeOff_DoesNotNormalizeInput()
 		{
-			using (var collator = new RuleBasedCollator(YurutiRules))
-			{
-				Assert.That(collator.Compare(DecomposedIAcute, ComposedIAcute, true), Is.EqualTo(0));
-			}
-		}
-
-		[Test]
-		public void Compare_NormalizeInput_MatchesDefaultOverloadForNormalizedInput()
-		{
-			using (var collator = new RuleBasedCollator(SerbianRules))
-			{
-				Assert.That(collator.Compare("ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", true),
-					Is.EqualTo(collator.Compare("ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR")));
-			}
-		}
-
-		[Test]
-		public void Compare_NormalizeInput_HandlesNulls()
-		{
+			// Off is the default for most collators: ICU only guarantees a correct result for
+			// input in FCD form, so canonically equivalent strings can compare unequal.
 			using (var collator = new RuleBasedCollator(string.Empty))
 			{
-				Assert.That(collator.Compare(null, null, true), Is.EqualTo(0));
-				Assert.That(collator.Compare(null, "a", true), Is.EqualTo(-1));
-				Assert.That(collator.Compare("a", null, true), Is.EqualTo(1));
+				Assert.That(collator.NormalizationMode, Is.EqualTo(NormalizationMode.Off));
+				Assert.That(collator.Compare(OutOfOrderMarks, Composed), Is.Not.EqualTo(0));
 			}
 		}
 
 		[Test]
-		public void Compare_DefaultOverload_DoesNotNormalizeInput()
+		public void Compare_NormalizationModeOn_CanonicallyEquivalentStringsAreEqual()
 		{
-			// Marks in non-canonical order: without normalization ICU can order these
-			// differently from their canonically equivalent NFC form.
-			const string outOfOrderMarks = "a\u0301\u0328";
-			const string composed = "\u0105\u0301";
-			using (var collator = new RuleBasedCollator(string.Empty))
-			{
-				Assert.That(collator.Compare(outOfOrderMarks, composed), Is.Not.EqualTo(0));
-				Assert.That(collator.Compare(outOfOrderMarks, composed, true), Is.EqualTo(0));
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizeInput_CanonicallyEquivalentStringsGiveSameKey()
-		{
-			using (var collator = new RuleBasedCollator(YurutiRules))
-			{
-				var decomposedKey = collator.GetSortKey(DecomposedIAcute, true);
-				var composedKey = collator.GetSortKey(ComposedIAcute, true);
-				Assert.That(SortKey.Compare(decomposedKey, composedKey), Is.EqualTo(0));
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizeInput_KeepsOriginalString()
-		{
-			using (var collator = new RuleBasedCollator(YurutiRules))
-			{
-				var sortKey = collator.GetSortKey(DecomposedIAcute, true);
-				Assert.That(sortKey.OriginalString, Is.EqualTo(DecomposedIAcute));
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizeInput_Null()
-		{
-			using (var collator = new RuleBasedCollator(string.Empty))
-			{
-				Assert.That(() => collator.GetSortKey(null, true), Throws.TypeOf<ArgumentNullException>());
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizeInput_EmptyString()
-		{
-			using (var collator = new RuleBasedCollator(string.Empty))
-			{
-				var key = collator.GetSortKey(string.Empty, true);
-				Assert.That(key, Is.Not.Null);
-				Assert.That(key.KeyData, Is.Not.Null);
-			}
-		}
-
-		[Test]
-		public void GetSortKey_NormalizeInput_NormalizationModeOn_LeavesInputAlone()
-		{
-			using (var collator = new RuleBasedCollator(YurutiRules, NormalizationMode.On,
+			using (var collator = new RuleBasedCollator(string.Empty, NormalizationMode.On,
 				CollationStrength.Default))
 			{
-				// ICU normalizes the input itself, so the two overloads agree.
-				Assert.That(SortKey.Compare(collator.GetSortKey(DecomposedIAcute, true),
-					collator.GetSortKey(DecomposedIAcute)), Is.EqualTo(0));
+				Assert.That(collator.Compare(OutOfOrderMarks, Composed), Is.EqualTo(0));
+			}
+		}
+
+		[Test]
+		public void GetSortKey_NormalizationModeOn_CanonicallyEquivalentStringsGiveSameKey()
+		{
+			using (var collator = new RuleBasedCollator(string.Empty, NormalizationMode.On,
+				CollationStrength.Default))
+			{
+				Assert.That(SortKey.Compare(collator.GetSortKey(OutOfOrderMarks),
+					collator.GetSortKey(Composed)), Is.EqualTo(0));
 			}
 		}
 
