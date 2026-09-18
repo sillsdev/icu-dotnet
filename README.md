@@ -96,12 +96,10 @@ RUN apt-get update \
 
 ### Collation
 
-Use ICU 53 or newer: older versions can crash on input that the collation rules
-don't cover. With the default normalization mode ICU only guarantees a correct
-result for input in FCD form, so if yours might not be, set
-`Collator.NormalizationMode` to `NormalizationMode.On` rather than normalizing each
-string yourself - ICU's check is incremental and native, and costs far less. See
-[issue 130](https://github.com/sillsdev/icu-dotnet/issues/130).
+With the default normalization mode ICU only guarantees a correct result for input
+in FCD form. If yours might not be, set `Collator.NormalizationMode` to
+`NormalizationMode.On` rather than normalizing each string yourself - ICU's check is
+incremental and native, and costs far less.
 
 ### Linux
 

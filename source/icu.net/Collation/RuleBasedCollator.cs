@@ -2,11 +2,9 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
-using System.Threading;
 
 
 namespace Icu.Collation
@@ -57,30 +55,8 @@ namespace Icu.Collation
 			public override bool IsInvalid => handle == IntPtr.Zero || handle == new IntPtr(-1) || IsClosed;
 		}
 
-		// ICU 53 rewrote collation; older versions can crash on input that the rules don't
-		// cover (https://github.com/sillsdev/icu-dotnet/issues/130).
-		private const int RecommendedMinIcuVersionForCollation = 53;
-
-		private static int _icuVersionWarningIssued;
-
 		private bool _disposingValue; // To detect redundant calls
 		private SafeRuleBasedCollatorHandle _collatorHandle;
-
-		/// <summary>
-		/// Warns once if the loaded ICU is too old to collate reliably. Call only after a
-		/// collator was opened, so that ICU is known to be loaded.
-		/// </summary>
-		[Conditional("DEBUG")]
-		private static void WarnIfIcuVersionIsOldForCollation()
-		{
-			if (Interlocked.Exchange(ref _icuVersionWarningIssued, 1) == 0 &&
-				int.TryParse(Wrapper.IcuVersion.Split('.')[0], out var majorVersion) &&
-				majorVersion < RecommendedMinIcuVersionForCollation)
-			{
-				Debug.WriteLine($"icu.net: collating with ICU {majorVersion}; " +
-					$"{RecommendedMinIcuVersionForCollation} or newer is recommended.");
-			}
-		}
 
 		private RuleBasedCollator() {}
 
@@ -129,7 +105,6 @@ namespace Icu.Collation
 				_collatorHandle = default;
 				throw;
 			}
-			WarnIfIcuVersionIsOldForCollation();
 		}
 
 		/// <summary>The collation strength.
@@ -234,10 +209,9 @@ namespace Icu.Collation
 		/// Get a sort key for the argument string.
 		/// Sort keys may be compared using SortKey.Compare
 		/// </summary>
-		/// <remarks>With <see cref="NormalizationMode"/> off (the default for most collators)
-		/// ICU only guarantees a correct result for input in FCD form. Set it to
-		/// <see cref="Icu.Collation.NormalizationMode.On"/> to have ICU check and normalize the
-		/// input itself, which is much cheaper than normalizing each string first.</remarks>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		/// <remarks>See <see cref="Compare"/> about normalization of the input.</remarks>
 		public override SortKey GetSortKey(string source)
 		{
 			if(source == null)
@@ -392,7 +366,6 @@ namespace Icu.Collation
 						break;
 				}
 
-				WarnIfIcuVersionIsOldForCollation();
 				return instance;
 			}
 			catch
