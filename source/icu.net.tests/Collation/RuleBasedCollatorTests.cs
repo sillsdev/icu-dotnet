@@ -908,5 +908,32 @@ namespace Icu.Tests.Collation
 			Assert.IsNotNull(collationRules);
 			Assert.IsNotEmpty(collationRules);
 		}
+
+		// "a" with acute and ogonek in non-canonical order, and the canonically equivalent
+		// precomposed form (https://github.com/sillsdev/icu-dotnet/issues/130).
+		private const string OutOfOrderMarks = "a\u0301\u0328";
+		private const string Composed = "\u0105\u0301";
+
+		[Test]
+		public void Compare_NormalizationModeOff_DoesNotNormalizeInput()
+		{
+			using (var collator = new RuleBasedCollator(string.Empty))
+			{
+				Assert.That(collator.NormalizationMode, Is.EqualTo(NormalizationMode.Off));
+				Assert.That(collator.Compare(OutOfOrderMarks, Composed), Is.Not.EqualTo(0));
+			}
+		}
+
+		[Test]
+		public void NormalizationModeOn_CanonicallyEquivalentStringsAreEqual()
+		{
+			using (var collator = new RuleBasedCollator(string.Empty, NormalizationMode.On,
+				CollationStrength.Default))
+			{
+				Assert.That(collator.Compare(OutOfOrderMarks, Composed), Is.EqualTo(0));
+				Assert.That(SortKey.Compare(collator.GetSortKey(OutOfOrderMarks),
+					collator.GetSortKey(Composed)), Is.EqualTo(0));
+			}
+		}
 	}
 }
