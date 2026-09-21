@@ -26,12 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 - Added net10.0 target framework.
 
-### Changed
-
-- `Wrapper.MinSupportedIcuVersion` is now 53 (was 44). ICU 53 rewrote collation; older
-  versions can crash on input that the collation rules don't cover
-  ([#130](https://github.com/sillsdev/icu-dotnet/issues/130)).
-
 ### Fixed
 
 - Fixed `Transliterator.Transliterate` throwing `OverflowException` for characters that expand

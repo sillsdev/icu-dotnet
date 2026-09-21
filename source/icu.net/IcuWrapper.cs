@@ -16,12 +16,8 @@ namespace Icu
 	/// </summary>
 	public static class Wrapper
 	{
-		/// <summary>
-		/// The minimum ICU version supported by this library. ICU 53 rewrote collation;
-		/// older versions can crash on input that the collation rules don't cover
-		/// (https://github.com/sillsdev/icu-dotnet/issues/130).
-		/// </summary>
-		public const int MinSupportedIcuVersion = 53;
+		/// <summary>The minimum ICU version supported by this library.</summary>
+		public const int MinSupportedIcuVersion = 44;
 		/// <summary>The maximum ICU version supported by this library.</summary>
 		public const int MaxSupportedIcuVersion = 90;
 
@@ -74,10 +70,10 @@ namespace Icu
 		/// <remarks>This method allows an application to select a specific ICU version. Otherwise
 		/// the highest found supported ICU libraries will be used.</remarks>
 		/// <param name="minIcuVersion">Minimum ICU version. Needs to be greater or equal to the
-		/// minimum supported ICU version (currently 53).</param>
+		/// minimum supported ICU version (<see cref="MinSupportedIcuVersion"/>).</param>
 		/// <param name="maxIcuVersion">Maximum ICU version. Needs to be less or equal to the
-		/// maximum supported ICU version (currently 60). Set to <c>-1</c> to use the same value
-		/// as <paramref name="minIcuVersion"/>.</param>
+		/// maximum supported ICU version (<see cref="MaxSupportedIcuVersion"/>). Set to
+		/// <c>-1</c> to use the same value as <paramref name="minIcuVersion"/>.</param>
 		/// ------------------------------------------------------------------------------------
 		[PublicAPI]
 		public static void ConfineIcuVersions(int minIcuVersion, int maxIcuVersion = -1)
