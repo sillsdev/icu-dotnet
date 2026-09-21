@@ -93,6 +93,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   vulnerability). The `net451` target retains `Microsoft.Extensions.DependencyModel` 2.1.0 (the
   newest version with net451 support) and pins the latest `Newtonsoft.Json`.
 
+- Upgraded `SIL.ReleaseTasks` to 4.0.0, which upgrades its own `SIL.Core` dependency to bring
+  `Newtonsoft.Json` to 13.0.1 — past the vulnerability (GHSA-5crp-9r3c-p9vr) — and no longer
+  exports any transitive dependencies publicly. This was never consumer-facing, since the
+  reference to `SIL.ReleaseTasks` already uses `PrivateAssets="all"`.
+
 ## [3.0.1] - 2025-02-21
 
 ### Fixed

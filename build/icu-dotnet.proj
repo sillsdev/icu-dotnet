@@ -40,7 +40,7 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Message Text="MSBuildProjectDirectory=$(MSBuildProjectDirectory)"/>
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.5.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 4.0.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
 	</Target>
 
 	<Target Name="Build">
@@ -94,7 +94,7 @@
 		</ItemGroup>
 
 		<SIL.BuildTasks.UnitTestTasks.NUnit3 Assemblies="@(TestAssemblies)"
-			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.10.0/tools"
+			ToolPath="$(NuGetPackageDir)/nunit.consolerunner/3.22.0/tools"
 			TestInNewThread="false"
 			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)/"
