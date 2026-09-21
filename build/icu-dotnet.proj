@@ -79,7 +79,7 @@
 
 	<Target Name="RunNUnitTC" Condition="'$(IsOnTeamCity)'=='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net461/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net462/*tests.dll"/>
 		</ItemGroup>
 
 		<NUnitTeamCity
@@ -90,7 +90,7 @@
 
 	<Target Name="RunNUnit" Condition="'$(IsOnTeamCity)'!='true'">
 		<ItemGroup>
-			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net461/*tests.dll"/>
+			<TestAssemblies Include="$(OutputDir)/$(Configuration)/net462/*tests.dll"/>
 		</ItemGroup>
 
 		<SIL.BuildTasks.UnitTestTasks.NUnit3 Assemblies="@(TestAssemblies)"
