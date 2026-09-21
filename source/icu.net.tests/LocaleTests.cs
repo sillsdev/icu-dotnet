@@ -303,21 +303,13 @@ namespace Icu.Tests
 		private void SetUICulture(string culture)
 		{
 			var cultureInfo = new CultureInfo(culture);
-#if NET40
-			System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
-#else
 			CultureInfo.CurrentUICulture = cultureInfo;
-#endif
 		}
 
 		private void SetCulture(string culture)
 		{
 			var cultureInfo = new CultureInfo(culture);
-#if NET40
-			System.Threading.Thread.CurrentThread.CurrentCulture = cultureInfo;
-#else
 			CultureInfo.CurrentCulture = cultureInfo;
-#endif
 		}
 	}
 }

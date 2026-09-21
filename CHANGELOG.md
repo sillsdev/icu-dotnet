@@ -111,6 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   sillsdev's repos found no remaining consumers, and nothing in icu-dotnet's own test suite
   exercised it either, but any project still building against `net40` specifically will no
   longer find a compatible asset in this package.
+- Removed dead `#if NET40` / `#if !NET40` conditional code (and the comments explaining it) from
+  `NativeMethods.cs`, `NativeMethodsHelper.cs`, `NativeMethodsTests.cs`, `NativeMethodsHelperTests.cs`,
+  `CharacterTests.cs`, and `LocaleTests.cs`, now that `net40` is no longer a target framework.
+  Also updated remaining `net461`/`4.5.1`-specific comments to reflect the `net462` retarget.
 
 ### Security
 
