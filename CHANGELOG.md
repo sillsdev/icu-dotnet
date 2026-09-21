@@ -47,7 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Replaced the legacy TeamCity-oriented `build/icu-dotnet.proj` MSBuild file with plain `dotnet`
   CLI scripts (`build/TestBuild.sh`, `build/TestPack.sh`), matching what CI already runs. This
   build path had not been used by CI for a long time (CI now calls `dotnet build`/`test`/`pack`
-  directly) and TeamCity itself was decommissioned for this project a while back.
+  directly) and TeamCity itself was decommissioned for this project a while back. The scripts
+  test each target framework explicitly and only run the `net462` tests on Windows (matching
+  CI's platform gating, since .NET Framework tests can't run on macOS/Linux); `set -e` ensures
+  a build or test failure stops the script instead of `dotnet pack` silently masking it.
 
 ### Fixed
 
