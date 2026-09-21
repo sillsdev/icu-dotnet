@@ -203,7 +203,7 @@ namespace Icu.Collation
 				(NativeMethods.CollationAttributeValue) value);
 		}
 
-		private byte[] keyData = new byte[1024];
+		private const int InitialSortKeyBufferSize = 1024;
 
 		/// <summary>
 		/// Get a sort key for the argument string.
@@ -211,12 +211,16 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
+		/// <remarks>Safe to call concurrently on one collator: each call builds its key
+		/// independently. Changing collator settings while other threads use it is still
+		/// not safe.</remarks>
 		public override SortKey GetSortKey(string source)
 		{
 			if(source == null)
 			{
 				throw new ArgumentNullException();
 			}
+			var keyData = new byte[InitialSortKeyBufferSize];
 			int actualLength;
 			for (;;)
 			{
@@ -224,7 +228,8 @@ namespace Icu.Collation
 					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
-					keyData = new byte[keyData.Length*2];
+					// ucol_getSortKey reports the size the key needs, so one retry is enough.
+					keyData = new byte[actualLength];
 					continue;
 				}
 				break;
