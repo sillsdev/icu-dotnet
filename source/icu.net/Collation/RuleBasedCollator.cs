@@ -211,12 +211,13 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		/// <remarks>Safe to call concurrently on one collator: each call builds its key
-		/// independently. Changing collator settings while other threads use it is still
-		/// not safe.</remarks>
+		/// <remarks>Safe to call concurrently on one collator: each call only reads the
+		/// collator and builds its key in its own buffer. Changing a setting concurrently
+		/// is not safe: it silently yields keys that mix the old and new settings rather
+		/// than throwing. <see cref="Clone"/> per thread instead.</remarks>
 		public override SortKey GetSortKey(string source)
 		{
-			if(source == null)
+			if (source == null)
 			{
 				throw new ArgumentNullException();
 			}
