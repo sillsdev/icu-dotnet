@@ -23,7 +23,6 @@
       Going forward we'll have to drop 4.6.2 support to be able to update NUnit3TestAdapter.
      -->
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.2" />
-    <PackageReference Include="NUnit.Console" Version="3.22.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\icu.net\icu.net.csproj" />
