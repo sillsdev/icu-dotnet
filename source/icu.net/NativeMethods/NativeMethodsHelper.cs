@@ -5,9 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-#if !NET40
 using Microsoft.Extensions.DependencyModel;
-#endif
 
 // ReSharper disable once CheckNamespace
 namespace Icu
@@ -76,7 +74,6 @@ namespace Icu
 				return IcuVersion;
 			}
 
-#if !NET40
 			var context = DependencyContext.Default;
 			// If this is false, something went wrong.  These files should have
 			// either been found above or we should have been able to locate the
@@ -103,7 +100,6 @@ namespace Icu
 			}
 
 			TrySetIcuPathFromDirectory(new DirectoryInfo(packagePath), nativeAssetPaths);
-#endif
 
 			return IcuVersion;
 		}
@@ -169,14 +165,12 @@ namespace Icu
 			}
 
 			string[] nativeAssetPaths = null;
-#if !NET40
 			// 3. Check in {directoryOfAssembly}/runtimes/{runtimeId}/native/
 			if (!TryGetNativeAssetPaths(DependencyContext.Default, out nativeAssetPaths))
 			{
 				Trace.WriteLine("Could not locate icu native assets from DependencyModel.");
 				return false;
 			}
-#endif
 			// If we found the icu*.dll files under {directoryOfAssembly}/runtimes/{rid}/native/,
 			// they should ALL be there... or else something went wrong in publishing the app or
 			// restoring the files, or packaging the NuGet package.
@@ -258,7 +252,6 @@ namespace Icu
 			return doAllAssetsExistInDirectory;
 		}
 
-#if !NET40
 		/// <summary>
 		/// Tries to get the icu native binaries by searching the Runtime
 		/// ID graph to find the first set of paths that have those binaries.
@@ -317,7 +310,6 @@ namespace Icu
 
 			return Directory.Exists(packagePath);
 		}
-#endif
 
 		/// <summary>
 		/// Tries to fetch the default package directory for NuGet packages.

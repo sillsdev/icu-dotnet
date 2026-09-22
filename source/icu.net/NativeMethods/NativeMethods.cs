@@ -167,12 +167,7 @@ namespace Icu
 		{
 			get
 			{
-				//NOTE: .GetTypeInfo() is not supported until .NET 4.5 onwards.
-#if NET40
-				var currentAssembly = typeof(NativeMethods).Assembly;
-#else
 				var currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
-#endif
 #if NET
 				var managedPath = currentAssembly.Location;
 				// If the application is published as a single file, Assembly.Location will be an empty string.
@@ -538,7 +533,6 @@ namespace Icu
 			IcuVersion = 0;
 			_IcuPath = null;
 
-#if !NET40
 			NativeMethodsHelper.Reset();
 			var icuInfo = NativeMethodsHelper.GetIcuVersionInfoForNetCoreOrWindows();
 
@@ -547,7 +541,6 @@ namespace Icu
 				_IcuPath = icuInfo.IcuPath.FullName;
 				IcuVersion = icuInfo.IcuVersion;
 			}
-#endif
 		}
 
 		// This method is thread-safe and idempotent
@@ -593,13 +586,7 @@ namespace Icu
 
 			if (methodPointer != IntPtr.Zero)
 			{
-				// NOTE: Starting in .NET 4.5.1, Marshal.GetDelegateForFunctionPointer(IntPtr, Type) is obsolete.
-#if NET40
-				return Marshal.GetDelegateForFunctionPointer(
-					methodPointer, typeof(T)) as T;
-#else
 				return Marshal.GetDelegateForFunctionPointer<T>(methodPointer);
-#endif
 			}
 			if (missingInMinimal)
 			{

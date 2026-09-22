@@ -7,7 +7,6 @@ using NUnit.Framework;
 
 namespace Icu.Tests
 {
-#if !NET40
 	[TestFixture]
 	public class NativeMethodsHelperTests
 	{
@@ -71,5 +70,4 @@ namespace Icu.Tests
 			Assert.That(result, Is.EqualTo(Wrapper.MaxSupportedIcuVersion));
 		}
 	}
-#endif
 }
