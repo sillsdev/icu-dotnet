@@ -128,20 +128,26 @@ namespace Icu.Tests.Collation
 		}
 
 		[Test]
-		public void GetSortKey_LongString()
+		public void GetSortKey_LongString_RepeatedCallsReturnSameKey()
 		{
 			using (var ucaCollator = new RuleBasedCollator(string.Empty))
 			{
-				// Long enough that the sort key doesn't fit in the initial buffer
+				// Long enough that the sort key doesn't fit in GetSortKey's initial 1024-byte
+				// buffer, so each call has to take the grow-and-retry path.
 				var source = new string('a', 2000);
 				var key = ucaCollator.GetSortKey(source);
-				Assert.That(key.KeyData.Length, Is.GreaterThan(1024));
-				Assert.That(key.KeyData, Is.EqualTo(ucaCollator.GetSortKey(source).KeyData));
+				Assert.That(key.KeyData.Length, Is.GreaterThan(1024),
+					"Test is only meaningful if the key is too big for the initial buffer");
+
+				// Deliberately calls GetSortKey again rather than reusing key: a grown buffer
+				// retained on the collator would leak into later calls.
+				Assert.That(ucaCollator.GetSortKey(source).KeyData, Is.EqualTo(key.KeyData),
+					"A repeated call with the same input must produce an identical sort key");
 			}
 		}
 
 		[Test]
-		public void GetSortKey_ConcurrentCallsOnSameCollator()
+		public void GetSortKey_ConcurrentCallsOnSameCollator_KeysNotCorrupted()
 		{
 			const int threadCount = 8;
 			const int iterations = 2000;
@@ -173,7 +179,8 @@ namespace Icu.Tests.Collation
 				foreach (var thread in threads)
 					thread.Join();
 
-				Assert.That(corrupted, Is.EqualTo(0));
+				Assert.That(corrupted, Is.EqualTo(0),
+					"Concurrent calls returned sort keys built from another thread's string");
 			}
 		}
 
