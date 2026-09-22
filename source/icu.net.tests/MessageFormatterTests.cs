@@ -29,7 +29,7 @@ namespace Icu.Tests
 
 		// Skip when umsg_format produces wrong results due to the non-ARM64 Unix ICU 74+
 		// double-varargs ABI mismatch (https://github.com/dotnet/runtime/issues/48752).
-		// net461 only runs on Windows, so the check is unnecessary there.
+		// .NET Framework tests only run on Windows, so the check is unnecessary there.
 		private static void SkipIfUnreliableOnThisPlatform()
 		{
 #if !NETFRAMEWORK

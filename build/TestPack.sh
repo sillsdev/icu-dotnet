@@ -9,3 +9,4 @@ dotnet test -p:TargetFramework=net10.0 --configuration "$CONFIGURATION" --no-bui
 if [ "$OS" = "Windows_NT" ]; then
 	dotnet test -p:TargetFramework=net462 --configuration "$CONFIGURATION" --no-build $SLN
 fi
+dotnet pack --configuration "$CONFIGURATION" --no-build --include-symbols $SLN

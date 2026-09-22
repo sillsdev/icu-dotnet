@@ -26,6 +26,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 - Added net10.0 target framework.
 
+### Changed
+
+- **BREAKING CHANGE:** Replaced the `net451` target framework with `net462`, matching the
+  framework already used by current consumers (e.g. libpalaso, LibChorus) and remaining the
+  nearest compatible target for others (FieldWorks, SayMore, HearThis). Any consumer targeting
+  `net461` or lower will no longer resolve a compatible .NET Framework build of this package
+  (falling back to the `netstandard2.0` build instead, if their tooling supports it). The
+  `net461`-targeted test/tooling projects in this repo were bumped to `net462` to match.
+- Upgraded `System.ValueTuple` from 4.5.0 to 4.6.2.
+- Unified `Microsoft.Extensions.DependencyModel` on version 10.0.9 across all target frameworks:
+  it now officially supports `net462`, so the old net451-era pin to 2.1.0 (and the accompanying
+  `Newtonsoft.Json` override) is no longer needed.
+- Removed the explicit `Microsoft.SourceLink.GitHub` `PackageReference`: verified that the .NET
+  SDK (8.0+) now embeds correct `raw.githubusercontent.com` source link mappings for GitHub repos
+  without it — confirmed by inspecting the packed `.snupkg` PDBs for all four target frameworks.
+- Removed the `System.IO.FileSystem` / `System.IO.FileSystem.Primitives` 4.3.0 references from
+  the test project: netstandard1.x-era facades, both deprecated on nuget.org, no longer needed
+  now that the lowest test target is `net462`.
+- Replaced the legacy TeamCity-oriented `build/icu-dotnet.proj` MSBuild file with plain `dotnet`
+  CLI scripts (`build/TestBuild.sh`, `build/TestPack.sh`), matching what CI already runs. This
+  build path had not been used by CI for a long time (CI now calls `dotnet build`/`test`/`pack`
+  directly) and TeamCity itself was decommissioned for this project a while back. The scripts
+  test each target framework explicitly and only run the `net462` tests on Windows (matching
+  CI's platform gating, since .NET Framework tests can't run on macOS/Linux); `set -e` ensures
+  a build or test failure stops the script instead of `dotnet pack` silently masking it.
+
 ### Fixed
 
 - Fixed `RuleBasedCollator.GetSortKey` silently returning corrupted keys when called
@@ -88,12 +114,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
   UNumericType.COUNT.
 
+### Removed
+
+- **BREAKING CHANGE:** Dropped the `net40` target framework. A GitHub code search across
+  sillsdev's repos found no remaining consumers, and nothing in icu-dotnet's own test suite
+  exercised it either, but any project still building against `net40` specifically will no
+  longer find a compatible asset in this package.
+- Removed dead `#if NET40` / `#if !NET40` conditional code (and the comments explaining it) from
+  `NativeMethods.cs`, `NativeMethodsHelper.cs`, `NativeMethodsTests.cs`, `NativeMethodsHelperTests.cs`,
+  `CharacterTests.cs`, and `LocaleTests.cs`, now that `net40` is no longer a target framework.
+  Also updated remaining `net461`/`4.5.1`-specific comments to reflect the `net462` retarget.
+- Removed `build/icu-dotnet.proj`, `build/NuGet.targets`, and `build/TestInstallerBuild.bat`
+  (the latter was unrelated leftover cruft for building a different repository), along with the
+  `SIL.BuildTasks` and `NUnit.Console` dependencies that only existed to support that build path.
+
 ### Security
 
 - Upgraded `Microsoft.Extensions.DependencyModel` from 2.0.4 to 10.0.9 on non-.NET-Framework
   targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 (high severity
-  vulnerability). The `net451` target retains `Microsoft.Extensions.DependencyModel` 2.1.0 (the
-  newest version with net451 support) and pins the latest `Newtonsoft.Json`.
+  vulnerability).
 
 - Upgraded `SIL.ReleaseTasks` to 4.0.0, which upgrades its own `SIL.Core` dependency to bring
   `Newtonsoft.Json` to 13.0.1 — past the vulnerability (GHSA-5crp-9r3c-p9vr) — and no longer
