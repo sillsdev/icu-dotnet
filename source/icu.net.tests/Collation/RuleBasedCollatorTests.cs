@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Threading;
 using Icu.Collation;
 using NUnit.Framework;
 
@@ -122,6 +124,63 @@ namespace Icu.Tests.Collation
 				SortKey key = ucaCollator.GetSortKey(string.Empty);
 				Assert.IsNotNull(key);
 				Assert.IsNotNull(key.KeyData);
+			}
+		}
+
+		[Test]
+		public void GetSortKey_LongString_RepeatedCallsReturnSameKey()
+		{
+			using (var ucaCollator = new RuleBasedCollator(string.Empty))
+			{
+				// Long enough that the sort key doesn't fit in GetSortKey's initial 1024-byte
+				// buffer, so each call has to take the grow-and-retry path.
+				var source = new string('a', 2000);
+				var key = ucaCollator.GetSortKey(source);
+				Assert.That(key.KeyData.Length, Is.GreaterThan(1024),
+					"Test is only meaningful if the key is too big for the initial buffer");
+
+				// Deliberately calls GetSortKey again rather than reusing key: a grown buffer
+				// retained on the collator would leak into later calls.
+				Assert.That(ucaCollator.GetSortKey(source).KeyData, Is.EqualTo(key.KeyData),
+					"A repeated call with the same input must produce an identical sort key");
+			}
+		}
+
+		[Test]
+		public void GetSortKey_ConcurrentCallsOnSameCollator_KeysNotCorrupted()
+		{
+			const int threadCount = 8;
+			const int iterations = 2000;
+			var words = new[] {
+				"abc", "ČUKIĆ SLOBODAN", "CUKIĆ SVETOZAR", "ĆURIĆ MILOŠ", "CVRKALJ ÐURO"
+			};
+
+			using (var serbianCollator = new RuleBasedCollator(SerbianRules))
+			{
+				var expected = words.Select(word => serbianCollator.GetSortKey(word).KeyData).ToArray();
+				var corrupted = 0;
+				var threads = new Thread[threadCount];
+
+				for (var t = 0; t < threadCount; t++)
+				{
+					threads[t] = new Thread(() =>
+					{
+						for (var i = 0; i < iterations; i++)
+						{
+							var index = i % words.Length;
+							var keyData = serbianCollator.GetSortKey(words[index]).KeyData;
+							if (!keyData.SequenceEqual(expected[index]))
+								Interlocked.Increment(ref corrupted);
+						}
+					});
+					threads[t].Start();
+				}
+
+				foreach (var thread in threads)
+					thread.Join();
+
+				Assert.That(corrupted, Is.EqualTo(0),
+					"Concurrent calls returned sort keys built from another thread's string");
 			}
 		}
 
