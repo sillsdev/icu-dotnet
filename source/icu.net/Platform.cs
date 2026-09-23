@@ -36,6 +36,10 @@ namespace Icu
 			get
 			{
 #if NET || NETSTANDARD
+#if NET5_0_OR_GREATER
+				if (System.OperatingSystem.IsAndroid())
+					return OperatingSystemType.Unix;
+#endif
 				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					return OperatingSystemType.Windows;
 				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

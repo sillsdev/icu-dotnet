@@ -1,0 +1,19 @@
+<Project>
+  <!--
+    DeviceRunners can emit a truncated TRX when failure messages contain XML-invalid
+    control characters. Regenerate TRX from tcp-test-events.jsonl before reporting.
+  -->
+  <PropertyGroup>
+    <_DeviceRunnersTrxRebuildScript>$(MSBuildThisFileDirectory)..\..\scripts\rebuild-device-test-trx.ps1</_DeviceRunnersTrxRebuildScript>
+    <DeviceRunnersTrxRebuildCommand Condition="'$(OS)' == 'Windows_NT'">powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(_DeviceRunnersTrxRebuildScript)&quot; -ResultsDir &quot;$(_DeviceRunnersResultsDir)&quot; -TrxFile &quot;$(_DeviceRunnersTrxFile)&quot;</DeviceRunnersTrxRebuildCommand>
+    <DeviceRunnersTrxRebuildCommand Condition="'$(OS)' != 'Windows_NT'">pwsh -NoProfile -File &quot;$(_DeviceRunnersTrxRebuildScript)&quot; -ResultsDir &quot;$(_DeviceRunnersResultsDir)&quot; -TrxFile &quot;$(_DeviceRunnersTrxFile)&quot;</DeviceRunnersTrxRebuildCommand>
+  </PropertyGroup>
+  <Target Name="_DeviceRunnersRebuildTrxFromEvents"
+          AfterTargets="_DeviceRunnersExecTests"
+          BeforeTargets="_DeviceRunnersReportResults"
+          DependsOnTargets="_DeviceRunnersPrepareArgs"
+          Condition="'$(_DeviceRunnersIsSupportedPlatform)' == 'true'">
+    <Exec Command="$(DeviceRunnersTrxRebuildCommand)"
+          Condition="'$(_DeviceRunnersResultsDir)' != '' and '$(_DeviceRunnersTrxFile)' != ''" />
+  </Target>
+</Project>
