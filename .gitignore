@@ -5,6 +5,8 @@ build/nuget.exe
 build/packages/
 lib/
 output/
+# Explicit marker for Android ICU cross-compile output (also under output/)
+output/android-icu/
 bin/
 obj/
 test-results/
