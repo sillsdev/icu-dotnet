@@ -22,8 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - NuGet package now includes the XML documentation file, enabling IntelliSense summaries in Visual Studio.
 - Added net10.0 target framework.
-- Added an opt-in `net10.0-android` target framework (enabled via the `IcuDotNetIncludeAndroid`
-  MSBuild property), bundling ICU native libraries so icu.net can run on Android devices.
+- Added an opt-in `net10.0-android` target framework. Enable it via the `IcuDotNetIncludeAndroid`
+  MSBuild property and reference the `Icu4c.Android.Fw.Lib` package to provide the required ICU
+  native libraries.
 
 ### Changed
 
@@ -80,7 +81,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Upgraded `Microsoft.Extensions.DependencyModel` from 2.0.4 to 10.0.9 on non-.NET-Framework
   targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 (high severity
   vulnerability).
-
 - Upgraded `SIL.ReleaseTasks` to 4.0.0, which upgrades its own `SIL.Core` dependency to bring
   `Newtonsoft.Json` to 13.0.1 — past the vulnerability (GHSA-5crp-9r3c-p9vr) — and no longer
   exports any transitive dependencies publicly. This was never consumer-facing, since the
