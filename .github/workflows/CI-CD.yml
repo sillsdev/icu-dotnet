@@ -30,6 +30,9 @@ jobs:
           - os: macos-15
             icu-manager: macports
     runs-on: ${{ matrix.os }}
+    env:
+      # The ubuntu leg produces the published NuGet package, so it also builds net10.0-android.
+      IcuDotNetIncludeAndroid: ${{ matrix.os == 'ubuntu-latest' }}
 
     steps:
     - name: Install icu4c via Homebrew
@@ -55,6 +58,10 @@ jobs:
         dotnet-version: |
           8.0.x
           10.0.x
+
+    - name: Install Android workload
+      if: ${{ env.IcuDotNetIncludeAndroid == 'true' }}
+      run: dotnet workload install android
 
     - name: Build
       run: dotnet build --configuration Release source/icu.net.sln
