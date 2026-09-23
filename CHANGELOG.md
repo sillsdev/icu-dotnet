@@ -16,15 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-09-23
+
 ### Added
 
 - NuGet package now includes the XML documentation file, enabling IntelliSense summaries in Visual Studio.
-- In Character class, added all enums from Unicode's uchar.h that were missing:
-  UBidiPairedBracketType, UBlockCode, UEastAsianWidth, UPropertyNameChoice, UJoiningType,
-  UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
-  UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
-  UVerticalOrientation, UIdentifierStatus, UIdentifierType.
 - Added net10.0 target framework.
+- Added an opt-in `net10.0-android` target framework (enabled via the `IcuDotNetIncludeAndroid`
+  MSBuild property), bundling ICU native libraries so icu.net can run on Android devices.
 
 ### Changed
 
@@ -61,6 +60,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   on `BUFFER_OVERFLOW_ERROR` instead of immediately throwing.
 - Fixed `Wrapper.ConfineIcuVersions` being ignored during library discovery: `CheckDirectoryForIcuBinaries`
   now filters candidates to the confined version range before selecting the highest match.
+
+### Removed
+
+- **BREAKING CHANGE:** Dropped the `net40` target framework. A GitHub code search across
+  sillsdev's repos found no remaining consumers, and nothing in icu-dotnet's own test suite
+  exercised it either, but any project still building against `net40` specifically will no
+  longer find a compatible asset in this package.
+- Removed dead `#if NET40` / `#if !NET40` conditional code (and the comments explaining it) from
+  `NativeMethods.cs`, `NativeMethodsHelper.cs`, `NativeMethodsTests.cs`, `NativeMethodsHelperTests.cs`,
+  `CharacterTests.cs`, and `LocaleTests.cs`, now that `net40` is no longer a target framework.
+  Also updated remaining `net461`/`4.5.1`-specific comments to reflect the `net462` retarget.
+- Removed `build/icu-dotnet.proj`, `build/NuGet.targets`, and `build/TestInstallerBuild.bat`
+  (the latter was unrelated leftover cruft for building a different repository), along with the
+  `SIL.BuildTasks` and `NUnit.Console` dependencies that only existed to support that build path.
+
+### Security
+
+- Upgraded `Microsoft.Extensions.DependencyModel` from 2.0.4 to 10.0.9 on non-.NET-Framework
+  targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 (high severity
+  vulnerability).
+
+- Upgraded `SIL.ReleaseTasks` to 4.0.0, which upgrades its own `SIL.Core` dependency to bring
+  `Newtonsoft.Json` to 13.0.1 — past the vulnerability (GHSA-5crp-9r3c-p9vr) — and no longer
+  exports any transitive dependencies publicly. This was never consumer-facing, since the
+  reference to `SIL.ReleaseTasks` already uses `PrivateAssets="all"`.
+
+## [3.0.2] - 2026-06-03
+
+### Added
+
+- In Character class, added all enums from Unicode's uchar.h that were missing:
+  UBidiPairedBracketType, UBlockCode, UEastAsianWidth, UPropertyNameChoice, UJoiningType,
+  UJoiningGroup, UGraphemeClusterBreak, UWordBreakValues, USentenceBreak, ULineBreak,
+  UHangulSyllableType, UIndicPositionalCategory, UIndicSyllabicCategory, UIndicConjunctBreak,
+  UVerticalOrientation, UIdentifierStatus, UIdentifierType.
+
+### Fixed
+
 - Fixed macOS crash at process exit (.NET 6+): `u_cleanup()` and `NativeLibrary.Free` are now
   skipped on macOS so dyld does not fire ICU's destructor against already-cleaned state. Also
   fixed an independent ordering bug on all platforms: `u_cleanup()` was previously called after
@@ -113,31 +150,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - In Character class, added \[Obsolete\] attribute to enum members UDecompositionType.COUNT and
   UNumericType.COUNT.
-
-### Removed
-
-- **BREAKING CHANGE:** Dropped the `net40` target framework. A GitHub code search across
-  sillsdev's repos found no remaining consumers, and nothing in icu-dotnet's own test suite
-  exercised it either, but any project still building against `net40` specifically will no
-  longer find a compatible asset in this package.
-- Removed dead `#if NET40` / `#if !NET40` conditional code (and the comments explaining it) from
-  `NativeMethods.cs`, `NativeMethodsHelper.cs`, `NativeMethodsTests.cs`, `NativeMethodsHelperTests.cs`,
-  `CharacterTests.cs`, and `LocaleTests.cs`, now that `net40` is no longer a target framework.
-  Also updated remaining `net461`/`4.5.1`-specific comments to reflect the `net462` retarget.
-- Removed `build/icu-dotnet.proj`, `build/NuGet.targets`, and `build/TestInstallerBuild.bat`
-  (the latter was unrelated leftover cruft for building a different repository), along with the
-  `SIL.BuildTasks` and `NUnit.Console` dependencies that only existed to support that build path.
-
-### Security
-
-- Upgraded `Microsoft.Extensions.DependencyModel` from 2.0.4 to 10.0.9 on non-.NET-Framework
-  targets, eliminating the transitive dependency on `Newtonsoft.Json` 9.0.1 (high severity
-  vulnerability).
-
-- Upgraded `SIL.ReleaseTasks` to 4.0.0, which upgrades its own `SIL.Core` dependency to bring
-  `Newtonsoft.Json` to 13.0.1 — past the vulnerability (GHSA-5crp-9r3c-p9vr) — and no longer
-  exports any transitive dependencies publicly. This was never consumer-facing, since the
-  reference to `SIL.ReleaseTasks` already uses `PrivateAssets="all"`.
 
 ## [3.0.1] - 2025-02-21
 
@@ -437,7 +449,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Change versioning scheme. Previously the versions for the nuget package included
   the ICU version. Now we follow [Semantic Versioning](https://semver.org/).
 
-[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.1...HEAD
+[Unreleased]: https://github.com/sillsdev/icu-dotnet/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.2...v4.0.0
+[3.0.2]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/sillsdev/icu-dotnet/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.10.0...v3.0.0
 [2.10.0]: https://github.com/sillsdev/icu-dotnet/compare/v2.9.0...v2.10.0
