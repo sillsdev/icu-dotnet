@@ -124,6 +124,13 @@ RUN apt-get update \
 
 ## ICU versions
 
+### Collation
+
+With the default normalization mode ICU only guarantees a correct result for input
+in FCD form. If yours might not be, set `Collator.NormalizationMode` to
+`NormalizationMode.On` rather than normalizing each string yourself; ICU's check is
+incremental and native, and costs far less.
+
 ### Linux
 
 icu-dotnet links with any installed version of ICU shared objects. It is

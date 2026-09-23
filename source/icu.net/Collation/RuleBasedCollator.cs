@@ -209,12 +209,11 @@ namespace Icu.Collation
 		/// Get a sort key for the argument string.
 		/// Sort keys may be compared using SortKey.Compare
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
 		/// <remarks>Safe to call concurrently on one collator: each call only reads the
 		/// collator and builds its key in its own buffer. Changing a setting concurrently
 		/// is not safe: it silently yields keys that mix the old and new settings rather
-		/// than throwing. <see cref="Clone"/> per thread instead.</remarks>
+		/// than throwing. <see cref="Clone"/> per thread instead.
+		/// <para>See <see cref="Compare"/> about normalization of the input.</para></remarks>
 		public override SortKey GetSortKey(string source)
 		{
 			if (source == null)
@@ -414,9 +413,12 @@ namespace Icu.Collation
 		/// </summary>
 		/// <param name="string1">The first string to compare</param>
 		/// <param name="string2">The second string to compare</param>
-		/// <returns></returns>
 		/// <remarks>Comparing a null reference is allowed and does not generate an exception.
-		/// A null reference is considered to be less than any reference that is not null.</remarks>
+		/// A null reference is considered to be less than any reference that is not null.
+		/// <para>With <see cref="NormalizationMode"/> off (the default for most collators)
+		/// ICU only guarantees a correct result for input in FCD form. Set it to
+		/// <see cref="Icu.Collation.NormalizationMode.On"/> to have ICU check and normalize the
+		/// input itself, which is much cheaper than normalizing each string first.</para></remarks>
 		public override int Compare(string string1, string string2)
 		{
 			if(string1 == null)

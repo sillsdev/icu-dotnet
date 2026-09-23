@@ -71,10 +71,10 @@ namespace Icu
 		/// the highest found supported ICU libraries will be used. On Android, call this before
 		/// <see cref="Init"/> so bootstrap can match a bundled <c>icudtNl.dat</c> asset.</remarks>
 		/// <param name="minIcuVersion">Minimum ICU version. Needs to be greater or equal to the
-		/// minimum supported ICU version (currently 44).</param>
+		/// minimum supported ICU version (<see cref="MinSupportedIcuVersion"/>).</param>
 		/// <param name="maxIcuVersion">Maximum ICU version. Needs to be less or equal to the
-		/// maximum supported ICU version (currently 60). Set to <c>-1</c> to use the same value
-		/// as <paramref name="minIcuVersion"/>.</param>
+		/// maximum supported ICU version (<see cref="MaxSupportedIcuVersion"/>). Set to
+		/// <c>-1</c> to use the same value as <paramref name="minIcuVersion"/>.</param>
 		/// ------------------------------------------------------------------------------------
 		[PublicAPI]
 		public static void ConfineIcuVersions(int minIcuVersion, int maxIcuVersion = -1)
