@@ -194,9 +194,7 @@ namespace Icu
 			Dispose(false);
 		}
 
-		/// <summary>
-		/// Dispose of managed/unmanaged resources.
-		/// </summary>
+		/// <inheritdoc/>
 		public void Dispose()
 		{
 			Dispose(true);

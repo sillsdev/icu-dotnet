@@ -53,9 +53,7 @@ namespace Icu.Tests
 
 		internal static string OutputDirectory => Path.GetDirectoryName(
 			new Uri(
-#if NET40
-				typeof(NativeMethodsTests).Assembly.CodeBase
-#elif NET5_0_OR_GREATER
+#if NET5_0_OR_GREATER
 				typeof(NativeMethodsTests).GetTypeInfo().Assembly.Location
 #else
 				typeof(NativeMethodsTests).GetTypeInfo().Assembly.CodeBase
@@ -122,7 +120,7 @@ namespace Icu.Tests
 
 		internal static void CopyTestFiles(string sourceDir, string targetDir)
 		{
-			// sourceDir is something like output/Debug/net461, TestHelper is in output/Debug/TestHelper/net461
+			// sourceDir is something like output/Debug/net*, TestHelper is in output/Debug/TestHelper/net*
 			var framework = Path.GetFileName(sourceDir);
 			sourceDir = Path.Combine(sourceDir, "..", "TestHelper", framework);
 			CopyFilesFromDirectory(sourceDir, targetDir);
