@@ -11,18 +11,36 @@ namespace Icu
 	/// object and makes the handle unusable when <see cref="Wrapper.Cleanup"/> unloads the ICU
 	/// libraries.
 	/// </summary>
-	/// <remarks>Derived classes must not declare a constructor other than a public default one:
-	/// the interop marshaler creates the handles that ICU methods return.</remarks>
+	/// <remarks>Derived classes need a public default constructor: the interop marshaler
+	/// creates the handles that ICU methods return.</remarks>
 	internal abstract class SafeIcuHandle : SafeHandle, IIcuHandleOwner
 	{
-		protected SafeIcuHandle() : base(IntPtr.Zero, true)
+		protected SafeIcuHandle() : this(true)
+		{
+		}
+
+		/// <param name="ownsHandle"><c>false</c> if ICU owns the native object, so this handle
+		/// must never close it.</param>
+		protected SafeIcuHandle(bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
 		{
 			IcuHandleRegistry.Register(this);
 		}
 
+		public override bool IsInvalid => handle == IntPtr.Zero;
+
 		/// <summary><c>true</c> if the ICU libraries got unloaded while this handle was open,
 		/// which makes the native object it pointed to unusable.</summary>
 		public bool IsStale { get; private set; }
+
+		/// <param name="ownerName">Name of the class owning this handle; used in the
+		/// exception message.</param>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this handle got opened.</exception>
+		public void ThrowIfStale(string ownerName)
+		{
+			if (IsStale)
+				throw IcuHandleRegistry.UnloadedException(ownerName);
+		}
 
 		/// <summary>Closes the native ICU object.</summary>
 		protected abstract bool ReleaseIcuHandle();

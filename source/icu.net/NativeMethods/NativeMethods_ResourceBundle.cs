@@ -14,44 +14,44 @@ namespace Icu
 		private class ResourceBundleMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_openDelegate(string packageName, string locale,
+			internal delegate ResourceBundle.SafeResourceBundleHandle ures_openDelegate(string packageName, string locale,
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void ures_closeDelegate(IntPtr resourceBundle);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getKeyDelegate(IntPtr resourceBundle);
+			internal delegate IntPtr ures_getKeyDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr ures_getStringDelegate(IntPtr resourceBundle, out int len,
+			internal delegate IntPtr ures_getStringDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle, out int len,
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getLocaleDelegate(IntPtr resourceBundle,
+			internal delegate IntPtr ures_getLocaleDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle,
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getByKeyDelegate(IntPtr resourceBundle,
+			internal delegate ResourceBundle.SafeResourceBundleHandle ures_getByKeyDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle,
 				string key, IntPtr fillIn, out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getStringByKeyDelegate(IntPtr resourceBundle,
+			internal delegate IntPtr ures_getStringByKeyDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle,
 				string key, out int len, out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate void ures_resetIteratorDelegate(IntPtr resourceBundle);
+			internal delegate void ures_resetIteratorDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getNextStringDelegate(IntPtr resourceBundle,
+			internal delegate IntPtr ures_getNextStringDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle,
 				out int len, out IntPtr key, out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			[return: MarshalAs(UnmanagedType.I1)]
-			internal delegate bool ures_hasNextDelegate(IntPtr resourceBundle);
+			internal delegate bool ures_hasNextDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal delegate IntPtr ures_getNextResourceDelegate(IntPtr resourceBundle,
+			internal delegate ResourceBundle.SafeResourceBundleHandle ures_getNextResourceDelegate(ResourceBundle.SafeResourceBundleHandle resourceBundle,
 				IntPtr fillIn, out ErrorCode status);
 
 			internal ures_openDelegate ures_open;
@@ -71,7 +71,7 @@ namespace Icu
 		private static ResourceBundleMethodsContainer ResourceBundleMethods = new ResourceBundleMethodsContainer();
 
 		/// <summary/>
-		public static IntPtr ures_open(string packageName, string locale, out ErrorCode status)
+		public static ResourceBundle.SafeResourceBundleHandle ures_open(string packageName, string locale, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_open == null)
@@ -96,7 +96,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getKey(IntPtr resourceBundle)
+		public static IntPtr ures_getKey(ResourceBundle.SafeResourceBundleHandle resourceBundle)
 		{
 			if (ResourceBundleMethods.ures_getKey == null)
 			{
@@ -108,7 +108,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getString(IntPtr resourceBundle, out int len, out ErrorCode status)
+		public static IntPtr ures_getString(ResourceBundle.SafeResourceBundleHandle resourceBundle, out int len, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getString == null)
@@ -121,7 +121,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getLocale(IntPtr resourceBundle, out ErrorCode status)
+		public static IntPtr ures_getLocale(ResourceBundle.SafeResourceBundleHandle resourceBundle, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			if (ResourceBundleMethods.ures_getLocale == null)
@@ -134,7 +134,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getByKey(IntPtr resourceBundle, string key, IntPtr fillIn,
+		public static ResourceBundle.SafeResourceBundleHandle ures_getByKey(ResourceBundle.SafeResourceBundleHandle resourceBundle, string key, IntPtr fillIn,
 			out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
@@ -148,7 +148,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getStringByKey(IntPtr resourceBundle, string key, out int len,
+		public static IntPtr ures_getStringByKey(ResourceBundle.SafeResourceBundleHandle resourceBundle, string key, out int len,
 			out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
@@ -162,7 +162,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static void ures_resetIterator(IntPtr resourceBundle)
+		public static void ures_resetIterator(ResourceBundle.SafeResourceBundleHandle resourceBundle)
 		{
 			if (ResourceBundleMethods.ures_resetIterator == null)
 			{
@@ -174,7 +174,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getNextString(IntPtr resourceBundle, out int len,
+		public static IntPtr ures_getNextString(ResourceBundle.SafeResourceBundleHandle resourceBundle, out int len,
 			out IntPtr key, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
@@ -188,7 +188,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static IntPtr ures_getNextResource(IntPtr resourceBundle, IntPtr fillIn,
+		public static ResourceBundle.SafeResourceBundleHandle ures_getNextResource(ResourceBundle.SafeResourceBundleHandle resourceBundle, IntPtr fillIn,
 			out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
@@ -202,7 +202,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static bool ures_hasNext(IntPtr resourceBundle)
+		public static bool ures_hasNext(ResourceBundle.SafeResourceBundleHandle resourceBundle)
 		{
 			if (ResourceBundleMethods.ures_hasNext == null)
 			{

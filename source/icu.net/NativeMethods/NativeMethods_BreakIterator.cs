@@ -14,24 +14,24 @@ namespace Icu
 		private class BreakIteratorMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
+			internal delegate RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_openDelegate(BreakIterator.UBreakIteratorType type,
 				[MarshalAs(UnmanagedType.LPStr)] string locale, string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr ubrk_openRulesDelegate(string rules, int rulesLength,
+			internal delegate RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_openRulesDelegate(string rules, int rulesLength,
 				string text, int textLength, out ParseError parseError, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 			internal delegate void ubrk_closeDelegate(IntPtr bi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate int ubrk_firstDelegate(IntPtr bi);
+			internal delegate int ubrk_firstDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate int ubrk_nextDelegate(IntPtr bi);
+			internal delegate int ubrk_nextDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate int ubrk_getRuleStatusDelegate(IntPtr bi);
+			internal delegate int ubrk_getRuleStatusDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi);
 
 			/// <summary>
 			/// Get the statuses from the break rules that determined the most
@@ -45,17 +45,17 @@ namespace Icu
 			/// <returns>The number of rule status values that determined the most recent
 			/// boundary returned from the break iterator.</returns>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate int ubrk_getRuleStatusVecDelegate(IntPtr bi,
+			internal delegate int ubrk_getRuleStatusVecDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi,
 				[Out, MarshalAs(UnmanagedType.LPArray)]int[] fillInVector,
 				int capacity,
 				out ErrorCode status);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-			internal delegate IntPtr ubrk_safeCloneDelegate(IntPtr bi, IntPtr stackBuffer,
+			internal delegate RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_safeCloneDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi, IntPtr stackBuffer,
 				IntPtr bufferSize, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate void ubrk_setTextDelegate(IntPtr bi, string text, int textLength,
+			internal delegate void ubrk_setTextDelegate(RuleBasedBreakIterator.SafeBreakIteratorHandle bi, string text, int textLength,
 				out ErrorCode errorCode);
 
 			internal ubrk_openDelegate ubrk_open;
@@ -83,7 +83,7 @@ namespace Icu
 		/// <param name="textLength">Length of the text.</param>
 		/// <param name="errorCode">The error code.</param>
 		/// <returns></returns>
-		public static IntPtr ubrk_open(BreakIterator.UBreakIteratorType type,
+		public static RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_open(BreakIterator.UBreakIteratorType type,
 			string locale, string text, int textLength, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -102,7 +102,7 @@ namespace Icu
 		/// <param name="parseError">Receives position and context information for any syntax errors detected while parsing the rules.</param>
 		/// <param name="errorCode">The error code.</param>
 		/// <returns></returns>
-		public static IntPtr ubrk_openRules(
+		public static RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_openRules(
 			string rules, int rulesLength,
 			string text, int textLength,
 			out ParseError parseError, out ErrorCode errorCode)
@@ -121,7 +121,7 @@ namespace Icu
 		/// <param name="bufferSize">Deprecated. Should be IntPtr.Zero.</param>
 		/// <param name="errorCode">The error code</param>
 		/// <returns>The new clone</returns>
-		public static IntPtr ubrk_safeClone(IntPtr bi, IntPtr stackBuffer, IntPtr bufferSize,
+		public static RuleBasedBreakIterator.SafeBreakIteratorHandle ubrk_safeClone(RuleBasedBreakIterator.SafeBreakIteratorHandle bi, IntPtr stackBuffer, IntPtr bufferSize,
 			out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -137,7 +137,7 @@ namespace Icu
 		/// <param name="text">Text to examine</param>
 		/// <param name="textLength">The length of the text</param>
 		/// <param name="errorCode">The error code</param>
-		public static void ubrk_setText(IntPtr bi, string text, int textLength, out ErrorCode errorCode)
+		public static void ubrk_setText(RuleBasedBreakIterator.SafeBreakIteratorHandle bi, string text, int textLength, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
 			if (BreakIteratorMethods.ubrk_setText == null)
@@ -161,7 +161,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		public static int ubrk_first(IntPtr bi)
+		public static int ubrk_first(RuleBasedBreakIterator.SafeBreakIteratorHandle bi)
 		{
 			if (BreakIteratorMethods.ubrk_first == null)
 				BreakIteratorMethods.ubrk_first = GetMethod<BreakIteratorMethodsContainer.ubrk_firstDelegate>(IcuCommonLibHandle, "ubrk_first", true);
@@ -173,7 +173,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		public static int ubrk_next(IntPtr bi)
+		public static int ubrk_next(RuleBasedBreakIterator.SafeBreakIteratorHandle bi)
 		{
 			if (BreakIteratorMethods.ubrk_next == null)
 				BreakIteratorMethods.ubrk_next = GetMethod<BreakIteratorMethodsContainer.ubrk_nextDelegate>(IcuCommonLibHandle, "ubrk_next", true);
@@ -185,7 +185,7 @@ namespace Icu
 		/// </summary>
 		/// <param name="bi">The break iterator.</param>
 		/// <returns></returns>
-		public static int ubrk_getRuleStatus(IntPtr bi)
+		public static int ubrk_getRuleStatus(RuleBasedBreakIterator.SafeBreakIteratorHandle bi)
 		{
 			if (BreakIteratorMethods.ubrk_getRuleStatus == null)
 				BreakIteratorMethods.ubrk_getRuleStatus = GetMethod<BreakIteratorMethodsContainer.ubrk_getRuleStatusDelegate>(IcuCommonLibHandle, "ubrk_getRuleStatus", true);
@@ -200,7 +200,7 @@ namespace Icu
 		/// <param name="capacity">The length of the supplied vector. A length of zero causes the function to return the number of status values, in the normal way, without attempting to store any values.</param>
 		/// <param name="status">Receives error codes.</param>
 		/// <returns>The number of rule status values from rules that determined the most recent boundary returned by the break iterator.</returns>
-		public static int ubrk_getRuleStatusVec(IntPtr bi,
+		public static int ubrk_getRuleStatusVec(RuleBasedBreakIterator.SafeBreakIteratorHandle bi,
 			[Out, MarshalAs(UnmanagedType.LPArray)] int[] fillInVector,
 			int capacity,
 			out ErrorCode status)

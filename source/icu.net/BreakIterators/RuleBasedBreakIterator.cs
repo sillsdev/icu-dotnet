@@ -15,6 +15,15 @@ namespace Icu
 	/// </summary>
 	public class RuleBasedBreakIterator : BreakIterator
 	{
+		internal sealed class SafeBreakIteratorHandle : SafeIcuHandle
+		{
+			protected override bool ReleaseIcuHandle()
+			{
+				NativeMethods.ubrk_close(handle);
+				return true;
+			}
+		}
+
 		private readonly UBreakIteratorType _iteratorType;
 		/// <summary>
 		/// Sets the rules this break iterator uses
@@ -23,10 +32,33 @@ namespace Icu
 		private readonly Locale _locale = DefaultLocale;
 
 		private bool _disposingValue; // To detect redundant calls
-		private readonly NativeHandle _breakIterator = new NativeHandle(nameof(RuleBasedBreakIterator), NativeMethods.ubrk_close);
+		// Opened lazily, once there is text.
+		private SafeBreakIteratorHandle _breakIterator;
 		private string _text;
 		private int _currentIndex;
 		private TextBoundary[] _textBoundaries = new TextBoundary[0];
+
+		private bool IsOpen => _breakIterator != null && !_breakIterator.IsInvalid;
+
+		// The native break iterator gets opened lazily, so a disposed iterator might not have a
+		// handle that could report the disposal.
+		private void ThrowIfDisposed()
+		{
+			if (_disposingValue)
+				throw new ObjectDisposedException(nameof(RuleBasedBreakIterator));
+		}
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this break iterator got opened.</exception>
+		private SafeBreakIteratorHandle Handle
+		{
+			get
+			{
+				_breakIterator?.ThrowIfStale(nameof(RuleBasedBreakIterator));
+				return _breakIterator;
+			}
+		}
 
 		/// <summary>
 		/// Default RuleStatus vector returns 0.
@@ -77,13 +109,13 @@ namespace Icu
 			_textBoundaries = new TextBoundary[bi._textBoundaries.Length];
 			bi._textBoundaries.CopyTo(_textBoundaries, 0);
 
-			bi._breakIterator.ThrowIfStale();
-			if (!bi._breakIterator.IsOpen)
+			var source = bi.Handle;
+			if (!bi.IsOpen)
 				return;
 
 			ErrorCode errorCode;
-			_breakIterator.Set(NativeMethods.ubrk_safeClone(bi._breakIterator.Pointer, IntPtr.Zero,
-				IntPtr.Zero, out errorCode));
+			_breakIterator = NativeMethods.ubrk_safeClone(source, IntPtr.Zero, IntPtr.Zero,
+				out errorCode);
 
 			if (errorCode.IsFailure())
 				throw new Exception($"BreakIterator.ubrk_safeClone() failed with code {errorCode}");
@@ -94,6 +126,7 @@ namespace Icu
 		/// </summary>
 		public override BreakIterator Clone()
 		{
+			ThrowIfDisposed();
 			return new RuleBasedBreakIterator(this);
 		}
 
@@ -411,6 +444,8 @@ namespace Icu
 		/// <param name="text">New text</param>
 		public override void SetText(string text)
 		{
+			ThrowIfDisposed();
+
 			if (text == null)
 			{
 				throw new ArgumentNullException("text");
@@ -425,7 +460,7 @@ namespace Icu
 				return;
 			}
 
-			if (!_breakIterator.IsOpen)
+			if (!IsOpen)
 			{
 				InitializeBreakIterator();
 			}
@@ -438,7 +473,7 @@ namespace Icu
 				{
 					ErrorCode err;
 
-					NativeMethods.ubrk_setText(_breakIterator.Pointer, Text, Text.Length, out err);
+					NativeMethods.ubrk_setText(Handle, Text, Text.Length, out err);
 
 					if (err.IsFailure())
 						throw new Exception(
@@ -448,7 +483,7 @@ namespace Icu
 
 					// Start at the the beginning of the text and iterate until all
 					// of the boundaries are consumed.
-					int cur = NativeMethods.ubrk_first(_breakIterator.Pointer);
+					int cur = NativeMethods.ubrk_first(Handle);
 
 					TextBoundary textBoundary;
 
@@ -459,7 +494,7 @@ namespace Icu
 
 					while (cur != DONE)
 					{
-						int next = NativeMethods.ubrk_next(_breakIterator.Pointer);
+						int next = NativeMethods.ubrk_next(Handle);
 
 						if (!TryGetTextBoundaryFromOffset(next, out textBoundary))
 							break;
@@ -493,7 +528,7 @@ namespace Icu
 			int[] vector = new int[length];
 
 			ErrorCode errorCode;
-			int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator.Pointer, vector, length, out errorCode);
+			int actualLen = NativeMethods.ubrk_getRuleStatusVec(Handle, vector, length, out errorCode);
 
 			if (errorCode.IsFailure())
 				throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
@@ -501,7 +536,7 @@ namespace Icu
 			if (actualLen > length)
 			{
 				vector = new int[actualLen];
-				NativeMethods.ubrk_getRuleStatusVec(_breakIterator.Pointer, vector, vector.Length, out errorCode);
+				NativeMethods.ubrk_getRuleStatusVec(Handle, vector, vector.Length, out errorCode);
 
 				if (errorCode.IsFailure())
 					throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
@@ -532,8 +567,8 @@ namespace Icu
 		/// <returns></returns>
 		private void InitializeBreakIterator()
 		{
-			_breakIterator.ThrowIfStale();
-			if (_breakIterator.IsOpen)
+			_breakIterator?.ThrowIfStale(nameof(RuleBasedBreakIterator));
+			if (IsOpen)
 			{
 				return;
 			}
@@ -543,7 +578,7 @@ namespace Icu
 				ErrorCode errorCode;
 				ParseError parseError;
 
-				_breakIterator.Set(NativeMethods.ubrk_openRules(Rules, Rules.Length, Text, Text.Length, out parseError, out errorCode));
+				_breakIterator = NativeMethods.ubrk_openRules(Rules, Rules.Length, Text, Text.Length, out parseError, out errorCode);
 
 				if (errorCode.IsFailure())
 				{
@@ -553,7 +588,7 @@ namespace Icu
 			else
 			{
 				ErrorCode errorCode;
-				_breakIterator.Set(NativeMethods.ubrk_open(_iteratorType, _locale.Id, Text, Text.Length, out errorCode));
+				_breakIterator = NativeMethods.ubrk_open(_iteratorType, _locale.Id, Text, Text.Length, out errorCode);
 				if (errorCode.IsFailure())
 				{
 					throw new InvalidOperationException(
@@ -586,22 +621,10 @@ namespace Icu
 			if (!_disposingValue)
 			{
 				if (disposing)
-				{
-					// Dispose managed state (managed objects), if any.
-				}
-
-				_breakIterator.Close();
+					_breakIterator?.Dispose();
 
 				_disposingValue = true;
 			}
-		}
-
-		/// <summary>
-		/// Disposes of all unmanaged resources used by RulesBasedBreakIterator
-		/// </summary>
-		~RuleBasedBreakIterator()
-		{
-			Dispose(false);
 		}
 
 		#endregion

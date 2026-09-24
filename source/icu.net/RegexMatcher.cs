@@ -9,6 +9,15 @@ namespace Icu
 	/// </summary>
 	public class RegexMatcher : IDisposable
 	{
+		internal sealed class SafeRegexHandle : SafeIcuHandle
+		{
+			protected override bool ReleaseIcuHandle()
+			{
+				NativeMethods.uregex_close(handle);
+				return true;
+			}
+		}
+
 		/// <summary>
 		/// Constants for Regular Expression Match Modes.
 		/// </summary>
@@ -75,7 +84,19 @@ namespace Icu
 			ERROR_ON_UNKNOWN_ESCAPES = 512
 		}
 		private string _regexp;
-		private readonly NativeHandle _regexMatcher = new NativeHandle(nameof(RegexMatcher), NativeMethods.uregex_close);
+		private readonly SafeRegexHandle _regexMatcher;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this matcher was created.</exception>
+		private SafeRegexHandle Handle
+		{
+			get
+			{
+				_regexMatcher.ThrowIfStale(nameof(RegexMatcher));
+				return _regexMatcher;
+			}
+		}
 
 		/// <summary>
 		/// constructor
@@ -88,7 +109,7 @@ namespace Icu
 			ErrorCode e;
 			ParseError parseError;
 
-			_regexMatcher.Set(NativeMethods.uregex_open(_regexp, _regexp.Length, (uint)flags, out parseError, out e));
+			_regexMatcher = NativeMethods.uregex_open(_regexp, _regexp.Length, (uint)flags, out parseError, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -102,7 +123,7 @@ namespace Icu
 		{
 			ErrorCode e;
 
-			NativeMethods.uregex_setText(_regexMatcher.Pointer, str, str.Length, out e);
+			NativeMethods.uregex_setText(Handle, str, str.Length, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -127,7 +148,7 @@ namespace Icu
 			ErrorCode errorCode;
 			bool result;
 
-			result = NativeMethods.uregex_matches(_regexMatcher.Pointer, startIndex, out errorCode);
+			result = NativeMethods.uregex_matches(Handle, startIndex, out errorCode);
 			if (errorCode.IsFailure())
 			{
 				throw new Exception("Match failed");
@@ -161,19 +182,7 @@ namespace Icu
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
-				// Dispose managed state (managed objects), if any.
-			}
-
-			_regexMatcher.Close();
-		}
-
-		/// <summary>
-		/// Disposes of all unmanaged resources used by RegexMatcher
-		/// </summary>
-		~RegexMatcher()
-		{
-			Dispose(false);
+				_regexMatcher.Dispose();
 		}
 	}
 }

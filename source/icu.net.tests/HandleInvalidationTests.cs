@@ -91,20 +91,6 @@ namespace Icu.Tests
 		}
 
 		[Test]
-		public void Cleanup_ClosesOpenNativeHandle()
-		{
-			var closed = new System.Collections.Generic.List<IntPtr>();
-			var handle = new NativeHandle("Test", closed.Add);
-			handle.Set(new IntPtr(42));
-
-			Wrapper.Cleanup();
-			handle.Close();
-
-			Assert.That(closed, Is.EqualTo(new[] { new IntPtr(42) }));
-			Assert.That(handle.IsStale, Is.True);
-		}
-
-		[Test]
 		public void Cleanup_ClosesOpenSafeIcuHandle()
 		{
 			var handle = new CountingSafeIcuHandle();
@@ -281,6 +267,36 @@ namespace Icu.Tests
 			{
 				_invalidated.Value = true;
 			}
+		}
+
+		[Test]
+		[Category("Full ICU")]
+		public void ObjectsUsedAfterDispose_Throw()
+		{
+			var biDi = new BiDi();
+			var breakIterator = new RuleBasedBreakIterator(BreakIterator.UBreakIteratorType.WORD,
+				new Locale("en-US"));
+			breakIterator.SetText("hello there");
+			var unopenedBreakIterator = new RuleBasedBreakIterator(
+				BreakIterator.UBreakIteratorType.WORD, new Locale("en-US"));
+			var matcher = new RegexMatcher("a+");
+			var formatter = new MessageFormatter("{0}", "en");
+
+			biDi.Dispose();
+			breakIterator.Dispose();
+			unopenedBreakIterator.Dispose();
+			matcher.Dispose();
+			formatter.Dispose();
+
+			Assert.That(() => biDi.SetPara("abc", 0, null), Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => breakIterator.SetText("something else"),
+				Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => unopenedBreakIterator.SetText("hello"),
+				Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => unopenedBreakIterator.Clone(),
+				Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => matcher.SetText("aaa"), Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => formatter.Pattern, Throws.TypeOf<ObjectDisposedException>());
 		}
 
 		[Test]

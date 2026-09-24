@@ -71,7 +71,7 @@ namespace Icu
 				_compactThreshold = MinCompactThreshold;
 			}
 
-			// Invalidate outside the lock: an unopened handle registers itself again.
+			// Invalidate outside the lock: closing a handle calls into ICU.
 			foreach (var owner in owners)
 				owner.InvalidateHandle();
 		}

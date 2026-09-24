@@ -54,7 +54,32 @@ namespace Icu.Normalization
 			COMPOSE_CONTIGUOUS = 3
 		}
 
-		private readonly NativeHandle _Normalizer = new NativeHandle(nameof(Normalizer2), close: null);
+		/// <summary>ICU owns the normalizer instances, so this handle never closes one.</summary>
+		internal sealed class SafeNormalizer2Handle : SafeIcuHandle
+		{
+			public SafeNormalizer2Handle() : base(ownsHandle: false)
+			{
+			}
+
+			protected override bool ReleaseIcuHandle()
+			{
+				return true;
+			}
+		}
+
+		private readonly SafeNormalizer2Handle _Normalizer;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this normalizer was created.</exception>
+		private SafeNormalizer2Handle Handle
+		{
+			get
+			{
+				_Normalizer.ThrowIfStale(nameof(Normalizer2));
+				return _Normalizer;
+			}
+		}
 
 		/// <summary>
 		/// Returns a Normalizer2 instance for Unicode NFC normalization. Same as
@@ -130,7 +155,7 @@ namespace Icu.Normalization
 
 		private Normalizer2(string packageName, string name, Mode mode)
 		{
-			_Normalizer.Set(NativeMethods.unorm2_getInstance(packageName, name, mode, out var error));
+			_Normalizer = NativeMethods.unorm2_getInstance(packageName, name, mode, out var error);
 			ExceptionFromErrorCode.ThrowIfError(error);
 		}
 
@@ -147,7 +172,7 @@ namespace Icu.Normalization
 		/// <returns><c>true</c> if c has a normalization boundary after it</returns>
 		public bool HasBoundaryAfter(int codePoint)
 		{
-			return NativeMethods.unorm2_hasBoundaryAfter(_Normalizer.Pointer, codePoint);
+			return NativeMethods.unorm2_hasBoundaryAfter(Handle, codePoint);
 		}
 
 		/// <summary>
@@ -162,7 +187,7 @@ namespace Icu.Normalization
 		/// <returns><c>true</c> if c has a normalization boundary after it</returns>
 		public bool HasBoundaryBefore(int codePoint)
 		{
-			return NativeMethods.unorm2_hasBoundaryBefore(_Normalizer.Pointer, codePoint);
+			return NativeMethods.unorm2_hasBoundaryBefore(Handle, codePoint);
 		}
 
 		/// <summary>
@@ -177,7 +202,7 @@ namespace Icu.Normalization
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.unorm2_getDecomposition(_Normalizer.Pointer, codePoint,
+				length = NativeMethods.unorm2_getDecomposition(Handle, codePoint,
 					ptr, length, out var err);
 				return new Tuple<ErrorCode, int>(err, length);
 			}, 10);
@@ -193,7 +218,7 @@ namespace Icu.Normalization
 			if (string.IsNullOrEmpty(src))
 				return true;
 
-			var isNormalized = NativeMethods.unorm2_isNormalized(_Normalizer.Pointer, src, src.Length,
+			var isNormalized = NativeMethods.unorm2_isNormalized(Handle, src, src.Length,
 				out var err);
 			ExceptionFromErrorCode.ThrowIfError(err);
 			return isNormalized;
@@ -207,7 +232,7 @@ namespace Icu.Normalization
 		/// <returns>c's combining class</returns>
 		public byte GetCombiningClass(int c)
 		{
-			return (byte)NativeMethods.unorm2_getCombiningClass(_Normalizer.Pointer, c);
+			return (byte)NativeMethods.unorm2_getCombiningClass(Handle, c);
 		}
 
 		/// <summary>
@@ -222,7 +247,7 @@ namespace Icu.Normalization
 
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.unorm2_normalize(_Normalizer.Pointer, src, src.Length,
+				length = NativeMethods.unorm2_normalize(Handle, src, src.Length,
 					ptr, length, out var status);
 				return new Tuple<ErrorCode, int>(status, length);
 			}, src.Length + 10);
