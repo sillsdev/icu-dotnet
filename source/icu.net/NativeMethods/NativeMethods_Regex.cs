@@ -14,17 +14,17 @@ namespace Icu
 		private class RegexMethodsContainer
 		{
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr uregex_openDelegate(string pattern, int patternLength,
+			internal delegate RegexMatcher.SafeRegexHandle uregex_openDelegate(string pattern, int patternLength,
 				uint flags, out ParseError parseError, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
 			// which are usually zero, especially in debug builds...but one day we will be sorry.
 			[return: MarshalAs(UnmanagedType.I1)]
-			internal delegate bool uregex_matchesDelegate(IntPtr regexp, int startIndex, out ErrorCode errorCode);
+			internal delegate bool uregex_matchesDelegate(RegexMatcher.SafeRegexHandle regexp, int startIndex, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate void uregex_setTextDelegate(IntPtr regexp,
+			internal delegate void uregex_setTextDelegate(RegexMatcher.SafeRegexHandle regexp,
 				string text, int textLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -42,7 +42,7 @@ namespace Icu
 		/// <summary>
 		/// Open (compile) an ICU regular expression.
 		/// </summary>
-		public static IntPtr uregex_open(string pattern, int patternLength, uint flags,
+		public static RegexMatcher.SafeRegexHandle uregex_open(string pattern, int patternLength, uint flags,
 			out ParseError parseError, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -54,7 +54,7 @@ namespace Icu
 		/// <summary>
 		/// Attempts to match the input string against the pattern.
 		/// </summary>
-		public static bool uregex_matches(IntPtr regexp, int startIndex, out ErrorCode errorCode)
+		public static bool uregex_matches(RegexMatcher.SafeRegexHandle regexp, int startIndex, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
 			if (RegexMethods.uregex_matches == null)
@@ -62,7 +62,7 @@ namespace Icu
 			return RegexMethods.uregex_matches(regexp, startIndex, out errorCode);
 		}
 
-		public static void uregex_setText(IntPtr regexp, string text, int textLength,
+		public static void uregex_setText(RegexMatcher.SafeRegexHandle regexp, string text, int textLength,
 			out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;

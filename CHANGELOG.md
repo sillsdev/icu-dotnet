@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   of those objects afterwards throws `ObjectDisposedException`, and disposing one no longer calls
   into the unloaded libraries.
 
+### Changed
+
+- Every native ICU object is now held in a `SafeHandle`. A `MessageFormatter` or
+  `ResourceBundle` that isn't disposed is now freed on finalization, and using a disposed
+  `BiDi`, `RuleBasedBreakIterator`, `RegexMatcher` or `MessageFormatter` throws
+  `ObjectDisposedException`.
+
 ## [4.0.0] - 2026-09-23
 
 ### Added

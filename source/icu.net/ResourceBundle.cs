@@ -21,7 +21,28 @@ namespace Icu
 	/// </summary>
 	public class ResourceBundle : IDisposable
 	{
-		private readonly NativeHandle _ResourceBundle = new NativeHandle(nameof(ResourceBundle), NativeMethods.ures_close);
+		internal sealed class SafeResourceBundleHandle : SafeIcuHandle
+		{
+			protected override bool ReleaseIcuHandle()
+			{
+				NativeMethods.ures_close(handle);
+				return true;
+			}
+		}
+
+		private readonly SafeResourceBundleHandle _ResourceBundle;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this bundle was created.</exception>
+		private SafeResourceBundleHandle Handle
+		{
+			get
+			{
+				_ResourceBundle.ThrowIfStale(nameof(ResourceBundle));
+				return _ResourceBundle;
+			}
+		}
 
 		/// <summary>
 		/// Constructor
@@ -34,13 +55,13 @@ namespace Icu
 		/// <param name="locale">This is the locale this resource bundle is for.</param>
 		public ResourceBundle(string packageName, string locale)
 		{
-			_ResourceBundle.Set(NativeMethods.ures_open(packageName, locale, out var errorCode));
+			_ResourceBundle = NativeMethods.ures_open(packageName, locale, out var errorCode);
 			ExceptionFromErrorCode.ThrowIfError(errorCode);
 		}
 
-		private ResourceBundle(IntPtr resourceBundle)
+		private ResourceBundle(SafeResourceBundleHandle resourceBundle)
 		{
-			_ResourceBundle.Set(resourceBundle);
+			_ResourceBundle = resourceBundle;
 		}
 
 		#region Dispose pattern
@@ -55,11 +76,7 @@ namespace Icu
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
-				// do nothing
-			}
-
-			_ResourceBundle.Close();
+				_ResourceBundle.Dispose();
 		}
 		#endregion
 
@@ -70,15 +87,15 @@ namespace Icu
 		{
 			get
 			{
-				_ResourceBundle.ThrowIfStale();
-				return !_ResourceBundle.IsOpen;
+				var resourceBundle = Handle;
+				return resourceBundle.IsInvalid || resourceBundle.IsClosed;
 			}
 		}
 
 		/// <summary>
 		/// Gets the Null resource bundle
 		/// </summary>
-		public static ResourceBundle Null { get; } = new ResourceBundle(IntPtr.Zero);
+		public static ResourceBundle Null { get; } = new ResourceBundle(new SafeResourceBundleHandle());
 
 		/// <summary>
 		/// Returns the key associated with this resource.
@@ -93,7 +110,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var keyPtr = NativeMethods.ures_getKey(_ResourceBundle.Pointer);
+				var keyPtr = NativeMethods.ures_getKey(Handle);
 				return keyPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringAnsi(keyPtr);
 			}
 		}
@@ -110,7 +127,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var resultPtr = NativeMethods.ures_getString(_ResourceBundle.Pointer, out var len,
+				var resultPtr = NativeMethods.ures_getString(Handle, out var len,
 					out var status);
 				ExceptionFromErrorCode.ThrowIfError(status);
 				if (status.IsFailure() || resultPtr == IntPtr.Zero)
@@ -132,7 +149,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var resultPtr = NativeMethods.ures_getLocale(_ResourceBundle.Pointer, out var status);
+				var resultPtr = NativeMethods.ures_getLocale(Handle, out var status);
 				ExceptionFromErrorCode.ThrowIfError(status);
 				if (status.IsFailure() || resultPtr == IntPtr.Zero)
 					return string.Empty;
@@ -154,10 +171,13 @@ namespace Icu
 				if (IsNull)
 					return Null;
 
-				var bundle = NativeMethods.ures_getByKey(_ResourceBundle.Pointer, key, IntPtr.Zero,
+				var bundle = NativeMethods.ures_getByKey(Handle, key, IntPtr.Zero,
 					out var status);
-				if (status.IsFailure() || bundle == IntPtr.Zero)
+				if (status.IsFailure() || bundle.IsInvalid)
+				{
+					bundle.Dispose();
 					return Null;
+				}
 
 				return new ResourceBundle(bundle);
 			}
@@ -177,7 +197,7 @@ namespace Icu
 			if (IsNull)
 				return string.Empty;
 
-			var resultPtr = NativeMethods.ures_getStringByKey(_ResourceBundle.Pointer, key,
+			var resultPtr = NativeMethods.ures_getStringByKey(Handle, key,
 				out var len, out var status);
 			if (status.IsFailure())
 			{
@@ -200,7 +220,7 @@ namespace Icu
 			if (IsNull)
 				return;
 
-			NativeMethods.ures_resetIterator(_ResourceBundle.Pointer);
+			NativeMethods.ures_resetIterator(Handle);
 		}
 
 		/// <summary>
@@ -210,7 +230,7 @@ namespace Icu
 		/// elements</returns>
 		public bool HasNext()
 		{
-			return !IsNull && NativeMethods.ures_hasNext(_ResourceBundle.Pointer);
+			return !IsNull && NativeMethods.ures_hasNext(Handle);
 		}
 
 		/// <summary>
@@ -226,12 +246,14 @@ namespace Icu
 			if (IsNull)
 				return Null;
 
-			var resultPtr = NativeMethods.ures_getNextResource(_ResourceBundle.Pointer, IntPtr.Zero,
-				out var status);
-			if (status.IsFailure() || resultPtr == IntPtr.Zero)
+			var bundle = NativeMethods.ures_getNextResource(Handle, IntPtr.Zero, out var status);
+			if (status.IsFailure() || bundle.IsInvalid)
+			{
+				bundle.Dispose();
 				return Null;
+			}
 
-			return new ResourceBundle(resultPtr);
+			return new ResourceBundle(bundle);
 		}
 
 		/// <summary>
@@ -250,7 +272,7 @@ namespace Icu
 			if (IsNull)
 				return string.Empty;
 
-			var resultPtr = NativeMethods.ures_getNextString(_ResourceBundle.Pointer, out var ignoreLen,
+			var resultPtr = NativeMethods.ures_getNextString(Handle, out var ignoreLen,
 				out var keyPtr, out var status);
 			if (status.IsFailure() || resultPtr == IntPtr.Zero)
 				return null;

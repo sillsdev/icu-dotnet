@@ -16,7 +16,7 @@ namespace Icu
 		{
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr umsg_openDelegate(string pattern, int patternLen,
+			internal delegate MessageFormatter.SafeMessageFormatHandle umsg_openDelegate(string pattern, int patternLen,
 				[MarshalAs(UnmanagedType.LPStr)] string locale, out ParseError parseError,
 				out ErrorCode status);
 
@@ -26,7 +26,7 @@ namespace Icu
 
 			/// <summary/>
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int umsg_formatDelegate(IntPtr format, IntPtr result,
+			internal delegate int umsg_formatDelegate(MessageFormatter.SafeMessageFormatHandle format, IntPtr result,
 				int resultLen, out ErrorCode status, double arg0, string arg1, string arg2);
 			// TODO: umsg_format is a variadic C API. This delegate relies on runtime marshaling
 			// of managed arguments into varargs, which is ABI-fragile. ARM64 is guarded with a
@@ -34,7 +34,7 @@ namespace Icu
 			// wrong output. A non-variadic native shim would be more robust.
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int umsg_toPatternDelegate(IntPtr format, IntPtr result,
+			internal delegate int umsg_toPatternDelegate(MessageFormatter.SafeMessageFormatHandle format, IntPtr result,
 				int resultLen, out ErrorCode status);
 
 			internal umsg_openDelegate umsg_open;
@@ -48,7 +48,7 @@ namespace Icu
 		private static MessageFormatMethodsContainer MessageFormatMethods = new MessageFormatMethodsContainer();
 
 		/// <summary/>
-		public static IntPtr umsg_open(string pattern, int patternLen, string locale, out ParseError parseError, out ErrorCode status)
+		public static MessageFormatter.SafeMessageFormatHandle umsg_open(string pattern, int patternLen, string locale, out ParseError parseError, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			if (MessageFormatMethods.umsg_open == null)
@@ -65,7 +65,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static int umsg_format(IntPtr format, IntPtr result, int resultLen, out ErrorCode status, double arg0, string arg1, string arg2)
+		public static int umsg_format(MessageFormatter.SafeMessageFormatHandle format, IntPtr result, int resultLen, out ErrorCode status, double arg0, string arg1, string arg2)
 		{
 #if NET
 			if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
@@ -78,7 +78,7 @@ namespace Icu
 		}
 
 		/// <summary/>
-		public static int umsg_toPattern(IntPtr format, IntPtr result, int resultLen, out ErrorCode status)
+		public static int umsg_toPattern(MessageFormatter.SafeMessageFormatHandle format, IntPtr result, int resultLen, out ErrorCode status)
 		{
 			status = ErrorCode.NoErrors;
 			if (MessageFormatMethods.umsg_toPattern == null)

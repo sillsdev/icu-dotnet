@@ -24,38 +24,38 @@ namespace Icu
 				Normalizer.UNormalizationMode mode, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate IntPtr unorm2_getInstanceDelegate(
+			internal delegate Normalization.Normalizer2.SafeNormalizer2Handle unorm2_getInstanceDelegate(
 				[MarshalAs(UnmanagedType.LPStr)] string packageName,
 				[MarshalAs(UnmanagedType.LPStr)] string name,
 				Normalizer2.Mode mode, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int unorm2_normalizeDelegate(IntPtr norm2, string source,
+			internal delegate int unorm2_normalizeDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, string source,
 				int sourceLength, IntPtr dest, int capacity, ref ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			[return: MarshalAs(UnmanagedType.I1)]
-			internal delegate bool unorm2_isNormalizedDelegate(IntPtr norm2, string source,
+			internal delegate bool unorm2_isNormalizedDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, string source,
 				int sourceLength, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			[return: MarshalAs(UnmanagedType.I1)]
-			internal delegate bool unorm2_hasBoundaryAfterDelegate(IntPtr norm2, int c);
+			internal delegate bool unorm2_hasBoundaryAfterDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 			[return: MarshalAs(UnmanagedType.I1)]
-			internal delegate bool unorm2_hasBoundaryBeforeDelegate(IntPtr norm2, int c);
+			internal delegate bool unorm2_hasBoundaryBeforeDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int unorm2_getDecompositionDelegate(IntPtr norm2, int c,
+			internal delegate int unorm2_getDecompositionDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c,
 				IntPtr decomposition, int capacity, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int unorm2_getRawDecompositionDelegate(IntPtr norm2, int c,
+			internal delegate int unorm2_getRawDecompositionDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c,
 				IntPtr decomposition, int capacity, out ErrorCode errorCode);
 
 			[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-			internal delegate int unorm2_getCombiningClassDelegate(IntPtr norm2, int c);
+			internal delegate int unorm2_getCombiningClassDelegate(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c);
 
 			internal unorm_normalizeDelegate unorm_normalize;
 			internal unorm_isNormalizedDelegate unorm_isNormalized;
@@ -111,7 +111,7 @@ namespace Icu
 		/// similar to ucnv_openPackage() and ures_open()/ResourceBundle) and which composes or
 		/// decomposes text according to the specified mode.
 		/// </summary>
-		public static IntPtr unorm2_getInstance(string packageName, string name,
+		public static Normalization.Normalizer2.SafeNormalizer2Handle unorm2_getInstance(string packageName, string name,
 			Normalizer2.Mode mode, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -126,7 +126,7 @@ namespace Icu
 		/// <summary>
 		/// Normalize a string according to the given mode and options.
 		/// </summary>
-		public static int unorm2_normalize(IntPtr norm2, string source, int sourceLength,
+		public static int unorm2_normalize(Normalization.Normalizer2.SafeNormalizer2Handle norm2, string source, int sourceLength,
 			IntPtr result, int resultLength, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -149,7 +149,7 @@ namespace Icu
 		/// <summary>
 		/// Check whether a string is normalized according to the given mode and options.
 		/// </summary>
-		public static bool unorm2_isNormalized(IntPtr norm2, string source, int sourceLength,
+		public static bool unorm2_isNormalized(Normalization.Normalizer2.SafeNormalizer2Handle norm2, string source, int sourceLength,
 			out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -163,7 +163,7 @@ namespace Icu
 
 		/// <summary>Tests if the character always has a normalization boundary after it,
 		/// regardless of context.</summary>
-		public static bool unorm2_hasBoundaryAfter(IntPtr norm2, int codePoint)
+		public static bool unorm2_hasBoundaryAfter(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int codePoint)
 		{
 			if (NormalizeMethods.unorm2_hasBoundaryAfter == null)
 			{
@@ -175,7 +175,7 @@ namespace Icu
 
 		/// <summary>Tests if the character always has a normalization boundary before it,
 		/// regardless of context.</summary>
-		public static bool unorm2_hasBoundaryBefore(IntPtr norm2, int codePoint)
+		public static bool unorm2_hasBoundaryBefore(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int codePoint)
 		{
 			if (NormalizeMethods.unorm2_hasBoundaryBefore == null)
 			{
@@ -186,7 +186,7 @@ namespace Icu
 		}
 
 		/// <summary>Gets the decomposition mapping of c.</summary>
-		public static int unorm2_getDecomposition(IntPtr norm2, int c, IntPtr decomposition,
+		public static int unorm2_getDecomposition(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c, IntPtr decomposition,
 			int capacity, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -200,7 +200,7 @@ namespace Icu
 		}
 
 		/// <summary>Gets the raw decomposition mapping of c.</summary>
-		public static int unorm2_getRawDecomposition(IntPtr norm2, int c, IntPtr decomposition,
+		public static int unorm2_getRawDecomposition(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c, IntPtr decomposition,
 			int capacity, out ErrorCode errorCode)
 		{
 			errorCode = ErrorCode.NoErrors;
@@ -214,7 +214,7 @@ namespace Icu
 		}
 
 		/// <summary>Gets the combining class of c.</summary>
-		public static int unorm2_getCombiningClass(IntPtr norm2, int c)
+		public static int unorm2_getCombiningClass(Normalization.Normalizer2.SafeNormalizer2Handle norm2, int c)
 		{
 			if (NormalizeMethods.unorm2_getCombiningClass == null)
 			{

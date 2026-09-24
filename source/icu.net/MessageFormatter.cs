@@ -12,7 +12,28 @@ namespace Icu
 	/// </summary>
 	public class MessageFormatter : IDisposable
 	{
-		private readonly NativeHandle _Formatter = new NativeHandle(nameof(MessageFormatter), NativeMethods.umsg_close);
+		internal sealed class SafeMessageFormatHandle : SafeIcuHandle
+		{
+			protected override bool ReleaseIcuHandle()
+			{
+				NativeMethods.umsg_close(handle);
+				return true;
+			}
+		}
+
+		private readonly SafeMessageFormatHandle _Formatter;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this formatter was created.</exception>
+		private SafeMessageFormatHandle Handle
+		{
+			get
+			{
+				_Formatter.ThrowIfStale(nameof(MessageFormatter));
+				return _Formatter;
+			}
+		}
 
 		/// <summary>
 		/// Constructs a new MessageFormat using the given pattern and locale.
@@ -22,8 +43,8 @@ namespace Icu
 		/// <remarks>If the pattern cannot be parsed, an exception is thrown.</remarks>
 		public MessageFormatter(string pattern, string localeId)
 		{
-			_Formatter.Set(NativeMethods.umsg_open(pattern, pattern.Length, localeId,
-				out var parseError, out var status));
+			_Formatter = NativeMethods.umsg_open(pattern, pattern.Length, localeId,
+				out var parseError, out var status);
 			ExceptionFromErrorCode.ThrowIfError(status);
 		}
 
@@ -39,8 +60,8 @@ namespace Icu
 		public MessageFormatter(string pattern, string localeId, out ParseError parseError,
 			out ErrorCode status)
 		{
-			_Formatter.Set(NativeMethods.umsg_open(pattern, pattern.Length, localeId,
-				out parseError, out status));
+			_Formatter = NativeMethods.umsg_open(pattern, pattern.Length, localeId, out parseError,
+				out status);
 		}
 
 		#region Dispose pattern
@@ -55,11 +76,7 @@ namespace Icu
 		protected void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
-				// do nothing
-			}
-
-			_Formatter.Close();
+				_Formatter.Dispose();
 		}
 		#endregion
 
@@ -70,7 +87,7 @@ namespace Icu
 			{
 				return NativeMethods.GetUnicodeString((ptr2, length) =>
 				{
-					length = NativeMethods.umsg_toPattern(_Formatter.Pointer, ptr2, length, out var err);
+					length = NativeMethods.umsg_toPattern(Handle, ptr2, length, out var err);
 					return new Tuple<ErrorCode, int>(err, length);
 				});
 			}
@@ -85,7 +102,7 @@ namespace Icu
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.umsg_format(_Formatter.Pointer, ptr, length, out var err, arg0, arg1, arg2);
+				length = NativeMethods.umsg_format(Handle, ptr, length, out var err, arg0, arg1, arg2);
 				return new Tuple<ErrorCode, int>(err, length);
 			});
 		}
