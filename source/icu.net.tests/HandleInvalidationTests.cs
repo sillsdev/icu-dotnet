@@ -277,16 +277,23 @@ namespace Icu.Tests
 			var breakIterator = new RuleBasedBreakIterator(BreakIterator.UBreakIteratorType.WORD,
 				new Locale("en-US"));
 			breakIterator.SetText("hello there");
+			var unopenedBreakIterator = new RuleBasedBreakIterator(
+				BreakIterator.UBreakIteratorType.WORD, new Locale("en-US"));
 			var matcher = new RegexMatcher("a+");
 			var formatter = new MessageFormatter("{0}", "en");
 
 			biDi.Dispose();
 			breakIterator.Dispose();
+			unopenedBreakIterator.Dispose();
 			matcher.Dispose();
 			formatter.Dispose();
 
 			Assert.That(() => biDi.SetPara("abc", 0, null), Throws.TypeOf<ObjectDisposedException>());
 			Assert.That(() => breakIterator.SetText("something else"),
+				Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => unopenedBreakIterator.SetText("hello"),
+				Throws.TypeOf<ObjectDisposedException>());
+			Assert.That(() => unopenedBreakIterator.Clone(),
 				Throws.TypeOf<ObjectDisposedException>());
 			Assert.That(() => matcher.SetText("aaa"), Throws.TypeOf<ObjectDisposedException>());
 			Assert.That(() => formatter.Pattern, Throws.TypeOf<ObjectDisposedException>());

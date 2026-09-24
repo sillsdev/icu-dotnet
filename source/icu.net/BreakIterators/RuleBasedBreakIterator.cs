@@ -40,6 +40,14 @@ namespace Icu
 
 		private bool IsOpen => _breakIterator != null && !_breakIterator.IsInvalid;
 
+		// The native break iterator gets opened lazily, so a disposed iterator might not have a
+		// handle that could report the disposal.
+		private void ThrowIfDisposed()
+		{
+			if (_disposingValue)
+				throw new ObjectDisposedException(nameof(RuleBasedBreakIterator));
+		}
+
 		/// <summary>The handle to pass to ICU.</summary>
 		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
 		/// <see cref="Wrapper.Cleanup"/> after this break iterator got opened.</exception>
@@ -118,6 +126,7 @@ namespace Icu
 		/// </summary>
 		public override BreakIterator Clone()
 		{
+			ThrowIfDisposed();
 			return new RuleBasedBreakIterator(this);
 		}
 
@@ -435,6 +444,8 @@ namespace Icu
 		/// <param name="text">New text</param>
 		public override void SetText(string text)
 		{
+			ThrowIfDisposed();
+
 			if (text == null)
 			{
 				throw new ArgumentNullException("text");
