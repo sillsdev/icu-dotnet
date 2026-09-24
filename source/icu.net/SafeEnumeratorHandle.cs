@@ -6,12 +6,8 @@ using System.Runtime.ConstrainedExecution;
 
 namespace Icu
 {
-	internal sealed class SafeEnumeratorHandle : SafeHandle
+	internal sealed class SafeEnumeratorHandle : SafeIcuHandle
 	{
-		public SafeEnumeratorHandle() : base(IntPtr.Zero, true)
-		{
-		}
-
 		///<summary>
 		///When overridden in a derived class, executes the code required to free the handle.
 		///</summary>
@@ -49,6 +45,9 @@ namespace Icu
 
 		public string Next()
 		{
+			if (IsStale)
+				throw IcuHandleRegistry.UnloadedException(nameof(SafeEnumeratorHandle));
+
 			var str = NativeMethods.uenum_unext(this, out var length, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 

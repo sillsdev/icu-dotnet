@@ -75,7 +75,7 @@ namespace Icu
 			ERROR_ON_UNKNOWN_ESCAPES = 512
 		}
 		private string _regexp;
-		private IntPtr _regexMatcher = IntPtr.Zero;
+		private readonly NativeHandle _regexMatcher = new NativeHandle(nameof(RegexMatcher));
 
 		/// <summary>
 		/// constructor
@@ -88,7 +88,7 @@ namespace Icu
 			ErrorCode e;
 			ParseError parseError;
 
-			_regexMatcher = NativeMethods.uregex_open(_regexp, _regexp.Length, (uint)flags, out parseError, out e);
+			_regexMatcher.Set(NativeMethods.uregex_open(_regexp, _regexp.Length, (uint)flags, out parseError, out e));
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -102,7 +102,7 @@ namespace Icu
 		{
 			ErrorCode e;
 
-			NativeMethods.uregex_setText(_regexMatcher, str, str.Length, out e);
+			NativeMethods.uregex_setText(_regexMatcher.Pointer, str, str.Length, out e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -127,7 +127,7 @@ namespace Icu
 			ErrorCode errorCode;
 			bool result;
 
-			result = NativeMethods.uregex_matches(_regexMatcher, startIndex, out errorCode);
+			result = NativeMethods.uregex_matches(_regexMatcher.Pointer, startIndex, out errorCode);
 			if (errorCode.IsFailure())
 			{
 				throw new Exception("Match failed");
@@ -165,11 +165,9 @@ namespace Icu
 				// Dispose managed state (managed objects), if any.
 			}
 
-			if (_regexMatcher != IntPtr.Zero)
-			{
-				NativeMethods.uregex_close(_regexMatcher);
-				_regexMatcher = IntPtr.Zero;
-			}
+			var regexMatcher = _regexMatcher.Take();
+			if (regexMatcher != IntPtr.Zero)
+				NativeMethods.uregex_close(regexMatcher);
 		}
 
 		/// <summary>

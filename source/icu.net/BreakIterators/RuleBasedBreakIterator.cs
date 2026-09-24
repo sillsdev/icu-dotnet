@@ -23,7 +23,7 @@ namespace Icu
 		private readonly Locale _locale = DefaultLocale;
 
 		private bool _disposingValue; // To detect redundant calls
-		private IntPtr _breakIterator = IntPtr.Zero;
+		private readonly NativeHandle _breakIterator = new NativeHandle(nameof(RuleBasedBreakIterator));
 		private string _text;
 		private int _currentIndex;
 		private TextBoundary[] _textBoundaries = new TextBoundary[0];
@@ -77,11 +77,13 @@ namespace Icu
 			_textBoundaries = new TextBoundary[bi._textBoundaries.Length];
 			bi._textBoundaries.CopyTo(_textBoundaries, 0);
 
-			if (bi._breakIterator == IntPtr.Zero)
+			bi._breakIterator.ThrowIfStale();
+			if (!bi._breakIterator.IsOpen)
 				return;
 
 			ErrorCode errorCode;
-			_breakIterator = NativeMethods.ubrk_safeClone(bi._breakIterator, IntPtr.Zero, IntPtr.Zero, out errorCode);
+			_breakIterator.Set(NativeMethods.ubrk_safeClone(bi._breakIterator.Pointer, IntPtr.Zero,
+				IntPtr.Zero, out errorCode));
 
 			if (errorCode.IsFailure())
 				throw new Exception($"BreakIterator.ubrk_safeClone() failed with code {errorCode}");
@@ -423,7 +425,7 @@ namespace Icu
 				return;
 			}
 
-			if (_breakIterator == IntPtr.Zero)
+			if (!_breakIterator.IsOpen)
 			{
 				InitializeBreakIterator();
 			}
@@ -436,7 +438,7 @@ namespace Icu
 				{
 					ErrorCode err;
 
-					NativeMethods.ubrk_setText(_breakIterator, Text, Text.Length, out err);
+					NativeMethods.ubrk_setText(_breakIterator.Pointer, Text, Text.Length, out err);
 
 					if (err.IsFailure())
 						throw new Exception(
@@ -446,7 +448,7 @@ namespace Icu
 
 					// Start at the the beginning of the text and iterate until all
 					// of the boundaries are consumed.
-					int cur = NativeMethods.ubrk_first(_breakIterator);
+					int cur = NativeMethods.ubrk_first(_breakIterator.Pointer);
 
 					TextBoundary textBoundary;
 
@@ -457,7 +459,7 @@ namespace Icu
 
 					while (cur != DONE)
 					{
-						int next = NativeMethods.ubrk_next(_breakIterator);
+						int next = NativeMethods.ubrk_next(_breakIterator.Pointer);
 
 						if (!TryGetTextBoundaryFromOffset(next, out textBoundary))
 							break;
@@ -491,7 +493,7 @@ namespace Icu
 			int[] vector = new int[length];
 
 			ErrorCode errorCode;
-			int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, length, out errorCode);
+			int actualLen = NativeMethods.ubrk_getRuleStatusVec(_breakIterator.Pointer, vector, length, out errorCode);
 
 			if (errorCode.IsFailure())
 				throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
@@ -499,7 +501,7 @@ namespace Icu
 			if (actualLen > length)
 			{
 				vector = new int[actualLen];
-				NativeMethods.ubrk_getRuleStatusVec(_breakIterator, vector, vector.Length, out errorCode);
+				NativeMethods.ubrk_getRuleStatusVec(_breakIterator.Pointer, vector, vector.Length, out errorCode);
 
 				if (errorCode.IsFailure())
 					throw new Exception("BreakIterator.GetRuleStatusVector failed! " + errorCode);
@@ -530,7 +532,8 @@ namespace Icu
 		/// <returns></returns>
 		private void InitializeBreakIterator()
 		{
-			if (_breakIterator != IntPtr.Zero)
+			_breakIterator.ThrowIfStale();
+			if (_breakIterator.IsOpen)
 			{
 				return;
 			}
@@ -540,7 +543,7 @@ namespace Icu
 				ErrorCode errorCode;
 				ParseError parseError;
 
-				_breakIterator = NativeMethods.ubrk_openRules(Rules, Rules.Length, Text, Text.Length, out parseError, out errorCode);
+				_breakIterator.Set(NativeMethods.ubrk_openRules(Rules, Rules.Length, Text, Text.Length, out parseError, out errorCode));
 
 				if (errorCode.IsFailure())
 				{
@@ -550,7 +553,7 @@ namespace Icu
 			else
 			{
 				ErrorCode errorCode;
-				_breakIterator = NativeMethods.ubrk_open(_iteratorType, _locale.Id, Text, Text.Length, out errorCode);
+				_breakIterator.Set(NativeMethods.ubrk_open(_iteratorType, _locale.Id, Text, Text.Length, out errorCode));
 				if (errorCode.IsFailure())
 				{
 					throw new InvalidOperationException(
@@ -587,11 +590,9 @@ namespace Icu
 					// Dispose managed state (managed objects), if any.
 				}
 
-				if (_breakIterator != IntPtr.Zero)
-				{
-					NativeMethods.ubrk_close(_breakIterator);
-					_breakIterator = IntPtr.Zero;
-				}
+				var breakIterator = _breakIterator.Take();
+				if (breakIterator != IntPtr.Zero)
+					NativeMethods.ubrk_close(breakIterator);
 
 				_disposingValue = true;
 			}

@@ -21,7 +21,7 @@ namespace Icu
 	/// </summary>
 	public class ResourceBundle : IDisposable
 	{
-		private IntPtr _ResourceBundle { get; set; }
+		private readonly NativeHandle _ResourceBundle = new NativeHandle(nameof(ResourceBundle));
 
 		/// <summary>
 		/// Constructor
@@ -34,13 +34,13 @@ namespace Icu
 		/// <param name="locale">This is the locale this resource bundle is for.</param>
 		public ResourceBundle(string packageName, string locale)
 		{
-			_ResourceBundle = NativeMethods.ures_open(packageName, locale, out var errorCode);
+			_ResourceBundle.Set(NativeMethods.ures_open(packageName, locale, out var errorCode));
 			ExceptionFromErrorCode.ThrowIfError(errorCode);
 		}
 
 		private ResourceBundle(IntPtr resourceBundle)
 		{
-			_ResourceBundle = resourceBundle;
+			_ResourceBundle.Set(resourceBundle);
 		}
 
 		#region Dispose pattern
@@ -59,16 +59,23 @@ namespace Icu
 				// do nothing
 			}
 
-			if (_ResourceBundle != IntPtr.Zero)
-				NativeMethods.ures_close(_ResourceBundle);
-			_ResourceBundle = IntPtr.Zero;
+			var resourceBundle = _ResourceBundle.Take();
+			if (resourceBundle != IntPtr.Zero)
+				NativeMethods.ures_close(resourceBundle);
 		}
 		#endregion
 
 		/// <summary>
 		/// Returns <c>true</c> if this is a Null resource bundle
 		/// </summary>
-		public bool IsNull => _ResourceBundle == IntPtr.Zero;
+		public bool IsNull
+		{
+			get
+			{
+				_ResourceBundle.ThrowIfStale();
+				return !_ResourceBundle.IsOpen;
+			}
+		}
 
 		/// <summary>
 		/// Gets the Null resource bundle
@@ -88,7 +95,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var keyPtr = NativeMethods.ures_getKey(_ResourceBundle);
+				var keyPtr = NativeMethods.ures_getKey(_ResourceBundle.Pointer);
 				return keyPtr == IntPtr.Zero ? string.Empty : Marshal.PtrToStringAnsi(keyPtr);
 			}
 		}
@@ -105,7 +112,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var resultPtr = NativeMethods.ures_getString(_ResourceBundle, out var len,
+				var resultPtr = NativeMethods.ures_getString(_ResourceBundle.Pointer, out var len,
 					out var status);
 				ExceptionFromErrorCode.ThrowIfError(status);
 				if (status.IsFailure() || resultPtr == IntPtr.Zero)
@@ -127,7 +134,7 @@ namespace Icu
 				if (IsNull)
 					return string.Empty;
 
-				var resultPtr = NativeMethods.ures_getLocale(_ResourceBundle, out var status);
+				var resultPtr = NativeMethods.ures_getLocale(_ResourceBundle.Pointer, out var status);
 				ExceptionFromErrorCode.ThrowIfError(status);
 				if (status.IsFailure() || resultPtr == IntPtr.Zero)
 					return string.Empty;
@@ -149,7 +156,7 @@ namespace Icu
 				if (IsNull)
 					return Null;
 
-				var bundle = NativeMethods.ures_getByKey(_ResourceBundle, key, IntPtr.Zero,
+				var bundle = NativeMethods.ures_getByKey(_ResourceBundle.Pointer, key, IntPtr.Zero,
 					out var status);
 				if (status.IsFailure() || bundle == IntPtr.Zero)
 					return Null;
@@ -172,7 +179,7 @@ namespace Icu
 			if (IsNull)
 				return string.Empty;
 
-			var resultPtr = NativeMethods.ures_getStringByKey(_ResourceBundle, key,
+			var resultPtr = NativeMethods.ures_getStringByKey(_ResourceBundle.Pointer, key,
 				out var len, out var status);
 			if (status.IsFailure())
 			{
@@ -195,7 +202,7 @@ namespace Icu
 			if (IsNull)
 				return;
 
-			NativeMethods.ures_resetIterator(_ResourceBundle);
+			NativeMethods.ures_resetIterator(_ResourceBundle.Pointer);
 		}
 
 		/// <summary>
@@ -205,7 +212,7 @@ namespace Icu
 		/// elements</returns>
 		public bool HasNext()
 		{
-			return !IsNull && NativeMethods.ures_hasNext(_ResourceBundle);
+			return !IsNull && NativeMethods.ures_hasNext(_ResourceBundle.Pointer);
 		}
 
 		/// <summary>
@@ -221,7 +228,7 @@ namespace Icu
 			if (IsNull)
 				return Null;
 
-			var resultPtr = NativeMethods.ures_getNextResource(_ResourceBundle, IntPtr.Zero,
+			var resultPtr = NativeMethods.ures_getNextResource(_ResourceBundle.Pointer, IntPtr.Zero,
 				out var status);
 			if (status.IsFailure() || resultPtr == IntPtr.Zero)
 				return Null;
@@ -245,7 +252,7 @@ namespace Icu
 			if (IsNull)
 				return string.Empty;
 
-			var resultPtr = NativeMethods.ures_getNextString(_ResourceBundle, out var ignoreLen,
+			var resultPtr = NativeMethods.ures_getNextString(_ResourceBundle.Pointer, out var ignoreLen,
 				out var keyPtr, out var status);
 			if (status.IsFailure() || resultPtr == IntPtr.Zero)
 				return null;
