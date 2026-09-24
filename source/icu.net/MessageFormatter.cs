@@ -12,7 +12,7 @@ namespace Icu
 	/// </summary>
 	public class MessageFormatter : IDisposable
 	{
-		private readonly NativeHandle _Formatter = new NativeHandle(nameof(MessageFormatter));
+		private readonly NativeHandle _Formatter = new NativeHandle(nameof(MessageFormatter), NativeMethods.umsg_close);
 
 		/// <summary>
 		/// Constructs a new MessageFormat using the given pattern and locale.
@@ -59,9 +59,7 @@ namespace Icu
 				// do nothing
 			}
 
-			var formatter = _Formatter.Take();
-			if (formatter != IntPtr.Zero)
-				NativeMethods.umsg_close(formatter);
+			_Formatter.Close();
 		}
 		#endregion
 

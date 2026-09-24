@@ -21,7 +21,7 @@ namespace Icu
 	/// </summary>
 	public class ResourceBundle : IDisposable
 	{
-		private readonly NativeHandle _ResourceBundle = new NativeHandle(nameof(ResourceBundle));
+		private readonly NativeHandle _ResourceBundle = new NativeHandle(nameof(ResourceBundle), NativeMethods.ures_close);
 
 		/// <summary>
 		/// Constructor
@@ -59,9 +59,7 @@ namespace Icu
 				// do nothing
 			}
 
-			var resourceBundle = _ResourceBundle.Take();
-			if (resourceBundle != IntPtr.Zero)
-				NativeMethods.ures_close(resourceBundle);
+			_ResourceBundle.Close();
 		}
 		#endregion
 

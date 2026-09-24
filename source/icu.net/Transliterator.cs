@@ -39,7 +39,7 @@ namespace Icu
 		{
 			public override bool IsInvalid => handle == IntPtr.Zero;
 
-			protected override bool ReleaseHandle()
+			protected override bool ReleaseIcuHandle()
 			{
 				try
 				{

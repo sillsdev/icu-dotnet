@@ -73,6 +73,70 @@ namespace Icu.Tests
 
 		[Test]
 		[Category("Full ICU")]
+		public void BreakIterator_OpenedAfterCleanup_InvalidatedByNextCleanup()
+		{
+			using (var breakIterator = new RuleBasedBreakIterator(
+				BreakIterator.UBreakIteratorType.WORD, new Locale("en-US")))
+			{
+				// The native break iterator only gets opened once there is text.
+				Wrapper.Cleanup();
+				Wrapper.Init();
+				breakIterator.SetText("hello there");
+
+				Wrapper.Cleanup();
+
+				Assert.That(() => breakIterator.SetText("something else"),
+					Throws.TypeOf<ObjectDisposedException>());
+			}
+		}
+
+		[Test]
+		public void Cleanup_ClosesOpenNativeHandle()
+		{
+			var closed = new System.Collections.Generic.List<IntPtr>();
+			var handle = new NativeHandle("Test", closed.Add);
+			handle.Set(new IntPtr(42));
+
+			Wrapper.Cleanup();
+			handle.Close();
+
+			Assert.That(closed, Is.EqualTo(new[] { new IntPtr(42) }));
+			Assert.That(handle.IsStale, Is.True);
+		}
+
+		[Test]
+		public void Cleanup_ClosesOpenSafeIcuHandle()
+		{
+			var handle = new CountingSafeIcuHandle();
+			handle.Open(new IntPtr(42));
+
+			Wrapper.Cleanup();
+			handle.Dispose();
+
+			Assert.That(handle.ReleaseCount, Is.EqualTo(1));
+			Assert.That(handle.IsStale, Is.True);
+		}
+
+		private sealed class CountingSafeIcuHandle : SafeIcuHandle
+		{
+			public int ReleaseCount { get; private set; }
+
+			public override bool IsInvalid => handle == IntPtr.Zero;
+
+			public void Open(IntPtr pointer)
+			{
+				SetHandle(pointer);
+			}
+
+			protected override bool ReleaseIcuHandle()
+			{
+				ReleaseCount++;
+				return true;
+			}
+		}
+
+		[Test]
+		[Category("Full ICU")]
 		public void BiDi_UsedAfterCleanup_Throws()
 		{
 			using (var biDi = new BiDi())

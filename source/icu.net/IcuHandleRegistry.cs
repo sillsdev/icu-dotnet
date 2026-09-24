@@ -12,9 +12,10 @@ namespace Icu
 	internal interface IIcuHandleOwner
 	{
 		/// <summary>
-		/// Marks the native handle as unusable. Called before the ICU libraries get unloaded,
-		/// so implementations must not call into ICU.
+		/// Closes the native object and marks the handle as unusable.
 		/// </summary>
+		/// <remarks>Runs while the ICU libraries are still loaded and with
+		/// <see cref="NativeMethods.CleanupLock"/> held.</remarks>
 		void InvalidateHandle();
 	}
 
@@ -49,9 +50,9 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Invalidates the handle of every registered object that is still alive. Afterwards
-		/// using one of them throws <see cref="ObjectDisposedException"/> instead of handing a
-		/// dangling pointer to ICU, which would take down the process with an
+		/// Closes and invalidates the handle of every registered object that is still alive.
+		/// Afterwards using one of them throws <see cref="ObjectDisposedException"/> instead of
+		/// handing a dangling pointer to ICU, which would take down the process with an
 		/// <c>AccessViolationException</c>.
 		/// </summary>
 		internal static void InvalidateAll()
@@ -70,7 +71,7 @@ namespace Icu
 				_compactThreshold = MinCompactThreshold;
 			}
 
-			// Invalidate outside the lock: invalidating one object might create another one.
+			// Invalidate outside the lock: an unopened handle registers itself again.
 			foreach (var owner in owners)
 				owner.InvalidateHandle();
 		}

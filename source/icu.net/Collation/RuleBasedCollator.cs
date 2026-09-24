@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Globalization;
-using System.Runtime.ConstrainedExecution;
 
 
 namespace Icu.Collation
@@ -24,10 +23,7 @@ namespace Icu.Collation
 			/// true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.
 			/// In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if NETFRAMEWORK
-			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-			protected override bool ReleaseHandle()
+			protected override bool ReleaseIcuHandle()
 			{
 				try
 				{

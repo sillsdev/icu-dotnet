@@ -2,7 +2,6 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.ConstrainedExecution;
 
 namespace Icu
 {
@@ -16,10 +15,7 @@ namespace Icu
 		/// failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging
 		/// Assistant.
 		///</returns>
-#if NETFRAMEWORK
-		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-		protected override bool ReleaseHandle()
+		protected override bool ReleaseIcuHandle()
 		{
 			try
 			{

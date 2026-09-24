@@ -12,13 +12,17 @@ namespace Icu
 	internal sealed class NativeHandle : IIcuHandleOwner
 	{
 		private readonly string _ownerName;
+		private readonly Action<IntPtr> _close;
 		private IntPtr _handle;
 
 		/// <param name="ownerName">Name of the class owning this handle; used in the
 		/// <see cref="ObjectDisposedException"/> message.</param>
-		public NativeHandle(string ownerName)
+		/// <param name="close">The ICU method that closes the native object, or <c>null</c> if
+		/// ICU owns it.</param>
+		public NativeHandle(string ownerName, Action<IntPtr> close)
 		{
 			_ownerName = ownerName;
+			_close = close;
 			IcuHandleRegistry.Register(this);
 		}
 
@@ -55,26 +59,34 @@ namespace Icu
 		}
 
 		/// <summary>
-		/// Clears this handle and returns the pointer the caller has to close, or
-		/// <see cref="IntPtr.Zero"/> if there is nothing to close because the handle was never
-		/// opened, got closed already, or points into unloaded ICU libraries.
+		/// Closes the native object, if this handle is open. Safe to call from a finalizer.
 		/// </summary>
-		public IntPtr Take()
+		public void Close()
+		{
+			lock (NativeMethods.CleanupLock)
+				CloseCore();
+		}
+
+		private void CloseCore()
 		{
 			var handle = _handle;
 			_handle = IntPtr.Zero;
-			return handle;
+			if (handle != IntPtr.Zero)
+				_close?.Invoke(handle);
 		}
 
 		void IIcuHandleOwner.InvalidateHandle()
 		{
 			// A handle that isn't open doesn't point into the libraries that are about to go
-			// away, so it can be opened again afterwards.
+			// away. Its owner stays usable and might open it later, so keep tracking it.
 			if (!IsOpen)
+			{
+				IcuHandleRegistry.Register(this);
 				return;
+			}
 
+			CloseCore();
 			IsStale = true;
-			_handle = IntPtr.Zero;
 		}
 	}
 }

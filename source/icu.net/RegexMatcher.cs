@@ -75,7 +75,7 @@ namespace Icu
 			ERROR_ON_UNKNOWN_ESCAPES = 512
 		}
 		private string _regexp;
-		private readonly NativeHandle _regexMatcher = new NativeHandle(nameof(RegexMatcher));
+		private readonly NativeHandle _regexMatcher = new NativeHandle(nameof(RegexMatcher), NativeMethods.uregex_close);
 
 		/// <summary>
 		/// constructor
@@ -165,9 +165,7 @@ namespace Icu
 				// Dispose managed state (managed objects), if any.
 			}
 
-			var regexMatcher = _regexMatcher.Take();
-			if (regexMatcher != IntPtr.Zero)
-				NativeMethods.uregex_close(regexMatcher);
+			_regexMatcher.Close();
 		}
 
 		/// <summary>

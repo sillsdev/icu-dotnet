@@ -123,7 +123,7 @@ namespace Icu
 		}
 
 
-		private readonly NativeHandle _biDi = new NativeHandle(nameof(BiDi));
+		private readonly NativeHandle _biDi = new NativeHandle(nameof(BiDi), NativeMethods.ubidi_close);
 
 		// The ICU Bidi object accepts pointers and expects that the caller keeps buffers allocated, so we handle allocating unmananged memory
 		private IntPtr _para;
@@ -173,9 +173,7 @@ namespace Icu
 				// TODO: dispose managed state (managed objects).
 			}
 
-			var biDi = _biDi.Take();
-			if (biDi != IntPtr.Zero)
-				NativeMethods.ubidi_close(biDi);
+			_biDi.Close();
 
 			if (_para != IntPtr.Zero)
 			{

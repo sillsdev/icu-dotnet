@@ -18,6 +18,12 @@ namespace Icu
 	{
 		private static readonly object _lock = new object();
 
+		/// <summary>
+		/// Held by <see cref="Cleanup"/> until the libraries are unloaded. Hold it while closing
+		/// a native ICU object so the close can't interleave with an unload.
+		/// </summary>
+		internal static object CleanupLock => _lock;
+
 #if NET
 		private static readonly DllResolver _DllResolver =
 			new DllResolver(Assembly.GetExecutingAssembly());
@@ -531,7 +537,7 @@ namespace Icu
 			lock (_lock)
 			{
 				// Outstanding handles point into the libraries this method unloads, so they
-				// have to be invalidated first; otherwise using one of them afterwards
+				// have to be closed and invalidated first; otherwise using one of them afterwards
 				// dereferences freed memory and takes down the process.
 				IcuHandleRegistry.InvalidateAll();
 

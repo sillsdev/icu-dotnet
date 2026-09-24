@@ -23,7 +23,7 @@ namespace Icu
 		private readonly Locale _locale = DefaultLocale;
 
 		private bool _disposingValue; // To detect redundant calls
-		private readonly NativeHandle _breakIterator = new NativeHandle(nameof(RuleBasedBreakIterator));
+		private readonly NativeHandle _breakIterator = new NativeHandle(nameof(RuleBasedBreakIterator), NativeMethods.ubrk_close);
 		private string _text;
 		private int _currentIndex;
 		private TextBoundary[] _textBoundaries = new TextBoundary[0];
@@ -590,9 +590,7 @@ namespace Icu
 					// Dispose managed state (managed objects), if any.
 				}
 
-				var breakIterator = _breakIterator.Take();
-				if (breakIterator != IntPtr.Zero)
-					NativeMethods.ubrk_close(breakIterator);
+				_breakIterator.Close();
 
 				_disposingValue = true;
 			}

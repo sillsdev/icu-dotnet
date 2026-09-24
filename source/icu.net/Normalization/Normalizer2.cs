@@ -54,7 +54,7 @@ namespace Icu.Normalization
 			COMPOSE_CONTIGUOUS = 3
 		}
 
-		private readonly NativeHandle _Normalizer = new NativeHandle(nameof(Normalizer2));
+		private readonly NativeHandle _Normalizer = new NativeHandle(nameof(Normalizer2), close: null);
 
 		/// <summary>
 		/// Returns a Normalizer2 instance for Unicode NFC normalization. Same as
