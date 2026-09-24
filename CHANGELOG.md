@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `TypeInitializationException` (`UriFormatException: Invalid URI: The hostname could not be
+  parsed`) on first use when the path of `icu.net.dll` is longer than `MAX_PATH` on Windows. .NET
+  returns such paths with a `\\?\` prefix, which `new Uri(...)` could not parse.
+
 ## [4.0.0] - 2026-09-23
 
 ### Added

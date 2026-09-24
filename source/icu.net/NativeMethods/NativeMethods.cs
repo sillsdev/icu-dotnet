@@ -169,22 +169,39 @@ namespace Icu
 			{
 				var currentAssembly = typeof(NativeMethods).GetTypeInfo().Assembly;
 #if NET
-				var managedPath = currentAssembly.Location;
 				// If the application is published as a single file, Assembly.Location will be an empty string.
 				// Per the warning https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/il3000 we should use AppContext.BaseDirectory instead.
-				if (string.IsNullOrEmpty(managedPath))
-				{
-					managedPath = AppContext.BaseDirectory;
-				}
+				var directoryName = GetAssemblyDirectory(null, currentAssembly.Location,
+					AppContext.BaseDirectory);
 #else
-				var managedPath = currentAssembly.CodeBase ?? currentAssembly.Location;
+				var directoryName = GetAssemblyDirectory(currentAssembly.CodeBase,
+					currentAssembly.Location, null);
 #endif
-				var uri = new Uri(managedPath);
-
-				var directoryName = Path.GetDirectoryName(uri.LocalPath);
 				Trace.WriteLineIf(Verbose, $"icu.net: Directory of this assembly is {directoryName}");
 				return directoryName;
 			}
+		}
+
+		/// <summary>
+		/// Gets the directory of an assembly, preferring <paramref name="codeBase"/> (a file URI),
+		/// then <paramref name="location"/> (a file path), then <paramref name="fallbackPath"/>.
+		/// </summary>
+		/// <remarks>
+		/// File paths must not be passed to <see cref="Uri"/>: when the path is longer than
+		/// MAX_PATH, .NET returns it with a <c>\\?\</c> prefix, which <see cref="Uri"/>
+		/// parses as a UNC path with an invalid host name and throws.
+		/// </remarks>
+		internal static string GetAssemblyDirectory(string codeBase, string location, string fallbackPath)
+		{
+			var managedPath = location;
+			if (!string.IsNullOrEmpty(codeBase) &&
+				Uri.TryCreate(codeBase, UriKind.Absolute, out var uri) && uri.IsFile)
+			{
+				managedPath = uri.LocalPath;
+			}
+			if (string.IsNullOrEmpty(managedPath))
+				managedPath = fallbackPath;
+			return Path.GetDirectoryName(managedPath);
 		}
 
 		private static bool IsRunning64Bit => Platform.ProcessArchitecture == Platform.x64;
