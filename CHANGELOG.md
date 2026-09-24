@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `Wrapper.Cleanup()` leaving outstanding ICU handles dangling, so that using a collator,
+  break iterator, transliterator, BiDi, regex matcher, message formatter, resource bundle or
+  normalizer created before the call crashed the process with an `AccessViolationException`.
+  `Cleanup()` now invalidates every outstanding handle before unloading the libraries; using one
+  of those objects afterwards throws `ObjectDisposedException`, and disposing one no longer calls
+  into the unloaded libraries.
+
 ## [4.0.0] - 2026-09-23
 
 ### Added

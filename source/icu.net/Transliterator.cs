@@ -35,15 +35,11 @@ namespace Icu
 		}
 
 		// ReSharper disable once ClassNeverInstantiated.Global
-		internal sealed class SafeTransliteratorHandle : SafeHandle
+		internal sealed class SafeTransliteratorHandle : SafeIcuHandle
 		{
-			public SafeTransliteratorHandle() :
-				base(IntPtr.Zero, true)
-			{ }
-
 			public override bool IsInvalid => handle == IntPtr.Zero;
 
-			protected override bool ReleaseHandle()
+			protected override bool ReleaseIcuHandle()
 			{
 				try
 				{
@@ -59,6 +55,19 @@ namespace Icu
 		}
 
 		private readonly SafeTransliteratorHandle _transliteratorHandle;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this transliterator was created.</exception>
+		private SafeTransliteratorHandle Handle
+		{
+			get
+			{
+				if (_transliteratorHandle.IsStale)
+					throw IcuHandleRegistry.UnloadedException(nameof(Transliterator));
+				return _transliteratorHandle;
+			}
+		}
 
 		#region Static Methods
 		/// <summary>
@@ -332,7 +341,7 @@ namespace Icu
 
 				var textLength = text.Length;
 				var limit = textLength;
-				NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
+				NativeMethods.utrans_transUChars(Handle, textPtr, ref textLength,
 					textCapacity, start, ref limit, out var status);
 
 				if (status == ErrorCode.BUFFER_OVERFLOW_ERROR)
@@ -347,7 +356,7 @@ namespace Icu
 
 					textLength = text.Length;
 					limit = textLength;
-					NativeMethods.utrans_transUChars(_transliteratorHandle, textPtr, ref textLength,
+					NativeMethods.utrans_transUChars(Handle, textPtr, ref textLength,
 						textCapacity, start, ref limit, out status);
 				}
 

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Globalization;
-using System.Runtime.ConstrainedExecution;
 
 
 namespace Icu.Collation
@@ -15,11 +14,8 @@ namespace Icu.Collation
 	/// </summary>
 	public sealed class RuleBasedCollator : Collator
 	{
-		internal sealed class SafeRuleBasedCollatorHandle : SafeHandle
+		internal sealed class SafeRuleBasedCollatorHandle : SafeIcuHandle
 		{
-			public SafeRuleBasedCollatorHandle() :
-					base(IntPtr.Zero, true) {}
-
 			///<summary>
 			/// When overridden in a derived class, executes the code required to free the handle.
 			///</summary>
@@ -27,10 +23,7 @@ namespace Icu.Collation
 			/// true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false.
 			/// In this case, it generates a ReleaseHandleFailed Managed Debugging Assistant.
 			///</returns>
-#if NETFRAMEWORK
-			[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-			protected override bool ReleaseHandle()
+			protected override bool ReleaseIcuHandle()
 			{
 				try
 				{
@@ -57,6 +50,19 @@ namespace Icu.Collation
 
 		private bool _disposingValue; // To detect redundant calls
 		private SafeRuleBasedCollatorHandle _collatorHandle;
+
+		/// <summary>The handle to pass to ICU.</summary>
+		/// <exception cref="ObjectDisposedException">The ICU libraries were unloaded by
+		/// <see cref="Wrapper.Cleanup"/> after this collator was created.</exception>
+		private SafeRuleBasedCollatorHandle Handle
+		{
+			get
+			{
+				if (_collatorHandle != null && _collatorHandle.IsStale)
+					throw IcuHandleRegistry.UnloadedException(nameof(RuleBasedCollator));
+				return _collatorHandle;
+			}
+		}
 
 		private RuleBasedCollator() {}
 
@@ -224,7 +230,7 @@ namespace Icu.Collation
 			int actualLength;
 			for (;;)
 			{
-				actualLength = NativeMethods.ucol_getSortKey(_collatorHandle, source, source.Length,
+				actualLength = NativeMethods.ucol_getSortKey(Handle, source, source.Length,
 					keyData, keyData.Length);
 				if (actualLength > keyData.Length)
 				{
@@ -239,14 +245,14 @@ namespace Icu.Collation
 
 		private NativeMethods.CollationAttributeValue GetAttribute(NativeMethods.CollationAttribute attr)
 		{
-			var value = NativeMethods.ucol_getAttribute(_collatorHandle, attr, out var e);
+			var value = NativeMethods.ucol_getAttribute(Handle, attr, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 			return value;
 		}
 
 		private void SetAttribute(NativeMethods.CollationAttribute attr, NativeMethods.CollationAttributeValue value)
 		{
-			NativeMethods.ucol_setAttribute(_collatorHandle, attr, value, out var e);
+			NativeMethods.ucol_setAttribute(Handle, attr, value, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 		}
 
@@ -296,7 +302,7 @@ namespace Icu.Collation
 			var copy = new RuleBasedCollator();
 			var bufferSize = 512;
 			copy._collatorHandle = NativeMethods.ucol_safeClone(
-				_collatorHandle,
+				Handle,
 				IntPtr.Zero,
 				ref bufferSize,
 				out var status);
@@ -433,7 +439,7 @@ namespace Icu.Collation
 			{
 				return 1;
 			}
-			return (int) NativeMethods.ucol_strcoll(_collatorHandle,
+			return (int) NativeMethods.ucol_strcoll(Handle,
 													string1,
 													string1.Length,
 													string2,

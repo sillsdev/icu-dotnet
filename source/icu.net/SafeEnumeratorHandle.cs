@@ -2,16 +2,11 @@
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.ConstrainedExecution;
 
 namespace Icu
 {
-	internal sealed class SafeEnumeratorHandle : SafeHandle
+	internal sealed class SafeEnumeratorHandle : SafeIcuHandle
 	{
-		public SafeEnumeratorHandle() : base(IntPtr.Zero, true)
-		{
-		}
-
 		///<summary>
 		///When overridden in a derived class, executes the code required to free the handle.
 		///</summary>
@@ -20,10 +15,7 @@ namespace Icu
 		/// failure, false. In this case, it generates a ReleaseHandleFailed Managed Debugging
 		/// Assistant.
 		///</returns>
-#if NETFRAMEWORK
-		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-		protected override bool ReleaseHandle()
+		protected override bool ReleaseIcuHandle()
 		{
 			try
 			{
@@ -49,6 +41,9 @@ namespace Icu
 
 		public string Next()
 		{
+			if (IsStale)
+				throw IcuHandleRegistry.UnloadedException(nameof(SafeEnumeratorHandle));
+
 			var str = NativeMethods.uenum_unext(this, out var length, out var e);
 			ExceptionFromErrorCode.ThrowIfError(e);
 

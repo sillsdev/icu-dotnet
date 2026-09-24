@@ -12,7 +12,7 @@ namespace Icu
 	/// </summary>
 	public class MessageFormatter : IDisposable
 	{
-		private IntPtr _Formatter;
+		private readonly NativeHandle _Formatter = new NativeHandle(nameof(MessageFormatter), NativeMethods.umsg_close);
 
 		/// <summary>
 		/// Constructs a new MessageFormat using the given pattern and locale.
@@ -22,8 +22,8 @@ namespace Icu
 		/// <remarks>If the pattern cannot be parsed, an exception is thrown.</remarks>
 		public MessageFormatter(string pattern, string localeId)
 		{
-			_Formatter = NativeMethods.umsg_open(pattern, pattern.Length, localeId,
-				out var parseError, out var status);
+			_Formatter.Set(NativeMethods.umsg_open(pattern, pattern.Length, localeId,
+				out var parseError, out var status));
 			ExceptionFromErrorCode.ThrowIfError(status);
 		}
 
@@ -39,8 +39,8 @@ namespace Icu
 		public MessageFormatter(string pattern, string localeId, out ParseError parseError,
 			out ErrorCode status)
 		{
-			_Formatter = NativeMethods.umsg_open(pattern, pattern.Length, localeId, out parseError,
-				out status);
+			_Formatter.Set(NativeMethods.umsg_open(pattern, pattern.Length, localeId,
+				out parseError, out status));
 		}
 
 		#region Dispose pattern
@@ -59,9 +59,7 @@ namespace Icu
 				// do nothing
 			}
 
-			if (_Formatter != IntPtr.Zero)
-				NativeMethods.umsg_close(_Formatter);
-			_Formatter = IntPtr.Zero;
+			_Formatter.Close();
 		}
 		#endregion
 
@@ -72,7 +70,7 @@ namespace Icu
 			{
 				return NativeMethods.GetUnicodeString((ptr2, length) =>
 				{
-					length = NativeMethods.umsg_toPattern(_Formatter, ptr2, length, out var err);
+					length = NativeMethods.umsg_toPattern(_Formatter.Pointer, ptr2, length, out var err);
 					return new Tuple<ErrorCode, int>(err, length);
 				});
 			}
@@ -87,7 +85,7 @@ namespace Icu
 		{
 			return NativeMethods.GetUnicodeString((ptr, length) =>
 			{
-				length = NativeMethods.umsg_format(_Formatter, ptr, length, out var err, arg0, arg1, arg2);
+				length = NativeMethods.umsg_format(_Formatter.Pointer, ptr, length, out var err, arg0, arg1, arg2);
 				return new Tuple<ErrorCode, int>(err, length);
 			});
 		}
