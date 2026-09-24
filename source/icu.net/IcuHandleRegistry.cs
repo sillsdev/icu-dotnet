@@ -42,7 +42,9 @@ namespace Icu
 					_compactThreshold = Math.Max(MinCompactThreshold, _owners.Count * 2);
 				}
 
-				_owners.Add(new WeakReference(owner));
+				// A short weak reference is cleared before finalization, so InvalidateAll() would
+				// miss undisposed owners that are still waiting for their finalizer.
+				_owners.Add(new WeakReference(owner, trackResurrection: true));
 			}
 		}
 

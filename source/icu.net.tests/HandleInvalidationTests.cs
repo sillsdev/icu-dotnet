@@ -1,6 +1,8 @@
 // Copyright (c) 2026 SIL Global
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using Icu.Collation;
 using Icu.Normalization;
 using NUnit.Framework;
@@ -160,6 +162,61 @@ namespace Icu.Tests
 				collator.Dispose();
 				biDi.Dispose();
 			}, Throws.Nothing);
+		}
+
+		[Test]
+		public void OwnerPendingFinalization_InvalidatedByCleanup()
+		{
+			using (var finalizerStarted = new ManualResetEventSlim())
+			using (var releaseFinalizer = new ManualResetEventSlim())
+			{
+				var invalidated = new StrongBox<bool>();
+				CreateUnreferencedOwner(invalidated, finalizerStarted, releaseFinalizer);
+
+				// Queue the owner for finalization and hold its finalizer until Cleanup() has
+				// run, the window in which a short weak reference would already be cleared.
+				GC.Collect();
+				Assert.That(finalizerStarted.Wait(TimeSpan.FromSeconds(10)), Is.True);
+
+				Wrapper.Cleanup();
+				releaseFinalizer.Set();
+
+				Assert.That(invalidated.Value, Is.True);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private static void CreateUnreferencedOwner(StrongBox<bool> invalidated,
+			ManualResetEventSlim finalizerStarted, ManualResetEventSlim releaseFinalizer)
+		{
+			IcuHandleRegistry.Register(
+				new FinalizableOwner(invalidated, finalizerStarted, releaseFinalizer));
+		}
+
+		private sealed class FinalizableOwner : IIcuHandleOwner
+		{
+			private readonly StrongBox<bool> _invalidated;
+			private readonly ManualResetEventSlim _finalizerStarted;
+			private readonly ManualResetEventSlim _releaseFinalizer;
+
+			public FinalizableOwner(StrongBox<bool> invalidated,
+				ManualResetEventSlim finalizerStarted, ManualResetEventSlim releaseFinalizer)
+			{
+				_invalidated = invalidated;
+				_finalizerStarted = finalizerStarted;
+				_releaseFinalizer = releaseFinalizer;
+			}
+
+			~FinalizableOwner()
+			{
+				_finalizerStarted.Set();
+				_releaseFinalizer.Wait(TimeSpan.FromSeconds(10));
+			}
+
+			public void InvalidateHandle()
+			{
+				_invalidated.Value = true;
+			}
 		}
 
 		[Test]
